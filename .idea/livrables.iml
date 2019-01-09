@@ -2,11 +2,11 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/site_web/app" isTestSource="false" packagePrefix="App\" />
-      <excludeFolder url="file://$MODULE_DIR$/site_web/vendor/composer" />
-      <excludeFolder url="file://$MODULE_DIR$/site_web/vendor/symfony/polyfill-ctype" />
-      <excludeFolder url="file://$MODULE_DIR$/site_web/vendor/symfony/polyfill-mbstring" />
-      <excludeFolder url="file://$MODULE_DIR$/site_web/vendor/twig/twig" />
+      <sourceFolder url="file://$MODULE_DIR$/website/src/Framework" isTestSource="false" packagePrefix="Framework\" />
+      <excludeFolder url="file://$MODULE_DIR$/website/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/website/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/website/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/website/vendor/twig/twig" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -2,10 +2,10 @@
 <project version="4">
   <component name="PhpIncludePathManager">
     <include_path>
-      <path value="$PROJECT_DIR$/site_web/vendor/composer" />
-      <path value="$PROJECT_DIR$/site_web/vendor/twig/twig" />
-      <path value="$PROJECT_DIR$/site_web/vendor/symfony/polyfill-ctype" />
-      <path value="$PROJECT_DIR$/site_web/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/website/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/website/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/website/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/website/vendor/composer" />
     </include_path>
   </component>
 </project>
