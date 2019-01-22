@@ -116,6 +116,20 @@ class PostManager extends Manager
         return self::createAPostFromDatabaseData($thePostData);
     }
 
+    public function getAll() : array
+    {
+        $posts = [];
+        $query = "SELECT * FROM bl_post";
+
+        $requestAllPosts = $this->database->query($query);
+        $postsData = $requestAllPosts->fetchAll(PDO::FETCH_ASSOC);
+
+        var_dump($postsData);
+        die;
+    }
+
+    // Private
+
     /**
      * @param array $data
      * @return Post

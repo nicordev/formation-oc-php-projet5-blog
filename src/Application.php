@@ -16,19 +16,10 @@ class Application
 {
     public function run()
     {
-        $myPost = new Post([
-            'id' => 2,
-            'title' => 'Titre',
-            'excerpt' => 'Extrait',
-            'content' => 'Contenu',
-            'authorId' => 1,
-            'lastEditorId' => 2
-        ]);
-
         $postManager = new PostManager();
 
-        $myPost = $postManager->get(3);
+        $posts = $postManager->getAll();
 
-        var_dump($myPost);
+        var_dump($posts);
     }
 }
