@@ -16,16 +16,6 @@ use \PDO;
 
 class PostManager extends Manager
 {
-    protected static $tableNames = [
-        'p_id',
-        'p_author_id_fk',
-        'p_last_editor_id_fk',
-        'p_creation_date',
-        'p_last_modification_date',
-        'p_title',
-        'p_excerpt',
-        'p_content'
-    ];
 
     /**
      * Add a new blog post in the database
@@ -33,7 +23,7 @@ class PostManager extends Manager
      * @param Post $newPost
      * @throws Exception
      */
-    public function add(Post $newPost) : void
+    public function add(Post $newPost): void
     {
         $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
             VALUES (:authorId, NOW(), :title, :excerpt, :content)';
@@ -55,7 +45,7 @@ class PostManager extends Manager
      * @param Post $modifiedPost
      * @throws Exception
      */
-    public function edit(Post $modifiedPost) : void
+    public function edit(Post $modifiedPost): void
     {
         $query = 'UPDATE bl_post
             SET p_last_editor_id_fk = :lastEditorId,
@@ -83,7 +73,7 @@ class PostManager extends Manager
      * @param int $postId
      * @throws Exception
      */
-    public function delete(int $postId) : void
+    public function delete(int $postId): void
     {
         $query = 'DELETE FROM bl_post WHERE p_id = ?';
 
@@ -100,7 +90,7 @@ class PostManager extends Manager
      * @return Post
      * @throws Exception
      */
-    public function get(int $postId) : Post
+    public function get(int $postId): Post
     {
         $query = "SELECT * FROM bl_post WHERE p_id = ?";
 
@@ -116,7 +106,12 @@ class PostManager extends Manager
         return self::createAPostFromDatabaseData($thePostData);
     }
 
-    public function getAll() : array
+    /**
+     * Get all posts from the database
+     *
+     * @return array
+     */
+    public function getAll(): array
     {
         $posts = [];
         $query = "SELECT * FROM bl_post";
@@ -124,8 +119,11 @@ class PostManager extends Manager
         $requestAllPosts = $this->database->query($query);
         $postsData = $requestAllPosts->fetchAll(PDO::FETCH_ASSOC);
 
-        var_dump($postsData);
-        die;
+        foreach ($postsData as $postsDatum) {
+            $posts[] = self::createAPostFromDatabaseData($postsDatum);
+        }
+
+        return $posts;
     }
 
     // Private
@@ -134,7 +132,7 @@ class PostManager extends Manager
      * @param array $data
      * @return Post
      */
-    private static function createAPostFromDatabaseData(array $data) : Post
+    private static function createAPostFromDatabaseData(array $data): Post
     {
         $attributes = [
             'id' => $data['p_id'],

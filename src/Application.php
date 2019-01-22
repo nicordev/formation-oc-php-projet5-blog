@@ -9,17 +9,15 @@
 namespace Application;
 
 
-use Model\Entity\Post;
+use Model\Entity\Tag;
 use Model\Manager\PostManager;
+use Model\Manager\TagManager;
 
 class Application
 {
     public function run()
     {
         $postManager = new PostManager();
-
-        $posts = $postManager->getAll();
-
-        var_dump($posts);
+        $tagManager = new TagManager();
     }
 }

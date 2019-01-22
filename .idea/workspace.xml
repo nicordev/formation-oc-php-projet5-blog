@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="deb91fe8-3905-48b7-bba6-a354a749a162" name="Default Changelist" comment="Add files to create the database and its tables">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Application.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Application.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/Manager/PostManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Manager/PostManager.php" afterDir="false" />
     </list>
@@ -33,10 +34,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Application.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="22" column="25" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+            <state relative-caret-position="375">
+              <caret line="20" column="39" selection-start-line="20" selection-start-column="39" selection-end-line="20" selection-end-column="39" />
               <folding>
-                <element signature="e#113#135#0#PHP" expanded="true" />
+                <element signature="e#113#134#0#PHP" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -45,7 +46,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Entity/Entity.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
+            <state relative-caret-position="425">
               <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
               <folding>
                 <element signature="e#6#86#0#PHP" expanded="true" />
@@ -57,8 +58,29 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Entity/Post.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1300">
-              <caret line="9" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="350">
+              <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/Entity/Tag.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/Manager/TagManager.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3025">
+              <caret line="121" column="36" lean-forward="true" selection-start-line="121" selection-start-column="36" selection-end-line="121" selection-end-column="36" />
+              <folding>
+                <element signature="e#34#48#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -66,10 +88,40 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/Manager/PostManager.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="521">
-              <caret line="127" column="12" selection-start-line="127" selection-start-column="12" selection-end-line="127" selection-end-column="12" />
+            <state relative-caret-position="700">
+              <caret line="148" column="5" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="148" selection-end-column="5" />
               <folding>
                 <element signature="e#115#139#0#PHP" expanded="true" />
+                <element signature="e#1342#1456#0#PHP" />
+                <element signature="e#391#1020#0#PHP" />
+                <element signature="e#0#218#1" />
+                <element signature="e#96#201#0" />
+                <element signature="e#103#183#0" />
+                <element signature="e#602#828#0#PHP" />
+                <element signature="e#623#827#1#PHP" />
+                <element signature="e#597#937#0#PHP" />
+                <element signature="e#942#1059#0#PHP" />
+                <element signature="e#1147#1986#0#PHP" />
+                <element signature="e#0#271#1" />
+                <element signature="e#1425#1804#0#PHP" />
+                <element signature="e#1447#1803#1#PHP" />
+                <element signature="e#1420#1937#0#PHP" />
+                <element signature="e#1901#2000#0#PHP" />
+                <element signature="e#2103#2440#0#PHP" />
+                <element signature="e#0#34#1" />
+                <element signature="e#2177#2336#0#PHP" />
+                <element signature="e#2620#2746#0#PHP" />
+                <element signature="e#2707#3296#0#PHP" />
+                <element signature="e#0#36#2" />
+                <element signature="e#2877#3034#0#PHP" />
+                <element signature="e#3106#3225#0#PHP" />
+                <element signature="e#3370#3449#0#PHP" />
+                <element signature="e#3407#3685#0#PHP" />
+                <element signature="e#0#21#2" />
+                <element signature="e#3691#3735#0#PHP" />
+                <element signature="e#3707#3764#0#PHP" />
+                <element signature="e#3304#3928#0#PHP" />
+                <element signature="e#3404#3882#0#PHP" />
               </folding>
             </state>
           </provider>
@@ -94,12 +146,16 @@
       <find>$db</find>
       <find>-&gt;db</find>
       <find>databaseName</find>
+      <find>bl_post</find>
+      <find>p_id</find>
     </findStrings>
     <replaceStrings>
       <replace>$database</replace>
       <replace>-&gt;database</replace>
       <replace>use</replace>
       <replace>password</replace>
+      <replace>bl_tag</replace>
+      <replace>tag_id</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -130,7 +186,10 @@
         <option value="$PROJECT_DIR$/src/model/Manager/Manager.php" />
         <option value="$APPLICATION_CONFIG_DIR$/consoles/db/28c85989-346a-4430-a18d-22eab7c2ef36/console.sql" />
         <option value="$PROJECT_DIR$/src/model/Entity/Entity.php" />
+        <option value="$PROJECT_DIR$/src/model/Entity/Tag.php" />
+        <option value="$PROJECT_DIR$/src/model/Manager/ManagerInterface.php" />
         <option value="$PROJECT_DIR$/src/model/Manager/PostManager.php" />
+        <option value="$PROJECT_DIR$/src/model/Manager/TagManager.php" />
         <option value="$PROJECT_DIR$/src/Application.php" />
       </list>
     </option>
@@ -252,18 +311,18 @@
       <workItem from="1547815868629" duration="4869000" />
       <workItem from="1547992348527" duration="2871000" />
       <workItem from="1548003005113" duration="4063000" />
-      <workItem from="1548138039135" duration="15144000" />
+      <workItem from="1548138039135" duration="19309000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34046000" />
+    <option name="totallyTimeSpent" value="38211000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.09701493" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.09701493" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Database Console" weight="0.32936078" />
@@ -277,7 +336,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" visible="true" weight="0.32936078" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50053304" side_tool="true" weight="0.32936078" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32936078" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -421,9 +480,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/28c85989-346a-4430-a18d-22eab7c2ef36/console.sql">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/model/Manager/Manager.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
@@ -431,9 +487,12 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/28c85989-346a-4430-a18d-22eab7c2ef36/console.sql">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/model/Entity/Entity.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
+        <state relative-caret-position="425">
           <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
           <folding>
             <element signature="e#6#86#0#PHP" expanded="true" />
@@ -441,29 +500,83 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Entity/Post.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Manager/ManagerInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/model/Manager/PostManager.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="521">
-          <caret line="127" column="12" selection-start-line="127" selection-start-column="12" selection-end-line="127" selection-end-column="12" />
+        <state relative-caret-position="700">
+          <caret line="148" column="5" lean-forward="true" selection-start-line="19" selection-start-column="4" selection-end-line="148" selection-end-column="5" />
           <folding>
             <element signature="e#115#139#0#PHP" expanded="true" />
+            <element signature="e#1342#1456#0#PHP" />
+            <element signature="e#391#1020#0#PHP" />
+            <element signature="e#0#218#1" />
+            <element signature="e#96#201#0" />
+            <element signature="e#103#183#0" />
+            <element signature="e#602#828#0#PHP" />
+            <element signature="e#623#827#1#PHP" />
+            <element signature="e#597#937#0#PHP" />
+            <element signature="e#942#1059#0#PHP" />
+            <element signature="e#1147#1986#0#PHP" />
+            <element signature="e#0#271#1" />
+            <element signature="e#1425#1804#0#PHP" />
+            <element signature="e#1447#1803#1#PHP" />
+            <element signature="e#1420#1937#0#PHP" />
+            <element signature="e#1901#2000#0#PHP" />
+            <element signature="e#2103#2440#0#PHP" />
+            <element signature="e#0#34#1" />
+            <element signature="e#2177#2336#0#PHP" />
+            <element signature="e#2620#2746#0#PHP" />
+            <element signature="e#2707#3296#0#PHP" />
+            <element signature="e#0#36#2" />
+            <element signature="e#2877#3034#0#PHP" />
+            <element signature="e#3106#3225#0#PHP" />
+            <element signature="e#3370#3449#0#PHP" />
+            <element signature="e#3407#3685#0#PHP" />
+            <element signature="e#0#21#2" />
+            <element signature="e#3691#3735#0#PHP" />
+            <element signature="e#3707#3764#0#PHP" />
+            <element signature="e#3304#3928#0#PHP" />
+            <element signature="e#3404#3882#0#PHP" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/Entity/Post.php">
+    <entry file="file://$PROJECT_DIR$/src/model/Entity/Tag.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1300">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        <state relative-caret-position="100">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Manager/TagManager.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3025">
+          <caret line="121" column="36" lean-forward="true" selection-start-line="121" selection-start-column="36" selection-end-line="121" selection-end-column="36" />
+          <folding>
+            <element signature="e#34#48#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Application.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="22" column="25" selection-start-line="22" selection-start-column="25" selection-end-line="22" selection-end-column="25" />
+        <state relative-caret-position="375">
+          <caret line="20" column="39" selection-start-line="20" selection-start-column="39" selection-end-line="20" selection-end-column="39" />
           <folding>
-            <element signature="e#113#135#0#PHP" expanded="true" />
+            <element signature="e#113#134#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
