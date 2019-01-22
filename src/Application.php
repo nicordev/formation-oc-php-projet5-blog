@@ -18,17 +18,17 @@ class Application
     {
         $myPost = new Post([
             'id' => 2,
-            'title' => 'Titre modifié',
-            'excerpt' => 'Extrait modifié',
-            'content' => 'Contenu modifié',
+            'title' => 'Titre',
+            'excerpt' => 'Extrait',
+            'content' => 'Contenu',
             'authorId' => 1,
             'lastEditorId' => 2
         ]);
 
-        var_dump($myPost);
-
         $postManager = new PostManager();
 
-        $postManager->delete($myPost->getId());
+        $myPost = $postManager->get(3);
+
+        var_dump($myPost);
     }
 }

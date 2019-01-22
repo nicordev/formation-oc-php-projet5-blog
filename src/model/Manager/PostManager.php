@@ -9,18 +9,31 @@
 namespace Model\Manager;
 
 
+use Model\Entity\Entity;
 use Model\Entity\Post;
 use \Exception;
+use \PDO;
 
 class PostManager extends Manager
 {
+    protected static $tableNames = [
+        'p_id',
+        'p_author_id_fk',
+        'p_last_editor_id_fk',
+        'p_creation_date',
+        'p_last_modification_date',
+        'p_title',
+        'p_excerpt',
+        'p_content'
+    ];
+
     /**
      * Add a new blog post in the database
      *
      * @param Post $newPost
      * @throws Exception
      */
-    public function add(Post $newPost)
+    public function add(Post $newPost) : void
     {
         $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
             VALUES (:authorId, NOW(), :title, :excerpt, :content)';
@@ -42,7 +55,7 @@ class PostManager extends Manager
      * @param Post $modifiedPost
      * @throws Exception
      */
-    public function edit(Post $modifiedPost)
+    public function edit(Post $modifiedPost) : void
     {
         $query = 'UPDATE bl_post
             SET p_last_editor_id_fk = :lastEditorId,
@@ -70,7 +83,7 @@ class PostManager extends Manager
      * @param int $postId
      * @throws Exception
      */
-    public function delete(int $postId)
+    public function delete(int $postId) : void
     {
         $query = 'DELETE FROM bl_post WHERE p_id = ?';
 
@@ -78,5 +91,48 @@ class PostManager extends Manager
         if (!$requestDelete->execute([$postId])) {
             throw new Exception('Error when trying to delete a post in the database. Post id:' . $postId);
         }
+    }
+
+    /**
+     * Get a post from the database
+     *
+     * @param int $postId
+     * @return Post
+     * @throws Exception
+     */
+    public function get(int $postId) : Post
+    {
+        $query = "SELECT * FROM bl_post WHERE p_id = ?";
+
+        $requestAPost = $this->database->prepare($query);
+        if (!$requestAPost->execute([$postId])) {
+            throw new Exception('Error when trying to get a post from the database. Post id:' . $postId);
+        }
+        $thePostData = $requestAPost->fetch(PDO::FETCH_ASSOC);
+        if (!$thePostData) {
+            throw new Exception('Error when trying to get a post. Post id: ' . $postId);
+        }
+
+        return self::createAPostFromDatabaseData($thePostData);
+    }
+
+    /**
+     * @param array $data
+     * @return Post
+     */
+    private static function createAPostFromDatabaseData(array $data) : Post
+    {
+        $attributes = [
+            'id' => $data['p_id'],
+            'authorId' => $data['p_author_id_fk'],
+            'lastEditorId' => $data['p_last_editor_id_fk'] === null ? Entity::NO_ID : $data['p_last_editor_id_fk'],
+            'creationDate' => $data['p_creation_date'],
+            'lastModificationDate' => $data['p_last_modification_date'] === null ? '' : $data['p_last_modification_date'],
+            'title' => $data['p_title'],
+            'excerpt' => $data['p_excerpt'],
+            'content' => $data['p_content']
+        ];
+
+        return new Post($attributes);
     }
 }

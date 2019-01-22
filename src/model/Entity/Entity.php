@@ -15,10 +15,13 @@ namespace Model\Entity;
  */
 abstract class Entity
 {
+
+    const NO_ID = -1;
+
     /**
      * @var int
      */
-    protected $id = -1;
+    protected $id = self::NO_ID;
 
     /**
      * Entity constructor.
