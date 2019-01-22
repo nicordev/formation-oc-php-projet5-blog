@@ -51,6 +51,7 @@ class PostManager extends Manager
                 p_excerpt = :excerpt,
                 p_content = :content
             WHERE p_id = :id';
+
         $requestEdit = $this->database->prepare($query);
         if (!$requestEdit->execute([
             'id' => $modifiedPost->getId(),
@@ -60,6 +61,22 @@ class PostManager extends Manager
             'content' => $modifiedPost->getContent()
         ])) {
             throw new Exception('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
+        }
+    }
+
+    /**
+     * Delete a post in the database
+     *
+     * @param int $postId
+     * @throws Exception
+     */
+    public function delete(int $postId)
+    {
+        $query = 'DELETE FROM bl_post WHERE p_id = ?';
+
+        $requestDelete = $this->database->prepare($query);
+        if (!$requestDelete->execute([$postId])) {
+            throw new Exception('Error when trying to delete a post in the database. Post id:' . $postId);
         }
     }
 }

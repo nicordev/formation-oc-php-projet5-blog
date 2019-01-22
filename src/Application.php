@@ -29,6 +29,6 @@ class Application
 
         $postManager = new PostManager();
 
-        $postManager->edit($myPost);
+        $postManager->delete($myPost->getId());
     }
 }
