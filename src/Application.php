@@ -10,6 +10,7 @@ namespace Application;
 
 
 use Model\Entity\Post;
+use Model\Manager\PostManager;
 
 class Application
 {
@@ -20,12 +21,16 @@ class Application
             'title' => 'Titre',
             'excerpt' => 'Extrait',
             'content' => 'Contenu',
-            'authorId' => 344,
-            'lastEditorId' => 24,
+            'authorId' => 1,
+            'lastEditorId' => 2,
             'creationDate' => 'today',
             'lastModificationDate' => 'tomorrow'
         ]);
 
         var_dump($myPost);
+
+        $postManager = new PostManager();
+
+        $postManager->add($myPost);
     }
 }
