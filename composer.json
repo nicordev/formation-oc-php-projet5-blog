@@ -1,0 +1,20 @@
+{
+    "name": "nicolas_renvoise/projet5",
+    "description": "Website build during my PHP formation",
+    "authors": [
+        {
+            "name": "SansGodasse",
+            "email": "sansgodasse@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^2.6"
+    },
+    "autoload": {
+    	"psr-4": {
+            "Model\\": "src/model",
+            "Controller\\": "src/controller",
+            "Application\\": "src/"
+        }
+    }
+}
