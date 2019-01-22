@@ -9,7 +9,7 @@
 namespace Application;
 
 
-use Model\Entity\Tag;
+use Model\Manager\CategoryManager;
 use Model\Manager\PostManager;
 use Model\Manager\TagManager;
 
@@ -19,5 +19,6 @@ class Application
     {
         $postManager = new PostManager();
         $tagManager = new TagManager();
+        $categoryManager = new CategoryManager();
     }
 }
