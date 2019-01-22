@@ -17,20 +17,18 @@ class Application
     public function run()
     {
         $myPost = new Post([
-            'id' => 153,
-            'title' => 'Titre',
-            'excerpt' => 'Extrait',
-            'content' => 'Contenu',
+            'id' => 2,
+            'title' => 'Titre modifié',
+            'excerpt' => 'Extrait modifié',
+            'content' => 'Contenu modifié',
             'authorId' => 1,
-            'lastEditorId' => 2,
-            'creationDate' => 'today',
-            'lastModificationDate' => 'tomorrow'
+            'lastEditorId' => 2
         ]);
 
         var_dump($myPost);
 
         $postManager = new PostManager();
 
-        $postManager->add($myPost);
+        $postManager->edit($myPost);
     }
 }

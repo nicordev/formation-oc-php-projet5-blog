@@ -10,7 +10,7 @@ namespace Model\Manager;
 
 
 use Model\Entity\Post;
-use mysql_xdevapi\Exception;
+use \Exception;
 
 class PostManager extends Manager
 {
@@ -18,6 +18,7 @@ class PostManager extends Manager
      * Add a new blog post in the database
      *
      * @param Post $newPost
+     * @throws Exception
      */
     public function add(Post $newPost)
     {
@@ -32,6 +33,33 @@ class PostManager extends Manager
             'content' => $newPost->getContent()
         ])) {
             throw new Exception('Error when trying to add the new blog post in the database.');
+        }
+    }
+
+    /**
+     * Edit a blog post in the database
+     *
+     * @param Post $modifiedPost
+     * @throws Exception
+     */
+    public function edit(Post $modifiedPost)
+    {
+        $query = 'UPDATE bl_post
+            SET p_last_editor_id_fk = :lastEditorId,
+                p_last_modification_date = NOW(),
+                p_title = :title,
+                p_excerpt = :excerpt,
+                p_content = :content
+            WHERE p_id = :id';
+        $requestEdit = $this->database->prepare($query);
+        if (!$requestEdit->execute([
+            'id' => $modifiedPost->getId(),
+            'lastEditorId' => $modifiedPost->getLastEditorId(),
+            'title' => $modifiedPost->getTitle(),
+            'excerpt' => $modifiedPost->getExcerpt(),
+            'content' => $modifiedPost->getContent()
+        ])) {
+            throw new Exception('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
         }
     }
 }
