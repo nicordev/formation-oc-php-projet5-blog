@@ -13,8 +13,14 @@ ob_start();
         <h2>Articles</h2>
 
         <p>
-            <a class="btn" href="?page=create-post">Ajouter un article</a>
+            <a class="btn" href="?page=post-editor">Ajouter un article</a>
         </p>
+
+        <div>
+            <?php
+            require 'message.php';
+            ?>
+        </div>
 
         <table>
             <thead>
@@ -33,16 +39,19 @@ ob_start();
                 ?>
                 <tr>
                     <td>
-                        <?= $post->getTitle() ?>
+                        <form action="?page=post-editor" method="post">
+                            <input type="hidden" name="post-id" value="<?= $post->getId() ?>">
+                            <input class="admin-blogpost-title" type="submit" value="<?= $post->getTitle() ?>">
+                        </form>
                     </td>
                     <td>
-
+                        coming soon...
                     </td>
                     <td>
-
+                        coming soon...
                     </td>
                     <td>
-
+                        coming soon...
                     </td>
                     <td>
                         <?= $post->getCreationDate() ?>

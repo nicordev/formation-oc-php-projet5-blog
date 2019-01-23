@@ -10,6 +10,7 @@ namespace Application;
 
 
 use Controller\BlogController;
+use Model\Entity\Post;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
@@ -43,12 +44,22 @@ class Application
                 if (isset($_POST['add-post'])) {
                     $blogController->addPost();
 
+                } elseif (isset($_POST['edit-post'])) {
+                    $blogController->editPost();
+
+                } elseif (isset($_POST['delete-post'])) {
+                    $blogController->deletePost();
+
                 } else {
                     $blogController->showAdminPanel();
                 }
 
-            } elseif ($page === 'create-post') {
-                $blogController->showCreatePostPanel();
+            } elseif ($page === 'post-editor') {
+                $postId = Post::NO_ID;
+                if (isset($_POST['post-id'])) {
+                    $postId = (int)$_POST['post-id'];
+                }
+                $blogController->showPostEditor($postId);
 
             } else {
                 $blogController->pageNotFound404();

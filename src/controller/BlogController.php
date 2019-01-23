@@ -81,7 +81,7 @@ class BlogController
     /**
      * Show the panel do manage blog posts
      */
-    public function showAdminPanel()
+    public function showAdminPanel(string $message = '')
     {
         $posts = $this->postManager->getAll();
 
@@ -89,11 +89,21 @@ class BlogController
     }
 
     /**
-     * Show the panel to create a blog post
+     * Show the post editor
+     *
+     * @param int $postToEditId
+     * @param string $message
+     * @throws BlogException
      */
-    public function showCreatePostPanel(string $message = '')
+    public function showPostEditor(int $postToEditId = Post::NO_ID, string $message = '')
     {
-        require $this->viewFolderPath . '/createPost.php';
+        $postToEdit = null;
+
+        if ($postToEditId !== Post::NO_ID) {
+            $postToEdit = $this->postManager->get($postToEditId);
+        }
+
+        require $this->viewFolderPath . '/postEditor.php';
     }
 
     /**
@@ -106,7 +116,7 @@ class BlogController
     }
 
     /**
-     * Add a new post
+     * Add a new post from $_POST
      *
      * @throws BlogException
      */
@@ -117,18 +127,51 @@ class BlogController
         if ($newPost !== null) {
             $this->postManager->add($newPost);
             // Come back to the admin panel
-            $this->showAdminPanel();
+            $this->showAdminPanel("Un article a été publié.");
 
         } else {
             // Try again...
-            $this->showCreatePostPanel("Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+            $this->showPostEditor(Post::NO_ID, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
         }
+    }
+
+    /**
+     * Edit an existing post from $_POST
+     *
+     * @throws BlogException
+     */
+    public function editPost()
+    {
+        $modifiedPost = self::buildPostFromForm();
+
+        if ($modifiedPost !== null) {
+            $this->postManager->edit($modifiedPost);
+            // Come back to the admin panel
+            $this->showAdminPanel("Un article a été modifié.");
+        } else {
+            // Try again...
+            $this->showPostEditor(htmlspecialchars($_POST['edit-post']), "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+        }
+    }
+
+    /**
+     * Delete a post
+     *
+     * @throws BlogException
+     */
+    public function deletePost()
+    {
+        $postId = (int) $_POST['delete-post'];
+        $this->postManager->delete($postId);
+        // Come back to the admin panel
+        $this->showAdminPanel("Un article a été supprimé.");
     }
 
     // Private
 
     /**
-     * Create a Post from a form
+     * Create a Post from a form (thanks to $_POST)
+     * Work for addPost and editPost
      *
      * @return Post|null
      */
@@ -136,14 +179,25 @@ class BlogController
     {
         $post = new Post();
 
-        if (isset($_POST['post-title']) && !empty($_POST['post-title']) &&
+        if (
+            isset($_POST['post-title']) && !empty($_POST['post-title']) &&
             isset($_POST['post-excerpt']) && !empty($_POST['post-excerpt']) &&
-            isset($_POST['post-content']) && !empty($_POST['post-content'])) {
-
+            isset($_POST['post-content']) && !empty($_POST['post-content']) &&
+            isset($_POST['post-author-id'])
+        ) {
+            // Common
             $post->setTitle(htmlspecialchars($_POST['post-title']));
             $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
             $post->setContent(htmlspecialchars($_POST['post-content']));
-            $post->setAuthorId(1); // TODO: set the true author id
+            $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
+
+            // Edit a post
+            if (isset($_POST['edit-post'])) {
+                $post->setId(htmlspecialchars($_POST['edit-post']));
+            }
+            if (isset($_POST['post-editor-id'])) {
+                $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));
+            }
 
             return $post;
 

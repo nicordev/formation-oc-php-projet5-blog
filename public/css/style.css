@@ -27,6 +27,19 @@ h2, h3, h4, h5, h6 {
     color: chocolate;
 }
 
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin: 10px 0 10px 0;
+}
+
+label {
+    color: chocolate;
+    font-size: 1.15em;
+}
+
 a, a:visited {
     text-decoration: none;
     color: chocolate;
@@ -66,6 +79,7 @@ td, th {
 
 .card-deck {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -93,11 +107,10 @@ td, th {
 
 .blogpost-navigation ul {
     display: flex;
-    list-style-type: none;
 }
 
 .blogpost-navigation ul li {
-    margin-right: 50px;
+    margin: 0 50px 0 0;
     list-style-type: none;
 }
 
@@ -124,4 +137,16 @@ td, th {
     background-color: #ddddff;
     color: lightslategrey;
     padding: 30px 0;
+}
+
+.admin-blogpost-title {
+    border: none;
+    background-color: transparent;
+    color: chocolate;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.admin-blogpost-title:hover {
+    cursor: pointer;
 }
