@@ -9,6 +9,7 @@
 namespace Application;
 
 
+use Controller\BlogController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
@@ -18,10 +19,14 @@ class Application
 {
     public function run()
     {
-        $postManager = new PostManager();
-        $tagManager = new TagManager();
-        $categoryManager = new CategoryManager();
-        $commentManager = new CommentManager();
+        $blogController = new BlogController(
+            new PostManager(),
+            new TagManager(),
+            new CategoryManager(),
+            new CommentManager(),
+            __DIR__ . '/view'
+        );
 
+        $blogController->showAllPosts();
     }
 }

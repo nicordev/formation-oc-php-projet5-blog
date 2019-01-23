@@ -8,11 +8,10 @@
 
     <body>
         <header>
-            <h1>Blog</h1>
             <?= $header ?>
         </header>
 
-        <section>
+        <section class="content">
             <?= $content ?>
         </section>
 

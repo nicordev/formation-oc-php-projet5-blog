@@ -1,4 +1,51 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: rgb(237, 237, 237);
+}
+
+header {
+    text-align: center;
+    padding: 50px 0;
+    background-color: lightslategrey;
+    color: rgb(237, 237, 237);
+}
+
+footer {
+    text-align: center;
+    color: rgb(237, 237, 237);
+    background-color: dimgrey;
+    padding: 50px;
+}
+
+/* id */
+
+
+/* class */
+.content {
+    margin: 0 auto;
+}
+
+.card {
+    padding: 10px;
+    margin: 20px;
+    border: 1px solid grey;
+    width: 200px;
+}
+
+.card-title {
+
+}
+
+.card-content {
+
+}
+
+.card-deck {
+    display: flex;
+    justify-content: center;
+}
+
+.card-deck-title {
+    text-align: center;
 }
