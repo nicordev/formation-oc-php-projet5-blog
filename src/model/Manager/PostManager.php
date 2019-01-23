@@ -127,6 +127,8 @@ class PostManager extends Manager
     }
 
     /**
+     * Get only the ids of the posts
+     *
      * @return array
      */
     public function getAllIds(): array

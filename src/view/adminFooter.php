@@ -1,0 +1,1 @@
+<p><a href="?page=blog">Quitter</a></p>

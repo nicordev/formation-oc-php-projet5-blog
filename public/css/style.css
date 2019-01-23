@@ -19,8 +19,21 @@ footer {
     padding: 50px;
 }
 
-a {
+footer a:link, footer a:visited {
+    color: rgb(237, 237, 237);
+}
+
+h2, h3, h4, h5, h6 {
+    color: chocolate;
+}
+
+a, a:visited {
     text-decoration: none;
+    color: chocolate;
+}
+
+td, th {
+    padding: 5px 20px;
 }
 
 /* id */
@@ -41,12 +54,8 @@ a {
     border-radius: 5px;
 }
 
-.card-title a, .card-title a:visited {
-    color: chocolate;
-}
-
 .card-content {
-
+    /* What's up buddy? */
 }
 
 .card-info {
@@ -73,7 +82,7 @@ a {
 }
 
 .blogpost-content {
-
+    /* Feeling well? */
 }
 
 .blogpost-info {
@@ -90,4 +99,29 @@ a {
 .blogpost-navigation ul li {
     margin-right: 50px;
     list-style-type: none;
+}
+
+.admin-input, .admin-textarea {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.btn, .btn:visited {
+    background-color: lightslategrey;
+    color: rgb(237, 237, 237);
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    padding: 10px 20px;
+}
+
+.message {
+    text-align: center;
+    background-color: #ddddff;
+    color: lightslategrey;
+    padding: 30px 0;
 }

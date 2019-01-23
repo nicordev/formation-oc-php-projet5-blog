@@ -32,7 +32,7 @@ if (!isset($content)) {
 if (!isset($footer)) {
     ob_start();
     ?>
-    <p>Ceci est un footer.</p>
+    <p><a href="?page=blog-admin">Administration</a></p>
     <?php
     $footer = ob_get_clean();
 }

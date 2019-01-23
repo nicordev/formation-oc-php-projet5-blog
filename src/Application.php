@@ -39,9 +39,21 @@ class Application
 
                 $blogController->showASinglePost($_GET['post-id']);
 
+            } elseif ($page === 'blog-admin') {
+                if (isset($_POST['add-post'])) {
+                    $blogController->addPost();
+
+                } else {
+                    $blogController->showAdminPanel();
+                }
+
+            } elseif ($page === 'create-post') {
+                $blogController->showCreatePostPanel();
+
             } else {
-                $blogController->showAllPosts();
+                $blogController->pageNotFound404();
             }
+
         } else {
             $blogController->showAllPosts();
         }

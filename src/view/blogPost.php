@@ -1,9 +1,9 @@
 <?php
 $pageTitle = $post->getTitle();
 
+// Content
 ob_start();
 ?>
-
     <section class="blogpost">
 
         <h2 class="blogpost-title"><?= $post->getTitle() ?></h2>

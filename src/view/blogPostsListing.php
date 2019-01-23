@@ -1,9 +1,9 @@
 <?php
 $pageTitle = 'Liste des articles';
 
+// Content
 ob_start();
 ?>
-
 <section class="blog-list">
 
     <h2 class="card-deck-title">Liste des articles du blog</h2>

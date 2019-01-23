@@ -25,6 +25,15 @@ class BlogController
     protected $commentManager;
     protected $viewFolderPath = '';
 
+    /**
+     * BlogController constructor.
+     * 
+     * @param PostManager $postManager
+     * @param TagManager $tagManager
+     * @param CategoryManager $categoryManager
+     * @param CommentManager $commentManager
+     * @param string $viewFolderPath
+     */
     public function __construct(PostManager $postManager,
                                 TagManager $tagManager,
                                 CategoryManager $categoryManager,
@@ -63,11 +72,84 @@ class BlogController
             $previousPostId = $this->getPreviousPostId($postId);
 
         } catch (BlogException $e) {
-            require $this->viewFolderPath . '/postNotFound.php';
-            exit();
+            $this->pageNotFound404();
         }
 
         require $this->viewFolderPath . '/blogPost.php';
+    }
+
+    /**
+     * Show the panel do manage blog posts
+     */
+    public function showAdminPanel()
+    {
+        $posts = $this->postManager->getAll();
+
+        require $this->viewFolderPath . '/blogAdmin.php';
+    }
+
+    /**
+     * Show the panel to create a blog post
+     */
+    public function showCreatePostPanel(string $message = '')
+    {
+        require $this->viewFolderPath . '/createPost.php';
+    }
+
+    /**
+     * Show a page when the visitor is lost...
+     */
+    public function pageNotFound404()
+    {
+        require $this->viewFolderPath . '/pageNotFound.php';
+        exit();
+    }
+
+    /**
+     * Add a new post
+     *
+     * @throws BlogException
+     */
+    public function addPost()
+    {
+        $newPost = self::buildPostFromForm();
+
+        if ($newPost !== null) {
+            $this->postManager->add($newPost);
+            // Come back to the admin panel
+            $this->showAdminPanel();
+
+        } else {
+            // Try again...
+            $this->showCreatePostPanel("Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+        }
+    }
+
+    // Private
+
+    /**
+     * Create a Post from a form
+     *
+     * @return Post|null
+     */
+    private static function buildPostFromForm(): ?Post
+    {
+        $post = new Post();
+
+        if (isset($_POST['post-title']) && !empty($_POST['post-title']) &&
+            isset($_POST['post-excerpt']) && !empty($_POST['post-excerpt']) &&
+            isset($_POST['post-content']) && !empty($_POST['post-content'])) {
+
+            $post->setTitle(htmlspecialchars($_POST['post-title']));
+            $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
+            $post->setContent(htmlspecialchars($_POST['post-content']));
+            $post->setAuthorId(1); // TODO: set the true author id
+
+            return $post;
+
+        } else {
+            return null;
+        }
     }
 
     /**

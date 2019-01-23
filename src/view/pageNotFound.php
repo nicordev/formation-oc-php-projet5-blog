@@ -1,9 +1,9 @@
 <?php
-$pageTitle = 'Article introuvable';
+$pageTitle = 'Page introuvable';
 
 ob_start();
 ?>
-    <h2>Article introuvable</h2>
+    <h2>Page introuvable...</h2>
 
     <p><a href="index.php?page=blog">Revenir à la liste des articles</a></p>
 <?php
