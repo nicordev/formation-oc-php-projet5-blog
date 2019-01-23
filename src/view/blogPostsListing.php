@@ -1,8 +1,10 @@
 <?php
+$pageTitle = 'Liste des articles';
+
 ob_start();
 ?>
 
-<section id="blog-list">
+<section class="blog-list">
 
     <h2 class="card-deck-title">Liste des articles du blog</h2>
 
@@ -11,9 +13,10 @@ ob_start();
 foreach ($posts as $post) {
 ?>
         <div class="card">
-            <h3 class="card-title"><?= $post->getTitle() ?></h3>
+            <h3 class="card-title"><a href="<?= 'index.php?page=blog-post&post-id=' . $post->getId() ?>"><?= $post->getTitle() ?></a></h3>
 
             <div class="card-content"><?= $post->getExcerpt() ?></div>
+            <div class="card-info"><?= $post->getCreationDate() ?></div>
         </div>
 <?php
 }

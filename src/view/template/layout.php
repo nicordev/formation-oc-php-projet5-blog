@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <title><?= $pageTitle ?></title>
         <link href="public/css/style.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     </head>
 
     <body>

@@ -11,8 +11,8 @@ namespace Model\Manager;
 
 use Model\Entity\Entity;
 use Model\Entity\Post;
-use \Exception;
 use \PDO;
+use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
@@ -21,7 +21,7 @@ class PostManager extends Manager
      * Add a new blog post in the database
      *
      * @param Post $newPost
-     * @throws Exception
+     * @throws BlogException
      */
     public function add(Post $newPost): void
     {
@@ -35,7 +35,7 @@ class PostManager extends Manager
             'excerpt' => $newPost->getExcerpt(),
             'content' => $newPost->getContent()
         ])) {
-            throw new Exception('Error when trying to add the new blog post in the database.');
+            throw new BlogException('Error when trying to add the new blog post in the database.');
         }
     }
 
@@ -43,7 +43,7 @@ class PostManager extends Manager
      * Edit a blog post in the database
      *
      * @param Post $modifiedPost
-     * @throws Exception
+     * @throws BlogException
      */
     public function edit(Post $modifiedPost): void
     {
@@ -63,7 +63,7 @@ class PostManager extends Manager
             'excerpt' => $modifiedPost->getExcerpt(),
             'content' => $modifiedPost->getContent()
         ])) {
-            throw new Exception('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
+            throw new BlogException('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
         }
     }
 
@@ -71,7 +71,7 @@ class PostManager extends Manager
      * Delete a post in the database
      *
      * @param int $postId
-     * @throws Exception
+     * @throws BlogException
      */
     public function delete(int $postId): void
     {
@@ -79,7 +79,7 @@ class PostManager extends Manager
 
         $requestDelete = $this->database->prepare($query);
         if (!$requestDelete->execute([$postId])) {
-            throw new Exception('Error when trying to delete a post in the database. Post id:' . $postId);
+            throw new BlogException('Error when trying to delete a post in the database. Post id:' . $postId);
         }
     }
 
@@ -88,7 +88,7 @@ class PostManager extends Manager
      *
      * @param int $postId
      * @return Post
-     * @throws Exception
+     * @throws BlogException
      */
     public function get(int $postId): Post
     {
@@ -96,11 +96,11 @@ class PostManager extends Manager
 
         $requestAPost = $this->database->prepare($query);
         if (!$requestAPost->execute([$postId])) {
-            throw new Exception('Error when trying to get a post from the database. Post id:' . $postId);
+            throw new BlogException('Error when trying to get a post from the database. Post id:' . $postId);
         }
         $thePostData = $requestAPost->fetch(PDO::FETCH_ASSOC);
         if (!$thePostData) {
-            throw new Exception('Error when trying to get a post. Post id: ' . $postId);
+            throw new BlogException('Error when trying to get a post. Post id: ' . $postId);
         }
 
         return self::createAPostFromDatabaseData($thePostData);
@@ -124,6 +124,24 @@ class PostManager extends Manager
         }
 
         return $posts;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllIds(): array
+    {
+        $query = 'SELECT p_id FROM bl_post';
+        $requestAllId = $this->database->query($query);
+
+        $idsFromDb = $requestAllId->fetchAll(PDO::FETCH_ASSOC);
+        $ids = [];
+
+        foreach ($idsFromDb as $idFromDb) {
+            $ids[] = $idFromDb['p_id'];
+        }
+
+        return $ids;
     }
 
     // Private

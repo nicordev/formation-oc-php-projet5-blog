@@ -6,6 +6,10 @@
  * Time: 13:34
  */
 
+if (!isset($pageTitle)) {
+    $pageTitle = 'Mon super site';
+}
+
 // Header
 if (!isset($header)) {
     ob_start();

@@ -27,6 +27,23 @@ class Application
             __DIR__ . '/view'
         );
 
-        $blogController->showAllPosts();
+        if (isset($_GET['page'])) {
+            $page = $_GET['page'];
+
+            if ($page === 'blog') {
+                $blogController->showAllPosts();
+
+            } elseif ($page === 'blog-post' &&
+                isset($_GET['post-id']) &&
+                is_numeric($_GET['post-id'])) {
+
+                $blogController->showASinglePost($_GET['post-id']);
+
+            } else {
+                $blogController->showAllPosts();
+            }
+        } else {
+            $blogController->showAllPosts();
+        }
     }
 }
