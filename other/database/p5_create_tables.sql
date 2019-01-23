@@ -176,6 +176,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE bl_comment(
 	com_id INT UNSIGNED AUTO_INCREMENT,
+	com_parent_id_fk INT UNSIGNED,
 	com_post_id_fk INT UNSIGNED,
 	com_author_id_fk INT UNSIGNED,
 	com_last_editor_id_fk INT UNSIGNED,
@@ -185,6 +186,12 @@ CREATE TABLE bl_comment(
 
 	CONSTRAINT pk_com_id
 		PRIMARY KEY (com_id),
+
+	CONSTRAINT fk_com_parent_id_com_id
+		FOREIGN KEY (com_parent_id_fk)
+			REFERENCES bl_comment(com_id)
+			ON UPDATE CASCADE
+			ON DELETE CASCADE,
 
 	CONSTRAINT fk_com_author_id_m_id
 		FOREIGN KEY (com_author_id_fk)
