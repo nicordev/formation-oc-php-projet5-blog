@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Ajout d\'un article';
+$pageTitle = 'Editeur d\'article';
 
 // Header
 ob_start();
@@ -10,7 +10,7 @@ $header = ob_get_clean();
 ob_start();
 ?>
     <section class="blog-admin">
-        <h2>Création d'un article</h2>
+        <h2>Editeur d'article</h2>
 
         <div>
             <?php
