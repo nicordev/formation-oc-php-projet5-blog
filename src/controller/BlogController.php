@@ -96,7 +96,10 @@ class BlogController
     {
         $posts = $this->postManager->getAll();
 
-        require $this->viewFolderPath . '/blogAdmin.php';
+        echo $this->twig->render('blogAdmin.twig', [
+            'posts' => $posts,
+            'message' => $message
+        ]);
     }
 
     /**
