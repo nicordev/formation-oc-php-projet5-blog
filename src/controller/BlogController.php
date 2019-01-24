@@ -16,6 +16,7 @@ use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
 use Model\Manager\TagManager;
+use Twig_Environment;
 
 class BlogController
 {
@@ -24,37 +25,40 @@ class BlogController
     protected $categoryManager;
     protected $commentManager;
     protected $viewFolderPath = '';
+    protected $twig;
 
     /**
      * BlogController constructor.
-     * 
+     *
+     * @param Twig_Environment $twig
      * @param PostManager $postManager
      * @param TagManager $tagManager
      * @param CategoryManager $categoryManager
      * @param CommentManager $commentManager
-     * @param string $viewFolderPath
      */
-    public function __construct(PostManager $postManager,
+    public function __construct(
+                                PostManager $postManager,
                                 TagManager $tagManager,
                                 CategoryManager $categoryManager,
                                 CommentManager $commentManager,
-                                string $viewFolderPath)
+                                Twig_Environment $twig
+    )
     {
         $this->postManager = $postManager;
         $this->tagManager = $tagManager;
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
-        $this->viewFolderPath = $viewFolderPath;
+        $this->twig = $twig;
     }
+
+    // Views
 
     /**
      * Show all posts of the blog
      */
     public function showAllPosts()
     {
-        $posts = $this->postManager->getAll();
-
-        require $this->viewFolderPath . '/blogPostsListing.php';
+        echo $this->twig->render('blog.twig', ['posts' => $this->postManager->getAll()]);
     }
 
     /**
@@ -114,6 +118,8 @@ class BlogController
         require $this->viewFolderPath . '/pageNotFound.php';
         exit();
     }
+
+    // Actions
 
     /**
      * Add a new post from $_POST
