@@ -58,7 +58,9 @@ class BlogController
      */
     public function showAllPosts()
     {
-        echo $this->twig->render('blog.twig', ['posts' => $this->postManager->getAll()]);
+        $posts = $this->postManager->getAll();
+
+        echo $this->twig->render('blog.twig', ['posts' => $posts]);
     }
 
     /**
@@ -77,9 +79,14 @@ class BlogController
 
         } catch (BlogException $e) {
             $this->pageNotFound404();
+            exit();
         }
 
-        require $this->viewFolderPath . '/blogPost.php';
+        echo $this->twig->render('blogPost.twig', [
+            'post' => $post,
+            'nextPostId' => $nextPostId,
+            'previousPostId' => $previousPostId
+        ]);
     }
 
     /**

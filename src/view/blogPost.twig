@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block title %}
+    {{ post.getTitle }}
+{% endblock %}
+
+{% block header %}
+    <h1>Blog</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blogpost">
+
+        <h2 class="blogpost-title">{{ post.getTitle }}</h2>
+
+        <div class="blogpost-content">
+            {{ post.getContent }}
+        </div>
+
+        <div class="blogpost-info">
+            {{ post.getCreationDate }}
+        </div>
+
+        <div class="blogpost-navigation">
+            <ul>
+                {% if previousPostId %}
+                    <li><a href="?page=blog-post&post-id={{ previousPostId }}">Article précédent</a></li>
+                {% endif %}
+
+                <li><a href="?page=blog">Revenir à la liste des articles</a></li>
+
+                {% if nextPostId %}
+                    <li><a href="?page=blog-post&post-id={{ nextPostId }}">Article suivant</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
+{% endblock %}

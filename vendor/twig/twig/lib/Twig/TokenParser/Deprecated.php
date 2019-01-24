@@ -13,7 +13,7 @@
  * Deprecates a section of a template.
  *
  * <pre>
- * {% deprecated 'The "base.twig" template is deprecated, use "base.twig" instead.' %}
+ * {% deprecated 'The "layout.twig" template is deprecated, use "layout.twig" instead.' %}
  *
  * {% extends 'layout.html.twig' %}
  * </pre>
