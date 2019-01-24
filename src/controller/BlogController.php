@@ -132,7 +132,7 @@ class BlogController
      */
     public function pageNotFound404()
     {
-        require $this->viewFolderPath . '/pageNotFound.php';
+        echo $this->twig->render('pageNotFound.twig');
         exit();
     }
 
@@ -142,6 +142,9 @@ class BlogController
      * Add a new post from $_POST
      *
      * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function addPost()
     {
@@ -162,6 +165,9 @@ class BlogController
      * Edit an existing post from $_POST
      *
      * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function editPost()
     {
