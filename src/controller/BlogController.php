@@ -91,6 +91,11 @@ class BlogController
 
     /**
      * Show the panel do manage blog posts
+     *
+     * @param string $message
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function showAdminPanel(string $message = '')
     {
@@ -187,6 +192,9 @@ class BlogController
      * Delete a post
      *
      * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function deletePost()
     {

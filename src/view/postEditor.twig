@@ -5,18 +5,12 @@
 {% endblock %}
 
 {% block header %}
-    <h1>Gestion des articles</h1>
+    <h1>Editeur d'articles</h1>
 {% endblock %}
 
 {% block content %}
     <section class="blog-admin">
-        <h2>Editeur d'article</h2>
-
-        {% if message %}
-            <div>
-                <p class="message">{{ message }}</p>
-            </div>
-        {% endif %}
+        {% include "message.twig" %}
 
         {% if postToEdit %}
             <div>
@@ -61,6 +55,10 @@
             </form>
         </div>
     </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "adminFooter.twig" %}
 {% endblock %}
 
 

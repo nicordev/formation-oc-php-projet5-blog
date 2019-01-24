@@ -133,7 +133,7 @@ class PostManager extends Manager
      */
     public function getAllIds(): array
     {
-        $query = 'SELECT p_id FROM bl_post';
+        $query = 'SELECT p_id FROM bl_post ORDER BY p_id';
         $requestAllId = $this->database->query($query);
 
         $idsFromDb = $requestAllId->fetchAll(PDO::FETCH_ASSOC);

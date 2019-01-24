@@ -16,11 +16,7 @@
             <a class="btn" href="?page=post-editor">Ajouter un article</a>
         </p>
 
-        {% if message %}
-            <div>
-                <p class="message">{{ message }}</p>
-            </div>
-        {% endif %}
+        {% include "message.twig" %}
 
         <table>
             <thead>
@@ -69,4 +65,8 @@
             </tfoot>
         </table>
     </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "adminFooter.twig" %}
 {% endblock %}
