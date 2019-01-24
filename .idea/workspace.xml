@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="deb91fe8-3905-48b7-bba6-a354a749a162" name="Default Changelist" comment="Add files to create the database and its tables">
       <change beforePath="$PROJECT_DIR$/src/controller/BlogController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/BlogController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/blogAdmin.twig" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/blogAdmin.twig" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +33,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/BlogController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
+            <state relative-caret-position="440">
+              <caret line="125" column="33" lean-forward="true" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
               <folding>
                 <element signature="e#6#86#0#PHP" expanded="true" />
                 <element signature="e#112#152#0#PHP" expanded="true" />
@@ -43,10 +44,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/view/layout.twig">
+        <entry file="file://$PROJECT_DIR$/src/view/postEditor.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
+            <state relative-caret-position="346">
+              <caret line="14" column="8" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="18" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -54,17 +55,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/view/blogAdmin.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+            <state relative-caret-position="350">
+              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/view/message.php">
+        <entry file="file://$PROJECT_DIR$/src/view/layout.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="3" column="42" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="42" />
+            <state relative-caret-position="350">
+              <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -101,8 +102,10 @@
       <find>?&gt;</find>
       <find>$</find>
       <find>()</find>
-      <find>() ?&gt;</find>
       <find>-&gt;</find>
+      <find>&lt;?= $</find>
+      <find>() ?&gt;</find>
+      <find>() : '' ?&gt;</find>
     </findStrings>
     <replaceStrings>
       <replace>$database</replace>
@@ -122,8 +125,9 @@
       <replace>showPostEditor</replace>
       <replace>post-editor</replace>
       <replace>}}</replace>
-      <replace>}}</replace>
       <replace>.</replace>
+      <replace>{{</replace>
+      <replace>}}</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -132,7 +136,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/website/src/app/Router/Router.php" />
         <option value="$PROJECT_DIR$/website/src/app/App.php" />
         <option value="$PROJECT_DIR$/src/app/App.php" />
         <option value="$PROJECT_DIR$/src/app/HttpMessage/Message.php" />
@@ -182,6 +185,7 @@
         <option value="$PROJECT_DIR$/src/view/blog.twig" />
         <option value="$PROJECT_DIR$/src/view/blogPost.twig" />
         <option value="$PROJECT_DIR$/src/controller/BlogController.php" />
+        <option value="$PROJECT_DIR$/src/view/postEditor.twig" />
         <option value="$PROJECT_DIR$/src/view/blogAdmin.twig" />
       </list>
     </option>
@@ -303,17 +307,18 @@
       <workItem from="1548138039135" duration="20343000" />
       <workItem from="1548219919597" duration="8663000" />
       <workItem from="1548243320888" duration="24141000" />
-      <workItem from="1548314564714" duration="10018000" />
+      <workItem from="1548314564714" duration="10770000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82067000" />
+    <option name="totallyTimeSpent" value="82819000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11886994" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.11886994" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -326,7 +331,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" visible="true" weight="0.32936078" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" visible="true" weight="0.32936078" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50053304" side_tool="true" weight="0.32936078" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32936078" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.32936078" />
@@ -367,7 +372,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="Add files to create the database and its tables" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/website/src/app/App.php" />
     <entry file="file://$PROJECT_DIR$/website/composer.lock" />
     <entry file="file://$PROJECT_DIR$/website/composer.json" />
     <entry file="file://$PROJECT_DIR$/vendor/psr/http-message/src/RequestInterface.php" />
@@ -594,13 +598,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/view/layout.twig">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/view/blogPostsListing.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
@@ -615,17 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controller/BlogController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="100" column="33" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
-          <folding>
-            <element signature="e#6#86#0#PHP" expanded="true" />
-            <element signature="e#112#152#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/view/message.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -633,10 +619,35 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/BlogController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="125" column="33" lean-forward="true" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
+          <folding>
+            <element signature="e#6#86#0#PHP" expanded="true" />
+            <element signature="e#112#152#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/view/layout.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="14" column="39" lean-forward="true" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/view/postEditor.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="346">
+          <caret line="14" column="8" lean-forward="true" selection-start-line="14" selection-start-column="8" selection-end-line="18" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/view/blogAdmin.twig">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+        <state relative-caret-position="350">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
         </state>
       </provider>
     </entry>

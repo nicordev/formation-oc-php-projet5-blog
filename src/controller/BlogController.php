@@ -108,6 +108,9 @@ class BlogController
      * @param int $postToEditId
      * @param string $message
      * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function showPostEditor(int $postToEditId = Post::NO_ID, string $message = '')
     {
@@ -117,7 +120,11 @@ class BlogController
             $postToEdit = $this->postManager->get($postToEditId);
         }
 
-        require $this->viewFolderPath . '/postEditor.php';
+        echo $this->twig->render('postEditor.twig', [
+            'postToEdit' => $postToEdit,
+            'postToEditId' => $postToEditId,
+            'message' => $message
+        ]);
     }
 
     /**

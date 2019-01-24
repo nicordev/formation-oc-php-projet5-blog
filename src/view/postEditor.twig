@@ -1,0 +1,67 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    {{ post.getTitle }}
+{% endblock %}
+
+{% block header %}
+    <h1>Gestion des articles</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        <h2>Editeur d'article</h2>
+
+        {% if message %}
+            <div>
+                <p class="message">{{ message }}</p>
+            </div>
+        {% endif %}
+
+        {% if postToEdit %}
+            <div>
+                <form action="?page=blog-admin" method="post">
+                    <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
+                    <p>
+                        <input class="btn" type="submit" value="Supprimer l'article">
+                    </p>
+                </form>
+            </div>
+        {% endif %}
+
+        <div>
+            <form action="?page=blog-admin" method="post">
+                <!-- Hidden fields -->
+                {% if postToEdit %}
+                    <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
+                    <input type="hidden" name="post-editor-id" value="2"><!-- TODO put the true editor id here -->
+
+                {% else %}
+                    <input type="hidden" name="add-post">
+                {% endif %}
+                
+                <input type="hidden" name="post-author-id" value="1"><!-- TODO put the true author id here -->
+
+                <!-- Visible fields-->
+                <p>
+                    <input class="btn" type="submit" value="Publier l'article">
+                </p>
+                <p>
+                    <label for="post-title">Titre de l'article</label><br>
+                    <input class="admin-input" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}">
+                </p>
+                <p>
+                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label><br>
+                    <textarea class="admin-textarea" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
+                </p>
+                <p>
+                    <label for="post-content">Contenu de l'article</label><br>
+                    <textarea class="admin-textarea" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
+                </p>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+
+

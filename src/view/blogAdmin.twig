@@ -16,9 +16,11 @@
             <a class="btn" href="?page=post-editor">Ajouter un article</a>
         </p>
 
-        <div>
-            <p class="message">{{ message }}</p>
-        </div>
+        {% if message %}
+            <div>
+                <p class="message">{{ message }}</p>
+            </div>
+        {% endif %}
 
         <table>
             <thead>
