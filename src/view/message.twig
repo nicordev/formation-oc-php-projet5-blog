@@ -1,5 +1,12 @@
 {% if message %}
-    <div>
-        <p class="message">{{ message }}</p>
+    <div id="message-wrapper" onclick="hideMessage();">
+        <p class="message"><span class="closing-cross">x</span> {{ message }}</p><!-- TODO: add a cross button to hide the message -->
     </div>
+
+    <script>
+        function hideMessage()
+        {
+            document.getElementById("message-wrapper").style.display = 'none';
+        }
+    </script>
 {% endif %}

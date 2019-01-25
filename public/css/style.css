@@ -63,7 +63,7 @@ td, th {
     margin: 20px;
     border: 1px solid grey;
     width: 200px;
-    background-color: azure;
+    background-color: white;
     border-radius: 5px;
 }
 
@@ -132,13 +132,6 @@ td, th {
     padding: 10px 20px;
 }
 
-.message {
-    text-align: center;
-    background-color: #ddddff;
-    color: lightslategrey;
-    padding: 30px 0;
-}
-
 .admin-blogpost-title {
     border: none;
     background-color: transparent;
@@ -149,4 +142,24 @@ td, th {
 
 .admin-blogpost-title:hover {
     cursor: pointer;
+}
+
+.message {
+    text-align: center;
+    background-color: #ddddff;
+    color: lightslategrey;
+    padding: 30px 0;
+}
+
+.message:hover {
+    cursor: pointer;
+}
+
+.closing-cross {
+    font-weight: bold;
+    border: 1px solid lightslategrey;
+    background-color: lightslategrey;
+    color: #ddddff;
+    border-radius: 50%;
+    padding: 0 7px 2px 7px;
 }
