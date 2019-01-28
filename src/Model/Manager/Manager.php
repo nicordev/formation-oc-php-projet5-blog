@@ -82,6 +82,7 @@ abstract class Manager
      *
      * @param Entity $entity
      * @throws BlogException
+     * @throws \ReflectionException
      */
     public function add(Entity $entity): void
     {
@@ -101,14 +102,13 @@ abstract class Manager
     public function edit(Entity $modifiedEntity): void
     {
         $properties = self::getEntityProperties($modifiedEntity);
-        $keys = self::getEntityKeys($modifiedEntity);
         $fields = $this->filterEmptyFields($modifiedEntity);
 
-        var_dump($properties, $keys, $fields);
+        var_dump($fields);
         die;
 
         $query = 'UPDATE ' . $this->tableName . '
-            SET 
+            SET ' . '' . '
             WHERE';
 
         $requestAdd = $this->database->prepare($query);
@@ -119,6 +119,26 @@ abstract class Manager
     }
 
     // Private
+
+    private static function mergeFieldsAndAttributes(array $fields, array $attributes): string
+    {
+        $pieces = [];
+
+        foreach ($fields as $field) {
+        }
+    }
+
+    /**
+     * Return a string like "p_id = :id"
+     *
+     * @param string $field
+     * @param string $attribute
+     * @return string
+     */
+    private static function mergeFieldAndAttribute(string $field, string $attribute): string
+    {
+        return $field . ' = :' . $attribute;
+    }
 
     /**
      * Return an array with only filled fields
@@ -131,7 +151,8 @@ abstract class Manager
         $fields = [];
 
         foreach ($this->fields as $key => $value) {
-            if ($entity->$key !== null) {
+            $getter = 'get' . ucfirst($key);
+            if ($entity->$getter() !== null) {
                 $fields[] = $this->fields[$key];
             }
         }
@@ -144,32 +165,22 @@ abstract class Manager
      *
      * @param Entity $entity
      * @return array
+     * @throws \ReflectionException
      */
     private static function getEntityProperties(Entity $entity)
     {
         $properties = [];
+        $reflectionEntity = new ReflectionClass($entity);
+        $reflectionMethods = $reflectionEntity->getMethods();
 
-        foreach ($entity as $key => $value) {
-            if ($value !== null)
-                $properties[$key] = $value;
+        foreach ($reflectionMethods as $reflectionMethod) {
+            if (strpos($reflectionMethod, 'get')) {
+                $value = $reflectionMethod->invoke($entity);
+                if ($value !== null)
+                    $properties[lcfirst(substr($reflectionMethod->name, 3))] = $value;
+            }
         }
 
         return $properties;
-    }
-
-    /**
-     * @param Entity $entity
-     * @return array
-     */
-    private static function getEntityKeys(Entity $entity)
-    {
-        $keys = [];
-
-        foreach ($entity as $key => $value) {
-            if ($value !== null)
-                $keys[] = $key;
-        }
-
-        return $keys;
     }
 }

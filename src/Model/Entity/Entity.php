@@ -18,7 +18,7 @@ abstract class Entity
     /**
      * @var int
      */
-    public $id = null;
+    protected $id = null;
 
     /**
      * Entity constructor.

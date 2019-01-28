@@ -5,7 +5,7 @@ namespace Model\Entity;
 
 class Category extends Entity
 {
-    public $name = '';
+    protected $name = '';
 
     /**
      * @return string
