@@ -88,17 +88,6 @@ class PostManager extends Manager
     public function getAll(): array
     {
         return parent::getAll();
-//        $posts = [];
-//        $query = "SELECT * FROM bl_post";
-//
-//        $requestAllPosts = $this->database->query($query);
-//        $postsData = $requestAllPosts->fetchAll(PDO::FETCH_ASSOC);
-//
-//        foreach ($postsData as $postsDatum) {
-//            $posts[] = self::createAPostFromDatabaseData($postsDatum);
-//        }
-//
-//        return $posts;
     }
 
     /**

@@ -144,6 +144,11 @@ abstract class Manager
         return $this->createEntityFromTableData($tableData);
     }
 
+    /**
+     * Get all Entities form database
+     *
+     * @return array
+     */
     public function getAll(): array
     {
         $entities = [];
@@ -153,9 +158,7 @@ abstract class Manager
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($tableData as $tableDatum) {
-            foreach ($tableDatum as $key => $value) {
-
-            }
+            $entities[] = $this->createEntityFromTableData($tableDatum);
         }
 
         return $entities;
