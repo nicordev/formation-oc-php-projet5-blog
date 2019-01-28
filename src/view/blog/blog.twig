@@ -1,0 +1,36 @@
+{% extends "layout.twig" %}
+
+{% block title %}
+    Blog
+{% endblock %}
+
+{% block header %}
+    <h1>Blog</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-list">
+
+        <h2 class="card-deck-title">Liste des articles du blog</h2>
+
+        <div class="card-deck">
+            {% if posts is empty %}
+                <p>
+                    Il n'y a aucun article pour l'instant.
+                </p>
+
+            {% else %}
+
+                {% for post in posts %}
+                    <div class="card">
+                        <h3 class="card-title"><a href="?page=blog-post&amp;post-id={{ post.getId }}">{{ post.getTitle }}</a></h3>
+
+                        <div class="card-content">{{ post.getExcerpt }}</div>
+                        <div class="card-info">{{ post.getCreationDate }}</div>
+                    </div>
+                {% endfor %}
+
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

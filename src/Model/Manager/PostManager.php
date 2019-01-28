@@ -16,6 +16,7 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
+    protected $attributes = [];
 
     /**
      * Add a new blog post in the database

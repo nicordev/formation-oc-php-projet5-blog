@@ -11,8 +11,8 @@ namespace Model\Entity;
 
 class Post extends Entity
 {
-    protected $authorId = -1;
-    protected $lastEditorId = -1;
+    protected $authorId = self::NO_ID;
+    protected $lastEditorId = self::NO_ID;
     protected $creationDate = '';
     protected $lastModificationDate = '';
     protected $title = '';
@@ -22,7 +22,7 @@ class Post extends Entity
     /**
      * @return int
      */
-    public function getAuthorId(): int
+    public function getAuthorId(): ?int
     {
         return $this->authorId;
     }
@@ -38,7 +38,7 @@ class Post extends Entity
     /**
      * @return int
      */
-    public function getLastEditorId(): int
+    public function getLastEditorId(): ?int
     {
         return $this->lastEditorId;
     }
@@ -54,7 +54,7 @@ class Post extends Entity
     /**
      * @return string
      */
-    public function getCreationDate(): string
+    public function getCreationDate(): ?string
     {
         return $this->creationDate;
     }
@@ -70,7 +70,7 @@ class Post extends Entity
     /**
      * @return string
      */
-    public function getLastModificationDate(): string
+    public function getLastModificationDate(): ?string
     {
         return $this->lastModificationDate;
     }
@@ -86,7 +86,7 @@ class Post extends Entity
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -102,7 +102,7 @@ class Post extends Entity
     /**
      * @return string
      */
-    public function getExcerpt(): string
+    public function getExcerpt(): ?string
     {
         return $this->excerpt;
     }
@@ -118,7 +118,7 @@ class Post extends Entity
     /**
      * @return string
      */
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }

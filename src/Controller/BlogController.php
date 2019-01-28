@@ -27,6 +27,11 @@ class BlogController
     protected $viewFolderPath = '';
     protected $twig;
 
+    const VIEW_BLOG = 'blog/blog.twig';
+    const VIEW_BLOG_POST = 'blog/blogPost.twig';
+    const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
+    const VIEW_POST_EDITOR = 'blog/postEditor.twig';
+
     /**
      * BlogController constructor.
      *
@@ -60,7 +65,7 @@ class BlogController
     {
         $posts = $this->postManager->getAll();
 
-        echo $this->twig->render('blog.twig', ['posts' => $posts]);
+        echo $this->twig->render(self::VIEW_BLOG, ['posts' => $posts]);
     }
 
     /**
@@ -78,11 +83,10 @@ class BlogController
             $previousPostId = $this->getPreviousPostId($postId);
 
         } catch (BlogException $e) {
-            $this->pageNotFound404();
-            exit();
+            $this->pageNotFound404(); // TODO throw an Exception instead
         }
 
-        echo $this->twig->render('blogPost.twig', [
+        echo $this->twig->render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'nextPostId' => $nextPostId,
             'previousPostId' => $previousPostId
@@ -101,7 +105,7 @@ class BlogController
     {
         $posts = $this->postManager->getAll();
 
-        echo $this->twig->render('blogAdmin.twig', [
+        echo $this->twig->render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message
         ]);
@@ -125,7 +129,7 @@ class BlogController
             $postToEdit = $this->postManager->get($postToEditId);
         }
 
-        echo $this->twig->render('postEditor.twig', [
+        echo $this->twig->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
             'message' => $message

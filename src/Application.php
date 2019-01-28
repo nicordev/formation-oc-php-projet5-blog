@@ -29,14 +29,14 @@ class Application
             'cache' => false // TODO change to true for production
         ]);
 
-        $blogController = new BlogController(
+        $blogController = new BlogController( // A instancier si besoin
             new PostManager(),
             new TagManager(),
             new CategoryManager(),
             new CommentManager(),
             $twig
         );
-
+        // try
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
 
@@ -72,6 +72,7 @@ class Application
 
             } else {
                 $blogController->pageNotFound404();
+                // Jeter exception 404
             }
 
         } else {

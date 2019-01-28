@@ -22,7 +22,7 @@ class Comment extends Entity
     /**
      * @return int
      */
-    public function getParentId(): int
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
@@ -30,7 +30,7 @@ class Comment extends Entity
     /**
      * @param int $parentId
      */
-    public function setParentId(int $parentId): void
+    public function setParentId(?int $parentId): void
     {
         $this->parentId = $parentId;
     }
@@ -38,7 +38,7 @@ class Comment extends Entity
     /**
      * @return int
      */
-    public function getPostId(): int
+    public function getPostId(): ?int
     {
         return $this->postId;
     }
@@ -54,7 +54,7 @@ class Comment extends Entity
     /**
      * @return int
      */
-    public function getAuthorId(): int
+    public function getAuthorId(): ?int
     {
         return $this->authorId;
     }
@@ -70,7 +70,7 @@ class Comment extends Entity
     /**
      * @return int
      */
-    public function getLastEditorId(): int
+    public function getLastEditorId(): ?int
     {
         return $this->lastEditorId;
     }
@@ -86,7 +86,7 @@ class Comment extends Entity
     /**
      * @return string
      */
-    public function getCreationDate(): string
+    public function getCreationDate(): ?string
     {
         return $this->creationDate;
     }
@@ -102,7 +102,7 @@ class Comment extends Entity
     /**
      * @return string
      */
-    public function getLastModificationDate(): string
+    public function getLastModificationDate(): ?string
     {
         return $this->lastModificationDate;
     }
@@ -118,7 +118,7 @@ class Comment extends Entity
     /**
      * @return string
      */
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }

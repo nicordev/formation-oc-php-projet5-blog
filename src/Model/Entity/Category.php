@@ -3,14 +3,14 @@
 namespace Model\Entity;
 
 
-class Tag extends Entity
+class Category extends Entity
 {
     protected $name = '';
 
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

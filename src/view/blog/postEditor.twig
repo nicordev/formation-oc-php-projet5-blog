@@ -10,7 +10,7 @@
 
 {% block content %}
     <section class="blog-admin">
-        {% include "message.twig" %}
+        {% include "blog/message.twig" %}
 
         {% if postToEdit %}
             <div>
@@ -28,13 +28,13 @@
                 <!-- Hidden fields -->
                 {% if postToEdit %}
                     <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
-                    <input type="hidden" name="post-editor-id" value="2"><!-- TODO put the true editor id here -->
+                    <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
 
                 {% else %}
                     <input type="hidden" name="add-post">
                 {% endif %}
                 
-                <input type="hidden" name="post-author-id" value="1"><!-- TODO put the true author id here -->
+                <input type="hidden" name="post-author-id" value="58"><!-- TODO put the true author id here -->
 
                 <!-- Visible fields-->
                 <p>
@@ -58,7 +58,7 @@
 {% endblock %}
 
 {% block footer %}
-    {% include "adminFooter.twig" %}
+    {% include "blog/adminFooter.twig" %}
 {% endblock %}
 
 
