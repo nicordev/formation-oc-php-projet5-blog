@@ -9,7 +9,6 @@
 namespace Model\Manager;
 
 
-use Model\Entity\Entity;
 use Model\Entity\Post;
 use \PDO;
 use Application\Exception\BlogException;
@@ -108,27 +107,5 @@ class PostManager extends Manager
         }
 
         return $ids;
-    }
-
-    // Private
-
-    /**
-     * @param array $data
-     * @return Post
-     */
-    private static function createAPostFromDatabaseData(array $data): Post
-    {
-        $attributes = [
-            'id' => $data['p_id'],
-            'authorId' => $data['p_author_id_fk'],
-            'lastEditorId' => $data['p_last_editor_id_fk'] === null ? null : $data['p_last_editor_id_fk'],
-            'creationDate' => $data['p_creation_date'],
-            'lastModificationDate' => $data['p_last_modification_date'] === null ? '' : $data['p_last_modification_date'],
-            'title' => $data['p_title'],
-            'excerpt' => $data['p_excerpt'],
-            'content' => $data['p_content']
-        ];
-
-        return new Post($attributes);
     }
 }
