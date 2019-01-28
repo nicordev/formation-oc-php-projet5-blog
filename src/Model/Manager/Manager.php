@@ -93,9 +93,29 @@ abstract class Manager
 
         $requestAdd = $this->database->prepare($query);
 
-        if (!$requestAdd->execute($properties)) {
+        foreach ($properties as $key => $value) {
+            $requestAdd->bindValue($key, $value, self::getPdoType($value));
+        }
+
+        if (!$requestAdd->execute()) {
             throw new BlogException('Error when trying to add the new entity in the database.');
         }
+    }
+
+    /**
+     * Return the corresponding PDO constant of the variable type
+     *
+     * @param $var
+     * @return int
+     */
+    private static function getPdoType($var)
+    {
+        if (is_int($var))
+            return PDO::PARAM_INT;
+        elseif (is_null($var))
+            return PDO::PARAM_NULL;
+        elseif (is_string($var))
+            return PDO::PARAM_STR;
     }
 
     /**
@@ -107,10 +127,7 @@ abstract class Manager
         $properties = [];
 
         foreach ($entity as $key => $value) {
-            if ($value !== null)
-                $properties[$key] = $value;
-            else
-                $properties[$key] = '';
+            $properties[$key] = $value;
         }
 
         return $properties;
