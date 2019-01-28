@@ -9,6 +9,7 @@
 namespace Application;
 
 
+use Application\Router\Router;
 use Controller\BlogController;
 use Model\Entity\Post;
 use Model\Manager\CategoryManager;
@@ -28,6 +29,22 @@ class Application
             'debug' => true, // TODO change to false for production
             'cache' => false // TODO change to true for production
         ]);
+
+        // Routing
+        $route = Router::run();
+        var_dump($route);
+        die;
+
+        switch ($route['controller']) {
+            case 'BlogController':
+                $controller = new $route['controller'](
+
+                );
+                exit;
+        }
+
+
+
 
         $blogController = new BlogController( // A instancier si besoin
             new PostManager(),
@@ -78,5 +95,10 @@ class Application
         } else {
             $blogController->showAllPosts();
         }
+    }
+
+    private function executeRoute(array $route)
+    {
+
     }
 }
