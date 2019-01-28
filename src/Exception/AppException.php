@@ -5,7 +5,7 @@ namespace Application\Exception;
 
 use Exception;
 
-class BlogException extends Exception
+class AppException extends Exception
 {
 
 }
