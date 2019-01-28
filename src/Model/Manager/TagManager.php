@@ -32,7 +32,7 @@ class TagManager extends Manager
      * @param Tag $modifiedTag
      * @throws Exception
      */
-    public function edit(Tag $modifiedTag): void
+    public function edit($modifiedTag): void
     {
         $query = 'UPDATE bl_tag
             SET tag_name = :tagName

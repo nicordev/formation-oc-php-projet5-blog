@@ -13,11 +13,11 @@ class Post extends Entity
 {
     public $authorId = null;
     public $lastEditorId = null;
-    public $creationDate = '';
+    public $creationDate = null;
     public $lastModificationDate = null;
-    public $title = '';
-    public $excerpt = '';
-    public $content = '';
+    public $title = null;
+    public $excerpt = null;
+    public $content = null;
 
     /**
      * @return int

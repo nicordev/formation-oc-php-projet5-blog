@@ -62,26 +62,27 @@ class PostManager extends Manager
      * @param Post $modifiedPost
      * @throws BlogException
      */
-    public function edit(Post $modifiedPost): void
+    public function edit($modifiedPost): void
     {
-        $query = 'UPDATE bl_post
-            SET p_last_editor_id_fk = :lastEditorId,
-                p_last_modification_date = NOW(),
-                p_title = :title,
-                p_excerpt = :excerpt,
-                p_content = :content
-            WHERE p_id = :id';
-
-        $requestEdit = $this->database->prepare($query);
-        if (!$requestEdit->execute([
-            'id' => $modifiedPost->getId(),
-            'lastEditorId' => $modifiedPost->getLastEditorId(),
-            'title' => $modifiedPost->getTitle(),
-            'excerpt' => $modifiedPost->getExcerpt(),
-            'content' => $modifiedPost->getContent()
-        ])) {
-            throw new BlogException('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
-        }
+        parent::edit($modifiedPost);
+//        $query = 'UPDATE bl_post
+//            SET p_last_editor_id_fk = :lastEditorId,
+//                p_last_modification_date = NOW(),
+//                p_title = :title,
+//                p_excerpt = :excerpt,
+//                p_content = :content
+//            WHERE p_id = :id';
+//
+//        $requestEdit = $this->database->prepare($query);
+//        if (!$requestEdit->execute([
+//            'id' => $modifiedPost->getId(),
+//            'lastEditorId' => $modifiedPost->getLastEditorId(),
+//            'title' => $modifiedPost->getTitle(),
+//            'excerpt' => $modifiedPost->getExcerpt(),
+//            'content' => $modifiedPost->getContent()
+//        ])) {
+//            throw new BlogException('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
+//        }
     }
 
     /**

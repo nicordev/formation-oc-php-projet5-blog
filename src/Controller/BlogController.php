@@ -233,11 +233,15 @@ class BlogController
             $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
             $post->setContent(htmlspecialchars($_POST['post-content']));
             $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
-            $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+
+            if (isset($_POST['add-post'])) {
+                $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+            }
 
             // Edit a post
             if (isset($_POST['edit-post'])) {
                 $post->setId(htmlspecialchars($_POST['edit-post']));
+                $post->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
             }
             if (isset($_POST['post-editor-id'])) {
                 $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));

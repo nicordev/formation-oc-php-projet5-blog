@@ -86,11 +86,30 @@ abstract class Manager
     public function add(Entity $entity): void
     {
         $properties = self::getEntityProperties($entity);
-        $keys = self::getEntityKeys($entity);
         $fields = $this->filterEmptyFields($entity);
 
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
-            VALUES (:' . implode(', :', $keys) .')';
+            VALUES (:' . implode(', :', array_keys($properties)) .')';
+
+        $requestAdd = $this->database->prepare($query);
+
+        if (!$requestAdd->execute($properties)) {
+            throw new BlogException('Error when trying to add the new entity in the database.');
+        }
+    }
+
+    public function edit(Entity $modifiedEntity): void
+    {
+        $properties = self::getEntityProperties($modifiedEntity);
+        $keys = self::getEntityKeys($modifiedEntity);
+        $fields = $this->filterEmptyFields($modifiedEntity);
+
+        var_dump($properties, $keys, $fields);
+        die;
+
+        $query = 'UPDATE ' . $this->tableName . '
+            SET 
+            WHERE';
 
         $requestAdd = $this->database->prepare($query);
 
@@ -121,6 +140,8 @@ abstract class Manager
     }
 
     /**
+     * Get filled properties of an Entity (filter null values)
+     *
      * @param Entity $entity
      * @return array
      */

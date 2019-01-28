@@ -50,7 +50,7 @@ class CommentManager extends Manager
      * @param Comment $modifiedComment
      * @throws Exception
      */
-    public function edit(Comment $modifiedComment): void
+    public function edit($modifiedComment): void
     {
         $query = 'UPDATE bl_comment
             SET com_parent_id_fk = :parentId,
