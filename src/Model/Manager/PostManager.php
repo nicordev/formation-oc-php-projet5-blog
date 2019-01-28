@@ -66,12 +66,6 @@ class PostManager extends Manager
     public function delete(int $postId): void
     {
         parent::delete($postId);
-//        $query = 'DELETE FROM bl_post WHERE p_id = ?';
-//
-//        $requestDelete = $this->database->prepare($query);
-//        if (!$requestDelete->execute([$postId])) {
-//            throw new BlogException('Error when trying to delete a post in the database. Post id:' . $postId);
-//        }
     }
 
     /**
@@ -83,18 +77,7 @@ class PostManager extends Manager
      */
     public function get(int $postId): Post
     {
-        $query = "SELECT * FROM bl_post WHERE p_id = ?";
-
-        $requestAPost = $this->database->prepare($query);
-        if (!$requestAPost->execute([$postId])) {
-            throw new BlogException('Error when trying to get a post from the database. Post id:' . $postId);
-        }
-        $thePostData = $requestAPost->fetch(PDO::FETCH_ASSOC);
-        if (!$thePostData) {
-            throw new BlogException('Error when trying to get a post. Post id: ' . $postId);
-        }
-
-        return self::createAPostFromDatabaseData($thePostData);
+        return parent::get($postId);
     }
 
     /**

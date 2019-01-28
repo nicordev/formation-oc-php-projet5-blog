@@ -127,14 +127,48 @@ abstract class Manager
         $this->prepareThenExecuteQuery($query, [$entityId]);
     }
 
+    /**
+     * Get an Entity from the database
+     *
+     * @param int $entityId
+     * @return mixed
+     * @throws BlogException
+     */
+    public function get(int $entityId)
+    {
+        $entityClass = self::getEntityClass();
+        $entityData = [];
+        
+        $query = 'SELECT * FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
+
+        $request = $this->prepareThenExecuteQuery($query, [$entityId]);
+        $tableData = $request->fetch(PDO::FETCH_ASSOC);
+
+        foreach ($this->fields as $key => $value) {
+            $entityData[$key] = $tableData[$value];
+        }
+
+        return new $entityClass($entityData);
+    }
+
 
     // Private
+
+    private static function getEntityClass(): string
+    {
+        $class = explode('\\', get_called_class());
+        $class = end($class);
+        $class = 'Model\\Entity\\' . substr($class, 0, -(strlen('Manager')));
+
+        return $class;
+    }
 
     /**
      * Prepare then execute a SQL query with parameters
      *
      * @param string $query
      * @param array $params
+     * @return bool|\PDOStatement
      * @throws BlogException
      */
     private function prepareThenExecuteQuery(string $query, array $params)
@@ -144,6 +178,8 @@ abstract class Manager
         if (!$request->execute($params)) {
             throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
         }
+
+        return $request;
     }
 
     /**

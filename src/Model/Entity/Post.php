@@ -78,7 +78,7 @@ class Post extends Entity
     /**
      * @param string $lastModificationDate
      */
-    public function setLastModificationDate(string $lastModificationDate): void
+    public function setLastModificationDate(?string $lastModificationDate): void
     {
         $this->lastModificationDate = $lastModificationDate;
     }
