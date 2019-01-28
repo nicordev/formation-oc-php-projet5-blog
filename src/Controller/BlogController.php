@@ -32,6 +32,8 @@ class BlogController
     const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'blog/postEditor.twig';
 
+    const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+
     /**
      * BlogController constructor.
      *
@@ -231,6 +233,7 @@ class BlogController
             $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
             $post->setContent(htmlspecialchars($_POST['post-content']));
             $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
+            $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
 
             // Edit a post
             if (isset($_POST['edit-post'])) {

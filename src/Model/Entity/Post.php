@@ -14,7 +14,7 @@ class Post extends Entity
     public $authorId = null;
     public $lastEditorId = null;
     public $creationDate = '';
-    public $lastModificationDate = '';
+    public $lastModificationDate = null;
     public $title = '';
     public $excerpt = '';
     public $content = '';
@@ -46,7 +46,7 @@ class Post extends Entity
     /**
      * @param int $lastEditorId
      */
-    public function setLastEditorId(int $lastEditorId): void
+    public function setLastEditorId(?int $lastEditorId): void
     {
         $this->lastEditorId = $lastEditorId;
     }

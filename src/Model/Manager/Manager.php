@@ -87,35 +87,37 @@ abstract class Manager
     {
         $properties = self::getEntityProperties($entity);
         $keys = self::getEntityKeys($entity);
+        $fields = $this->filterEmptyFields($entity);
 
-        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $this->fields) . ')
+        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
             VALUES (:' . implode(', :', $keys) .')';
 
         $requestAdd = $this->database->prepare($query);
 
-        foreach ($properties as $key => $value) {
-            $requestAdd->bindValue($key, $value, self::getPdoType($value));
-        }
-
-        if (!$requestAdd->execute()) {
+        if (!$requestAdd->execute($properties)) {
             throw new BlogException('Error when trying to add the new entity in the database.');
         }
     }
 
+    // Private
+
     /**
-     * Return the corresponding PDO constant of the variable type
+     * Return an array with only filled fields
      *
-     * @param $var
-     * @return int
+     * @param Entity $entity
+     * @return array
      */
-    private static function getPdoType($var)
+    private function filterEmptyFields(Entity $entity)
     {
-        if (is_int($var))
-            return PDO::PARAM_INT;
-        elseif (is_null($var))
-            return PDO::PARAM_NULL;
-        elseif (is_string($var))
-            return PDO::PARAM_STR;
+        $fields = [];
+
+        foreach ($this->fields as $key => $value) {
+            if ($entity->$key !== null) {
+                $fields[] = $this->fields[$key];
+            }
+        }
+
+        return $fields;
     }
 
     /**
@@ -127,7 +129,8 @@ abstract class Manager
         $properties = [];
 
         foreach ($entity as $key => $value) {
-            $properties[$key] = $value;
+            if ($value !== null)
+                $properties[$key] = $value;
         }
 
         return $properties;
@@ -142,7 +145,8 @@ abstract class Manager
         $keys = [];
 
         foreach ($entity as $key => $value) {
-            $keys[] = $key;
+            if ($value !== null)
+                $keys[] = $key;
         }
 
         return $keys;
