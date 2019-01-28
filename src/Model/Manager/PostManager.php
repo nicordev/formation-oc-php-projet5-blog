@@ -38,22 +38,11 @@ class PostManager extends Manager
      *
      * @param Post $newPost
      * @throws BlogException
+     * @throws \ReflectionException
      */
     public function add($newPost): void
     {
         parent::add($newPost);
-//        $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
-//            VALUES (:authorId, NOW(), :title, :excerpt, :content)';
-//
-//        $requestAdd = $this->database->prepare($query);
-//        if (!$requestAdd->execute([
-//            'authorId' => $newPost->getAuthorId(),
-//            'title' => $newPost->getTitle(),
-//            'excerpt' => $newPost->getExcerpt(),
-//            'content' => $newPost->getContent()
-//        ])) {
-//            throw new BlogException('Error when trying to add the new blog post in the database.');
-//        }
     }
 
     /**
@@ -61,28 +50,11 @@ class PostManager extends Manager
      *
      * @param Post $modifiedPost
      * @throws BlogException
+     * @throws \ReflectionException
      */
     public function edit($modifiedPost): void
     {
         parent::edit($modifiedPost);
-//        $query = 'UPDATE bl_post
-//            SET p_last_editor_id_fk = :lastEditorId,
-//                p_last_modification_date = NOW(),
-//                p_title = :title,
-//                p_excerpt = :excerpt,
-//                p_content = :content
-//            WHERE p_id = :id';
-//
-//        $requestEdit = $this->database->prepare($query);
-//        if (!$requestEdit->execute([
-//            'id' => $modifiedPost->getId(),
-//            'lastEditorId' => $modifiedPost->getLastEditorId(),
-//            'title' => $modifiedPost->getTitle(),
-//            'excerpt' => $modifiedPost->getExcerpt(),
-//            'content' => $modifiedPost->getContent()
-//        ])) {
-//            throw new BlogException('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
-//        }
     }
 
     /**
@@ -93,12 +65,13 @@ class PostManager extends Manager
      */
     public function delete(int $postId): void
     {
-        $query = 'DELETE FROM bl_post WHERE p_id = ?';
-
-        $requestDelete = $this->database->prepare($query);
-        if (!$requestDelete->execute([$postId])) {
-            throw new BlogException('Error when trying to delete a post in the database. Post id:' . $postId);
-        }
+        parent::delete($postId);
+//        $query = 'DELETE FROM bl_post WHERE p_id = ?';
+//
+//        $requestDelete = $this->database->prepare($query);
+//        if (!$requestDelete->execute([$postId])) {
+//            throw new BlogException('Error when trying to delete a post in the database. Post id:' . $postId);
+//        }
     }
 
     /**

@@ -114,6 +114,19 @@ abstract class Manager
         $this->prepareThenExecuteQuery($query, $properties);
     }
 
+    /**
+     * Delete an Entity in the database
+     *
+     * @param int $entityId
+     * @throws BlogException
+     */
+    public function delete(int $entityId)
+    {
+        $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
+
+        $this->prepareThenExecuteQuery($query, [$entityId]);
+    }
+
 
     // Private
 
