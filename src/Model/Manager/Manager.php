@@ -92,11 +92,7 @@ abstract class Manager
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
-        $requestAdd = $this->database->prepare($query);
-
-        if (!$requestAdd->execute($properties)) {
-            throw new BlogException('Error when trying to add the new entity in the database.');
-        }
+        $this->prepareThenExecuteQuery($query, $properties);
     }
 
     /**
@@ -115,14 +111,27 @@ abstract class Manager
             SET ' . self::buildSqlSet($fields) . '
             WHERE ' . $fields['id'] . ' = :id';
 
-        $requestAdd = $this->database->prepare($query);
-
-        if (!$requestAdd->execute($properties)) {
-            throw new BlogException('Error when trying to add the new entity in the database.');
-        }
+        $this->prepareThenExecuteQuery($query, $properties);
     }
 
+
     // Private
+
+    /**
+     * Prepare then execute a SQL query with parameters
+     *
+     * @param string $query
+     * @param array $params
+     * @throws BlogException
+     */
+    private function prepareThenExecuteQuery(string $query, array $params)
+    {
+        $request = $this->database->prepare($query);
+
+        if (!$request->execute($params)) {
+            throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+        }
+    }
 
     /**
      * Return a string to use in SQL query SET
