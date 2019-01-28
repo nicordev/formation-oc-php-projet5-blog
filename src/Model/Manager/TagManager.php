@@ -15,7 +15,7 @@ class TagManager extends Manager
      * @param Tag $newTag
      * @throws Exception
      */
-    public function add(Tag $newTag): void
+    public function add($newTag): void
     {
         $query = 'INSERT INTO bl_tag(tag_name)
             VALUES (?)';

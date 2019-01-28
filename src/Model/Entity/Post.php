@@ -11,13 +11,13 @@ namespace Model\Entity;
 
 class Post extends Entity
 {
-    protected $authorId = self::NO_ID;
-    protected $lastEditorId = self::NO_ID;
-    protected $creationDate = '';
-    protected $lastModificationDate = '';
-    protected $title = '';
-    protected $excerpt = '';
-    protected $content = '';
+    public $authorId = null;
+    public $lastEditorId = null;
+    public $creationDate = '';
+    public $lastModificationDate = '';
+    public $title = '';
+    public $excerpt = '';
+    public $content = '';
 
     /**
      * @return int

@@ -121,11 +121,11 @@ class BlogController
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostEditor(int $postToEditId = Post::NO_ID, string $message = '')
+    public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
 
-        if ($postToEditId !== Post::NO_ID) {
+        if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
         }
 
@@ -166,7 +166,7 @@ class BlogController
 
         } else {
             // Try again...
-            $this->showPostEditor(Post::NO_ID, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+            $this->showPostEditor(null, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
         }
     }
 

@@ -2,7 +2,10 @@
 
 namespace Model\Manager;
 
+use Application\Exception\BlogException;
+use Model\Entity\Entity;
 use \PDO;
+use ReflectionClass;
 
 /**
  * Class Manager
@@ -10,6 +13,9 @@ use \PDO;
  */
 abstract class Manager
 {
+    protected $tableName = '';
+    protected $fields = [];
+
     /**
      * @var bool|PDO
      */
@@ -69,5 +75,59 @@ abstract class Manager
             return false;
         }
         return $database;
+    }
+
+    /**
+     * Add an Entity in the database
+     *
+     * @param Entity $entity
+     * @throws BlogException
+     */
+    public function add(Entity $entity): void
+    {
+        $properties = self::getEntityProperties($entity);
+        $keys = self::getEntityKeys($entity);
+
+        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $this->fields) . ')
+            VALUES (:' . implode(', :', $keys) .')';
+
+        $requestAdd = $this->database->prepare($query);
+
+        if (!$requestAdd->execute($properties)) {
+            throw new BlogException('Error when trying to add the new entity in the database.');
+        }
+    }
+
+    /**
+     * @param Entity $entity
+     * @return array
+     */
+    private static function getEntityProperties(Entity $entity)
+    {
+        $properties = [];
+
+        foreach ($entity as $key => $value) {
+            if ($value !== null)
+                $properties[$key] = $value;
+            else
+                $properties[$key] = '';
+        }
+
+        return $properties;
+    }
+
+    /**
+     * @param Entity $entity
+     * @return array
+     */
+    private static function getEntityKeys(Entity $entity)
+    {
+        $keys = [];
+
+        foreach ($entity as $key => $value) {
+            $keys[] = $key;
+        }
+
+        return $keys;
     }
 }

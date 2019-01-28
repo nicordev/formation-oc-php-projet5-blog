@@ -11,13 +11,13 @@ namespace Model\Entity;
 
 class Comment extends Entity
 {
-    protected $parentId = self::NO_ID;
-    protected $postId = self::NO_ID;
-    protected $authorId = self::NO_ID;
-    protected $lastEditorId = self::NO_ID;
-    protected $creationDate = '';
-    protected $lastModificationDate = '';
-    protected $content = '';
+    public $parentId = null;
+    public $postId = null;
+    public $authorId = null;
+    public $lastEditorId = null;
+    public $creationDate = '';
+    public $lastModificationDate = '';
+    public $content = '';
 
     /**
      * @return int

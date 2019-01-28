@@ -15,7 +15,7 @@ class CategoryManager extends Manager
      * @param Category $newCategory
      * @throws Exception
      */
-    public function add(Category $newCategory): void
+    public function add($newCategory): void
     {
         $query = 'INSERT INTO bl_category(cat_name)
             VALUES (?)';
@@ -32,7 +32,7 @@ class CategoryManager extends Manager
      * @param Category $modifiedCategory
      * @throws Exception
      */
-    public function edit(Category $modifiedCategory): void
+    public function edit($modifiedCategory): void
     {
         $query = 'UPDATE bl_category
             SET cat_name = :categoryName

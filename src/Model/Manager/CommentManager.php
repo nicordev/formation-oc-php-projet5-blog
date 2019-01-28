@@ -23,7 +23,7 @@ class CommentManager extends Manager
      * @param Comment $newComment
      * @throws Exception
      */
-    public function add(Comment $newComment): void
+    public function add($newComment): void
     {
         $query = 'INSERT INTO bl_comment(com_parent_id_fk, 
                        com_author_id_fk, 
@@ -36,7 +36,7 @@ class CommentManager extends Manager
 
         $requestAdd = $this->database->prepare($query);
         if (!$requestAdd->execute([
-            'parentId' => $newComment->getParentId() === Entity::NO_ID ? null : $newComment->getParentId(),
+            'parentId' => $newComment->getParentId() === null ? null : $newComment->getParentId(),
             'authorId' => $newComment->getAuthorId(),
             'content' => $newComment->getContent()
         ])) {
@@ -61,7 +61,7 @@ class CommentManager extends Manager
 
         $requestEdit = $this->database->prepare($query);
         if (!$requestEdit->execute([
-            'parentId' => $modifiedComment->getParentId() === Entity::NO_ID ? null : $modifiedComment->getParentId(),
+            'parentId' => $modifiedComment->getParentId() === null ? null : $modifiedComment->getParentId(),
             'id' => $modifiedComment->getId(),
             'lastEditorId' => $modifiedComment->getLastEditorId(),
             'content' => $modifiedComment->getContent()
@@ -139,9 +139,9 @@ class CommentManager extends Manager
     {
         $attributes = [
             'id' => $data['com_id'],
-            'parentId' => $data['com_parent_id_fk'] === null ? Entity::NO_ID : $data['com_parent_id_fk'],
+            'parentId' => $data['com_parent_id_fk'] === null ? null : $data['com_parent_id_fk'],
             'authorId' => $data['com_author_id_fk'],
-            'lastEditorId' => $data['com_last_editor_id_fk'] === null ? Entity::NO_ID : $data['com_last_editor_id_fk'],
+            'lastEditorId' => $data['com_last_editor_id_fk'] === null ? null : $data['com_last_editor_id_fk'],
             'creationDate' => $data['com_creation_date'],
             'lastModificationDate' => $data['com_last_modification_date'] === null ? '' : $data['com_last_modification_date'],
             'content' => $data['com_content']

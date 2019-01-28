@@ -16,7 +16,22 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
-    protected $attributes = [];
+    public function __construct()
+    {
+        $this->tableName = 'bl_post';
+        $this->fields = [
+            'id' => 'p_id',
+            'authorId' => 'p_author_id_fk',
+            'lastEditorId' => 'p_last_editor_id_fk',
+            'creationDate' => 'p_creation_date',
+            'lastModificationDate' => 'p_last_modification_date',
+            'title' => 'p_title',
+            'excerpt' => 'p_excerpt',
+            'content' => 'p_content'
+        ];
+
+        parent::__construct();
+    }
 
     /**
      * Add a new blog post in the database
@@ -24,20 +39,21 @@ class PostManager extends Manager
      * @param Post $newPost
      * @throws BlogException
      */
-    public function add(Post $newPost): void
+    public function add($newPost): void
     {
-        $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
-            VALUES (:authorId, NOW(), :title, :excerpt, :content)';
-
-        $requestAdd = $this->database->prepare($query);
-        if (!$requestAdd->execute([
-            'authorId' => $newPost->getAuthorId(),
-            'title' => $newPost->getTitle(),
-            'excerpt' => $newPost->getExcerpt(),
-            'content' => $newPost->getContent()
-        ])) {
-            throw new BlogException('Error when trying to add the new blog post in the database.');
-        }
+        parent::add($newPost);
+//        $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
+//            VALUES (:authorId, NOW(), :title, :excerpt, :content)';
+//
+//        $requestAdd = $this->database->prepare($query);
+//        if (!$requestAdd->execute([
+//            'authorId' => $newPost->getAuthorId(),
+//            'title' => $newPost->getTitle(),
+//            'excerpt' => $newPost->getExcerpt(),
+//            'content' => $newPost->getContent()
+//        ])) {
+//            throw new BlogException('Error when trying to add the new blog post in the database.');
+//        }
     }
 
     /**
@@ -158,7 +174,7 @@ class PostManager extends Manager
         $attributes = [
             'id' => $data['p_id'],
             'authorId' => $data['p_author_id_fk'],
-            'lastEditorId' => $data['p_last_editor_id_fk'] === null ? Entity::NO_ID : $data['p_last_editor_id_fk'],
+            'lastEditorId' => $data['p_last_editor_id_fk'] === null ? null : $data['p_last_editor_id_fk'],
             'creationDate' => $data['p_creation_date'],
             'lastModificationDate' => $data['p_last_modification_date'] === null ? '' : $data['p_last_modification_date'],
             'title' => $data['p_title'],

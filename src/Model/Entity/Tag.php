@@ -5,7 +5,7 @@ namespace Model\Entity;
 
 class Tag extends Entity
 {
-    protected $name = '';
+    public $name = '';
 
     /**
      * @return string
