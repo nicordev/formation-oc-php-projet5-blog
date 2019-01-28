@@ -99,17 +99,21 @@ abstract class Manager
         }
     }
 
+    /**
+     * Edit an Entity in the database
+     *
+     * @param Entity $modifiedEntity
+     * @throws BlogException
+     * @throws \ReflectionException
+     */
     public function edit(Entity $modifiedEntity): void
     {
         $properties = self::getEntityProperties($modifiedEntity);
         $fields = $this->filterEmptyFields($modifiedEntity);
 
-        var_dump($fields);
-        die;
-
         $query = 'UPDATE ' . $this->tableName . '
-            SET ' . '' . '
-            WHERE';
+            SET ' . self::buildSqlSet($fields) . '
+            WHERE ' . $fields['id'] . ' = :id';
 
         $requestAdd = $this->database->prepare($query);
 
@@ -120,24 +124,21 @@ abstract class Manager
 
     // Private
 
-    private static function mergeFieldsAndAttributes(array $fields, array $attributes): string
+    /**
+     * Return a string to use in SQL query SET
+     *
+     * @param array $fields
+     * @return string
+     */
+    private static function buildSqlSet(array $fields): string
     {
         $pieces = [];
 
-        foreach ($fields as $field) {
+        foreach ($fields as $key => $value) {
+            $pieces[] = $value . ' = :' . $key;
         }
-    }
 
-    /**
-     * Return a string like "p_id = :id"
-     *
-     * @param string $field
-     * @param string $attribute
-     * @return string
-     */
-    private static function mergeFieldAndAttribute(string $field, string $attribute): string
-    {
-        return $field . ' = :' . $attribute;
+        return implode(', ', $pieces);
     }
 
     /**
@@ -153,7 +154,7 @@ abstract class Manager
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
             if ($entity->$getter() !== null) {
-                $fields[] = $this->fields[$key];
+                $fields[$key] = $this->fields[$key];
             }
         }
 
