@@ -136,13 +136,44 @@ abstract class Manager
      */
     public function get(int $entityId)
     {
-        $entityClass = self::getEntityClass();
-        $entityData = [];
-        
         $query = 'SELECT * FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
         $request = $this->prepareThenExecuteQuery($query, [$entityId]);
         $tableData = $request->fetch(PDO::FETCH_ASSOC);
+
+        return $this->createEntityFromTableData($tableData);
+    }
+
+    public function getAll(): array
+    {
+        $entities = [];
+        $query = "SELECT * FROM " . $this->tableName;
+
+        $requestAllEntities = $this->database->query($query);
+        $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($tableData as $tableDatum) {
+            foreach ($tableDatum as $key => $value) {
+
+            }
+        }
+
+        return $entities;
+    }
+
+
+    // Private
+
+    /**
+     * Create an Entity child from database data
+     *
+     * @param array $tableData
+     * @return mixed
+     */
+    private function createEntityFromTableData(array $tableData)
+    {
+        $entityClass = self::getEntityClass();
+        $entityData = [];
 
         foreach ($this->fields as $key => $value) {
             $entityData[$key] = $tableData[$value];
@@ -151,9 +182,11 @@ abstract class Manager
         return new $entityClass($entityData);
     }
 
-
-    // Private
-
+    /**
+     * Get the Entity child class
+     *
+     * @return string
+     */
     private static function getEntityClass(): string
     {
         $class = explode('\\', get_called_class());
