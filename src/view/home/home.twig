@@ -1,0 +1,26 @@
+{% extends "../layout.twig" %}
+
+{% block title %}
+    Accueil
+{% endblock %}
+
+{% block header %}
+    <h1>Mon super site</h1>
+{% endblock %}
+
+{% block content %}
+
+    <p>
+        Cette page va afficher un aperçu des articles enregistrés regroupés en plusieurs zones selon leur catégorie :<br>
+        <ul>
+            <li>Blog</li>
+            <li>A propos</li>
+        </ul>
+    </p>
+
+    <section class="home-list">
+        <section class="home-category">
+            {% include "postDeck.twig" %}
+        </section>
+    </section>
+{% endblock %}

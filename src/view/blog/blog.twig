@@ -10,27 +10,22 @@
 
 {% block content %}
     <section class="blog-list">
+        {% if posts is empty %}
+            <p>
+                Il n'y a aucun article pour l'instant.
+            </p>
 
-        <h2 class="card-deck-title">Liste des articles du blog</h2>
+        {% else %}
 
-        <div class="card-deck">
-            {% if posts is empty %}
-                <p>
-                    Il n'y a aucun article pour l'instant.
-                </p>
+            {% for post in posts %}
+                <article class="post-wrapper">
+                    <h3 class="post-title"><a href="?page=post&amp;post-id={{ post.getId }}">{{ post.getTitle }}</a></h3>
 
-            {% else %}
+                    <div class="post-info">{{ post.getCreationDate }}</div>
+                    <div class="post-excerpt">{{ post.getExcerpt }}</div>
+                </article>
+            {% endfor %}
 
-                {% for post in posts %}
-                    <div class="card">
-                        <h3 class="card-title"><a href="?page=blog-post&amp;post-id={{ post.getId }}">{{ post.getTitle }}</a></h3>
-
-                        <div class="card-content">{{ post.getExcerpt }}</div>
-                        <div class="card-info">{{ post.getCreationDate }}</div>
-                    </div>
-                {% endfor %}
-
-            {% endif %}
-        </div>
+        {% endif %}
     </section>
 {% endblock %}

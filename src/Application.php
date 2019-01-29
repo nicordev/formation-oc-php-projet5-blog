@@ -43,7 +43,7 @@ class Application
             if ($page === 'blog') {
                 $blogController->showAllPosts();
 
-            } elseif ($page === 'blog-post' &&
+            } elseif ($page === 'post' &&
                 isset($_GET['post-id']) &&
                 is_numeric($_GET['post-id'])) {
 
