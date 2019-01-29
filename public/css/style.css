@@ -53,6 +53,13 @@ td, th {
     id
     --
 */
+#post-tags-wrapper {
+    margin: 0 0 20px 0;
+}
+
+#new-tag-wrapper {
+
+}
 
 
 /*
@@ -145,6 +152,8 @@ td, th {
     list-style-type: none;
 }
 
+/* blogAdmin.twig */
+
 .admin-input, .admin-textarea {
     border-radius: 10px;
     border: 1px solid lightslategrey;
@@ -175,6 +184,18 @@ td, th {
     cursor: pointer;
 }
 
+.tag-input {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.admin-piece {
+    margin: 20px;
+}
+
 /* message.twig */
 
 .message {
@@ -195,4 +216,9 @@ td, th {
     color: #ddddff;
     border-radius: 50%;
     padding: 0 7px 2px 7px;
+    margin: 5px;
+}
+
+.closing-cross:hover {
+    cursor: pointer;
 }

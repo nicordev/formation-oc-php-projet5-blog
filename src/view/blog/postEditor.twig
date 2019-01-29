@@ -40,18 +40,52 @@
                 <p>
                     <input class="btn" type="submit" value="Publier l'article">
                 </p>
+                {# Post title #}
                 <p>
                     <label for="post-title">Titre de l'article</label><br>
                     <input class="admin-input" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}">
                 </p>
+                {# Post excerpt #}
                 <p>
                     <label for="post-excerpt">Extrait de l'article (ou chapo)</label><br>
                     <textarea class="admin-textarea" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
                 </p>
+                {# Post content #}
                 <p>
                     <label for="post-content">Contenu de l'article</label><br>
                     <textarea class="admin-textarea" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
+
+                <div id="post-tags-wrapper">
+                    <h3>Etiquettes</h3>
+
+                    <div class="admin-piece" id="available-tags-wrapper">
+                        <h4>Etiquettes disponibles</h4>
+
+                        <ul id="available-tags">
+                            {% if tags %}
+                                {% for tag in tags %}
+                                    <li><span class="closing-cross">X</span><span class="available-tag">{{ tag }}</span><input type="hidden" name="tags" value="{{ tag }}"></li>
+                                {% endfor %}
+                            {% else %}
+                                <li>Aucune.</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div class="admin-piece" id="selected-tags-wrapper">
+                        <h4>Etiquettes sélectionnées</h4>
+
+                        <ul id="selected-tags">
+                        </ul>
+                    </div>
+
+                    <div class="admin-piece" id="new-tag-wrapper">
+                        <label for="new-tag">Créer une étiquette</label><br>
+                        <input class="tag-input" type="text" id="new-tag"><br>
+                        <button class="btn" id="new-tag-btn">Ajouter</button>
+                    </div>
+                </div>
             </form>
         </div>
     </section>
@@ -59,6 +93,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
+    <script src="public/js/tagManager.js"></script>
 {% endblock %}
 
 
