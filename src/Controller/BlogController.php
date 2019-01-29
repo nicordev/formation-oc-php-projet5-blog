@@ -135,15 +135,6 @@ class BlogController extends Controller
         ]);
     }
 
-    /**
-     * Show a page when the visitor is lost...
-     */
-    public function pageNotFound404()
-    {
-        self::render('pageNotFound.twig');
-        exit();
-    }
-
     // Actions
 
     /**

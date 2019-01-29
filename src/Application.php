@@ -21,42 +21,52 @@ use Twig_Loader_Filesystem;
 
 class Application
 {
-    public function run()
+    private $twig;
+
+    const VIEW_404 = 'pageNotFound.twig';
+
+    public function __construct()
     {
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
 
-        $twig = new Twig_Environment($twigLoader, [
+        $this->twig = new Twig_Environment($twigLoader, [
             'debug' => true, // TODO change to false for production
             'cache' => false // TODO change to true for production
         ]);
+    }
 
+    public function run()
+    {
         $blogController = new BlogController( // A instancier si besoin
             new PostManager(),
             new TagManager(),
             new CategoryManager(),
             new CommentManager(),
-            $twig
+            $this->twig
         );
 
         $homeController = new HomeController(
             new PostManager(),
             new CategoryManager(),
-            $twig
+            $this->twig
         );
 
         // try
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
 
+            // Blog
             if ($page === 'blog') {
                 $blogController->showAllPosts();
 
+            // Blog post
             } elseif ($page === 'post' &&
                 isset($_GET['post-id']) &&
                 is_numeric($_GET['post-id'])) {
 
                 $blogController->showASinglePost($_GET['post-id']);
 
+            // Blog admin
             } elseif ($page === 'blog-admin') {
                 if (isset($_POST['add-post'])) {
                     $blogController->addPost();
@@ -71,6 +81,7 @@ class Application
                     $blogController->showAdminPanel();
                 }
 
+            // Post editor
             } elseif ($page === 'post-editor') {
                 $postId = Post::NO_ID;
                 if (isset($_POST['post-id'])) {
@@ -78,13 +89,28 @@ class Application
                 }
                 $blogController->showPostEditor($postId);
 
+            // Error 404
             } else {
-                $blogController->pageNotFound404();
-                // Jeter exception 404
+                $this->showError404();
             }
 
+        // Home
         } else {
             $homeController->showHome();
         }
+    }
+
+    // Private
+
+    /**
+     * Show a page for errors 404
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    private function showError404()
+    {
+        echo $this->twig->render(self::VIEW_404);
     }
 }
