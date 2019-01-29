@@ -1,5 +1,5 @@
 
-<h2 class="card-deck-title">{{ deckTitle }}</h2>
+<h2 class="card-deck-title">{% block deckTitle %}{% endblock %}</h2>
 
 <div class="card-deck">
     {% if posts is empty %}

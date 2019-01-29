@@ -10,6 +10,7 @@ namespace Application;
 
 
 use Controller\BlogController;
+use Controller\HomeController;
 use Model\Entity\Post;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
@@ -36,6 +37,13 @@ class Application
             new CommentManager(),
             $twig
         );
+
+        $homeController = new HomeController(
+            new PostManager(),
+            new CategoryManager(),
+            $twig
+        );
+
         // try
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
@@ -76,7 +84,7 @@ class Application
             }
 
         } else {
-            $blogController->showAllPosts();
+            $homeController->showHome();
         }
     }
 }
