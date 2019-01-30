@@ -127,7 +127,38 @@ class PostManager extends Manager
             throw new BlogException('Error when trying to get a post. Post id: ' . $postId);
         }
 
-        return self::createAPostFromDatabaseData($thePostData);
+        $post = self::createAPostFromDatabaseData($thePostData);
+        $associatedTags = $this->getTagsOfAPost($post->getId());
+        $post->setTags($associatedTags);
+
+        return $post;
+    }
+
+    /**
+     * Get associated tags of a post
+     *
+     * @param int $postId
+     * @return array
+     */
+    public function getTagsOfAPost(int $postId)
+    {
+        $tags = [];
+
+        $query = 'SELECT bl_tag.* FROM bl_tag
+            INNER JOIN bl_post_tag
+                ON tag_id = pt_tag_id_fk
+            INNER JOIN bl_post ON pt_post_id_fk = p_id
+            WHERE p_id = :postId';
+
+        $requestTags = $this->database->prepare($query);
+        $requestTags->execute([
+            'postId' => $postId
+        ]);
+        while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
+            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+        }
+
+        return $tags;
     }
 
     /**

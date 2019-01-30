@@ -124,15 +124,28 @@ class BlogController extends Controller
     public function showPostEditor(int $postToEditId = Post::NO_ID, string $message = '')
     {
         $postToEdit = null;
+        $availableTags = $this->tagManager->getAll();
+        $availableTagNames = [];
+        $selectedTagNames = [];
+
+        foreach ($availableTags as $availableTag) {
+            $availableTagNames[] = $availableTag->getName();
+        }
 
         if ($postToEditId !== Post::NO_ID) {
             $postToEdit = $this->postManager->get($postToEditId);
+
+            foreach ($postToEdit->getTags() as $tag) {
+                $selectedTagNames[] = $tag->getName();
+            }
         }
 
         self::render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
-            'message' => $message
+            'message' => $message,
+            'availableTags' => $availableTagNames,
+            'selectedTags' => $selectedTagNames
         ]);
     }
 
