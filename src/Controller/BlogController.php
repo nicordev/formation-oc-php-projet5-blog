@@ -216,7 +216,7 @@ class BlogController extends Controller
     }
 
     /**
-     * Delete a post
+     * Delete a post from $_POST
      *
      * @throws BlogException
      * @throws \Twig_Error_Loader
