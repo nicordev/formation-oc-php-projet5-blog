@@ -182,6 +182,11 @@ td, th {
     cursor: pointer;
 }
 
+.btn-small {
+    font-size: 0.75em;
+    padding: 5px 10px;
+}
+
 .admin-blogpost-title {
     border: none;
     background-color: transparent;

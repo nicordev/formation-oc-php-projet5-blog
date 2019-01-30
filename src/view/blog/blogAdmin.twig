@@ -77,11 +77,15 @@
                             <input class="admin-tag" type="text" value="{{ tag.getName() }}"><span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
                         </li>
                     {% endfor %}
+
                     <li>
-                        <input class="admin-tag" type="text" placeholder="Ajouter une nouvelle étiquette">
+                        <form action="?page=blog-admin&action=add-tag" method="post">
+                            <input class="admin-tag" type="text" name="new-tag" placeholder="Ajouter une nouvelle étiquette">
+                            <input class="btn btn-small" type="submit" value="Ajouter">
+                        </form>
                     </li>
                 </ul>
-                <input class="btn" type="submit" value="Mettre à jour">
+                <input class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
             </form>
         </div>
 
