@@ -143,6 +143,12 @@ td, th {
     color: burlywood;
 }
 
+.blogpost-tags {
+    padding: 10px 0 10px 0;
+    font-size: 0.75em;
+    color: burlywood;
+}
+
 .blogpost-navigation ul {
     display: flex;
 }
