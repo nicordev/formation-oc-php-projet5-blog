@@ -4,15 +4,13 @@ namespace Controller;
 
 use Twig_Environment;
 
-class ErrorController
+class ErrorController extends Controller
 {
-    private $twig;
-
     const VIEW_404 = 'pageNotFound.twig';
 
     public function __construct(Twig_Environment $twig)
     {
-        $this->twig = $twig;
+        parent::__construct($twig);
     }
 
     /**

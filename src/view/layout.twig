@@ -10,9 +10,20 @@
     </head>
     
     <body>
+        <nav>
+            {% block navigation %}
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="index.php">Accueil</a>
+                        </li>
+                    </ul>
+                </nav>
+            {% endblock %}
+        </nav>
+
         <header>
             {% block header %}
-                <h1>Mon super site</h1>
             {% endblock %}
         </header>
 

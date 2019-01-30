@@ -12,13 +12,13 @@
     <section class="home-list">
         <section class="home-category">
             {% embed "home/postDeck.twig" %}
-                {% block deckTitle %}Blog{% endblock %}
+                {% block deckTitle %}<a href="?page=blog">Blog</a>{% endblock %}
             {% endembed %}
         </section>
 
         <section class="home-category">
             {% embed "home/postDeck.twig" %}
-                {% block deckTitle %}A propos{% endblock %}
+                {% block deckTitle %}<a href="?page=about">A propos</a>{% endblock %}
             {% endembed %}
         </section>
     </section>

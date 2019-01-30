@@ -31,8 +31,8 @@ class Router
                 $method = 'showAllPosts';
                 $params = [];
 
-            // Blog Post
-            } elseif ($page === 'blog-post' &&
+            // Post
+            } elseif ($page === 'post' &&
                 isset($_GET['post-id']) &&
                 is_numeric($_GET['post-id'])) {
 

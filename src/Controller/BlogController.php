@@ -25,7 +25,6 @@ class BlogController extends Controller
     protected $tagManager;
     protected $categoryManager;
     protected $commentManager;
-    protected $twig;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
