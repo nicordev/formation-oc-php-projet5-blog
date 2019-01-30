@@ -18,8 +18,8 @@ class Router
     public static function run(): Route
     {
         // Default route : Home
-        $controller = 'Controller\BlogController';
-        $method = 'showAllPosts';
+        $controller = 'Controller\HomeController';
+        $method = 'showHome';
         $params = [];
 
         if (isset($_GET['page'])) {
@@ -76,8 +76,8 @@ class Router
             // 404 page not found
             } else {
                 // TODO Throw an exception instead
-                $controller = 'Controller\BlogController';
-                $method = 'pageNotFound404';
+                $controller = 'Controller\ErrorController';
+                $method = 'showError404';
                 $params = [];
             }
         }

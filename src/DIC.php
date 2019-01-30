@@ -10,6 +10,8 @@ namespace Application;
 
 
 use Controller\BlogController;
+use Controller\ErrorController;
+use Controller\HomeController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
@@ -28,7 +30,7 @@ class DIC
     /**
      * @return BlogController
      */
-    public static function newBlogController()
+    public static function newBlogController(): BlogController
     {
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
 
@@ -44,5 +46,39 @@ class DIC
             new CommentManager(),
             $twig
         );
+    }
+
+    /**
+     * @return HomeController
+     */
+    public static function newHomeController(): HomeController
+    {
+        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+
+        $twig = new Twig_Environment($twigLoader, [
+            'debug' => true, // TODO change to false for production
+            'cache' => false // TODO change to true for production
+        ]);
+
+        return new HomeController(
+            new PostManager(),
+            new CategoryManager(),
+            $twig
+        );
+    }
+
+    /**
+     * @return ErrorController
+     */
+    public static function newErrorController(): ErrorController
+    {
+        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+
+        $twig = new Twig_Environment($twigLoader, [
+            'debug' => true, // TODO change to false for production
+            'cache' => false // TODO change to true for production
+        ]);
+
+        return new ErrorController($twig);
     }
 }

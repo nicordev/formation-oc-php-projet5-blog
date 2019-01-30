@@ -1,0 +1,29 @@
+<?php
+
+namespace Controller;
+
+use Twig_Environment;
+
+class ErrorController
+{
+    private $twig;
+
+    const VIEW_404 = 'pageNotFound.twig';
+
+    public function __construct(Twig_Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
+    /**
+     * Show a page for errors 404
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showError404()
+    {
+        echo $this->twig->render(self::VIEW_404);
+    }
+}
