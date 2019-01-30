@@ -56,34 +56,28 @@
                     <textarea class="admin-textarea" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
 
+                {# Tags #}
                 <div id="post-tags-wrapper">
                     <h3>Etiquettes</h3>
 
-                    <div class="admin-piece" id="available-tags-wrapper">
-                        <h4>Etiquettes disponibles</h4>
-
+                    <div class="admin-box" id="available-tags-wrapper">
                         <ul id="available-tags">
                             {% if tags %}
                                 {% for tag in tags %}
-                                    <li><span class="closing-cross">X</span><span class="available-tag">{{ tag }}</span><input type="hidden" name="tags" value="{{ tag }}"></li>
+                                    <li>
+                                        <input type="checkbox" name="tags[]" value="{{ tag }}">
+                                        <label class="available-tag" for="{{ tag }}">{{ tag }}</label>
+                                    </li>
                                 {% endfor %}
-                            {% else %}
-                                <li>Aucune.</li>
                             {% endif %}
                         </ul>
                     </div>
 
-                    <div class="admin-piece" id="selected-tags-wrapper">
-                        <h4>Etiquettes sélectionnées</h4>
-
-                        <ul id="selected-tags">
-                        </ul>
-                    </div>
-
-                    <div class="admin-piece" id="new-tag-wrapper">
+                    {# New tag #}
+                    <div class="admin-box" id="new-tag-wrapper">
                         <label for="new-tag">Créer une étiquette</label><br>
-                        <input class="tag-input" type="text" id="new-tag"><br>
-                        <button class="btn" id="new-tag-btn">Ajouter</button>
+                        <input class="tag-input" type="text" id="new-tag">
+                        <button class="btn" id="new-tag-btn">+</button>
                     </div>
                 </div>
             </form>

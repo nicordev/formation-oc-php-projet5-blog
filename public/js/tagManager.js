@@ -1,4 +1,5 @@
 (function () {
+
     let newTagBtnElt = document.getElementById('new-tag-btn');
 
     newTagBtnElt.addEventListener('click', function(evt) {
@@ -11,16 +12,16 @@
     });
 
     /**
-     * Add a new tag in the selected tags list
+     * Add a new tag in the tags list
      *
      * @param newTag
      */
     function addNewTag(newTag)
     {
         let newTagElt = createTagElt(newTag);
-        let selectedTagsElt = document.getElementById("selected-tags");
+        let availableTagsElt = document.getElementById("available-tags");
 
-        selectedTagsElt.appendChild(newTagElt);
+        availableTagsElt.appendChild(newTagElt);
     }
 
     /**
@@ -31,52 +32,48 @@
      */
     function createTagElt(tag)
     {
-        let wrapperElt = document.createElement('li');
-        let tagElt = document.createElement('span');
-        let hiddenInputElt = createHiddenInputElt('tag', tag);
-        let closingCrossElt = createClosingCrossElt();
+        let tagElt = document.createElement('li');
+        let checkboxElt = createCheckboxElt('tags[]', tag, true);
+        let labelElt = createLabelElt(tag, tag);
 
-        tagElt.setAttribute('class', 'selected-tag');
-        tagElt.textContent = tag;
+        labelElt.setAttribute('class', 'available-tag');
 
-        wrapperElt.appendChild(closingCrossElt);
-        wrapperElt.appendChild(tagElt);
-        wrapperElt.appendChild(hiddenInputElt);
+        tagElt.appendChild(checkboxElt);
+        tagElt.appendChild(labelElt);
 
-        return wrapperElt;
+        return tagElt;
     }
 
     /**
-     * Create a closing cross which erase the parent node on click
-     *
-     * @returns {HTMLElement}
+     * Create a label
+     * 
+     * @param {string} forAttribute 
+     * @param {string} text 
      */
-    function createClosingCrossElt()
+    function createLabelElt(forAttribute, text)
     {
-        let closingCrossElt = document.createElement('span');
-        closingCrossElt.textContent = 'X';
-        closingCrossElt.setAttribute('class', 'closing-cross');
+        let labelElt = document.createElement('label');
+        labelElt.setAttribute('for', forAttribute);
+        labelElt.textContent = text;
 
-        closingCrossElt.addEventListener('click', function(evt) {
-            evt.target.parentNode.innerHTML = '';
-        });
-
-        return closingCrossElt;
+        return labelElt;
     }
 
     /**
-     * Create a hidden input
+     * Create a checkbox
      *
      * @returns {HTMLElement}
      */
-    function createHiddenInputElt(name, value)
+    function createCheckboxElt(name, value, checked = true)
     {
-        let hiddenInputElt = document.createElement('input');
-        hiddenInputElt.type = 'hidden';
-        hiddenInputElt.name = name;
-        hiddenInputElt.value = value;
+        let checkboxElt = document.createElement('input');
+        checkboxElt.type = 'checkbox';
+        checkboxElt.name = name;
+        checkboxElt.value = value;
+        checkboxElt.id = value;
+        checkboxElt.checked = checked;
 
-        return hiddenInputElt;
+        return checkboxElt;
     }
 
     /**
@@ -87,32 +84,32 @@
      */
     function isNewTag(tag)
     {
-        let selectedTags = getSelectedTags();
+        let availableTags = getAvailableTags();
 
-        if (selectedTags && selectedTags.length > 0) {
-            return !selectedTags.includes(tag);
+        if (availableTags && availableTags.length > 0) {
+            return !availableTags.includes(tag);
         }
         return true;
     }
 
     /**
-     * Get all selected tags
+     * Get all available tags
      *
      * @returns {Array}
      */
-    function getSelectedTags()
+    function getAvailableTags()
     {
-        let selectedTags = [];
-        let selectedTagsElts = document.getElementsByClassName('selected-tag');
+        let availableTags = [];
+        let availableTagsElts = document.getElementsByClassName('available-tag');
 
-        if (selectedTagsElts.length === 0) {
+        if (availableTagsElts.length === 0) {
             return false;
         }
 
-        for (let i = 0, size = selectedTagsElts.length; i < size; i++) {
-            selectedTags.push(selectedTagsElts[i].textContent);
+        for (let i = 0, size = availableTagsElts.length; i < size; i++) {
+            availableTags.push(availableTagsElts[i].textContent);
         }
 
-        return selectedTags;
+        return availableTags;
     }
 })();

@@ -172,6 +172,10 @@ td, th {
     padding: 10px 20px;
 }
 
+.btn:hover {
+    cursor: pointer;
+}
+
 .admin-blogpost-title {
     border: none;
     background-color: transparent;
@@ -192,7 +196,7 @@ td, th {
     margin: 10px 0;
 }
 
-.admin-piece {
+.admin-box {
     margin: 20px;
 }
 
