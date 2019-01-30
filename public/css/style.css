@@ -134,17 +134,17 @@ td, th {
 }
 
 .blogpost-content {
-    /* Feeling well? */
+
 }
 
 .blogpost-info {
-    padding: 10px 0 10px 0;
+    padding: 10px 0;
     font-size: 0.75em;
     color: burlywood;
 }
 
 .blogpost-tags {
-    padding: 10px 0 10px 0;
+    padding: 10px 0;
     font-size: 0.75em;
     color: burlywood;
 }
@@ -194,16 +194,22 @@ td, th {
     cursor: pointer;
 }
 
+.admin-box {
+    margin: 20px;
+}
+
+/* postEditor.twig */
+
+.post-editor-box {
+    margin: 20px;
+}
+
 .tag-input {
     border-radius: 10px;
     border: 1px solid lightslategrey;
     box-sizing: border-box;
     padding: 10px;
     margin: 10px 0;
-}
-
-.admin-box {
-    margin: 20px;
 }
 
 /* message.twig */

@@ -104,10 +104,12 @@ class BlogController extends Controller
     public function showAdminPanel(string $message = '')
     {
         $posts = $this->postManager->getAll();
+        $tags = $this->tagManager->getAll();
 
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
-            'message' => $message
+            'message' => $message,
+            'tags' => $tags
         ]);
     }
 

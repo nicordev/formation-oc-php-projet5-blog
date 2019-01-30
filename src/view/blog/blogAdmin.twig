@@ -9,64 +9,86 @@
 {% endblock %}
 
 {% block content %}
-    <section class="blog-admin">
-        <h2>Articles</h2>
+    <section id="blog-admin">
+        <div class="admin-box">
+            <h2>Articles</h2>
 
-        <p>
-            <a class="btn" href="?page=post-editor">Ajouter un article</a>
-        </p>
+            <p>
+                <a class="btn" href="?page=post-editor">Ajouter un article</a>
+            </p>
 
-        {% include "blog/message.twig" %}
+            {% include "blog/message.twig" %}
 
-        <table>
-            <thead>
-            <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Etiquettes</th>
-                <th>Commentaires</th>
-                <th>Date de création</th>
-            </tr>
-            </thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Etiquettes</th>
+                        <th>Commentaires</th>
+                        <th>Date de création</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-            {% for post in posts %}
+                <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>
+                            <form action="?page=post-editor" method="post">
+                                <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
+                            </form>
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            {{ post.getCreationDate }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+                <tfoot>
                 <tr>
-                    <td>
-                        <form action="?page=post-editor" method="post">
-                            <input type="hidden" name="post-id" value="{{ post.getId }}">
-                            <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
-                        </form>
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        {{ post.getCreationDate }}
-                    </td>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Etiquettes</th>
+                    <th>Commentaires</th>
+                    <th>Date de création</th>
                 </tr>
-            {% endfor %}
-            </tbody>
+                </tfoot>
+            </table>
+        </div>
 
-            <tfoot>
-            <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Etiquettes</th>
-                <th>Commentaires</th>
-                <th>Date de création</th>
-            </tr>
-            </tfoot>
-        </table>
+        <div class="admin-box">
+            <h2>Etiquettes</h2>
+
+            <form action="?page=blog-admin" method="post">
+                <ul>
+                    {% for tag in tags %}
+                        <li>
+                            <input class="admin-tag" type="text" value="{{ tag.getName() }}"><span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
+                        </li>
+                    {% endfor %}
+                    <li>
+                        <input class="admin-tag" type="text" placeholder="Ajouter une nouvelle étiquette">
+                    </li>
+                </ul>
+                <input class="btn" type="submit" value="Mettre à jour">
+            </form>
+        </div>
+
     </section>
 {% endblock %}
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
+    <script src="public/js/erase.js"></script>
 {% endblock %}
