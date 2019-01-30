@@ -11,6 +11,7 @@ namespace Model\Manager;
 
 use Model\Entity\Entity;
 use Model\Entity\Post;
+use Model\Entity\Tag;
 use \PDO;
 use Application\Exception\BlogException;
 
@@ -38,6 +39,28 @@ class PostManager extends Manager
         ])) {
             throw new BlogException('Error when trying to add the new blog post in the database.');
         }
+
+        // Associate tags and post
+        $tags = $newPost->getTags();
+        if (!empty($tags)) {
+            $newPost->setId($this->getLastId());
+            $this->associatePostAndTags($newPost, $tags);
+        }
+    }
+
+    /**
+     * Get the last post id.
+     *
+     * @return int
+     */
+    public function getLastId(): int
+    {
+        $query = 'SELECT MAX(p_id) FROM bl_post';
+        $requestLastId = $this->database->query($query);
+
+        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
+
+        return $lastId;
     }
 
     /**
@@ -167,5 +190,27 @@ class PostManager extends Manager
         ];
 
         return new Post($attributes);
+    }
+
+    private function associatePostAndTags(Post $post, array $tags)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_post_tag WHERE pt_post_id_fk = :postId';
+        $requestDelete = $this->database->prepare($query);
+        $requestDelete->execute([
+            'postId' => $post->getId()
+        ]);
+
+        // Add
+        $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
+                VALUES (:postId, :tagId)';
+        $requestAdd = $this->database->prepare($query);
+
+        foreach ($tags as $tag) {
+            $requestAdd->execute([
+                'postId' => $post->getId(),
+                'tagId' => $tag->getId()
+            ]);
+        }
     }
 }

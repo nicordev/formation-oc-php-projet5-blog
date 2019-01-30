@@ -12,6 +12,7 @@ namespace Controller;
 use Application\Exception\BlogException;
 use Exception;
 use Model\Entity\Post;
+use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
@@ -138,7 +139,7 @@ class BlogController extends Controller
     // Actions
 
     /**
-     * Add a new post from $_POST
+     * Add a new post from $_POST and add associated tags
      *
      * @throws BlogException
      * @throws \Twig_Error_Loader
@@ -148,9 +149,26 @@ class BlogController extends Controller
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
+        $tags = self::getTagsFromForm();
 
         if ($newPost !== null) {
+
+            if ($tags !== null) {
+                foreach ($tags as $tag) {
+                    // Add new tag
+                    if ($this->tagManager->isNewTag($tag)) {
+                        $this->tagManager->add($tag);
+                    }
+                    // Set tag id
+                    $id = $this->tagManager->getId($tag->getName());
+                    $tag->setId($id);
+                }
+                // Associate tags and post
+                $newPost->setTags($tags);
+            }
+
             $this->postManager->add($newPost);
+
             // Come back to the admin panel
             $this->showAdminPanel("Un article a été publié.");
 
@@ -199,6 +217,24 @@ class BlogController extends Controller
     }
 
     // Private
+
+    /**
+     * Return Tag entities
+     *
+     * @return array
+     */
+    private static function getTagsFromForm(): array
+    {
+        $tags = null;
+
+        if (isset($_POST['tags'])) {
+            foreach ($_POST['tags'] as $tag) {
+                $tags[] = new Tag(['name' => $tag]);
+            }
+        }
+
+        return $tags;
+    }
 
     /**
      * Create a Post from a form (thanks to $_POST)

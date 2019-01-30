@@ -106,6 +106,46 @@ class TagManager extends Manager
         return $tags;
     }
 
+    /**
+     * Check if a tag is new
+     *
+     * @param Tag $newTag
+     * @return bool
+     */
+    public function isNewTag(Tag $newTag): bool
+    {
+        $tags = $this->getAll();
+
+        if (!empty($tags)) {
+            foreach ($tags as $tag) {
+                if ($tag->getName() === $newTag->getName()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the id of a tag from its name
+     *
+     * @param string $tagName
+     * @return mixed
+     */
+    public function getId(string $tagName)
+    {
+        $query = 'SELECT tag_id FROM bl_tag WHERE tag_name = :tag';
+        $requestId = $this->database->prepare($query);
+        $requestId->execute([
+            'tag' => $tagName
+        ]);
+
+        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
+
+        return $id;
+    }
+
     // Private
 
     /**
