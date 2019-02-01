@@ -56,13 +56,13 @@
                 </tbody>
 
                 <tfoot>
-                <tr>
-                    <th>Titre</th>
-                    <th>Auteur</th>
-                    <th>Etiquettes</th>
-                    <th>Commentaires</th>
-                    <th>Date de création</th>
-                </tr>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Etiquettes</th>
+                        <th>Commentaires</th>
+                        <th>Date de création</th>
+                    </tr>
                 </tfoot>
             </table>
         </div>
@@ -71,21 +71,21 @@
             <h2>Etiquettes</h2>
 
             <form action="?page=blog-admin" method="post">
-                <ul>
+                <ul id="tag-list">
                     {% for tag in tags %}
                         <li>
-                            <input class="admin-tag" type="text" value="{{ tag.getName() }}"><span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
+                            <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
+                            <input class="available-tag" type="text" value="{{ tag.getName() }}">
+                            <span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
                         </li>
                     {% endfor %}
 
-                    <li>
-                        <form action="?page=blog-admin&action=add-tag" method="post">
-                            <input class="admin-tag" type="text" name="new-tag" placeholder="Ajouter une nouvelle étiquette">
-                            <input class="btn btn-small" type="submit" value="Ajouter">
-                        </form>
+                    <li id="new-tag-input-li">
+                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Ajouter une nouvelle étiquette">
+                        <button id="new-tag-btn" class="btn btn-small">+</button>
                     </li>
                 </ul>
-                <input class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+                <input id="new-tag-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
             </form>
         </div>
 
@@ -95,4 +95,5 @@
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
     <script src="public/js/erase.js"></script>
+    <script src="public/js/adminTagManager.js"></script>
 {% endblock %}

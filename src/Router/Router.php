@@ -42,6 +42,8 @@ class Router
 
             // Blog Admin
             } elseif ($page === 'blog-admin') {
+
+                // Manage post
                 if (isset($_POST['add-post'])) {
                     $controller = 'Controller\BlogController';
                     $method = 'addPost';
@@ -61,6 +63,8 @@ class Router
                     $method = 'showAdminPanel';
                     $params = [];
                 }
+
+
 
             // Post Editor
             } elseif ($page === 'post-editor') {
