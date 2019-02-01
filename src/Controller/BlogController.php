@@ -31,6 +31,8 @@ class BlogController extends Controller
     const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'blog/postEditor.twig';
 
+    const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+
     /**
      * BlogController constructor.
      *
@@ -122,7 +124,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostEditor(int $postToEditId = Post::NO_ID, string $message = '')
+    public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
         $availableTags = $this->tagManager->getAll();
@@ -133,7 +135,7 @@ class BlogController extends Controller
             $availableTagNames[] = $availableTag->getName();
         }
 
-        if ($postToEditId !== Post::NO_ID) {
+        if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
 
             foreach ($postToEdit->getTags() as $tag) {
@@ -188,7 +190,7 @@ class BlogController extends Controller
 
         } else {
             // Try again...
-            $this->showPostEditor(Post::NO_ID, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+            $this->showPostEditor(null, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
         }
     }
 
@@ -366,9 +368,14 @@ class BlogController extends Controller
             $post->setContent(htmlspecialchars($_POST['post-content']));
             $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
 
+            if (isset($_POST['add-post'])) {
+                $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+            }
+
             // Edit a post
             if (isset($_POST['edit-post'])) {
                 $post->setId(htmlspecialchars($_POST['edit-post']));
+                $post->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
             }
             if (isset($_POST['post-editor-id'])) {
                 $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));

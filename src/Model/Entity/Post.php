@@ -11,13 +11,13 @@ namespace Model\Entity;
 
 class Post extends Entity
 {
-    protected $authorId = self::NO_ID;
-    protected $lastEditorId = self::NO_ID;
-    protected $creationDate = '';
-    protected $lastModificationDate = '';
-    protected $title = '';
-    protected $excerpt = '';
-    protected $content = '';
+    protected $authorId = null;
+    protected $lastEditorId = null;
+    protected $creationDate = null;
+    protected $lastModificationDate = null;
+    protected $title = null;
+    protected $excerpt = null;
+    protected $content = null;
     protected $tags = [];
 
     /**
@@ -47,7 +47,7 @@ class Post extends Entity
     /**
      * @param int $lastEditorId
      */
-    public function setLastEditorId(int $lastEditorId): void
+    public function setLastEditorId(?int $lastEditorId): void
     {
         $this->lastEditorId = $lastEditorId;
     }
@@ -79,7 +79,7 @@ class Post extends Entity
     /**
      * @param string $lastModificationDate
      */
-    public function setLastModificationDate(string $lastModificationDate): void
+    public function setLastModificationDate(?string $lastModificationDate): void
     {
         $this->lastModificationDate = $lastModificationDate;
     }

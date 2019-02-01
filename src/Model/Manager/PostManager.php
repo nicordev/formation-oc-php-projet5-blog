@@ -9,7 +9,6 @@
 namespace Model\Manager;
 
 
-use Model\Entity\Entity;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use \PDO;
@@ -17,28 +16,33 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
-    protected $attributes = [];
+    public function __construct()
+    {
+        $this->tableName = 'bl_post';
+        $this->fields = [
+            'id' => 'p_id',
+            'authorId' => 'p_author_id_fk',
+            'lastEditorId' => 'p_last_editor_id_fk',
+            'creationDate' => 'p_creation_date',
+            'lastModificationDate' => 'p_last_modification_date',
+            'title' => 'p_title',
+            'excerpt' => 'p_excerpt',
+            'content' => 'p_content'
+        ];
+
+        parent::__construct();
+    }
 
     /**
      * Add a new blog post in the database
      *
      * @param Post $newPost
      * @throws BlogException
+     * @throws \ReflectionException
      */
-    public function add(Post $newPost): void
+    public function add($newPost): void
     {
-        $query = 'INSERT INTO bl_post(p_author_id_fk, p_creation_date, p_title, p_excerpt, p_content)
-            VALUES (:authorId, NOW(), :title, :excerpt, :content)';
-
-        $requestAdd = $this->database->prepare($query);
-        if (!$requestAdd->execute([
-            'authorId' => $newPost->getAuthorId(),
-            'title' => $newPost->getTitle(),
-            'excerpt' => $newPost->getExcerpt(),
-            'content' => $newPost->getContent()
-        ])) {
-            throw new BlogException('Error when trying to add the new blog post in the database.');
-        }
+        parent::add($newPost);
 
         // Associate tags and post
         $tags = $newPost->getTags();
@@ -68,27 +72,11 @@ class PostManager extends Manager
      *
      * @param Post $modifiedPost
      * @throws BlogException
+     * @throws \ReflectionException
      */
-    public function edit(Post $modifiedPost): void
+    public function edit($modifiedPost): void
     {
-        $query = 'UPDATE bl_post
-            SET p_last_editor_id_fk = :lastEditorId,
-                p_last_modification_date = NOW(),
-                p_title = :title,
-                p_excerpt = :excerpt,
-                p_content = :content
-            WHERE p_id = :id';
-
-        $requestEdit = $this->database->prepare($query);
-        if (!$requestEdit->execute([
-            'id' => $modifiedPost->getId(),
-            'lastEditorId' => $modifiedPost->getLastEditorId(),
-            'title' => $modifiedPost->getTitle(),
-            'excerpt' => $modifiedPost->getExcerpt(),
-            'content' => $modifiedPost->getContent()
-        ])) {
-            throw new BlogException('Error when trying to edit a post in the database. Post id:' . $modifiedPost->getId());
-        }
+        parent::edit($modifiedPost);
     }
 
     /**
@@ -99,12 +87,7 @@ class PostManager extends Manager
      */
     public function delete(int $postId): void
     {
-        $query = 'DELETE FROM bl_post WHERE p_id = ?';
-
-        $requestDelete = $this->database->prepare($query);
-        if (!$requestDelete->execute([$postId])) {
-            throw new BlogException('Error when trying to delete a post in the database. Post id:' . $postId);
-        }
+        parent::delete($postId);
     }
 
     /**
@@ -116,18 +99,8 @@ class PostManager extends Manager
      */
     public function get(int $postId): Post
     {
-        $query = "SELECT * FROM bl_post WHERE p_id = ?";
+        $post = parent::get($postId);
 
-        $requestAPost = $this->database->prepare($query);
-        if (!$requestAPost->execute([$postId])) {
-            throw new BlogException('Error when trying to get a post from the database. Post id:' . $postId);
-        }
-        $thePostData = $requestAPost->fetch(PDO::FETCH_ASSOC);
-        if (!$thePostData) {
-            throw new BlogException('Error when trying to get a post. Post id: ' . $postId);
-        }
-
-        $post = self::createAPostFromDatabaseData($thePostData);
         $associatedTags = $this->getTagsOfAPost($post->getId());
         $post->setTags($associatedTags);
 
@@ -168,17 +141,7 @@ class PostManager extends Manager
      */
     public function getAll(): array
     {
-        $posts = [];
-        $query = "SELECT * FROM bl_post";
-
-        $requestAllPosts = $this->database->query($query);
-        $postsData = $requestAllPosts->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($postsData as $postsDatum) {
-            $posts[] = self::createAPostFromDatabaseData($postsDatum);
-        }
-
-        return $posts;
+        return parent::getAll();
     }
 
     /**
