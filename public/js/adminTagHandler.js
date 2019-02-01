@@ -3,8 +3,6 @@ let newTagBtnElt = document.getElementById('new-tag-btn');
 let tagListFormElt = document.getElementById('admin-tag-list-form');
 
 const AVAILABLE_TAG_CLASS = 'available-tag';
-const BAD_TAG_COLOR = 'rgb(255, 178, 178)';
-const GOOD_TAG_COLOR = 'white';
 
 /**
  * Highlight any incorrect Tag from the list of tags
@@ -12,26 +10,8 @@ const GOOD_TAG_COLOR = 'white';
 function highlightIncorrectTags()
 {
     let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
-    let tags = [];
-    let numberOfTags = tagElts.length;
-    let i;
 
-    // Let's get the names of the tags first
-    for (i = 0; i < numberOfTags; i++) {
-        tagElts[i].style.backgroundColor = GOOD_TAG_COLOR; // Reset the color
-        if (!tagElts[i].value) {
-            tagElts[i].style.backgroundColor = BAD_TAG_COLOR;
-        } else {
-            tags.push(tagElts[i].value);
-        }
-    }
-
-    // Counting the occurrences of each tag
-    for (i = 0; i < numberOfTags; i++) {
-        if (countOccurrences(tags, tags[i]) > 1) {
-            tagElts[i].style.backgroundColor = BAD_TAG_COLOR;
-        }
-    }
+    myApp.formatBadElements(tagElts, 'bad', true, true, true);
 }
 
 // Update the list of tags
@@ -55,28 +35,19 @@ function tagListIsCorrect()
 {
     let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
     let tags = [];
-    let numberOfTags = tagElts.length;
-    let i;
 
     if (!tagElts) {
         return false;
     }
 
-    // Let's get the names of the tags first
-    for (i = 0; i < numberOfTags; i++) {
+    for (let i = 0, numberOfTags = tagElts.length; i < numberOfTags; i++) {
         if (!tagElts[i].value) {
             return false;
         }
         tags.push(tagElts[i].value);
     }
 
-    // Counting the occurrences of each tag
-    for (i = 0; i < numberOfTags; i++) {
-        if (countOccurrences(tags, tags[i]) > 1) {
-            return false;
-        }
-    }
-    return true;
+    return !myApp.hasForbiddenValues(tags, null, false, false);
 }
 
 // Add a new tag in the list
@@ -87,32 +58,13 @@ newTagBtnElt.addEventListener('click', function(evt) {
 });
 
 /**
- * Count the number of occurrences of a value in an array
- *
- * @param theArray
- * @param theValue
- * @returns {number}
- */
-function countOccurrences(theArray, theValue)
-{
-    let count = 0;
-
-    for (let i = 0, size = theArray.length; i < size; i++) {
-        if (theArray[i] === theValue) {
-            count++;
-        }
-    }
-    return count;
-}
-
-/**
  * Add a tag in the list of tags if its new
  */
 function addTag()
 {
     let newTag = document.getElementById('new-tag-input').value;
 
-    if (isUniqueTag(newTag)) {
+    if (newTag && isUniqueTag(newTag)) {
         addTagInTheList(newTag);
     }
 }
@@ -127,12 +79,7 @@ function isUniqueTag(tag)
 {
     let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
 
-    for (let i = 0, size = tagElts.length; i < size; i++) {
-        if (tag === tagElts[i].value) {
-            return false;
-        }
-    }
-    return true;
+    return !myApp.isInElements(tag, tagElts);
 }
 
 /**
@@ -157,9 +104,9 @@ function addTagInTheList(tag)
 function createTagElt(tag)
 {
     let tagElt = document.createElement('li');
-    let tagHiddenInfoElt = createInputElt('hidden', 'tag_ids[]', 'new');
-    let tagInputElt = createInputElt('text', '', tag);
-    let closingCrossElt = createClosingCrossElt(); // From erase.js
+    let tagHiddenInfoElt = myApp.createInputElt('hidden', 'tag_ids[]', 'new');
+    let tagInputElt = myApp.createInputElt('text', '', tag);
+    let closingCrossElt = myApp.eraseTools.createClosingCrossElt();
 
     tagInputElt.setAttribute('class', AVAILABLE_TAG_CLASS);
     tagInputElt.setAttribute('onkeyup', 'highlightIncorrectTags()');
@@ -170,22 +117,4 @@ function createTagElt(tag)
     tagElt.appendChild(closingCrossElt);
 
     return tagElt;
-}
-
-/**
- * Create an input DOM element
- *
- * @param type
- * @param name
- * @param value
- * @returns {HTMLElement}
- */
-function createInputElt(type = 'text', name = '', value = '')
-{
-    let elt = document.createElement('input');
-    elt.type = type;
-    elt.name = name;
-    elt.value = value;
-
-    return elt;
 }

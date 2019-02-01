@@ -1,7 +1,7 @@
 {% extends "layout.twig" %}
 
 {% block title %}
-    {{ post.getTitle }}
+    Administration
 {% endblock %}
 
 {% block header %}
@@ -10,6 +10,8 @@
 
 {% block content %}
     <section id="blog-admin">
+
+        {# Posts#}
         <div class="admin-box">
             <h2>Articles</h2>
 
@@ -67,6 +69,7 @@
             </table>
         </div>
 
+        {# Tags #}
         <div class="admin-box">
             <h2>Etiquettes</h2>
 
@@ -78,8 +81,7 @@
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="refreshValue(event); highlightIncorrectTags();">
-                            <span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
+                            <input class="available-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectTags();"><span class="closing-cross" onclick="myApp.eraseTools.eraseElementFromEvent(event)">X</span>
                         </li>
                     {% endfor %}
 
@@ -91,12 +93,36 @@
             </form>
         </div>
 
+        <div class="admin-box">
+            <h2>Catégories</h2>
+
+            <form action="?page=blog-admin" method="post">
+
+                <input id="update-category-list-btn" class="btn" type="submit" value="Mettre à jour les catégories">
+
+                <ul id="category-list">
+                    {% for category in categories %}
+                        <li>
+                            <input type="hidden" name="category_ids[]" value="{{ category.getId() }}">
+                            <input class="available-category" type="text" name="category_names[]" value="{{ category.getName() }}" onkeyup="myApp.refreshValue(event);"><span class="closing-cross" onclick="myApp.eraseTools.eraseElementFromEvent(event)">X</span>
+                        </li>
+                    {% endfor %}
+
+                    <li id="new-category-input-li">
+                        <input id="new-category-input" type="text" name="new-category-input" placeholder="Ajouter une nouvelle catégorie">
+                        <button type="button" id="new-category-btn" class="btn btn-small">+</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
     </section>
 {% endblock %}
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="public/js/erase.js"></script>
-    <script src="public/js/refreshValue.js"></script>
-    <script src="public/js/adminTagManager.js"></script>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="public/js/adminTagHandler.js"></script>
 {% endblock %}

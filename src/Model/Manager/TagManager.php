@@ -8,7 +8,9 @@ use Model\Entity\Tag;
 
 class TagManager extends Manager
 {
-
+    /**
+     * TagManager constructor.
+     */
     public function __construct()
     {
         $this->tableName = 'bl_tag';

@@ -107,11 +107,13 @@ class BlogController extends Controller
     {
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
+        $categories = $this->categoryManager->getAll();
 
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
-            'tags' => $tags
+            'tags' => $tags,
+            'categories' => $categories
         ]);
     }
 

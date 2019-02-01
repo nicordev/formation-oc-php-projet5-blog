@@ -9,6 +9,20 @@ use Model\Entity\Category;
 class CategoryManager extends Manager
 {
     /**
+     * CategoryManager constructor.
+     */
+    public function __construct()
+    {
+        $this->tableName = 'bl_category';
+        $this->fields = [
+            'id' => 'cat_id',
+            'name' => 'cat_name'
+        ];
+
+        parent::__construct();
+    }
+
+    /**
      * Add a new category in the database
      *
      * @param Category $newCategory

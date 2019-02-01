@@ -245,8 +245,8 @@ input[type='text'], textarea {
 .closing-cross {
     font-weight: bold;
     border: 1px solid lightslategrey;
-    background-color: lightslategrey;
-    color: #ddddff;
+    background-color: rgb(237, 237, 237);
+    color: lightslategrey;
     border-radius: 50%;
     padding: 0 7px 2px 7px;
     margin: 5px;
@@ -254,4 +254,10 @@ input[type='text'], textarea {
 
 .closing-cross:hover {
     cursor: pointer;
+}
+
+/* common */
+.bad {
+    background-color: #dd4444;
+    color: whitesmoke;
 }

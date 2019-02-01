@@ -1,7 +1,11 @@
 {% extends 'layout.twig' %}
 
 {% block title %}
-    {{ post.getTitle }}
+    {% if postToEdit %}
+        {{ postToEdit.getTitle }}
+    {% else %}
+        Ecrire un article
+    {% endif %}
 {% endblock %}
 
 {% block header %}
@@ -87,7 +91,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="public/js/tagManager.js"></script>
+    <script src="public/js/tagHandler.js"></script>
 {% endblock %}
 
 

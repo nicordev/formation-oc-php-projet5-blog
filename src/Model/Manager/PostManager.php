@@ -16,6 +16,9 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
+    /**
+     * PostManager constructor.
+     */
     public function __construct()
     {
         $this->tableName = 'bl_post';
