@@ -40,10 +40,9 @@ tagListFormElt.addEventListener('submit', function(evt) {
     evt.preventDefault();
 
     if (tagListIsCorrect()) {
-        console.log('List OK')
-        // evt.target.submit(); // TODO check this syntax
+        evt.target.submit();
     } else {
-        console.log('Erreur dans la liste');
+        console.log('Erreur dans la liste des tags');
     }
 });
 
@@ -164,6 +163,7 @@ function createTagElt(tag)
 
     tagInputElt.setAttribute('class', AVAILABLE_TAG_CLASS);
     tagInputElt.setAttribute('onkeyup', 'highlightIncorrectTags()');
+    tagInputElt.setAttribute('name', 'tag_names[]');
 
     tagElt.appendChild(tagHiddenInfoElt);
     tagElt.appendChild(tagInputElt);

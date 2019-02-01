@@ -78,7 +78,7 @@
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag" type="text" value="{{ tag.getName() }}" onkeyup="refreshValue(event); highlightIncorrectTags();">
+                            <input class="available-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="refreshValue(event); highlightIncorrectTags();">
                             <span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
                         </li>
                     {% endfor %}

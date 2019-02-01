@@ -64,7 +64,17 @@ class Router
                     $params = [];
                 }
 
-
+                // Manage tags
+                if (isset($_POST['tag_ids']) &&
+                    isset($_POST['tag_names'])
+                ) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'updateTagList';
+                    $params = [
+                        'tagIds' => $_POST['tag_ids'],
+                        'tagNames' => $_POST['tag_names']
+                    ];
+                }
 
             // Post Editor
             } elseif ($page === 'post-editor') {

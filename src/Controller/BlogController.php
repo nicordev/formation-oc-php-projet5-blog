@@ -230,7 +230,101 @@ class BlogController extends Controller
         $this->showAdminPanel("Un article a été supprimé.");
     }
 
+    /**
+     * Update the list of tags
+     *
+     * @param array $tagIds
+     * @param array $tagNames
+     * @throws Exception
+     */
+    public function updateTagList(array $tagIds, array $tagNames)
+    {
+        $oldTags = $this->tagManager->getAll();
+
+        // Add new tags
+        $this->addNewTags($tagIds, $tagNames);
+
+        // Update of delete tags
+        $tagIds = array_map('intval', $tagIds); // Convert string to int
+        foreach ($oldTags as $oldTag) {
+            // Delete or update tag ?
+            if (self::isTagToDelete($oldTag, $tagIds)) {
+                $this->tagManager->delete($oldTag->getId());
+            } else {
+                $this->updateTag($oldTag, $tagIds, $tagNames);
+            }
+        }
+        // Head back to the admin panel
+        $this->showAdminPanel('La liste des étiquettes a été mise à jour.');
+    }
+
     // Private
+
+    /**
+     * Add new tags to the database if tag id === 'new'
+     *
+     * @param array $tagIds
+     * @param array $tagNames
+     * @return int
+     * @throws Exception
+     */
+    private function addNewTags(array $tagIds, array $tagNames)
+    {
+        $numberOfNewTags = 0;
+
+        for ($i = count($tagIds) - 1; $i >= 0; $i--) {
+            if ($tagIds[$i] === 'new') {
+                $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
+                $numberOfNewTags++;
+
+            } else {
+                break;
+            }
+        }
+        return $numberOfNewTags;
+    }
+
+    /**
+     * Update a tag in the database if necessary
+     * Return true if the tag has been updated
+     *
+     * @param Tag $tagToUpdate
+     * @param array $tagIds
+     * @param array $tagNames
+     * @return bool
+     */
+    private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)
+    {
+        $tagToUpdateId = $tagToUpdate->getId();
+        $tagToUpdateName = $tagToUpdate->getName();
+
+        for ($i = 0, $size = count($tagIds); $i < $size; $i++) {
+            if ($tagToUpdateId === $tagIds[$i] && $tagToUpdateName !== $tagNames[$i]) {
+//                $this->tagManager->update($tagToUpdateId, $tagNames[$i]); // TODO implement the method
+                return true;
+            } elseif ($tagIds[$i] === 'new') {
+                break;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a tag has to be deleted
+     *
+     * @param Tag $oldTag
+     * @param array $tagIds
+     * @return bool
+     */
+    private static function isTagToDelete(Tag $oldTag, array $tagIds)
+    {
+        foreach ($tagIds as $tagId) {
+            if ($tagId === $oldTag->getId()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Return Tag entities
