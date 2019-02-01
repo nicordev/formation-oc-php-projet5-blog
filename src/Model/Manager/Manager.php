@@ -155,6 +155,7 @@ abstract class Manager
         $query = "SELECT * FROM " . $this->tableName;
 
         $requestAllEntities = $this->database->query($query);
+
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($tableData as $tableDatum) {

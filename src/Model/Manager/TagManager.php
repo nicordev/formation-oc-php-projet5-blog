@@ -8,6 +8,18 @@ use Model\Entity\Tag;
 
 class TagManager extends Manager
 {
+
+    public function __construct()
+    {
+        $this->tableName = 'bl_tag';
+        $this->fields = [
+            'id' => 'tag_id',
+            'name' => 'tag_name'
+        ];
+
+        parent::__construct();
+    }
+
     /**
      * Add a new tag in the database
      *

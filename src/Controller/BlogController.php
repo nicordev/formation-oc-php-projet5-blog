@@ -9,6 +9,7 @@
 namespace Controller;
 
 
+use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
 use Model\Entity\Post;
@@ -158,6 +159,7 @@ class BlogController extends Controller
      * Add a new post from $_POST and add associated tags
      *
      * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -198,6 +200,7 @@ class BlogController extends Controller
      * Edit an existing post from $_POST
      *
      * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -268,7 +271,7 @@ class BlogController extends Controller
      * @param array $tagIds
      * @param array $tagNames
      * @return int
-     * @throws Exception
+     * @throws AppException
      */
     private function addNewTags(array $tagIds, array $tagNames)
     {
@@ -276,7 +279,11 @@ class BlogController extends Controller
 
         for ($i = count($tagIds) - 1; $i >= 0; $i--) {
             if ($tagIds[$i] === 'new') {
-                $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
+                try {
+                    $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to add the tag ' . $tagNames[$i]);
+                }
                 $numberOfNewTags++;
 
             } else {
@@ -294,6 +301,7 @@ class BlogController extends Controller
      * @param array $tagIds
      * @param array $tagNames
      * @return bool
+     * @throws AppException
      */
     private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)
     {
@@ -302,8 +310,18 @@ class BlogController extends Controller
 
         for ($i = 0, $size = count($tagIds); $i < $size; $i++) {
             if ($tagToUpdateId === $tagIds[$i] && $tagToUpdateName !== $tagNames[$i]) {
-//                $this->tagManager->update($tagToUpdateId, $tagNames[$i]); // TODO implement the method
+                $tagData = [
+                    'id' => $tagToUpdateId,
+                    'name' => $tagNames[$i]
+                ];
+                $updatedTag = new Tag($tagData);
+                try {
+                    $this->tagManager->edit($updatedTag);
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true));
+                }
                 return true;
+
             } elseif ($tagIds[$i] === 'new') {
                 break;
             }

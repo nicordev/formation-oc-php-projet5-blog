@@ -166,26 +166,6 @@ class PostManager extends Manager
 
     // Private
 
-    /**
-     * @param array $data
-     * @return Post
-     */
-    private static function createAPostFromDatabaseData(array $data): Post
-    {
-        $attributes = [
-            'id' => $data['p_id'],
-            'authorId' => $data['p_author_id_fk'],
-            'lastEditorId' => $data['p_last_editor_id_fk'] === null ? Entity::NO_ID : $data['p_last_editor_id_fk'],
-            'creationDate' => $data['p_creation_date'],
-            'lastModificationDate' => $data['p_last_modification_date'] === null ? '' : $data['p_last_modification_date'],
-            'title' => $data['p_title'],
-            'excerpt' => $data['p_excerpt'],
-            'content' => $data['p_content']
-        ];
-
-        return new Post($attributes);
-    }
-
     private function associatePostAndTags(Post $post, array $tags)
     {
         // Delete
@@ -206,5 +186,27 @@ class PostManager extends Manager
                 'tagId' => $tag->getId()
             ]);
         }
+    }
+
+    // Old
+
+    /**
+     * @param array $data
+     * @return Post
+     */
+    private static function createAPostFromDatabaseData(array $data): Post
+    {
+        $attributes = [
+            'id' => $data['p_id'],
+            'authorId' => $data['p_author_id_fk'],
+            'lastEditorId' => $data['p_last_editor_id_fk'],
+            'creationDate' => $data['p_creation_date'],
+            'lastModificationDate' => $data['p_last_modification_date'],
+            'title' => $data['p_title'],
+            'excerpt' => $data['p_excerpt'],
+            'content' => $data['p_content']
+        ];
+
+        return new Post($attributes);
     }
 }
