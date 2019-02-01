@@ -49,6 +49,13 @@ td, th {
     padding: 5px 20px;
 }
 
+input[type='text'], textarea {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
 /*
     id
     --
@@ -66,6 +73,10 @@ td, th {
     class
     -----
 */
+.w100 {
+    width: 100%;
+}
+
 .content {
     margin: 0 auto;
     max-width: 1300px;
@@ -161,11 +172,6 @@ td, th {
 /* blogAdmin.twig */
 
 .admin-input, .admin-textarea {
-    border-radius: 10px;
-    border: 1px solid lightslategrey;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px;
 }
 
 .btn, .btn:visited {
@@ -201,6 +207,12 @@ td, th {
 
 .admin-box {
     margin: 20px;
+}
+
+.available-tag {
+    color: chocolate;
+    font-weight: bold;
+    padding: 5px;
 }
 
 /* postEditor.twig */
