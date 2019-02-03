@@ -115,29 +115,6 @@ var myApp = {
     },
 
     /**
-     * Create an input DOM element
-     *
-     * @param type
-     * @param name
-     * @param value
-     * @returns {HTMLElement}
-     */
-    createInputElt: function (type = 'text', name = '', value = '')
-    {
-        let inputElt = document.createElement('input');
-
-        inputElt.type = type;
-        if (name) {
-            inputElt.name = name;
-        }
-        if (value) {
-            inputElt.value = value;
-        }
-
-        return inputElt;
-    },
-
-    /**
      * Refresh the value attribute
      *
      * @param evt
@@ -183,6 +160,44 @@ var myApp = {
             checkboxElt.checked = checked;
 
             return checkboxElt;
+        },
+
+        /**
+         * Create a label
+         *
+         * @param {string} forAttribute
+         * @param {string} text
+         */
+        createLabelElt: function (forAttribute, text)
+        {
+            let labelElt = document.createElement('label');
+            labelElt.setAttribute('for', forAttribute);
+            labelElt.textContent = text;
+
+            return labelElt;
+        },
+
+        /**
+         * Create an input DOM element
+         *
+         * @param type
+         * @param name
+         * @param value
+         * @returns {HTMLElement}
+         */
+        createInputElt: function (type = 'text', name = '', value = '')
+        {
+            let inputElt = document.createElement('input');
+
+            inputElt.type = type;
+            if (name) {
+                inputElt.name = name;
+            }
+            if (value) {
+                inputElt.value = value;
+            }
+
+            return inputElt;
         }
     },
 

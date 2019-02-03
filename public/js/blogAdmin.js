@@ -104,9 +104,9 @@ function addTagInTheList(tag)
 function createTagElt(tag)
 {
     let tagElt = document.createElement('li');
-    let tagHiddenInfoElt = myApp.createInputElt('hidden', 'tag_ids[]', 'new');
-    let tagInputElt = myApp.createInputElt('text', '', tag);
-    let closingCrossElt = myApp.eraseTools.createClosingCrossElt();
+    let tagHiddenInfoElt = myApp.elementsBuilder.createInputElt('hidden', 'tag_ids[]', 'new');
+    let tagInputElt = myApp.elementsBuilder.createInputElt('text', '', tag);
+    let closingCrossElt = myApp.elementsBuilder.createClosingCrossElt();
 
     tagInputElt.setAttribute('class', AVAILABLE_TAG_CLASS);
     tagInputElt.setAttribute('onkeyup', 'highlightIncorrectTags()');
