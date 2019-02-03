@@ -169,6 +169,12 @@ class PostManager extends Manager
 
     // Private
 
+    /**
+     * Fill the table bl_post_tag
+     *
+     * @param Post $post
+     * @param array $tags
+     */
     private function associatePostAndTags(Post $post, array $tags)
     {
         // Delete

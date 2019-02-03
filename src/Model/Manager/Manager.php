@@ -257,7 +257,7 @@ abstract class Manager
     }
 
     /**
-     * Get filled properties of an Entity (filter null values)
+     * Get filled properties of an Entity (filter null values and arrays)
      *
      * @param Entity $entity
      * @return array
@@ -272,8 +272,12 @@ abstract class Manager
         foreach ($reflectionMethods as $reflectionMethod) {
             if (strpos($reflectionMethod, 'get')) {
                 $value = $reflectionMethod->invoke($entity);
-                if ($value !== null)
+                if (
+                    $value !== null &&
+                    !is_array($value
+                    )) {
                     $properties[lcfirst(substr($reflectionMethod->name, 3))] = $value;
+                }
             }
         }
 

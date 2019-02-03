@@ -353,7 +353,7 @@ class BlogController extends Controller
      *
      * @return array
      */
-    private static function getTagsFromForm(): array
+    private static function getTagsFromForm(): ?array
     {
         $tags = null;
 

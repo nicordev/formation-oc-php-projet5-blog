@@ -33,8 +33,8 @@
     function createTagElt(tag)
     {
         let tagElt = document.createElement('li');
-        let checkboxElt = myApp.elementsBuilder.createCheckboxElt('tags[]', tag, true);
-        let labelElt = myApp.elementsBuilder.createLabelElt(tag, tag);
+        let checkboxElt = myApp.elementBuilder.createCheckboxElt('tags[]', tag, true);
+        let labelElt = myApp.elementBuilder.createLabelElt(tag, tag);
 
         labelElt.setAttribute('class', 'available-tag');
 

@@ -128,7 +128,7 @@ var myApp = {
     /**
      * Methods to create DOM elements
      */
-    elementsBuilder: {
+    elementBuilder: {
 
         /**
          * Create a closing cross which erase the parent node on click
@@ -141,7 +141,7 @@ var myApp = {
             closingCrossElt.textContent = 'X';
             closingCrossElt.setAttribute('class', 'closing-cross');
 
-            myApp.eraseTools.eraseElementOnClick(closingCrossElt);
+            myApp.eraseTool.eraseElementOnClick(closingCrossElt);
 
             return closingCrossElt;
         }, 
@@ -204,7 +204,7 @@ var myApp = {
     /**
      * Some methods to erase stuff
      */
-    eraseTools: {
+    eraseTool: {
 
         /**
          * Erase an element on click by emptying the parent node inner HTML
@@ -224,7 +224,7 @@ var myApp = {
          */
         eraseElementFromEvent: function (evt)
         {
-            myApp.eraseTools.eraseElement(evt.target);
+            myApp.eraseTool.eraseElement(evt.target);
         },
 
         /**
@@ -235,6 +235,24 @@ var myApp = {
         eraseElement: function (element)
         {
             element.parentNode.innerHTML = '';
+        }
+    },
+
+    messageTool: {
+        buildMessageElt: function (message)
+        {
+            let messageWrapperElt = document.createElement('div');
+            let messageTextElt = document.createElement('p');
+            let closingCrossElt = myApp.elementBuilder.createClosingCrossElt();
+
+            messageTextElt.textContent = message;
+            messageTextElt.classList.add('message');
+            messageWrapperElt.classList.add('message-wrapper');
+
+            messageWrapperElt.appendChild(closingCrossElt);
+            messageWrapperElt.appendChild(messageTextElt);
+
+            return messageWrapperElt;
         }
     }
 }
