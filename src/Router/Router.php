@@ -65,7 +65,8 @@ class Router
                 }
 
                 // Manage tags
-                if (isset($_POST['tag_ids']) &&
+                if (
+                    isset($_POST['tag_ids']) &&
                     isset($_POST['tag_names'])
                 ) {
                     $controller = 'Controller\BlogController';
@@ -73,6 +74,19 @@ class Router
                     $params = [
                         'tagIds' => $_POST['tag_ids'],
                         'tagNames' => $_POST['tag_names']
+                    ];
+                }
+
+                // Manage categories
+                if (
+                    isset($_POST['category_ids']) &&
+                    isset($_POST['category_names'])
+                ) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'updateCategoryList';
+                    $params = [
+                        'categoryIds' => $_POST['category_ids'],
+                        'categoryNames' => $_POST['category_names']
                     ];
                 }
 

@@ -68,6 +68,11 @@ input[type='text'], textarea {
 
 }
 
+#blog-admin {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 
 /*
     class
@@ -211,7 +216,11 @@ input[type='text'], textarea {
 
 .available-tag {
     color: chocolate;
-    font-weight: bold;
+    padding: 5px;
+}
+
+.available-category {
+    color: chocolate;
     padding: 5px;
 }
 

@@ -12,6 +12,8 @@ namespace Controller;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
+use Model\Entity\Category;
+use Model\Entity\Entity;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
@@ -238,7 +240,7 @@ class BlogController extends Controller
     }
 
     /**
-     * Update the list of tags
+     * Update the list of tags in the database
      *
      * @param array $tagIds
      * @param array $tagNames
@@ -255,7 +257,7 @@ class BlogController extends Controller
         $tagIds = array_map('intval', $tagIds); // Convert string to int
         foreach ($oldTags as $oldTag) {
             // Delete or update tag ?
-            if (self::isTagToDelete($oldTag, $tagIds)) {
+            if (self::isEntityToDelete($oldTag, $tagIds)) {
                 $this->tagManager->delete($oldTag->getId());
             } else {
                 $this->updateTag($oldTag, $tagIds, $tagNames);
@@ -265,7 +267,97 @@ class BlogController extends Controller
         $this->showAdminPanel('La liste des étiquettes a été mise à jour.');
     }
 
+    /**
+     * Update the list of categories in the database
+     *
+     * @param array $categoryIds
+     * @param array $categoryNames
+     * @throws AppException
+     */
+    public function updateCategoryList(array $categoryIds, array $categoryNames)
+    {
+        $oldCategories = $this->categoryManager->getAll();
+
+        // Add new categories
+        $this->addNewCategories($categoryIds, $categoryNames);
+
+        // Update or delete categories
+        $categoryIds = array_map('intval', $categoryIds); // Convert string to int
+        foreach ($oldCategories as $oldCategory) {
+            // Delete or update category ?
+            if (self::isEntityToDelete($oldCategory, $categoryIds)) {
+                $this->categoryManager->delete($oldCategory->getId());
+            } else {
+                $this->updateCategory($oldCategory, $categoryIds, $categoryNames);
+            }
+        }
+        // Head back to the admin panel
+        $this->showAdminPanel('La liste des catégories a été mise à jour.');
+    }
+
     // Private
+
+    /**
+     * @param array $categoryIds
+     * @param array $categoryNames
+     * @return int
+     * @throws AppException
+     */
+    private function addNewCategories(array $categoryIds, array $categoryNames)
+    {
+        $numberOfCategories = 0;
+
+        for ($i = count($categoryIds) - 1; $i >= 0; $i--) {
+            if ($categoryIds[$i] === 'new') {
+                try {
+                    $this->categoryManager->add(new Category(['name' => $categoryNames[$i]]));
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to add the category ' . $categoryNames[$i]);
+                }
+                $numberOfCategories++;
+
+            } else {
+                break;
+            }
+        }
+        return $numberOfCategories;
+    }
+
+    /**
+     * Update a category in the database if necessary
+     * Return true if the category has been updated
+     *
+     * @param Category $categoryToUpdate
+     * @param array $categoryIds
+     * @param array $categoryNames
+     * @return bool
+     * @throws AppException
+     */
+    private function updateCategory(Category $categoryToUpdate, array $categoryIds, array $categoryNames)
+    {
+        $categoryToUpdateId = $categoryToUpdate->getId();
+        $categoryToUpdateName = $categoryToUpdate->getName();
+
+        for ($i = 0, $size = count($categoryIds); $i < $size; $i++) {
+            if ($categoryToUpdateId === $categoryIds[$i] && $categoryToUpdateName !== $categoryNames[$i]) {
+                $categoryData = [
+                    'id' => $categoryToUpdateId,
+                    'name' => $categoryNames[$i]
+                ];
+                $updatedCategory = new Category($categoryData);
+                try {
+                    $this->categoryManager->edit($updatedCategory);
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to edit the category ' . print_r($categoryData, true));
+                }
+                return true;
+
+            } elseif ($categoryIds[$i] === 'new') {
+                break;
+            }
+        }
+        return false;
+    }
 
     /**
      * Add new tags to the database if tag id === 'new'
@@ -332,16 +424,16 @@ class BlogController extends Controller
     }
 
     /**
-     * Check if a tag has to be deleted
+     * Check if an Entity has to be deleted
      *
-     * @param Tag $oldTag
-     * @param array $tagIds
+     * @param Entity $oldEntity
+     * @param array $entityIdsToDelete
      * @return bool
      */
-    private static function isTagToDelete(Tag $oldTag, array $tagIds)
+    private function isEntityToDelete(Entity $oldEntity, array $entityIdsToDelete): bool
     {
-        foreach ($tagIds as $tagId) {
-            if ($tagId === $oldTag->getId()) {
+        foreach ($entityIdsToDelete as $entityIdToDelete) {
+            if ($entityIdToDelete === $oldEntity->getId()) {
                 return false;
             }
         }
