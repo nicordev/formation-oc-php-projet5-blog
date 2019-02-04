@@ -11,10 +11,10 @@
 {% block content %}
     <section class="home-list">
         {% if postsByCategory %}
-            {% for category, posts in postsByCategory %}
+            {% for categoryId, posts in postsByCategory %}
                 <section class="home-category">
                     {% embed "home/postDeck.twig" %}
-                        {% block deckTitle %}<a href="?page=blog">{{ category }}</a>{% endblock %}
+                        {% block deckTitle %}<a href="?page=blog&amp;category-id={{ categoryId }}">{{ categories[loop.index0].getName }}</a>{% endblock %}
                     {% endembed %}
                 </section>
             {% endfor %}

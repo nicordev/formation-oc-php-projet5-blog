@@ -43,10 +43,11 @@ class HomeController extends Controller
         $postsByCategory = [];
 
         foreach ($categories as $category) {
-            $postsByCategory[$category->getName()] = $this->postManager->getPostsOfACategory($category);
+            $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
         }
 
         self::render(self::VIEW_HOME, [
+            'categories' => $categories,
             'postsByCategory' => $postsByCategory
         ]);
     }

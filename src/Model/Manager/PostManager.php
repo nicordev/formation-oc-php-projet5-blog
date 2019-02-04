@@ -169,10 +169,10 @@ class PostManager extends Manager
     /**
      * Get the posts associated to a category via its tags
      *
-     * @param Category $category
+     * @param int $categoryId
      * @return array
      */
-    public function getPostsOfACategory(Category $category)
+    public function getPostsOfACategory(int $categoryId)
     {
         $posts = [];
 
@@ -189,7 +189,7 @@ class PostManager extends Manager
             )';
         $requestPosts = $this->database->prepare($query);
         $requestPosts->execute([
-            'id' => $category->getId()
+            'id' => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {

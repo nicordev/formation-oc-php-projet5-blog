@@ -74,6 +74,21 @@ class BlogController extends Controller
     }
 
     /**
+     * Show all posts of a given category
+     *
+     * @param int $categoryId
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showPostsOfACategory(int $categoryId)
+    {
+        $posts = $this->postManager->getPostsOfACategory($categoryId);
+
+        self::render(self::VIEW_BLOG, ['posts' => $posts]);
+    }
+
+    /**
      * Show an entire blog post
      *
      * @param $postId

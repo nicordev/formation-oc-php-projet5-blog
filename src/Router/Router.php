@@ -27,9 +27,11 @@ class Router
 
             // Blog
             if ($page === 'blog') {
-                $controller = 'Controller\BlogController';
-                $method = 'showAllPosts';
-                $params = [];
+                if (isset($_GET['category-id'])) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'showPostsOfACategory';
+                    $params = ['categoryId' => (int) $_GET['category-id']];
+                }
 
             // Post
             } elseif ($page === 'post' &&
