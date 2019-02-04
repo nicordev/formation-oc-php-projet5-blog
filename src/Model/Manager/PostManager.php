@@ -80,6 +80,12 @@ class PostManager extends Manager
     public function edit($modifiedPost): void
     {
         parent::edit($modifiedPost);
+
+        // Associate tags and post
+        $tags = $modifiedPost->getTags();
+        if (!empty($tags)) {
+            $this->associatePostAndTags($modifiedPost, $tags);
+        }
     }
 
     /**

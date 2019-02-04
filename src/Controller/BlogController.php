@@ -212,8 +212,24 @@ class BlogController extends Controller
     public function editPost()
     {
         $modifiedPost = self::buildPostFromForm();
+        $tags = self::getTagsFromForm();
 
         if ($modifiedPost !== null) {
+
+            if ($tags !== null) {
+                foreach ($tags as $tag) {
+                    // Add new tag
+                    if ($this->tagManager->isNewTag($tag)) {
+                        $this->tagManager->add($tag);
+                    }
+                    // Set tag id
+                    $id = $this->tagManager->getId($tag->getName());
+                    $tag->setId($id);
+                }
+                // Associate tags and post
+                $modifiedPost->setTags($tags);
+            }
+
             $this->postManager->edit($modifiedPost);
             // Come back to the admin panel
             $this->showAdminPanel("Un article a été modifié.");
@@ -491,6 +507,12 @@ class BlogController extends Controller
             }
             if (isset($_POST['post-editor-id'])) {
                 $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));
+            }
+
+            // Tags
+            $tags = self::getTagsFromForm();
+            if ($tags) {
+                $post->setTags($tags);
             }
 
             return $post;

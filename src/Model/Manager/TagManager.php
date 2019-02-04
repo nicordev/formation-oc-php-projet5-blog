@@ -5,6 +5,7 @@ namespace Model\Manager;
 
 use Exception;
 use Model\Entity\Tag;
+use PDO;
 
 class TagManager extends Manager
 {

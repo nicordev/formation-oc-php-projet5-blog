@@ -12,7 +12,7 @@
     <section id="blog-admin">
 
         {# Posts#}
-        <div class="admin-box">
+        <div class="admin-box w100">
             <h2>Articles</h2>
 
             <p>
@@ -45,7 +45,9 @@
                             coming soon...
                         </td>
                         <td>
-                            coming soon...
+                            {% for tag in post.getTags() %}
+                                {{ tag.getName() }}
+                            {% endfor %}
                         </td>
                         <td>
                             coming soon...
