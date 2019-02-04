@@ -45,9 +45,13 @@
                             coming soon...
                         </td>
                         <td>
-                            {% for tag in post.getTags() %}
-                                {{ tag.getName() }}
-                            {% endfor %}
+                            {% if post.getTags() %}
+                                {% for tag in post.getTags() %}
+                                    {{ tag.getName() }}
+                                {% endfor %}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                         <td>
                             coming soon...

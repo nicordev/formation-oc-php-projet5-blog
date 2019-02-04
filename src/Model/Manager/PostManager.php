@@ -150,7 +150,14 @@ class PostManager extends Manager
      */
     public function getAll(): array
     {
-        return parent::getAll();
+        $posts = parent::getAll();
+
+        // Get tags
+        foreach ($posts as $post) {
+            $post->setTags($this->getTagsOfAPost($post->getId()));
+        }
+
+        return $posts;
     }
 
     /**
