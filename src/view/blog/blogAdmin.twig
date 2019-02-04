@@ -11,6 +11,8 @@
 {% block content %}
     <section id="blog-admin">
 
+        {% include "blog/message.twig" %}
+
         {# Posts#}
         <div class="admin-box w100">
             <h2>Articles</h2>
@@ -18,8 +20,6 @@
             <p>
                 <a class="btn" href="?page=post-editor">Ajouter un article</a>
             </p>
-
-            {% include "blog/message.twig" %}
 
             <table>
                 <thead>
@@ -45,8 +45,9 @@
                             coming soon...
                         </td>
                         <td>
-                            {% if post.getTags() %}
-                                {% for tag in post.getTags() %}
+                            {% set postTags = post.getTags() %}
+                            {% if postTags %}
+                                {% for tag in postTags %}
                                     {{ tag.getName() }}
                                 {% endfor %}
                             {% else %}
@@ -102,24 +103,42 @@
         <div class="admin-box">
             <h2>Catégories</h2>
 
-            <form id="admin-category-list-form" action="?page=blog-admin" method="post">
+            {# Add a category button #}
+            <p>
+                <a class="btn" href="?page=category-editor">Ajouter une catégorie</a>
+            </p>
 
-                <input id="update-category-list-btn" class="btn" type="submit" value="Mettre à jour les catégories">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Etiquettes associées</th>
+                    </tr>
+                </thead>
 
-                <ul id="category-list">
-                    {% for category in categories %}
-                        <li>
-                            <input type="hidden" name="category_ids[]" value="{{ category.getId() }}">
-                            <input class="available-category" type="text" name="category_names[]" value="{{ category.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectCategories();"><span class="closing-cross" onclick="myApp.eraseTool.eraseElementFromEvent(event)">X</span>
-                        </li>
-                    {% endfor %}
-
-                    <li id="new-category-input-li">
-                        <input id="new-category-input" type="text" name="new-category-input" placeholder="Ajouter une nouvelle catégorie">
-                        <button type="button" id="new-category-btn" class="btn btn-small">+</button>
-                    </li>
-                </ul>
-            </form>
+                <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>
+                            <form action="?page=category-editor" method="post">
+                                <input type="hidden" name="category-id" value="{{ category.getId() }}">
+                                <input class="available-category" type="submit" value="{{ category.getName() }}">
+                            </form>
+                        </td>
+                        <td>
+                            {% set categoryTags = category.getTags() %}
+                            {% if categoryTags %}
+                                {% for tag in categoryTags %}
+                                    {{ tag.getName }}
+                                {% endfor %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </section>
 {% endblock %}

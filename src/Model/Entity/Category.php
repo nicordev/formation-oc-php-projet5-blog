@@ -5,7 +5,24 @@ namespace Model\Entity;
 
 class Category extends Entity
 {
-    protected $name = '';
+    protected $name = null;
+    protected $tags = [];
+
+    /**
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     */
+    public function setTags(array $tags): void
+    {
+        $this->tags = $tags;
+    }
 
     /**
      * @return string

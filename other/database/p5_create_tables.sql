@@ -168,7 +168,7 @@ CREATE TABLE bl_category_tag(
 
 	CONSTRAINT fk_ct_tag_id_tag_id
 		FOREIGN KEY (ct_tag_id_fk)
-			REFERENCES bl_category(cat_id)
+			REFERENCES bl_tag(tag_id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE
 )

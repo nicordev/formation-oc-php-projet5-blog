@@ -56,21 +56,6 @@ class PostManager extends Manager
     }
 
     /**
-     * Get the last post id.
-     *
-     * @return int
-     */
-    public function getLastId(): int
-    {
-        $query = 'SELECT MAX(p_id) FROM bl_post';
-        $requestLastId = $this->database->query($query);
-
-        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
-
-        return $lastId;
-    }
-
-    /**
      * Edit a blog post in the database
      *
      * @param Post $modifiedPost

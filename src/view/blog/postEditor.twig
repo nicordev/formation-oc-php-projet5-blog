@@ -61,29 +61,7 @@
                 </p>
 
                 {# Tags #}
-                <div id="post-tags-wrapper">
-                    <h3>Etiquettes</h3>
-
-                    <div class="post-editor-box" id="available-tags-wrapper">
-                        <ul id="available-tags">
-                            {% if availableTags %}
-                                {% for tag in availableTags %}
-                                    <li>
-                                        <input type="checkbox" name="tags[]" value="{{ tag }}" {% if tag in selectedTags %}checked{% endif %}>
-                                        <label class="available-tag" for="{{ tag }}">{{ tag }}</label>
-                                    </li>
-                                {% endfor %}
-                            {% endif %}
-                        </ul>
-                    </div>
-
-                    {# New tag #}
-                    <div class="post-editor-box" id="new-tag-wrapper">
-                        <label for="new-tag">Créer une étiquette</label><br>
-                        <input class="tag-input" type="text" id="new-tag">
-                        <button class="btn" id="new-tag-btn">+</button>
-                    </div>
-                </div>
+                {% include "blog/tagHandler.twig" %}
             </form>
         </div>
     </section>
@@ -91,7 +69,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="public/js/postEditor.js"></script>
+    <script src="public/js/tagHandler.js"></script>
 {% endblock %}
 
 

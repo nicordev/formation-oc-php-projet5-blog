@@ -5,6 +5,7 @@ namespace Model\Manager;
 
 use Exception;
 use Model\Entity\Category;
+use PDO;
 
 class CategoryManager extends Manager
 {
@@ -31,6 +32,13 @@ class CategoryManager extends Manager
     public function add($newCategory): void
     {
         parent::add($newCategory);
+
+        // Associate tags and category
+        $tags = $newCategory->getTags();
+        if (!empty($tags)) {
+            $newCategory->setId($this->getLastId());
+            $this->associateCategoryAndTags($newCategory, $tags);
+        }
     }
 
     /**
@@ -42,6 +50,12 @@ class CategoryManager extends Manager
     public function edit($modifiedCategory): void
     {
         parent::edit($modifiedCategory);
+
+        // Associate tags and category
+        $tags = $modifiedCategory->getTags();
+        if (!empty($tags)) {
+            $this->associateCategoryAndTags($modifiedCategory, $tags);
+        }
     }
 
     /**
@@ -64,7 +78,39 @@ class CategoryManager extends Manager
      */
     public function get(int $categoryId): Category
     {
-        return parent::get($categoryId);
+        $category = parent::get($categoryId);
+
+        $associatedTags = $this->getTagsOfACategory($category->getId());
+        $category->setTags($associatedTags);
+
+        return $category;
+    }
+
+    /**
+     * Get associated tags of a category
+     *
+     * @param int $categoryId
+     * @return array
+     */
+    public function getTagsOfACategory(int $categoryId)
+    {
+        $tags = [];
+
+        $query = 'SELECT bl_tag.* FROM bl_tag
+            INNER JOIN bl_category_tag
+                ON tag_id = ct_tag_id_fk
+            INNER JOIN bl_category ON ct_category_id_fk = cat_id
+            WHERE cat_id = :categoryId';
+
+        $requestTags = $this->database->prepare($query);
+        $requestTags->execute([
+            'categoryId' => $categoryId
+        ]);
+        while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
+            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+        }
+
+        return $tags;
     }
 
     /**
@@ -74,6 +120,43 @@ class CategoryManager extends Manager
      */
     public function getAll(): array
     {
-        return parent::getAll();
+        $categories = parent::getAll();
+
+        // Get tags
+        foreach ($categories as $category) {
+            $category->setTags($this->getTagsOfACategory($category->getId()));
+        }
+
+        return $categories;
+    }
+    
+    // Private
+
+    /**
+     * Fill the table bl_category_tag
+     *
+     * @param Category $category
+     * @param array $tags
+     */
+    private function associateCategoryAndTags(Category $category, array $tags)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_category_tag WHERE ct_category_id_fk = :categoryId';
+        $requestDelete = $this->database->prepare($query);
+        $requestDelete->execute([
+            'categoryId' => $category->getId()
+        ]);
+
+        // Add
+        $query = 'INSERT INTO bl_category_tag(ct_category_id_fk, ct_tag_id_fk)
+                VALUES (:categoryId, :tagId)';
+        $requestAdd = $this->database->prepare($query);
+
+        foreach ($tags as $tag) {
+            $requestAdd->execute([
+                'categoryId' => $category->getId(),
+                'tagId' => $tag->getId()
+            ]);
+        }
     }
 }

@@ -165,6 +165,21 @@ abstract class Manager
         return $entities;
     }
 
+    /**
+     * Get the last id.
+     *
+     * @return int
+     */
+    public function getLastId(): int
+    {
+        $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
+        $requestLastId = $this->database->query($query);
+
+        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
+
+        return $lastId;
+    }
+
 
     // Private
 

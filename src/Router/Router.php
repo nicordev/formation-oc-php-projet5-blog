@@ -53,19 +53,14 @@ class Router
                     $controller = 'Controller\BlogController';
                     $method = 'editPost';
                     $params = [];
+
                 } elseif (isset($_POST['delete-post'])) {
                     $controller = 'Controller\BlogController';
                     $method = 'deletePost';
                     $params = [];
 
-                } else {
-                    $controller = 'Controller\BlogController';
-                    $method = 'showAdminPanel';
-                    $params = [];
-                }
-
                 // Manage tags
-                if (
+                } elseif (
                     isset($_POST['tag_ids']) &&
                     isset($_POST['tag_names'])
                 ) {
@@ -75,31 +70,50 @@ class Router
                         'tagIds' => $_POST['tag_ids'],
                         'tagNames' => $_POST['tag_names']
                     ];
-                }
 
                 // Manage categories
-                if (
-                    isset($_POST['category_ids']) &&
-                    isset($_POST['category_names'])
-                ) {
+                } elseif (isset($_POST['add-category'])) {
                     $controller = 'Controller\BlogController';
-                    $method = 'updateCategoryList';
-                    $params = [
-                        'categoryIds' => $_POST['category_ids'],
-                        'categoryNames' => $_POST['category_names']
-                    ];
+                    $method = 'addCategory';
+                    $params = [];
+
+                } elseif (isset($_POST['edit-category'])) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'editCategory';
+                    $params = [];
+
+                } elseif (isset($_POST['delete-category'])) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'deleteCategory';
+                    $params = [];
+                    
+                } else {
+                    $controller = 'Controller\BlogController';
+                    $method = 'showAdminPanel';
+                    $params = [];
                 }
 
             // Post Editor
             } elseif ($page === 'post-editor') {
 
                 if (isset($_POST['post-id'])) {
-                    $postId = (int) $_POST['post-id'];
+                    $postId = (int)$_POST['post-id'];
                 }
 
                 $controller = 'Controller\BlogController';
                 $method = 'showPostEditor';
                 $params = isset($postId) ? ['postId' => $postId] : [];
+
+            // Category editor
+            } elseif ($page === 'category-editor')  {
+
+                if (isset($_POST['category-id'])) {
+                    $categoryId = (int) $_POST['category-id'];
+                }
+
+                $controller = 'Controller\BlogController';
+                $method = 'showCategoryEditor';
+                $params = isset($categoryId) ? ['categoryId' => $categoryId] : [];
 
             // 404 page not found
             } else {
