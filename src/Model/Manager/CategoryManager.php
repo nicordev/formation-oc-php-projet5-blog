@@ -5,6 +5,7 @@ namespace Model\Manager;
 
 use Exception;
 use Model\Entity\Category;
+use Model\Entity\Post;
 use PDO;
 
 class CategoryManager extends Manager

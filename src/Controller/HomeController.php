@@ -39,9 +39,15 @@ class HomeController extends Controller
      */
     public function showHome()
     {
-        $posts = $this->postManager->getAll();
+        $categories = $this->categoryManager->getAll();
+        $postsByCategory = [];
+
+        foreach ($categories as $category) {
+            $postsByCategory[$category->getName()] = $this->postManager->getPostsOfACategory($category);
+        }
+
         self::render(self::VIEW_HOME, [
-            'posts' => $posts
+            'postsByCategory' => $postsByCategory
         ]);
     }
 }

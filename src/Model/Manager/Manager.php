@@ -191,7 +191,7 @@ abstract class Manager
     }
 
 
-    // Private
+    // Protected
 
     /**
      * Create an Entity child from database data
@@ -199,7 +199,7 @@ abstract class Manager
      * @param array $tableData
      * @return mixed
      */
-    private function createEntityFromTableData(array $tableData)
+    protected function createEntityFromTableData(array $tableData)
     {
         $entityClass = self::getEntityClass();
         $entityData = [];
@@ -210,6 +210,9 @@ abstract class Manager
 
         return new $entityClass($entityData);
     }
+
+
+    // Private
 
     /**
      * Get the Entity child class

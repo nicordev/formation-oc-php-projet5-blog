@@ -9,6 +9,7 @@
 namespace Model\Manager;
 
 
+use Model\Entity\Category;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use \PDO;
@@ -163,6 +164,39 @@ class PostManager extends Manager
         }
 
         return $ids;
+    }
+
+    /**
+     * Get the posts associated to a category via its tags
+     *
+     * @param Category $category
+     * @return array
+     */
+    public function getPostsOfACategory(Category $category)
+    {
+        $posts = [];
+
+        $query = 'SELECT * FROM bl_post
+            WHERE p_id IN (
+                SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
+                WHERE pt_tag_id_fk IN (
+                    SELECT tag_id FROM bl_tag
+                        INNER JOIN bl_category_tag
+                            ON tag_id = ct_tag_id_fk
+                        INNER JOIN bl_category
+                            ON cat_id = ct_category_id_fk
+                    WHERE cat_id = :id) # Use the requested category id here
+            )';
+        $requestPosts = $this->database->prepare($query);
+        $requestPosts->execute([
+            'id' => $category->getId()
+        ]);
+
+        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = $this->createEntityFromTableData($postData);
+        }
+
+        return $posts;
     }
 
     // Private
