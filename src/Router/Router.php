@@ -61,15 +61,24 @@ class Router
 
                 // Manage tags
                 } elseif (
-                    isset($_POST['tag_ids']) &&
-                    isset($_POST['tag_names'])
+                    isset($_POST['action']) && $_POST['action'] === 'update-tag-list'
                 ) {
                     $controller = 'Controller\BlogController';
                     $method = 'updateTagList';
-                    $params = [
-                        'tagIds' => $_POST['tag_ids'],
-                        'tagNames' => $_POST['tag_names']
-                    ];
+                    if (
+                        isset($_POST['tag_ids']) &&
+                        isset($_POST['tag_names'])
+                    ) {
+                        $params = [
+                            'tagIds' => $_POST['tag_ids'],
+                            'tagNames' => $_POST['tag_names']
+                        ];
+                    } else {
+                        $params = [
+                            'tagIds' => null,
+                            'tagNames' => null
+                        ];
+                    }
 
                 // Manage categories
                 } elseif (isset($_POST['add-category'])) {

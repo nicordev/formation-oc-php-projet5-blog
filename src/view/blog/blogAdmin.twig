@@ -84,6 +84,8 @@
 
                 <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
 
+                <input type="hidden" name="action" value="update-tag-list">
+
                 <ul id="tag-list">
                     {% for tag in tags %}
                         <li>

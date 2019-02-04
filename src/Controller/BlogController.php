@@ -266,10 +266,18 @@ class BlogController extends Controller
      *
      * @param array $tagIds
      * @param array $tagNames
+     * @return bool
      * @throws Exception
      */
-    public function updateTagList(array $tagIds, array $tagNames)
+    public function updateTagList(?array $tagIds, ?array $tagNames)
     {
+        if ($tagIds === null || $tagNames === null) {
+            $this->tagManager->deleteAll();
+            // Head back to the admin panel
+            $this->showAdminPanel('La liste des étiquettes a été vidée.');
+            return false;
+        }
+
         $oldTags = $this->tagManager->getAll();
 
         // Add new tags

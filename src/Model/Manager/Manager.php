@@ -115,7 +115,7 @@ abstract class Manager
     }
 
     /**
-     * Delete an Entity in the database
+     * Delete a line in the table
      *
      * @param int $entityId
      * @throws BlogException
@@ -125,6 +125,16 @@ abstract class Manager
         $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
         $this->prepareThenExecuteQuery($query, [$entityId]);
+    }
+
+    /**
+     * Delete all lines in the table
+     */
+    public function deleteAll()
+    {
+        $query = 'DELETE FROM ' . $this->tableName;
+
+        $this->database->query($query);
     }
 
     /**
