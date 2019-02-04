@@ -104,7 +104,7 @@
                     {% for category in categories %}
                         <li>
                             <input type="hidden" name="category_ids[]" value="{{ category.getId() }}">
-                            <input class="available-category" type="text" name="category_names[]" value="{{ category.getName() }}" onkeyup="myApp.refreshValue(event);"><span class="closing-cross" onclick="myApp.eraseTool.eraseElementFromEvent(event)">X</span>
+                            <input class="available-category" type="text" name="category_names[]" value="{{ category.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectCategories();"><span class="closing-cross" onclick="myApp.eraseTool.eraseElementFromEvent(event)">X</span>
                         </li>
                     {% endfor %}
 

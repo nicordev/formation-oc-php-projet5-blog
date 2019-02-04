@@ -1,5 +1,5 @@
 {% if message %}
-    <div id="message-wrapper" onclick="myApp.eraseTool.eraseElementFromEvent(event);">
-        <p class="message"><span class="closing-cross">x</span> {{ message }}</p>
+    <div id="message-wrapper" onclick="myApp.hideElementFromId('message-wrapper');">
+        <p class="message"><span class="closing-cross">X</span>{{ message }}</p>
     </div>
 {% endif %}

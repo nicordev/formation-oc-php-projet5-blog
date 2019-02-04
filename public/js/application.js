@@ -13,10 +13,7 @@ var myApp = {
 
         if (checkValues) {
             for (let element of elements) {
-                // Reset badClass
-                if (badClass in element.classList) {
-                    element.classList.remove(badClass);
-                }
+                element.classList.remove(badClass); // Reset badClass
                 if (checkIfEmpty && !element.value) {
                     element.classList.add(badClass);
                     continue;
@@ -25,10 +22,7 @@ var myApp = {
             }
         } else {
             for (let element of elements) {
-                // Reset badClass
-                if (badClass in element.classList) {
-                    element.classList.remove(badClass);
-                }
+                element.classList.remove(badClass); // Reset badClass
                 if (checkIfEmpty && !element.textContent) {
                     element.classList.add(badClass);
                     continue;
@@ -89,6 +83,33 @@ var myApp = {
     },
 
     /**
+     * Check if the values of an array of DOM elements are correct
+     *
+     * @param elements
+     * @param forbiddenValues
+     * @param allowEmptyValues
+     * @param allowDuplicates
+     * @returns {boolean}
+     */
+    elementValuesAreCorrect: function (elements, forbiddenValues = null, allowEmptyValues = false, allowDuplicates = false)
+    {
+        let values = [];
+
+        if (!elements) {
+            return false;
+        }
+
+        for (let i = 0, numberOfCategories = elements.length; i < numberOfCategories; i++) {
+            if (!elements[i].value && !allowEmptyValues) {
+                return false;
+            }
+            values.push(elements[i].value);
+        }
+
+        return !myApp.hasForbiddenValues(values, forbiddenValues, allowEmptyValues, allowDuplicates);
+    },
+
+    /**
      * Check if the value is in an array of DOM elements
      *
      * @param value
@@ -123,6 +144,11 @@ var myApp = {
     {
         let elt = evt.target;
         elt.setAttribute('value', elt.value);
+    },
+
+    hideElementFromId: function (elementId)
+    {
+        document.getElementById(elementId).style.display = 'none';
     },
 
     /**
