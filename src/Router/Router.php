@@ -23,13 +23,13 @@ class Router
 
         switch ($url) {
 
-            case 'blog':
+            case '/blog':
                 $controller = BlogController::class;
                 $method = 'showAllPosts';
                 $params = [];
                 break;
 
-            case 'blog-post':
+            case '/blog-post':
                 if (
                     isset($_GET['post-id']) &&
                     is_numeric($_GET['post-id'])
@@ -44,31 +44,31 @@ class Router
                 }
                 break;
 
-            case 'admin':
+            case '/admin':
                 $controller = BlogController::class;
                 $method = 'showAdminPanel';
                 $params = [];
                 break;
 
-            case 'admin/add-post':
+            case '/admin/add-post':
                 $controller = BlogController::class;
                 $method = 'addPost';
                 $params = [];
                 break;
 
-            case 'admin/edit-post':
+            case '/admin/edit-post':
                 $controller = BlogController::class;
                 $method = 'editPost';
                 $params = [];
                 break;
 
-            case 'admin/delete-post':
+            case '/admin/delete-post':
                 $controller = BlogController::class;
                 $method = 'deletePost';
                 $params = [];
                 break;
 
-            case 'admin/post-editor':
+            case '/admin/post-editor':
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
                 }
@@ -97,15 +97,8 @@ class Router
      */
     private static function getUrl()
     {
-        var_dump($_REQUEST, $_GET);
-        die;
+        $urlParts = explode('?', $_SERVER['REQUEST_URI']);
 
-        if (isset($_GET['url'])) {
-            $urlParts = explode('/', $_GET['url']);
-            unset($urlParts[0]);
-
-            return implode('/', $urlParts);
-        }
-        return null;
+        return $urlParts[0];
     }
 }
