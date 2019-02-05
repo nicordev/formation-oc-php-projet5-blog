@@ -18,7 +18,7 @@ class Router
     public static function run(): Route
     {
         // Default route : Home
-        $controller = 'Controller\BlogController';
+        $controller = BlogController::class;
         $method = 'showAllPosts';
         $params = [];
 
@@ -27,7 +27,7 @@ class Router
 
             // Blog
             if ($page === 'blog') {
-                $controller = 'Controller\BlogController';
+                $controller = BlogController::class;
                 $method = 'showAllPosts';
                 $params = [];
 
@@ -36,28 +36,28 @@ class Router
                 isset($_GET['post-id']) &&
                 is_numeric($_GET['post-id'])) {
 
-                $controller = 'Controller\BlogController';
+                $controller = BlogController::class;
                 $method = 'showASinglePost';
                 $params = ['postId' => $_GET['post-id']];
 
             // Blog Admin
             } elseif ($page === 'blog-admin') {
                 if (isset($_POST['add-post'])) {
-                    $controller = 'Controller\BlogController';
+                    $controller = BlogController::class;
                     $method = 'addPost';
                     $params = [];
 
                 } elseif (isset($_POST['edit-post'])) {
-                    $controller = 'Controller\BlogController';
+                    $controller = BlogController::class;
                     $method = 'editPost';
                     $params = [];
                 } elseif (isset($_POST['delete-post'])) {
-                    $controller = 'Controller\BlogController';
+                    $controller = BlogController::class;
                     $method = 'deletePost';
                     $params = [];
 
                 } else {
-                    $controller = 'Controller\BlogController';
+                    $controller = BlogController::class;
                     $method = 'showAdminPanel';
                     $params = [];
                 }
@@ -69,14 +69,14 @@ class Router
                     $postId = (int) $_POST['post-id'];
                 }
 
-                $controller = 'Controller\BlogController';
+                $controller = BlogController::class;
                 $method = 'showPostEditor';
                 $params = isset($postId) ? ['postId' => $postId] : [];
 
             // 404 page not found
             } else {
                 // TODO Throw an exception instead
-                $controller = 'Controller\BlogController';
+                $controller = BlogController::class;
                 $method = 'pageNotFound404';
                 $params = [];
             }

@@ -22,7 +22,7 @@ class Application
         $route = Router::run();
 
         switch ($route->controller) {
-            case 'Controller\BlogController':
+            case BlogController::class:
                 $controller = DIC::newBlogController();
                 break;
             default:
