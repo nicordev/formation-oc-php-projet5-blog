@@ -81,6 +81,33 @@ class Router
                 $params = isset($postId) ? ['postId' => $postId] : [];
                 break;
 
+            case '/admin/category-editor':
+                if (isset($_POST['category-id'])) {
+                    $categoryId = (int) $_POST['category-id'];
+                }
+                $controller = BlogController::class;
+                $method = 'showCategoryEditor';
+                $params = isset($categoryId) ? ['categoryId' => $categoryId] : [];
+                break;
+
+            case '/admin/add-category':
+                $controller = BlogController::class;
+                $method = 'addCategory';
+                $params = [];
+                break;
+
+            case '/admin/edit-category':
+                $controller = BlogController::class;
+                $method = 'editCategory';
+                $params = [];
+                break;
+
+            case '/admin/delete-category':
+                $controller = BlogController::class;
+                $method = 'deleteCategory';
+                $params = [];
+                break;
+
             default:
                 // Default route : Home
                 $controller = HomeController::class;

@@ -80,7 +80,7 @@
         <div class="admin-box">
             <h2>Etiquettes</h2>
 
-            <form id="admin-tag-list-form" action="?page=blog-admin" method="post">
+            <form id="admin-tag-list-form" action="/blog-admin" method="post">
 
                 <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
 
@@ -107,7 +107,7 @@
 
             {# Add a category button #}
             <p>
-                <a class="btn" href="?page=category-editor">Ajouter une catégorie</a>
+                <a class="btn" href="/admin/category-editor">Ajouter une catégorie</a>
             </p>
 
             <table>
@@ -122,7 +122,7 @@
                 {% for category in categories %}
                     <tr>
                         <td>
-                            <form action="?page=category-editor" method="post">
+                            <form action="/admin/category-editor" method="post">
                                 <input type="hidden" name="category-id" value="{{ category.getId() }}">
                                 <input class="available-category" type="submit" value="{{ category.getName() }}">
                             </form>
@@ -151,5 +151,5 @@
 
 {% block scripts %}
     {{ parent() }}
-    <script src="public/js/blogAdmin.js"></script>
+    <script src="/js/blogAdmin.js"></script>
 {% endblock %}
