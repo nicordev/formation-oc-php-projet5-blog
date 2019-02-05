@@ -18,7 +18,7 @@
 
         {% if postToEdit %}
             <div>
-                <form action="?page=blog-admin" method="post">
+                <form action="admin" method="post">
                     <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                     <p>
                         <input class="btn" type="submit" value="Supprimer l'article">
@@ -28,7 +28,7 @@
         {% endif %}
 
         <div>
-            <form action="?page=blog-admin" method="post">
+            <form action="admin" method="post">
                 <!-- Hidden fields -->
                 {% if postToEdit %}
                     <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">

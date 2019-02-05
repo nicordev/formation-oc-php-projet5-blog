@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
          {% block head %}
             <title>{% block title %}Bienvenue{% endblock %} - Mon super site</title>
-            <link href="../public/css/style.css" rel="stylesheet" />
+            <link href="/css/style.css" rel="stylesheet" />
             <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         {% endblock %}
     </head>
@@ -24,6 +24,7 @@
 
         <header>
             {% block header %}
+                <h1>Mon super site</h1>
             {% endblock %}
         </header>
 
@@ -35,7 +36,7 @@
 
         <footer>
             {% block footer %}
-                <p><a href="?page=blog-admin">Administration</a></p>
+                <p><a href="/admin">Administration</a></p>
             {% endblock %}
         </footer>
 

@@ -11,6 +11,9 @@ namespace Application;
 
 use Application\Exception\AppException;
 use Application\Router\Router;
+use Controller\BlogController;
+use Controller\ErrorController;
+use Controller\HomeController;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -18,20 +21,22 @@ class Application
 {
     public function run()
     {
+        // Time zone
+        date_default_timezone_set("Europe/Paris");
+
         // Routing
         $route = Router::run();
 
         switch ($route->controller) {
-
-            case 'Controller\BlogController':
+            case BlogController::class:
                 $controller = DIC::newBlogController();
                 break;
 
-            case 'Controller\HomeController':
+            case HomeController::class:
                 $controller = DIC::newHomeController();
                 break;
 
-            case 'Controller\ErrorController':
+            case ErrorController::class:
                 $controller = DIC::newErrorController();
                 break;
 
