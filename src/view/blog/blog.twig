@@ -1,11 +1,11 @@
 {% extends "layout.twig" %}
 
 {% block title %}
-    Blog
+    {{ category.getName }}
 {% endblock %}
 
 {% block header %}
-    <h1>Blog</h1>
+    <h1>{{ category.getName }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -19,7 +19,7 @@
 
             {% for post in posts %}
                 <article class="post-wrapper">
-                    <h3 class="post-title"><a href="/blog-post?post-id={{ post.getId }}">{{ post.getTitle }}</a></h3>
+                    <h3 class="post-title"><a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ category.getId }}">{{ post.getTitle }}</a></h3>
 
                     <div class="post-info">{{ post.getCreationDate }}</div>
                     <div class="post-excerpt">{{ post.getExcerpt }}</div>

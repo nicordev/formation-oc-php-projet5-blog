@@ -11,7 +11,7 @@
 
         {% for post in posts %}
             <div class="card">
-                <h3 class="card-title"><a href="?page=post&amp;post-id={{ post.getId }}">{{ post.getTitle }}</a></h3>
+                <h3 class="card-title"><a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">{{ post.getTitle }}</a></h3>
 
                 <div class="card-content">{{ post.getExcerpt }}</div>
                 <div class="card-info">{{ post.getCreationDate }}</div>
