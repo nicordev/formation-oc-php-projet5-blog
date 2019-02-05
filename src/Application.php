@@ -64,7 +64,7 @@ class Application
                 }
 
             } elseif ($page === 'post-editor') {
-                $postId = Post::NO_ID;
+                $postId = null;
                 if (isset($_POST['post-id'])) {
                     $postId = (int)$_POST['post-id'];
                 }
