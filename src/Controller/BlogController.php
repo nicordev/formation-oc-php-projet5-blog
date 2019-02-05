@@ -84,8 +84,12 @@ class BlogController extends Controller
     public function showPostsOfACategory(int $categoryId)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
+        $category = $this->categoryManager->get($categoryId);
 
-        self::render(self::VIEW_BLOG, ['posts' => $posts]);
+        self::render(self::VIEW_BLOG, [
+            'posts' => $posts,
+            'category' => $category
+        ]);
     }
 
     /**
@@ -95,12 +99,13 @@ class BlogController extends Controller
      * @return void
      * @throws Exception
      */
-    public function showASinglePost(int $postId)
+    public function showASinglePost(int $postId, int $categoryId)
     {
         try {
             $post = $this->postManager->get($postId);
-            $nextPostId = $this->getNextPostId($postId);
-            $previousPostId = $this->getPreviousPostId($postId);
+            $nextPostId = $this->getNextPostId($postId, $categoryId);
+            $previousPostId = $this->getPreviousPostId($postId, $categoryId);
+            $category = $this->categoryManager->get($categoryId);
 
         } catch (BlogException $e) {
             $this->pageNotFound404(); // TODO throw an Exception instead
@@ -109,7 +114,8 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'nextPostId' => $nextPostId,
-            'previousPostId' => $previousPostId
+            'previousPostId' => $previousPostId,
+            'category' => $category
         ]);
     }
 
@@ -610,11 +616,12 @@ class BlogController extends Controller
      * Get the next Post id or false if it's the last post
      *
      * @param int $postId
+     * @param int|null $categoryId
      * @return bool
      */
-    private function getNextPostId(int $postId)
+    private function getNextPostId(int $postId, ?int $categoryId = null)
     {
-        $ids = $this->postManager->getAllIds();
+        $ids = $this->postManager->getAllIds($categoryId);
 
         for ($i = 0, $size = count($ids); $i < $size; $i++) {
             if ($postId < $ids[$i]) {
@@ -629,11 +636,12 @@ class BlogController extends Controller
      * Get the previous Post id or false if it's the first post
      *
      * @param int $postId
+     * @param int|null $categoryId
      * @return bool
      */
-    private function getPreviousPostId(int $postId)
+    private function getPreviousPostId(int $postId, ?int $categoryId = null)
     {
-        $ids = $this->postManager->getAllIds();
+        $ids = $this->postManager->getAllIds($categoryId);
 
         for ($i = count($ids) - 1; $i >= 0; $i--) {
             if ($postId > $ids[$i]) {
