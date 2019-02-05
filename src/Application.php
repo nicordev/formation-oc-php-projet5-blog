@@ -19,6 +19,9 @@ class Application
 {
     public function run()
     {
+        // Time zone
+        date_default_timezone_set("Europe/Paris");
+
         // Routing
         $route = Router::run();
 
