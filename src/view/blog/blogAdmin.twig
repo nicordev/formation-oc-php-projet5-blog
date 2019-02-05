@@ -13,7 +13,7 @@
         <h2>Articles</h2>
 
         <p>
-            <a class="btn" href="?page=post-editor">Ajouter un article</a>
+            <a class="btn" href="admin/post-editor">Ajouter un article</a>
         </p>
 
         {% include "blog/message.twig" %}
@@ -33,7 +33,7 @@
             {% for post in posts %}
                 <tr>
                     <td>
-                        <form action="?page=post-editor" method="post">
+                        <form action="admin/post-editor" method="post">
                             <input type="hidden" name="post-id" value="{{ post.getId }}">
                             <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
                         </form>

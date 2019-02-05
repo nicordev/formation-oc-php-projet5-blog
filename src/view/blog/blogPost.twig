@@ -24,13 +24,13 @@
         <div class="blogpost-navigation">
             <ul>
                 {% if previousPostId %}
-                    <li><a href="?page=blog-post&amp;post-id={{ previousPostId }}">Article précédent</a></li>
+                    <li><a href="blog-post?post-id={{ previousPostId }}">Article précédent</a></li>
                 {% endif %}
 
-                <li><a href="?page=blog">Revenir à la liste des articles</a></li>
+                <li><a href="blog">Revenir à la liste des articles</a></li>
 
                 {% if nextPostId %}
-                    <li><a href="?page=blog-post&amp;post-id={{ nextPostId }}">Article suivant</a></li>
+                    <li><a href="blog-post?post-id={{ nextPostId }}">Article suivant</a></li>
                 {% endif %}
             </ul>
         </div>
