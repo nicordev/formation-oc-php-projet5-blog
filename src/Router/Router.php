@@ -97,9 +97,15 @@ class Router
      */
     private static function getUrl()
     {
-        $urlParts = explode('/', $_GET['url']);
-        unset($urlParts[0]);
+        var_dump($_REQUEST, $_GET);
+        die;
 
-        return implode('/', $urlParts);
+        if (isset($_GET['url'])) {
+            $urlParts = explode('/', $_GET['url']);
+            unset($urlParts[0]);
+
+            return implode('/', $urlParts);
+        }
+        return null;
     }
 }
