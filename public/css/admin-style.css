@@ -18,6 +18,15 @@ input[type='text'], textarea {
     padding: 10px;
 }
 
+footer {
+    background-color: #0c5460;
+    color: white;
+}
+
+footer ul li a, footer ul li a:hover {
+    color: white;
+}
+
 #tag-list {
 
 }
