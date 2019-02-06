@@ -1,4 +1,6 @@
 
+/* Common */
+
 .content {
     margin: 0 auto;
     max-width: 1300px;
@@ -6,4 +8,21 @@
 
 .w100 {
     width: 100%;
+}
+
+/* home.twig */
+
+.home-category {
+    margin-bottom: 50px;
+}
+
+/* postDeck.twig */
+
+.card-deck-title {
+    text-align: center;
+}
+
+.card-info {
+    font-size: 0.75em;
+    color: burlywood;
 }
