@@ -10,6 +10,12 @@
     width: 100%;
 }
 
+.sign-btn {
+    font-size: 1.5em;
+    padding: 0 14px 2px 15px;
+    border-radius: 100%;
+}
+
 /* home.twig */
 
 .home-category {

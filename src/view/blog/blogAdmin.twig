@@ -1,11 +1,40 @@
 {% extends "layout.twig" %}
 
+{# head #}
+{% block head %}
+    {{ parent() }}
+    <link href="/css/admin-style.css" rel="stylesheet" />
+{% endblock %}
+
 {% block title %}
     Administration
 {% endblock %}
 
-{% block headerTitle %}
-    <h1>Gestion des articles</h1>
+
+{% block navigation %}
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="/home">🚪 Quitter</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Administration du blog</a>
+                    </li>
+                    {% block navigationItems %}{% endblock %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block header %}
+    <header class="admin-header text-center">
+        <h1>Administration du blog</h1>
+    </header>
 {% endblock %}
 
 {% block content %}
@@ -38,7 +67,7 @@
                         <td>
                             <form action="/admin/post-editor" method="post">
                                 <input type="hidden" name="post-id" value="{{ post.getId }}">
-                                <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
+                                <input class="admin-link" type="submit" value="{{ post.getTitle }}">
                             </form>
                         </td>
                         <td>
@@ -76,32 +105,7 @@
             </table>
         </div>
 
-        {# Tags #}
-        <div class="admin-box">
-            <h2>Etiquettes</h2>
-
-            <form id="admin-tag-list-form" action="/blog-admin" method="post">
-
-                <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
-
-                <input type="hidden" name="action" value="update-tag-list">
-
-                <ul id="tag-list">
-                    {% for tag in tags %}
-                        <li>
-                            <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectTags();"><span class="closing-cross" onclick="myApp.eraseTool.eraseElementFromEvent(event)">X</span>
-                        </li>
-                    {% endfor %}
-
-                    <li id="new-tag-input-li">
-                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Ajouter une nouvelle étiquette">
-                        <button type="button" id="new-tag-btn" class="btn btn-small">+</button>
-                    </li>
-                </ul>
-            </form>
-        </div>
-
+        {# Categories #}
         <div class="admin-box">
             <h2>Catégories</h2>
 
@@ -124,7 +128,7 @@
                         <td>
                             <form action="/admin/category-editor" method="post">
                                 <input type="hidden" name="category-id" value="{{ category.getId() }}">
-                                <input class="available-category" type="submit" value="{{ category.getName() }}">
+                                <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
                             </form>
                         </td>
                         <td>
@@ -141,6 +145,33 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        {# Tags #}
+        <div class="admin-box">
+            <h2>Etiquettes</h2>
+
+            <form id="admin-tag-list-form" action="/blog-admin" method="post">
+
+                <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+
+                <input type="hidden" name="action" value="update-tag-list">
+
+                <ul id="tag-list">
+                    {% for tag in tags %}
+                        <li>
+                            <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
+                            <input class="available-tag text-center admin-link" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectTags();">
+                            <span class="btn sign-btn" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
+                        </li>
+                    {% endfor %}
+
+                    <li id="new-tag-input-li">
+                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette">
+                        <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
+                    </li>
+                </ul>
+            </form>
         </div>
     </section>
 {% endblock %}
