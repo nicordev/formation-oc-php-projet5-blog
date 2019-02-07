@@ -22,15 +22,9 @@
                     {# Classification #}
                     <div class="blogpost-classification">
                         {# Category #}
-                        <p>
-                            Catégorie <a href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a>
-                        </p>
+                        <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a> |
                         {# Tags #}
-                        <p>
-                            {% for tag in post.getTags %}
-                                <a href="/blog?tag-id={{ tag.getId }}">#{{ tag.getName }}</a>
-                            {% endfor %}
-                        </p>
+                        {% for tag in post.getTags %}<a href="/blog?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
                     </div>
 
                     <div class="blogpost-content">
@@ -38,17 +32,15 @@
                     </div>
 
                     <div class="blogpost-navigation">
-                        <ul>
-                            {% if previousPostId %}
-                                <li><a href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a></li>
-                            {% endif %}
+                        {% if previousPostId %}
+                        <a class="post-nav-link" href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a><span> | </span>
+                        {% endif %}
 
-                            <li><a href="/blog?category-id={{ category.getId }}">Revenir au sommaire de la catégorie {{ category.getName }}</a></li>
+                        <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">Sommaire</a>
 
-                            {% if nextPostId %}
-                                <li><a href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}">Article suivant</a></li>
-                            {% endif %}
-                        </ul>
+                        {% if nextPostId %}
+                        <span> | </span><a class="post-nav-link" href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}"> | Article suivant</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

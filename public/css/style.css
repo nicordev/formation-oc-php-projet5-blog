@@ -5,6 +5,14 @@ a, p a, a:hover {
     text-decoration: none;
 }
 
+.post-nav-link {
+    color: burlywood;
+}
+
+.post-nav-link:hover {
+    color: #0c5460;
+}
+
 .content {
     margin: 50px auto;
     max-width: 1300px;
@@ -24,6 +32,11 @@ a, p a, a:hover {
     background-color: #ddddff;
     padding: 20px 0;
     color: #0c5460;
+}
+
+.blogpost-navigation {
+    margin-top: 30px;
+    color: burlywood;
 }
 
 .message:hover {
@@ -51,5 +64,12 @@ a, p a, a:hover {
 
 .card-info {
     font-size: 0.75em;
+    color: burlywood;
+}
+
+/* blogPost.twig */
+
+.blogpost-classification, .blogpost-classification a {
+    margin-bottom: 30px;
     color: burlywood;
 }
