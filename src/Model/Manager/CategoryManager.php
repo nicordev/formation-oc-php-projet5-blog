@@ -138,7 +138,7 @@ class CategoryManager extends Manager
             'categoryId' => $categoryId
         ]);
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
-            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+            $tags[] = $this->createEntityFromTableData($tagData, 'Tag');
         }
 
         return $tags;

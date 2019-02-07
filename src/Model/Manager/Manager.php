@@ -25,6 +25,8 @@ abstract class Manager
     protected $user = 'root';
     protected $password = '';
 
+    protected const ENTITY_NAMESPACE = 'Model\\Entity\\';
+
     /**
      * Manager constructor.
      *
@@ -205,7 +207,7 @@ abstract class Manager
         $entityData = [];
 
         if ($className !== null) {
-            $entityClass = $className;
+            $entityClass = self::ENTITY_NAMESPACE . $className;
             // Find the right manager
             $managerClass = self::getManagerClass($className);
             $entityManager = new $managerClass();
@@ -256,7 +258,7 @@ abstract class Manager
     {
         $class = explode('\\', get_called_class());
         $class = end($class);
-        $class = 'Model\\Entity\\' . substr($class, 0, -(strlen('Manager')));
+        $class = self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
 
         return $class;
     }
@@ -264,14 +266,12 @@ abstract class Manager
     /**
      * Get the manager class name of an Entity
      *
-     * @param string $entityClassName
+     * @param string $entityClassName without the namespace
      * @return string
      */
     private static function getManagerClass(string $entityClassName): string
     {
-        $class = explode('\\', $entityClassName);
-        $class = end($class);
-        $class = 'Model\\Manager\\' . strtolower($class) . 'Manager';
+        $class = __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
 
         return $class;
     }

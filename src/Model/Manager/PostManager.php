@@ -123,7 +123,7 @@ class PostManager extends Manager
             'postId' => $postId
         ]);
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
-            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+            $tags[] = $this->createEntityFromTableData($tagData, 'Tag');
         }
 
         return $tags;
@@ -152,7 +152,7 @@ class PostManager extends Manager
         $requestCategories = $this->prepareThenExecuteQuery($query, ['id' => $postId]);
 
         while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
-            $categories[] = $this->createEntityFromTableData($categoryData, 'Model\\Entity\\Category');
+            $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
         }
 
         return $categories;
@@ -162,6 +162,7 @@ class PostManager extends Manager
      * Get all posts from the database
      *
      * @return array
+     * @throws BlogException
      */
     public function getAll(): array
     {

@@ -117,18 +117,4 @@ class TagManager extends Manager
 
         return $id;
     }
-
-    /**
-     * @param array $data
-     * @return Tag
-     */
-    public static function createATagFromDatabaseData(array $data): Tag
-    {
-        $attributes = [
-            'id' => $data['tag_id'],
-            'name' => $data['tag_name']
-        ];
-
-        return new Tag($attributes);
-    }
 }
