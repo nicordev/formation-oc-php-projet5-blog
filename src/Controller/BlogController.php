@@ -113,20 +113,17 @@ class BlogController extends Controller
      * Show an entire blog post
      *
      * @param int $postId
-     * @param int $categoryId
      * @return void
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showASinglePost(int $postId, int $categoryId)
+    public function showASinglePost(int $postId)
     {
         try {
             $post = $this->postManager->get($postId);
             self::decodePostContent($post);
-            $nextPostId = $this->getNextPostId($postId, $categoryId);
-            $previousPostId = $this->getPreviousPostId($postId, $categoryId);
-            $category = $this->categoryManager->get($categoryId);
+            $categories = $this->categoryManager->getCategoriesFromPostId($postId);
 
         } catch (BlogException $e) {
             $this->pageNotFound404(); // TODO throw an Exception instead
@@ -134,9 +131,7 @@ class BlogController extends Controller
 
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'nextPostId' => $nextPostId,
-            'previousPostId' => $previousPostId,
-            'category' => $category
+            'categories' => $categories
         ]);
     }
 
@@ -632,46 +627,6 @@ class BlogController extends Controller
         } else {
             return null;
         }
-    }
-
-    /**
-     * Get the next Post id or false if it's the last post
-     *
-     * @param int $postId
-     * @param int|null $categoryId
-     * @return bool
-     */
-    private function getNextPostId(int $postId, ?int $categoryId = null)
-    {
-        $ids = $this->postManager->getAllIds($categoryId);
-
-        for ($i = 0, $size = count($ids); $i < $size; $i++) {
-            if ($postId < $ids[$i]) {
-                return $ids[$i];
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get the previous Post id or false if it's the first post
-     *
-     * @param int $postId
-     * @param int|null $categoryId
-     * @return bool
-     */
-    private function getPreviousPostId(int $postId, ?int $categoryId = null)
-    {
-        $ids = $this->postManager->getAllIds($categoryId);
-
-        for ($i = count($ids) - 1; $i >= 0; $i--) {
-            if ($postId > $ids[$i]) {
-                return $ids[$i];
-            }
-        }
-
-        return false;
     }
 
     /**

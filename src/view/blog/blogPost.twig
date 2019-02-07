@@ -20,27 +20,10 @@
                 <div class="col-lg-8 col-md-10 mx-auto">
 
                     {# Classification #}
-                    <div class="blogpost-classification">
-                        {# Category #}
-                        <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a> |
-                        {# Tags #}
-                        {% for tag in post.getTags %}<a href="/blog?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
-                    </div>
+                    {% include 'blog/blogpostClassification.twig' %}
 
                     <div class="blogpost-content">
                         {{ post.getContent|raw }}
-                    </div>
-
-                    <div class="blogpost-navigation">
-                        {% if previousPostId %}
-                        <a class="post-nav-link" href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a><span> | </span>
-                        {% endif %}
-
-                        <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">Sommaire</a>
-
-                        {% if nextPostId %}
-                        <span> | </span><a class="post-nav-link" href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}"> | Article suivant</a>
-                        {% endif %}
                     </div>
                 </div>
             </div>

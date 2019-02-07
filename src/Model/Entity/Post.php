@@ -19,6 +19,23 @@ class Post extends Entity
     protected $excerpt = null;
     protected $content = null;
     protected $tags = [];
+    protected $categories = [];
+
+    /**
+     * @return array
+     */
+    public function getCategories(): array
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
 
     /**
      * @return int

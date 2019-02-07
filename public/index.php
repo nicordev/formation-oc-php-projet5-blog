@@ -1,21 +1,5 @@
 <?php
 
-/**
- * @param $variables
- */
-function varDump($variables)
-{
-    echo '<pre>';
-    if (is_array($variables)) {
-        foreach ($variables as $variable) {
-            var_dump($variable);
-        }
-    } else {
-        var_dump($variables);
-    }
-    echo '</pre>';
-}
-
 use Application\Application;
 
 require_once('../vendor/autoload.php');
