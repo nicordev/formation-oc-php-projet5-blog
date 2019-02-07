@@ -70,7 +70,7 @@
         <div class="admin-box">
             <h2>Etiquettes</h2>
 
-            <form id="admin-tag-list-form" action="?page=blog-admin" method="post">
+            <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
 
                 <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
 
@@ -96,7 +96,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="/public/js/erase.js"></script>
-    <script src="/public/js/refreshValue.js"></script>
-    <script src="/public/js/adminTagManager.js"></script>
+    <script src="/js/erase.js"></script>
+    <script src="/js/refreshValue.js"></script>
+    <script src="/js/adminTagManager.js"></script>
 {% endblock %}

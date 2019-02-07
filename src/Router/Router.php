@@ -90,6 +90,15 @@ class Router
                 $params = isset($postId) ? ['postId' => $postId] : [];
                 break;
 
+            case '/admin/update-tags':
+                $controller = BlogController::class;
+                $method = 'updateTagList';
+                $params = [
+                    'tagIds' => $_POST['tag_ids'],
+                    'tagNames' => $_POST['tag_names']
+                ];
+                break;
+
             default:
                 // Default route : Home
                 $controller = BlogController::class;
