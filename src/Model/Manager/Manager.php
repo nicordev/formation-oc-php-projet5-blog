@@ -197,18 +197,51 @@ abstract class Manager
      * Create an Entity child from database data
      *
      * @param array $tableData
+     * @param string|null $className If null, the method will use the entity linked to the calling manager
      * @return mixed
      */
-    protected function createEntityFromTableData(array $tableData)
+    protected function createEntityFromTableData(array $tableData, ?string $className = null)
     {
-        $entityClass = self::getEntityClass();
         $entityData = [];
 
-        foreach ($this->fields as $key => $value) {
-            $entityData[$key] = $tableData[$value];
+        if ($className !== null) {
+            $entityClass = $className;
+            // Find the right manager
+            $managerClass = self::getManagerClass($className);
+            $entityManager = new $managerClass();
+
+            foreach ($entityManager->fields as $key => $value) {
+                $entityData[$key] = $tableData[$value];
+            }
+
+        } else {
+            $entityClass = self::getEntityClass();
+
+            foreach ($this->fields as $key => $value) {
+                $entityData[$key] = $tableData[$value];
+            }
         }
 
         return new $entityClass($entityData);
+    }
+
+    /**
+     * Prepare then execute a SQL query with parameters
+     *
+     * @param string $query
+     * @param array $params
+     * @return bool|\PDOStatement
+     * @throws BlogException
+     */
+    protected function prepareThenExecuteQuery(string $query, array $params)
+    {
+        $request = $this->database->prepare($query);
+
+        if (!$request->execute($params)) {
+            throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+        }
+
+        return $request;
     }
 
 
@@ -229,22 +262,18 @@ abstract class Manager
     }
 
     /**
-     * Prepare then execute a SQL query with parameters
+     * Get the manager class name of an Entity
      *
-     * @param string $query
-     * @param array $params
-     * @return bool|\PDOStatement
-     * @throws BlogException
+     * @param string $entityClassName
+     * @return string
      */
-    private function prepareThenExecuteQuery(string $query, array $params)
+    private static function getManagerClass(string $entityClassName): string
     {
-        $request = $this->database->prepare($query);
+        $class = explode('\\', $entityClassName);
+        $class = end($class);
+        $class = 'Model\\Manager\\' . strtolower($class) . 'Manager';
 
-        if (!$request->execute($params)) {
-            throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
-        }
-
-        return $request;
+        return $class;
     }
 
     /**

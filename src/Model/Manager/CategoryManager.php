@@ -160,6 +160,20 @@ class CategoryManager extends Manager
 
         return $categories;
     }
+
+    /**
+     * @param array $data
+     * @return Category
+     */
+    public static function createACategoryFromDatabaseData(array $data): Category
+    {
+        $attributes = [
+            'id' => $data['cat_id'],
+            'name' => $data['cat_name']
+        ];
+
+        return new Category($attributes);
+    }
     
     // Private
 

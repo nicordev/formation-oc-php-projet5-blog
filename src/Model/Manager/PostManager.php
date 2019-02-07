@@ -108,7 +108,7 @@ class PostManager extends Manager
      * @param int $postId
      * @return array
      */
-    public function getTagsOfAPost(int $postId)
+    public function getTagsOfAPost(int $postId): array
     {
         $tags = [];
 
@@ -130,6 +130,35 @@ class PostManager extends Manager
     }
 
     /**
+     * Get associated categories of a post
+     *
+     * @param int $postId
+     * @return array
+     * @throws BlogException
+     */
+    public function getCategoriesOfAPost(int $postId): array
+    {
+        $categories = [];
+
+        $query = 'SELECT DISTINCT * FROM bl_category
+            WHERE cat_id IN (
+                SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
+                WHERE ct_tag_id_fk IN (
+                    SELECT DISTINCT pt_tag_id_fk FROM bl_post_tag
+                    WHERE pt_post_id_fk = :id
+                )
+            )';
+
+        $requestCategories = $this->prepareThenExecuteQuery($query, ['id' => $postId]);
+
+        while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
+            $categories[] = $this->createEntityFromTableData($categoryData, 'Model\\Entity\\Category');
+        }
+
+        return $categories;
+    }
+
+    /**
      * Get all posts from the database
      *
      * @return array
@@ -138,9 +167,10 @@ class PostManager extends Manager
     {
         $posts = parent::getAll();
 
-        // Get tags
+        // Set tags and categories
         foreach ($posts as $post) {
             $post->setTags($this->getTagsOfAPost($post->getId()));
+            $post->setCategories($this->getCategoriesOfAPost($post->getId()));
         }
 
         return $posts;

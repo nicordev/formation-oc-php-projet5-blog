@@ -46,17 +46,24 @@
                             coming soon...
                         </td>
                         <td>
-                            {% set postTags = post.getTags() %}
+                            {% set postTags = post.getTags %}
                             {% if postTags %}
                                 {% for tag in postTags %}
-                                    {{ tag.getName() }}
+                                    #{{ tag.getName }}
                                 {% endfor %}
                             {% else %}
                                 -
                             {% endif %}
                         </td>
                         <td>
-                            coming soon...
+                            {% set postCategories = post.getCategories %}
+                            {% if postCategories %}
+                                {% for category in postCategories %}
+                                    {{ category.getName }}
+                                {% endfor %}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                         <td>
                             coming soon...
