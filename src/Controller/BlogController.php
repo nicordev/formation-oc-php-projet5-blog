@@ -65,10 +65,20 @@ class BlogController extends Controller
 
     /**
      * Show all posts of the blog
+     * @param bool $htmlDecode
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function showAllPosts()
+    public function showAllPosts(bool $htmlDecode = false)
     {
         $posts = $this->postManager->getAll();
+
+        if ($htmlDecode) {
+            foreach ($posts as $post) {
+                self::decodePostContent($post);
+            }
+        }
 
         self::render(self::VIEW_BLOG, ['posts' => $posts]);
     }
@@ -77,14 +87,21 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
+     * @param bool $htmlDecode
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfACategory(int $categoryId)
+    public function showPostsOfACategory(int $categoryId, bool $htmlDecode = false)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
+
+        if ($htmlDecode) {
+            foreach ($posts as $post) {
+                self::decodePostContent($post);
+            }
+        }
 
         self::render(self::VIEW_BLOG, [
             'posts' => $posts,
@@ -95,14 +112,18 @@ class BlogController extends Controller
     /**
      * Show an entire blog post
      *
-     * @param $postId
+     * @param int $postId
+     * @param int $categoryId
      * @return void
-     * @throws Exception
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function showASinglePost(int $postId, int $categoryId)
     {
         try {
             $post = $this->postManager->get($postId);
+            self::decodePostContent($post);
             $nextPostId = $this->getNextPostId($postId, $categoryId);
             $previousPostId = $this->getPreviousPostId($postId, $categoryId);
             $category = $this->categoryManager->get($categoryId);
@@ -160,6 +181,7 @@ class BlogController extends Controller
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
+            self::decodePostContent($postToEdit);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
@@ -650,5 +672,16 @@ class BlogController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Unescape HTML tags in the content of the post
+     *
+     * @param Post $post
+     */
+    private static function decodePostContent(Post $post)
+    {
+        $post->setContent(htmlspecialchars_decode($post->getContent()));
+        $post->setContent(htmlspecialchars_decode($post->getContent()));
     }
 }
