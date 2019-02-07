@@ -14,7 +14,7 @@
 
         {% if postToEdit %}
             <div>
-                <form action="admin" method="post">
+                <form action="/admin/delete-post" method="post">
                     <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                     <p>
                         <input class="btn" type="submit" value="Supprimer l'article">
@@ -24,19 +24,18 @@
         {% endif %}
 
         <div>
-            <form action="admin" method="post">
-                <!-- Hidden fields -->
-                {% if postToEdit %}
-                    <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
-                    <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
+            {% if postToEdit %}
+            <form action="/admin/edit-post" method="post">
+                <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
+                <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
 
-                {% else %}
-                    <input type="hidden" name="add-post">
-                {% endif %}
+            {% else %}
+            <form action="/admin/add-post" method="post">
+                <input type="hidden" name="add-post">
+            {% endif %}
                 
                 <input type="hidden" name="post-author-id" value="58"><!-- TODO put the true author id here -->
 
-                <!-- Visible fields-->
                 <p>
                     <input class="btn" type="submit" value="Publier l'article">
                 </p>
@@ -77,7 +76,7 @@
                     <div class="post-editor-box" id="new-tag-wrapper">
                         <label for="new-tag">Créer une étiquette</label><br>
                         <input class="tag-input" type="text" id="new-tag">
-                        <button class="btn" id="new-tag-btn">+</button>
+                        <button type="button" class="btn" id="new-tag-btn">+</button>
                     </div>
                 </div>
             </form>
@@ -87,7 +86,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="public/js/tagManager.js"></script>
+    <script src="/js/tagManager.js"></script>
 {% endblock %}
 
 
