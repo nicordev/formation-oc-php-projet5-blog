@@ -10,11 +10,14 @@
     "require": {
         "twig/twig": "^2.6"
     },
+    "require-dev": {
+        "symfony/debug": "^4.2"
+    },
     "autoload": {
     	"psr-4": {
+            "Application\\": "src/",
             "Model\\": "src/Model",
-            "Controller\\": "src/Controller",
-            "Application\\": "src/"
+            "Controller\\": "src/Controller"
         }
     }
 }
