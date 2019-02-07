@@ -28,7 +28,7 @@
                         {# Tags #}
                         <p>
                             {% for tag in post.getTags %}
-                                <a href="#">#{{ tag.getName }}</a>
+                                <a href="/blog?tag-id={{ tag.getId }}">#{{ tag.getName }}</a>
                             {% endfor %}
                         </p>
                     </div>

@@ -315,7 +315,7 @@ class BlogController extends Controller
     public function updateTagList(?array $tagIds, ?array $tagNames)
     {
         if ($tagIds === null || $tagNames === null) {
-            $this->tagManager->deleteAll();
+            $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
             // Head back to the admin panel
             $this->showAdminPanel('La liste des étiquettes a été vidée.');
             return false;
