@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block title %}
+    Accueil
+{% endblock %}
+
+{% block header %}
+    <h1>Mon super site</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="home-list">
+        <section class="home-category">
+            {% embed "home/postDeck.twig" %}
+                {% block deckTitle %}Blog{% endblock %}
+            {% endembed %}
+        </section>
+
+        <section class="home-category">
+            {% embed "home/postDeck.twig" %}
+                {% block deckTitle %}A propos{% endblock %}
+            {% endembed %}
+        </section>
+    </section>
+{% endblock %}

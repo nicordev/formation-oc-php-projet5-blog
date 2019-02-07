@@ -18,13 +18,12 @@ use Model\Manager\PostManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
 
-class BlogController
+class BlogController extends Controller
 {
     protected $postManager;
     protected $tagManager;
     protected $categoryManager;
     protected $commentManager;
-    protected $viewFolderPath = '';
     protected $twig;
 
     const VIEW_BLOG = 'blog/blog.twig';
@@ -51,11 +50,11 @@ class BlogController
                                 Twig_Environment $twig
     )
     {
+        parent::__construct($twig);
         $this->postManager = $postManager;
         $this->tagManager = $tagManager;
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
-        $this->twig = $twig;
     }
 
     // Views
@@ -67,7 +66,7 @@ class BlogController
     {
         $posts = $this->postManager->getAll();
 
-        echo $this->twig->render(self::VIEW_BLOG, ['posts' => $posts]);
+        self::render(self::VIEW_BLOG, ['posts' => $posts]);
     }
 
     /**
@@ -88,7 +87,7 @@ class BlogController
             $this->pageNotFound404(); // TODO throw an Exception instead
         }
 
-        echo $this->twig->render(self::VIEW_BLOG_POST, [
+        self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'nextPostId' => $nextPostId,
             'previousPostId' => $previousPostId
@@ -107,7 +106,7 @@ class BlogController
     {
         $posts = $this->postManager->getAll();
 
-        echo $this->twig->render(self::VIEW_BLOG_ADMIN, [
+        self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message
         ]);
@@ -131,20 +130,11 @@ class BlogController
             $postToEdit = $this->postManager->get($postToEditId);
         }
 
-        echo $this->twig->render(self::VIEW_POST_EDITOR, [
+        self::render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
             'message' => $message
         ]);
-    }
-
-    /**
-     * Show a page when the visitor is lost...
-     */
-    public function pageNotFound404()
-    {
-        echo $this->twig->render('pageNotFound.twig');
-        exit();
     }
 
     // Actions

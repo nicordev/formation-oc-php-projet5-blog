@@ -49,14 +49,22 @@ td, th {
     padding: 5px 20px;
 }
 
-/* id */
+/*
+    id
+    --
+*/
 
 
-/* class */
+/*
+    class
+    -----
+*/
 .content {
     margin: 0 auto;
     max-width: 1300px;
 }
+
+/* postDeck.twig */
 
 .card {
     padding: 0 20px 0 20px;
@@ -68,7 +76,7 @@ td, th {
 }
 
 .card-content {
-    /* What's up buddy? */
+
 }
 
 .card-info {
@@ -86,6 +94,29 @@ td, th {
 .card-deck-title {
     text-align: center;
 }
+
+/* blog.twig */
+
+.post-wrapper {
+    text-align: center;
+    margin: 20px;
+}
+
+.post-title {
+    margin: 10px 0 0 0;
+}
+
+.post-excerpt {
+
+}
+
+.post-info {
+    padding: 10px 0 10px 0;
+    font-size: 0.75em;
+    color: burlywood;
+}
+
+/* blogPost.twig */
 
 .blogpost {
     padding: 50px 0;
@@ -143,6 +174,8 @@ td, th {
 .admin-blogpost-title:hover {
     cursor: pointer;
 }
+
+/* message.twig */
 
 .message {
     text-align: center;
