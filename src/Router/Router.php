@@ -30,6 +30,12 @@ class Router
                 $params = ['categoryId' => (int) $_GET['category-id']];
                 break;
 
+            case '/blog/tag':
+                $controller = BlogController::class;
+                $method = 'showPostsOfATag';
+                $params = ['tagId' => (int) $_GET['tag-id']];
+                break;
+
             case '/blog-post':
                 if (
                     isset($_GET['post-id']) && is_numeric($_GET['post-id'])

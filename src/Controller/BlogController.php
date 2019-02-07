@@ -30,6 +30,7 @@ class BlogController extends Controller
     protected $commentManager;
 
     const VIEW_BLOG = 'blog/blog.twig';
+    const VIEW_BLOG_TAG = 'blog/tagPage.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
     const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'blog/postEditor.twig';
@@ -106,6 +107,25 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG, [
             'posts' => $posts,
             'category' => $category
+        ]);
+    }
+
+    /**
+     * Show all the posts associated to a tag
+     *
+     * @param int $tagId
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showPostsOfATag(int $tagId)
+    {
+        $posts = $this->postManager->getPostsOfATag($tagId);
+        $tag = $this->tagManager->get($tagId);
+
+        self::render(self::VIEW_BLOG_TAG, [
+            'posts' => $posts,
+            'tag' => $tag
         ]);
     }
 

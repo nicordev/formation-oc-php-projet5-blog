@@ -221,6 +221,28 @@ class PostManager extends Manager
         return $posts;
     }
 
+    public function getPostsOfATag(int $tagId)
+    {
+        $posts = [];
+
+        $query = 'SELECT * FROM bl_post
+            WHERE p_id IN (
+                SELECT pt_post_id_fk FROM bl_post_tag
+                WHERE pt_tag_id_fk = :id
+            )';
+
+        $requestPosts = $this->database->prepare($query);
+        $requestPosts->execute([
+            'id' => $tagId
+        ]);
+
+        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = $this->createEntityFromTableData($postData);
+        }
+
+        return $posts;
+    }
+
     // Private
 
     /**

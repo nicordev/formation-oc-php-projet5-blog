@@ -6,5 +6,5 @@
     {% endfor %}
     <span> | </span>
     {# Tags #}
-    {% for tag in post.getTags %}<a href="/blog?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
+    {% for tag in post.getTags %}<a href="/blog/tag?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
 </div>
