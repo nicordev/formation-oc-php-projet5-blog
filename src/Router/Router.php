@@ -2,6 +2,8 @@
 
 namespace Application\Router;
 
+use Controller\BlogController;
+
 class Router
 {
     /**
@@ -17,52 +19,32 @@ class Router
      */
     public static function run(): Route
     {
-        // Default route : Home
-        $controller = 'Controller\HomeController';
-        $method = 'showHome';
-        $params = [];
+        $url = self::getUrl();
 
-        if (isset($_GET['page'])) {
-            $page = $_GET['page'];
+        switch ($url) {
 
-            // Blog
-            if ($page === 'blog') {
-                $controller = 'Controller\BlogController';
+            case '/blog':
+                $controller = BlogController::class;
                 $method = 'showAllPosts';
                 $params = [];
+                break;
 
-            // Post
-            } elseif ($page === 'post' &&
-                isset($_GET['post-id']) &&
-                is_numeric($_GET['post-id'])) {
-
-                $controller = 'Controller\BlogController';
-                $method = 'showASinglePost';
-                $params = ['postId' => $_GET['post-id']];
-
-            // Blog Admin
-            } elseif ($page === 'blog-admin') {
-
-                // Manage post
-                if (isset($_POST['add-post'])) {
-                    $controller = 'Controller\BlogController';
-                    $method = 'addPost';
-                    $params = [];
-
-                } elseif (isset($_POST['edit-post'])) {
-                    $controller = 'Controller\BlogController';
-                    $method = 'editPost';
-                    $params = [];
-                } elseif (isset($_POST['delete-post'])) {
-                    $controller = 'Controller\BlogController';
-                    $method = 'deletePost';
-                    $params = [];
-
+            case '/blog-post':
+                if (
+                    isset($_GET['post-id']) &&
+                    is_numeric($_GET['post-id'])
+                ) {
+                    $controller = BlogController::class;
+                    $method = 'showASinglePost';
+                    $params = ['postId' => $_GET['post-id']];
                 } else {
-                    $controller = 'Controller\BlogController';
-                    $method = 'showAdminPanel';
+                    $controller = BlogController::class;
+                    $method = 'pageNotFound404';
                     $params = [];
                 }
+                break;
+
+            case '/admin':
 
                 // Manage tags
                 if (isset($_POST['tag_ids']) &&
@@ -74,28 +56,62 @@ class Router
                         'tagIds' => $_POST['tag_ids'],
                         'tagNames' => $_POST['tag_names']
                     ];
+                } else {
+                    $controller = BlogController::class;
+                    $method = 'showAdminPanel';
+                    $params = [];
                 }
+                break;
 
-            // Post Editor
-            } elseif ($page === 'post-editor') {
+            case '/admin/add-post':
+                $controller = BlogController::class;
+                $method = 'addPost';
+                $params = [];
+                break;
 
+            case '/admin/edit-post':
+                $controller = BlogController::class;
+                $method = 'editPost';
+                $params = [];
+                break;
+
+            case '/admin/delete-post':
+                $controller = BlogController::class;
+                $method = 'deletePost';
+                $params = [];
+                break;
+
+            case '/admin/post-editor':
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
                 }
-
-                $controller = 'Controller\BlogController';
+                $controller = BlogController::class;
                 $method = 'showPostEditor';
                 $params = isset($postId) ? ['postId' => $postId] : [];
+                break;
 
-            // 404 page not found
-            } else {
-                // TODO Throw an exception instead
-                $controller = 'Controller\ErrorController';
-                $method = 'showError404';
+            default:
+                // Default route : Home
+                $controller = BlogController::class;
+                $method = 'showAllPosts';
                 $params = [];
-            }
+                break;
         }
 
         return new Route($controller, $method, $params);
+    }
+
+    // Private
+
+    /**
+     * Get the url
+     *
+     * @return mixed
+     */
+    private static function getUrl()
+    {
+        $urlParts = explode('?', $_SERVER['REQUEST_URI']);
+
+        return $urlParts[0];
     }
 }
