@@ -29,14 +29,17 @@ a, p a, a:hover {
     border-radius: 100%;
 }
 
-.blogpost-navigation {
-    margin-top: 30px;
-    color: burlywood;
-}
-
 .bad {
     background-color: #dd4444 !important;
     color: white !important;
+}
+
+.right-label {
+    padding-left: 5px;
+}
+
+.green {
+    color: #1c7430;
 }
 
 /* message.twig */
@@ -91,4 +94,15 @@ a, p a, a:hover {
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
     color: burlywood;
+}
+
+/* blogAdmin.twig */
+
+.table-tag {
+    color: #5a6268;
+    font-size: 0.75em;
+}
+
+.admin-tag {
+    color: #dd4444;
 }

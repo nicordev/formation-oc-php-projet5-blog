@@ -689,6 +689,6 @@ class BlogController extends Controller
     private static function decodePostContent(Post $post)
     {
         $post->setContent(htmlspecialchars_decode($post->getContent()));
-        $post->setContent(htmlspecialchars_decode($post->getContent()));
+        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
     }
 }

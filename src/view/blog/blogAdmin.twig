@@ -51,7 +51,7 @@
                             {% set postTags = post.getTags %}
                             {% if postTags %}
                                 {% for tag in postTags %}
-                                    #{{ tag.getName }}
+                                    <span class="table-tag">#{{ tag.getName }}</span>
                                 {% endfor %}
                             {% else %}
                                 -
@@ -152,7 +152,7 @@
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag text-center admin-link" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
+                            <input class="available-tag text-center admin-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
                             <span class="btn sign-btn" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
                         </li>
                     {% endfor %}

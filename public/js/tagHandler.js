@@ -52,7 +52,7 @@ var myTagHandler = {
         let checkboxElt = myApp.elementBuilder.createCheckboxElt('tags[]', tag, true);
         let labelElt = myApp.elementBuilder.createLabelElt(tag, tag);
 
-        labelElt.setAttribute('class', 'available-tag');
+        labelElt.setAttribute('class', 'available-tag right-label green');
 
         tagElt.appendChild(checkboxElt);
         tagElt.appendChild(labelElt);

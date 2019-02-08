@@ -256,6 +256,7 @@ class PostManager extends Manager
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $postData['p_content'] = 'Excerpt only';
             $posts[] = $this->createEntityFromTableData($postData);
         }
 
