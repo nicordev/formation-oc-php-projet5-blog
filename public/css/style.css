@@ -28,24 +28,37 @@ a, p a, a:hover {
     border-radius: 100%;
 }
 
-.message {
-    background-color: #ddddff;
-    padding: 20px 0;
-    color: #0c5460;
-}
-
 .blogpost-navigation {
     margin-top: 30px;
     color: burlywood;
+}
+
+.bad {
+    background-color: #dd4444 !important;
+    color: white !important;
+}
+
+/* message.twig */
+
+#message-wrapper {
+    background-color: #ddddff;
+}
+
+.message {
+    margin: 0;
+    padding: 10px 0;
+    color: #0c5460;
 }
 
 .message:hover {
     cursor: pointer;
 }
 
-.bad {
-    background-color: #dd4444 !important;
-    color: white !important;
+.message-form {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+
 }
 
 /* home.twig */

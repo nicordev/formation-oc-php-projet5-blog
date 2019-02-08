@@ -161,12 +161,13 @@ class BlogController extends Controller
      * Show the panel do manage blog posts
      *
      * @param string $message
+     * @param array $yesNoForm
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showAdminPanel(string $message = '')
+    public function showAdminPanel(string $message = '', array $yesNoForm = [])
     {
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
@@ -175,6 +176,7 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
+            'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories
         ]);
@@ -338,15 +340,29 @@ class BlogController extends Controller
      *
      * @param array $tagIds
      * @param array $tagNames
+     * @param string|null $action
      * @return bool
-     * @throws Exception
+     * @throws AppException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function updateTagList(?array $tagIds, ?array $tagNames)
+    public function updateTagList(?array $tagIds, ?array $tagNames, ?string $action = null)
     {
         if ($tagIds === null || $tagNames === null) {
-            $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
-            // Head back to the admin panel
-            $this->showAdminPanel('La liste des étiquettes a été vidée.');
+            if ($action === 'delete-all') {
+                $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
+                // Head back to the admin panel
+                $this->showAdminPanel('Toutes les etiquettes ont été supprimées.');
+            } else {
+                // Head back to the admin panel
+                $yesNoForm = [
+                    'yesAction' => '/admin/update-tags?action=delete-all',
+                    'noAction' => '/admin'
+                ];
+                $this->showAdminPanel('Vous êtes sur le point de supprimer toutes les étiquettes. Continuer ?', $yesNoForm);
+            }
             return false;
         }
 
@@ -405,6 +421,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function editCategory()
     {
@@ -438,6 +455,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function deleteCategory()
     {
