@@ -104,12 +104,12 @@ class TagManager extends Manager
      *
      * @param string $tagName
      * @return mixed
+     * @throws \Application\Exception\BlogException
      */
     public function getId(string $tagName)
     {
         $query = 'SELECT tag_id FROM bl_tag WHERE tag_name = :tag';
-        $requestId = $this->database->prepare($query);
-        $requestId->execute([
+        $requestId = $this->prepareThenExecuteQuery($query, [
             'tag' => $tagName
         ]);
 

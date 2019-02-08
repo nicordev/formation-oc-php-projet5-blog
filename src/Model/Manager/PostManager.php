@@ -107,6 +107,7 @@ class PostManager extends Manager
      *
      * @param int $postId
      * @return array
+     * @throws BlogException
      */
     public function getTagsOfAPost(int $postId): array
     {
@@ -118,10 +119,10 @@ class PostManager extends Manager
             INNER JOIN bl_post ON pt_post_id_fk = p_id
             WHERE p_id = :postId';
 
-        $requestTags = $this->database->prepare($query);
-        $requestTags->execute([
+        $requestTags = $this->prepareThenExecuteQuery($query, [
             'postId' => $postId
         ]);
+
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
             $tags[] = $this->createEntityFromTableData($tagData, 'Tag');
         }
@@ -182,6 +183,7 @@ class PostManager extends Manager
      *
      * @param int|null $categoryId
      * @return array
+     * @throws BlogException
      */
     public function getAllIds(?int $categoryId = null): array
     {
@@ -203,8 +205,7 @@ class PostManager extends Manager
                         WHERE cat_id = :id)
                 )';
 
-            $requestAllIds = $this->database->prepare($query);
-            $requestAllIds->execute([
+            $requestAllIds = $this->prepareThenExecuteQuery($query, [
                 'id' => $categoryId
             ]);
         }
@@ -224,6 +225,7 @@ class PostManager extends Manager
      *
      * @param int $categoryId
      * @return array
+     * @throws BlogException
      */
     public function getPostsOfACategory(int $categoryId)
     {
@@ -240,8 +242,7 @@ class PostManager extends Manager
                             ON cat_id = ct_category_id_fk
                     WHERE cat_id = :id) # Use the requested category id here
             )';
-        $requestPosts = $this->database->prepare($query);
-        $requestPosts->execute([
+        $requestPosts = $this->prepareThenExecuteQuery($query, [
             'id' => $categoryId
         ]);
 
@@ -262,8 +263,7 @@ class PostManager extends Manager
                 WHERE pt_tag_id_fk = :id
             )';
 
-        $requestPosts = $this->database->prepare($query);
-        $requestPosts->execute([
+        $requestPosts = $this->prepareThenExecuteQuery($query, [
             'id' => $tagId
         ]);
 
