@@ -151,7 +151,7 @@
                     {% endfor %}
 
                     <li id="new-tag-input-li">
-                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette">
+                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeypress="addTagOnEnter(event);">
                         <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
                     </li>
                 </ul>

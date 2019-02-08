@@ -43,6 +43,11 @@ a, p a, a:hover {
     cursor: pointer;
 }
 
+.bad {
+    background-color: #dd4444 !important;
+    color: white !important;
+}
+
 /* home.twig */
 
 .home-category {

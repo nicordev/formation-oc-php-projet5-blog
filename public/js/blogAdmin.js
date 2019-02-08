@@ -15,6 +15,7 @@ const TAG_CLASSES = 'available-tag text-center admin-link';
 function highlightIncorrectTags()
 {
     let tagElts = document.getElementsByClassName(TAG_CLASSES);
+    console.log(tagElts);
 
     myApp.formatBadElements(tagElts, 'bad', true, true, true);
 }
@@ -109,4 +110,18 @@ function addTag()
 
         return tagElt;
     }
+}
+
+/**
+ * Add a tag in the list when hitting enter
+ *
+ * @param event
+ */
+function addTagOnEnter(event) {
+
+    if (event.keyCode === 13) {
+        addTag();
+    }
+
+    return event.keyCode !== 13;
 }
