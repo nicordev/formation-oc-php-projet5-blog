@@ -104,7 +104,7 @@ class CategoryManager extends Manager
                 WHERE pt_post_id_fk = :id
             )';
 
-        $requestPostId = $this->prepareThenExecuteQuery($query, [
+        $requestPostId = $this->query($query, [
             'id' => $postId
         ]);
 
@@ -133,7 +133,7 @@ class CategoryManager extends Manager
             INNER JOIN bl_category ON ct_category_id_fk = cat_id
             WHERE cat_id = :categoryId';
 
-        $requestTags = $this->prepareThenExecuteQuery($query, [
+        $requestTags = $this->query($query, [
             'categoryId' => $categoryId
         ]);
 
@@ -188,7 +188,7 @@ class CategoryManager extends Manager
     {
         // Delete
         $query = 'DELETE FROM bl_category_tag WHERE ct_category_id_fk = :categoryId';
-        $requestDelete = $this->prepareThenExecuteQuery($query, [
+        $requestDelete = $this->query($query, [
             'categoryId' => $category->getId()
         ]);
 

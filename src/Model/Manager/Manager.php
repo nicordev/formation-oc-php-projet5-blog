@@ -94,7 +94,7 @@ abstract class Manager
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
-        $this->prepareThenExecuteQuery($query, $properties);
+        $this->query($query, $properties);
     }
 
     /**
@@ -113,7 +113,7 @@ abstract class Manager
             SET ' . self::buildSqlSet($fields) . '
             WHERE ' . $fields['id'] . ' = :id';
 
-        $this->prepareThenExecuteQuery($query, $properties);
+        $this->query($query, $properties);
     }
 
     /**
@@ -126,7 +126,7 @@ abstract class Manager
     {
         $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
-        $this->prepareThenExecuteQuery($query, [$entityId]);
+        $this->query($query, [$entityId]);
     }
 
     /**
@@ -136,7 +136,7 @@ abstract class Manager
     {
         $query = 'DELETE FROM ' . $this->tableName;
 
-        $this->database->query($query);
+        $this->query($query);
     }
 
     /**
@@ -150,7 +150,7 @@ abstract class Manager
     {
         $query = 'SELECT * FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
-        $request = $this->prepareThenExecuteQuery($query, [$entityId]);
+        $request = $this->query($query, [$entityId]);
         $tableData = $request->fetch(PDO::FETCH_ASSOC);
 
         return $this->createEntityFromTableData($tableData);
@@ -166,7 +166,7 @@ abstract class Manager
         $entities = [];
         $query = "SELECT * FROM " . $this->tableName;
 
-        $requestAllEntities = $this->database->query($query);
+        $requestAllEntities = $this->query($query);
 
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
@@ -185,7 +185,7 @@ abstract class Manager
     public function getLastId(): int
     {
         $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
-        $requestLastId = $this->database->query($query);
+        $requestLastId = $this->query($query);
 
         $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
 
@@ -228,19 +228,24 @@ abstract class Manager
     }
 
     /**
-     * Prepare then execute a SQL query with parameters
+     * Prepare then execute a SQL query with parameters or execute a simple query
      *
      * @param string $query
      * @param array $params
      * @return bool|\PDOStatement
      * @throws BlogException
      */
-    protected function prepareThenExecuteQuery(string $query, array $params)
+    protected function query(string $query, ?array $params = null)
     {
-        $request = $this->database->prepare($query);
+        if ($params !== null) {
 
-        if (!$request->execute($params)) {
-            throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+            $request = $this->database->prepare($query);
+
+            if (!$request->execute($params)) {
+                throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+            }
+        } else {
+            $request = $this->database->query($query);
         }
 
         return $request;

@@ -119,7 +119,7 @@ class PostManager extends Manager
             INNER JOIN bl_post ON pt_post_id_fk = p_id
             WHERE p_id = :postId';
 
-        $requestTags = $this->prepareThenExecuteQuery($query, [
+        $requestTags = $this->query($query, [
             'postId' => $postId
         ]);
 
@@ -150,7 +150,7 @@ class PostManager extends Manager
                 )
             )';
 
-        $requestCategories = $this->prepareThenExecuteQuery($query, ['id' => $postId]);
+        $requestCategories = $this->query($query, ['id' => $postId]);
 
         while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
             $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
@@ -190,7 +190,7 @@ class PostManager extends Manager
         if ($categoryId === null) {
             $query = 'SELECT ' . $this->fields['id'] . ' FROM ' . $this->tableName . ' ORDER BY ' . $this->fields['id'];
 
-            $requestAllIds = $this->database->query($query);
+            $requestAllIds = $this->query($query);
 
         } else {
             $query = 'SELECT p_id FROM bl_post
@@ -205,7 +205,7 @@ class PostManager extends Manager
                         WHERE cat_id = :id)
                 )';
 
-            $requestAllIds = $this->prepareThenExecuteQuery($query, [
+            $requestAllIds = $this->query($query, [
                 'id' => $categoryId
             ]);
         }
@@ -242,7 +242,7 @@ class PostManager extends Manager
                             ON cat_id = ct_category_id_fk
                     WHERE cat_id = :id) # Use the requested category id here
             )';
-        $requestPosts = $this->prepareThenExecuteQuery($query, [
+        $requestPosts = $this->query($query, [
             'id' => $categoryId
         ]);
 
@@ -263,7 +263,7 @@ class PostManager extends Manager
                 WHERE pt_tag_id_fk = :id
             )';
 
-        $requestPosts = $this->prepareThenExecuteQuery($query, [
+        $requestPosts = $this->query($query, [
             'id' => $tagId
         ]);
 

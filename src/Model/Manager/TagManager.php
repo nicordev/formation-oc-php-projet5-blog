@@ -109,7 +109,7 @@ class TagManager extends Manager
     public function getId(string $tagName)
     {
         $query = 'SELECT tag_id FROM bl_tag WHERE tag_name = :tag';
-        $requestId = $this->prepareThenExecuteQuery($query, [
+        $requestId = $this->query($query, [
             'tag' => $tagName
         ]);
 
