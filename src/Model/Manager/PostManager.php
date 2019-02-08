@@ -227,14 +227,20 @@ class PostManager extends Manager
      * Get the posts associated to a category via its tags
      *
      * @param int $categoryId
+     * @param bool $withContent
      * @return array
      * @throws BlogException
      */
-    public function getPostsOfACategory(int $categoryId)
+    public function getPostsOfACategory(int $categoryId, bool $withContent = false)
     {
         $posts = [];
+        if ($withContent) {
+            $columns = '*';
+        } else {
+            $columns = 'p_id, p_excerpt, p_last_modification_date, p_last_editor_id_fk, p_author_id_fk, p_creation_date, p_title';
+        }
 
-        $query = 'SELECT * FROM bl_post
+        $query = 'SELECT ' . $columns . ' FROM bl_post
             WHERE p_id IN (
                 SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
                 WHERE pt_tag_id_fk IN (

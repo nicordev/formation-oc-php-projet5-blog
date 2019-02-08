@@ -145,17 +145,24 @@
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag text-center admin-link" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectTags();">
+                            <input class="available-tag text-center admin-link" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
                             <span class="btn sign-btn" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
                         </li>
                     {% endfor %}
 
                     <li id="new-tag-input-li">
-                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="addTagOnEnter(event);">
+                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="myBlogAdmin.addTagOnEnter(event);">
                         <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
                     </li>
                 </ul>
             </form>
         </div>
     </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        myBlogAdmin.setTagEventListeners();
+    </script>
 {% endblock %}

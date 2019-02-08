@@ -67,9 +67,12 @@
     </section>
 {% endblock %}
 
-{% block footer %}
+{% block scripts %}
     {{ parent() }}
     <script src="/js/tagHandler.js"></script>
+    <script>
+        myTagHandler.setTagEventListeners();
+    </script>
     {# CKEditor #}
     <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
     <script>
@@ -80,6 +83,5 @@
             } );
     </script>
 {% endblock %}
-
 
 

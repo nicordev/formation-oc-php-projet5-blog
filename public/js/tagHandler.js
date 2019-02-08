@@ -1,28 +1,44 @@
-(function () {
 
-    let newTagBtnElt = document.getElementById('new-tag-btn');
 
-    newTagBtnElt.addEventListener('click', function(evt) {
-        evt.preventDefault();
+var myTagHandler = {
 
-        let newTag = document.getElementById('new-tag').value;
-
-        if (isNewTag(newTag))
-            addNewTag(newTag);
-    });
+    AVAILABLE_TAGS_CLASS: 'available-tag',
 
     /**
-     * Add a new tag in the tags list
+     * Add event listeners for tags
+     */
+    setTagEventListeners: function () {
+        let newTagBtnElt = document.getElementById('new-tag-btn');
+
+        newTagBtnElt.addEventListener('click', function(evt) {
+            evt.preventDefault();
+            myTagHandler.addNewTag();
+        });
+    },
+
+    /**
+     * Add a tag in the tags list if it's a new one
+     */
+    addNewTag: function () {
+        let newTag = document.getElementById('new-tag').value;
+
+        if (myTagHandler.isNewTag(newTag)) {
+            myTagHandler.addTag(newTag);
+        }
+    },
+
+    /**
+     * Add a tag in the tags list
      *
      * @param newTag
      */
-    function addNewTag(newTag)
+    addTag: function (newTag)
     {
-        let newTagElt = createTagElt(newTag);
+        let newTagElt = myTagHandler.createTagElt(newTag);
         let availableTagsElt = document.getElementById("available-tags");
 
         availableTagsElt.appendChild(newTagElt);
-    }
+    },
 
     /**
      * Create an element holding the tag
@@ -30,7 +46,7 @@
      * @param tag
      * @returns {HTMLElement}
      */
-    function createTagElt(tag)
+    createTagElt: function (tag)
     {
         let tagElt = document.createElement('li');
         let checkboxElt = myApp.elementBuilder.createCheckboxElt('tags[]', tag, true);
@@ -42,7 +58,7 @@
         tagElt.appendChild(labelElt);
 
         return tagElt;
-    }
+    },
 
     /**
      * Check if the tag is new
@@ -50,25 +66,25 @@
      * @param tag
      * @returns {boolean}
      */
-    function isNewTag(tag)
+    isNewTag: function (tag)
     {
-        let availableTags = getAvailableTags();
+        let availableTags = myTagHandler.getAvailableTags();
 
         if (availableTags && availableTags.length > 0) {
             return !availableTags.includes(tag);
         }
         return true;
-    }
+    },
 
     /**
      * Get all available tags
      *
      * @returns {Array}
      */
-    function getAvailableTags()
+    getAvailableTags: function ()
     {
         let availableTags = [];
-        let availableTagsElts = document.getElementsByClassName('available-tag');
+        let availableTagsElts = document.getElementsByClassName(myTagHandler.AVAILABLE_TAGS_CLASS);
 
         if (availableTagsElts.length === 0) {
             return false;
@@ -79,5 +95,21 @@
         }
 
         return availableTags;
+    },
+
+    /**
+     * Add a tag in the list when hitting enter
+     *
+     * @param event
+     */
+    addTagOnEnter: function (event) {
+
+        if (event.keyCode === 13) {
+            let newTag = document.getElementById('new-tag').value;
+            myTagHandler.addNewTag(newTag);
+            event.preventDefault();
+        }
+
+        return event.keyCode !== 13;
     }
-})();
+}
