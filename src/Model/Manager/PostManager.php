@@ -17,6 +17,9 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
+    public const EXCERPT_LENGTH = 300;
+    public const TITLE_LENGTH = 100;
+
     /**
      * PostManager constructor.
      */

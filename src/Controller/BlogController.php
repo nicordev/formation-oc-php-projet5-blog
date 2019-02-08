@@ -259,17 +259,27 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
 
         if ($newPost !== null) {
-            $tags = $newPost->getTags();
+            if (strlen($newPost->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
+                // Try again...
+                $this->showPostEditor(null, "Erreur : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères.");
 
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newPost->setTags($this->addNewTags($tags));
+            } elseif (strlen($newPost->getTitle()) > PostManager::TITLE_LENGTH) {
+                // Try again...
+                $this->showPostEditor(null, "Erreur : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères.");
+
+            } else {
+                $tags = $newPost->getTags();
+
+                if (!empty($tags)) {
+                    // Add tags in the database and get their ids
+                    $newPost->setTags($this->addNewTags($tags));
+                }
+
+                $this->postManager->add($newPost);
+
+                // Come back to the admin panel
+                $this->showAdminPanel("Un article a été publié.");
             }
-
-            $this->postManager->add($newPost);
-
-            // Come back to the admin panel
-            $this->showAdminPanel("Un article a été publié.");
 
         } else {
             // Try again...

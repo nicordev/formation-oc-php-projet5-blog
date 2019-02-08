@@ -3,8 +3,10 @@
 namespace Model\Manager;
 
 use Application\Exception\BlogException;
+use Exception;
 use Model\Entity\Entity;
 use \PDO;
+use PDOException;
 use ReflectionClass;
 
 /**
@@ -160,6 +162,7 @@ abstract class Manager
      * Get all Entities form database
      *
      * @return array
+     * @throws BlogException
      */
     public function getAll(): array
     {
