@@ -3,10 +3,14 @@
 namespace Controller;
 
 
+use DateTime;
 use Twig_Environment;
 
 abstract class Controller
 {
+    const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+    const WEBSITE_DATE_FORMAT = "d/m/Y à H:i";
+
     /**
      * @var Twig_Environment
      */
@@ -34,5 +38,18 @@ abstract class Controller
     public function render(string $view, array $params = [])
     {
         echo $this->twig->render($view, $params);
+    }
+
+    /**
+     * Format a date to match the website requirement
+     *
+     * @param string $date
+     * @return string
+     * @throws \Exception
+     */
+    public static function formatDate(string $date)
+    {
+        $date = new DateTime($date);
+        return $date->format(self::WEBSITE_DATE_FORMAT);
     }
 }

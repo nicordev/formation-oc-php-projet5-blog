@@ -23,31 +23,32 @@
                 <a class="btn" href="/admin/post-editor">Ajouter un article</a>
             </p>
 
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Etiquettes</th>
-                        <th>Catégories</th>
-                        <th>Commentaires</th>
-                        <th>Date de création</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Etiquettes</th>
+                        <th scope="col">Catégories</th>
+                        <th scope="col">Commentaires</th>
+                        <th scope="col">Date de création</th>
+                        <th scope="col">Dernière modification</th>
                     </tr>
                 </thead>
 
                 <tbody>
                 {% for post in posts %}
                     <tr>
-                        <td>
+                        <td scope="row">
                             <form action="/admin/post-editor" method="post">
                                 <input type="hidden" name="post-id" value="{{ post.getId }}">
                                 <input class="admin-link" type="submit" value="{{ post.getTitle }}">
                             </form>
                         </td>
-                        <td>
+                        <td scope="row">
                             coming soon...
                         </td>
-                        <td>
+                        <td scope="row">
                             {% set postTags = post.getTags %}
                             {% if postTags %}
                                 {% for tag in postTags %}
@@ -57,7 +58,7 @@
                                 -
                             {% endif %}
                         </td>
-                        <td>
+                        <td scope="row">
                             {% set postCategories = post.getCategories %}
                             {% if postCategories %}
                                 {% for category in postCategories %}
@@ -67,11 +68,18 @@
                                 -
                             {% endif %}
                         </td>
-                        <td>
+                        <td scope="row">
                             coming soon...
                         </td>
-                        <td>
-                            {{ post.getCreationDate }}
+                        <td scope="row">
+                            <span class="table-date">{{ post.getCreationDate }}</span>
+                        </td>
+                        <td scope="row">
+                            {% if post.getLastModificationDate %}
+                            <span class="table-date">Le {{ post.getLastModificationDate }} par TODO: insert the editor name here</span>
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
@@ -79,16 +87,19 @@
 
                 <tfoot>
                     <tr>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Etiquettes</th>
-                        <th>Catégories</th>
-                        <th>Commentaires</th>
-                        <th>Date de création</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Etiquettes</th>
+                        <th scope="col">Catégories</th>
+                        <th scope="col">Commentaires</th>
+                        <th scope="col">Date de création</th>
+                        <th scope="col">Dernière modification</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
+
+        <hr>
 
         {# Categories #}
         <div class="admin-box">
@@ -120,7 +131,7 @@
                             {% set categoryTags = category.getTags() %}
                             {% if categoryTags %}
                                 {% for tag in categoryTags %}
-                                    {{ tag.getName }}
+                                    <span class="table-tag">#{{ tag.getName }}</span>
                                 {% endfor %}
                             {% else %}
                                 -
@@ -132,9 +143,11 @@
             </table>
         </div>
 
+        <hr>
+
         {# Tags #}
         <div class="admin-box">
-            <h2>Etiquettes</h2>
+            <h2>#Etiquettes</h2>
 
             <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
                 <p>
@@ -152,13 +165,15 @@
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag text-center admin-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
-                            <span class="btn sign-btn" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
+                            <span>#</span>
+                            <input class="available-tag text-center admin-tag underline-input" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
+                            <span class="btn sign-btn-small" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
                         </li>
                     {% endfor %}
 
                     <li id="new-tag-input-li">
-                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="myBlogAdmin.addTagOnEnter(event);">
+                        <span>#</span>
+                        <input id="new-tag-input" class="underline-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="myBlogAdmin.addTagOnEnter(event);">
                         <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
                     </li>
                 </ul>

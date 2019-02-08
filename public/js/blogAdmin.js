@@ -8,7 +8,7 @@ var myBlogAdmin = {
     *
     * */
 
-    TAG_CLASSES: 'available-tag text-center admin-link',
+    TAG_CLASSES: 'available-tag text-center admin-tag underline-input green',
 
     /**
      * Add event listeners for tags
@@ -109,14 +109,18 @@ var myBlogAdmin = {
         {
             let tagElt = document.createElement('li');
             let tagHiddenInfoElt = myApp.elementBuilder.createInputElt('hidden', 'tag_ids[]', 'new');
+            let sharpElt = document.createElement('span');
             let tagInputElt = myApp.elementBuilder.createInputElt('text', '', tag);
-            let deleteBtnElt = myApp.elementBuilder.createDeleteBtnElt();
+            let deleteBtnElt = myApp.elementBuilder.createDeleteBtnElt(true);
+
+            sharpElt.textContent = '#';
 
             tagInputElt.setAttribute('class', myBlogAdmin.TAG_CLASSES);
             tagInputElt.setAttribute('onkeyup', 'highlightIncorrectTags()');
             tagInputElt.setAttribute('name', 'tag_names[]');
 
             tagElt.appendChild(tagHiddenInfoElt);
+            tagElt.appendChild(sharpElt);
             tagElt.appendChild(tagInputElt);
             tagElt.appendChild(deleteBtnElt);
 
