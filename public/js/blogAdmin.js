@@ -121,6 +121,7 @@ function addTagOnEnter(event) {
 
     if (event.keyCode === 13) {
         addTag();
+        event.preventDefault();
     }
 
     return event.keyCode !== 13;
