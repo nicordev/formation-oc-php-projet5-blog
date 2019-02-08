@@ -1,9 +1,11 @@
 {% extends "blog/admin.twig" %}
 
+{# head #}
 {% block title %}
     Administration du blog
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <h1>Administration du blog</h1>
 {% endblock %}
@@ -135,10 +137,9 @@
             <h2>Etiquettes</h2>
 
             <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
-
-                <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
-
-                <input type="hidden" name="action" value="update-tag-list">
+                <p>
+                    <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+                </p>
 
                 <ul id="tag-list">
                     {% for tag in tags %}

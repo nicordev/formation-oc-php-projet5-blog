@@ -181,6 +181,7 @@ abstract class Manager
      * Get the last id.
      *
      * @return int
+     * @throws BlogException
      */
     public function getLastId(): int
     {

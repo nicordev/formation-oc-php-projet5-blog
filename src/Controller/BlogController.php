@@ -70,6 +70,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showAllPosts(bool $htmlDecode = false)
     {
@@ -89,6 +90,7 @@ class BlogController extends Controller
      *
      * @param int $categoryId
      * @param bool $htmlDecode
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -159,6 +161,7 @@ class BlogController extends Controller
      * Show the panel do manage blog posts
      *
      * @param string $message
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -253,6 +256,7 @@ class BlogController extends Controller
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
+        $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
 
         if ($newPost !== null) {
             $tags = $newPost->getTags();

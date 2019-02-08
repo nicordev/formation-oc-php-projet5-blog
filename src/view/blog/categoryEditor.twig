@@ -1,5 +1,6 @@
 {% extends 'blog/admin.twig' %}
 
+{# head #}
 {% block title %}
     {% if categoryToEdit %}
         Edition de {{ categoryToEdit.getName }}
@@ -8,6 +9,7 @@
     {% endif %}
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <h1>Editeur de catégorie</h1>
 {% endblock %}
@@ -34,7 +36,6 @@
                 <input type="hidden" name="edit-category" value="{{ categoryToEdit.getId }}">
             {% else %}
             <form action="/admin/add-category" method="post">
-                <input type="hidden" name="add-category">
             {% endif %}
 
                 <!-- Visible fields-->

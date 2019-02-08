@@ -1,5 +1,6 @@
 {% extends 'blog/admin.twig' %}
 
+{# head #}
 {% block title %}
     {% if postToEdit %}
         Edition de {{ postToEdit.getTitle }}
@@ -8,6 +9,7 @@
     {% endif %}
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <h1>Editeur d'article</h1>
 {% endblock %}
@@ -35,7 +37,6 @@
                 <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
             {% else %}
             <form action="/admin/add-post" method="post">
-                <input type="hidden" name="add-post">
             {% endif %}
                 <input type="hidden" name="post-author-id" value="58"><!-- TODO put the true author id here -->
 
