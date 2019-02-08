@@ -29,6 +29,12 @@ a, p a, a:hover {
     border-radius: 100%;
 }
 
+.sign-btn-small {
+    font-size: 1em;
+    padding: 0 7px 0px 7px;
+    border-radius: 100%;
+}
+
 .bad {
     background-color: #dd4444 !important;
     color: white !important;

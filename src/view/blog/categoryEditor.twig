@@ -62,9 +62,12 @@
     </section>
 {% endblock %}
 
-{% block footer %}
+{% block scripts %}
     {{ parent() }}
     <script src="/js/tagHandler.js"></script>
+    <script>
+        myTagHandler.setTagEventListeners();
+    </script>
 {% endblock %}
 
 

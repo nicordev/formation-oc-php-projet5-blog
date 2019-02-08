@@ -51,11 +51,13 @@ var myTagHandler = {
         let tagElt = document.createElement('li');
         let checkboxElt = myApp.elementBuilder.createCheckboxElt('tags[]', tag, true);
         let labelElt = myApp.elementBuilder.createLabelElt(tag, tag);
+        let eraseBtnElt = myApp.elementBuilder.createDeleteBtnElt(true);
 
         labelElt.setAttribute('class', 'available-tag right-label green');
 
         tagElt.appendChild(checkboxElt);
         tagElt.appendChild(labelElt);
+        tagElt.appendChild(eraseBtnElt);
 
         return tagElt;
     },
