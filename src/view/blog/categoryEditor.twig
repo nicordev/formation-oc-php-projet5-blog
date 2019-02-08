@@ -17,18 +17,24 @@
 {% block content %}
     <section class="blog-admin">
         {% include "blog/message.twig" %}
-
-        {# Delete button #}
-        {% if categoryToEdit %}
+        <div>
+            {# Cancel button #}
             <div>
-                <form action="/admin/delete-category" method="post">
-                    <input type="hidden" name="delete-category" value="{{ categoryToEdit.getId }}">
-                    <p>
-                        <input class="btn" type="submit" value="Supprimer la catégorie">
-                    </p>
-                </form>
+                <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
             </div>
-        {% endif %}
+
+            {# Delete button #}
+            {% if categoryToEdit %}
+                <div>
+                    <form action="/admin/delete-category" method="post">
+                        <input type="hidden" name="delete-category" value="{{ categoryToEdit.getId }}">
+                        <p>
+                            <input class="btn" type="submit" value="Supprimer la catégorie">
+                        </p>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
 
         <div>
             {% if categoryToEdit %}

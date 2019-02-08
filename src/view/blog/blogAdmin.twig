@@ -138,7 +138,14 @@
 
             <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
                 <p>
-                    <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+                    {# Update list button #}
+                        <div>
+                            <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+                        </div>
+                        {# Cancel button #}
+                        <div>
+                            <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
+                        </div>
                 </p>
 
                 <ul id="tag-list">
