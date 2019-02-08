@@ -36,8 +36,6 @@ class BlogController extends Controller
     const VIEW_POST_EDITOR = 'blog/postEditor.twig';
     const VIEW_CATEGORY_EDITOR = 'blog/categoryEditor.twig';
 
-    const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
-
     /**
      * BlogController constructor.
      *
@@ -144,6 +142,7 @@ class BlogController extends Controller
     {
         try {
             $post = $this->postManager->get($postId);
+            self::convertDatesOfPost($post);
             self::decodePostContent($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
 
@@ -690,5 +689,20 @@ class BlogController extends Controller
     {
         $post->setContent(htmlspecialchars_decode($post->getContent()));
         $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
+    }
+
+    /**
+     * Change the date format use in a post
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    private static function convertDatesOfPost(Post $post)
+    {
+        $post->setCreationDate(self::formatDate($post->getCreationDate()));
+
+        if ($post->getLastModificationDate() !== null) {
+            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
     }
 }

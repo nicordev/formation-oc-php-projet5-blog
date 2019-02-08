@@ -45,7 +45,7 @@ a, p a, a:hover {
 }
 
 .green {
-    color: #1c7430;
+    color: #1c7430 !important;
 }
 
 /* message.twig */
@@ -100,15 +100,4 @@ a, p a, a:hover {
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
     color: burlywood;
-}
-
-/* blogAdmin.twig */
-
-.table-tag {
-    color: #5a6268;
-    font-size: 0.75em;
-}
-
-.admin-tag {
-    color: #dd4444;
 }

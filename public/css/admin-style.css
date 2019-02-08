@@ -1,5 +1,6 @@
 
 td, th {
+    font-size: 0.75em;
     padding: 5px 20px;
 }
 
@@ -27,8 +28,8 @@ footer ul li a, footer ul li a:hover {
     color: white;
 }
 
-#tag-list {
-
+#new-tag-input {
+    font-size: 0.75em;
 }
 
 .admin-header {
@@ -66,4 +67,27 @@ footer ul li a, footer ul li a:hover {
 
 .admin-box {
     margin: 50px 0;
+}
+
+.table-tag {
+    color: #5a6268;
+}
+
+.table-date {
+    color: #5a6268;
+}
+
+.admin-tag {
+    color: #dd4444;
+    font-size: 0.75em;
+}
+
+.underline-input {
+    border-top: 0 !important;
+    border-left: 0 !important;;
+    border-right: 0 !important;;
+}
+
+.btn {
+    font-weight: normal;
 }
