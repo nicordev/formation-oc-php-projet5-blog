@@ -32,6 +32,10 @@ footer ul li a, footer ul li a:hover {
     font-size: 0.75em;
 }
 
+.content {
+    max-width: unset;
+}
+
 .admin-header {
     background-color: #0c5460;
     color: white;
@@ -48,12 +52,12 @@ footer ul li a, footer ul li a:hover {
 }
 
 .btn:hover {
-    color: #212529;
-    background-color: #ddddff;
+    color: rgb(237, 237, 237);
+    background-color: #0073AA;
 }
 
 .admin-link {
-    color: #dd4444;
+    color: #0073aa;
     font-weight: bold;
     background-color: transparent;
     border: 1px solid transparent;
@@ -61,8 +65,7 @@ footer ul li a, footer ul li a:hover {
 
 .admin-link:hover {
     cursor: pointer;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    color: #00BFEE;
 }
 
 .admin-box {
@@ -78,8 +81,13 @@ footer ul li a, footer ul li a:hover {
 }
 
 .admin-tag {
-    color: #dd4444;
+    text-align: left !important;
+    color: #0073aa;
     font-size: 0.75em;
+}
+
+.admin-tag:hover {
+    color: #00BFEE;
 }
 
 .underline-input {

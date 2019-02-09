@@ -32,9 +32,9 @@ class BlogController extends Controller
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
-    const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
-    const VIEW_POST_EDITOR = 'blog/postEditor.twig';
-    const VIEW_CATEGORY_EDITOR = 'blog/categoryEditor.twig';
+    const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
+    const VIEW_POST_EDITOR = 'admin/postEditor.twig';
+    const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
 
     /**
      * BlogController constructor.

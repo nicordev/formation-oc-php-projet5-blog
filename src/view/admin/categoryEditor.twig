@@ -1,4 +1,4 @@
-{% extends 'blog/admin.twig' %}
+{% extends 'admin/admin.twig' %}
 
 {# head #}
 {% block title %}
@@ -16,7 +16,7 @@
 
 {% block content %}
     <section class="blog-admin">
-        {% include "blog/message.twig" %}
+        {% include "message.twig" %}
         <div>
             {# Cancel button #}
             <div>
@@ -56,7 +56,7 @@
                 </p>
 
                 {# Tags #}
-                {% include "blog/tagHandler.twig" %}
+                {% include "admin/tagHandler.twig" %}
             </form>
         </div>
     </section>
