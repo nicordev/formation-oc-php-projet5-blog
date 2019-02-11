@@ -41,6 +41,7 @@
                             <a class="nav-link" href="/home">Accueil</a>
                         </li>
                         {% block navigationItems %}{% endblock %}
+                        {% include 'member/connection.twig' %}
                     </ul>
                 </div>
             </div>
@@ -109,6 +110,7 @@
                         <p class="copyright text-muted">Copyright &copy; Nicolas Renvoisé 2019</p>
                     </div>
                 </div>
+
                 <p class="text-center"><a href="/admin">Administration</a></p>
             </div>
         </footer>

@@ -4,6 +4,7 @@ namespace Application\Router;
 
 use Controller\BlogController;
 use Controller\HomeController;
+use Controller\MemberController;
 
 class Router
 {
@@ -23,6 +24,8 @@ class Router
         $url = self::getUrl();
 
         switch ($url) {
+
+            // Blog
 
             case '/blog':
                 $controller = BlogController::class;
@@ -51,6 +54,40 @@ class Router
                     $params = [];
                 }
                 break;
+
+            // Member
+
+            case '/registration':
+                $controller = MemberController::class;
+
+                if (isset($_GET['action']) && $_GET['action'] === 'register') {
+                    $method = 'register';
+                } else {
+                    $method = 'showRegistrationPage';
+                }
+
+                $params = [];
+                break;
+
+            case '/connection':
+                $controller = MemberController::class;
+
+                if (isset($_GET['action']) && $_GET['action'] === 'connect') {
+                    $method = 'connect';
+                } else {
+                    $method = 'showConnectionPage';
+                }
+
+                $params = [];
+                break;
+
+            case '/disconnection':
+                $controller = MemberController::class;
+                $method = 'disconnect';
+                $params = [];
+                break;
+
+            // Admin
 
             case '/admin':
                 $controller = BlogController::class;

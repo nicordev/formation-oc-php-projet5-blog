@@ -14,6 +14,7 @@ use Application\Router\Router;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MemberController;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -21,6 +22,9 @@ class Application
 {
     public function run()
     {
+        // Session
+        session_start();
+
         // Time zone
         date_default_timezone_set("Europe/Paris");
 
@@ -38,6 +42,10 @@ class Application
 
             case ErrorController::class:
                 $controller = DIC::newErrorController();
+                break;
+
+            case MemberController::class:
+                $controller = DIC::newMemberController();
                 break;
 
             default:

@@ -12,8 +12,10 @@ namespace Application;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MemberController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
+use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
@@ -80,5 +82,20 @@ class DIC
         ]);
 
         return new ErrorController($twig);
+    }
+
+    public static function newMemberController(): MemberController
+    {
+        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+
+        $twig = new Twig_Environment($twigLoader, [
+            'debug' => true, // TODO change to false for production
+            'cache' => false // TODO change to true for production
+        ]);
+
+        return new MemberController(
+            new MemberManager(),
+            $twig
+        );
     }
 }

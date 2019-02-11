@@ -33,6 +33,7 @@ class HomeController extends Controller
     /**
      * Show the home page
      *
+     * @throws \Application\Exception\BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -48,7 +49,8 @@ class HomeController extends Controller
 
         self::render(self::VIEW_HOME, [
             'categories' => $categories,
-            'postsByCategory' => $postsByCategory
+            'postsByCategory' => $postsByCategory,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 }

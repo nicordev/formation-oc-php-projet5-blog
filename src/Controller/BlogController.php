@@ -63,27 +63,6 @@ class BlogController extends Controller
     // Views
 
     /**
-     * Show all posts of the blog
-     * @param bool $htmlDecode
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws BlogException
-     */
-    public function showAllPosts(bool $htmlDecode = false)
-    {
-        $posts = $this->postManager->getAll();
-
-        if ($htmlDecode) {
-            foreach ($posts as $post) {
-                self::decodePostContent($post);
-            }
-        }
-
-        self::render(self::VIEW_BLOG, ['posts' => $posts]);
-    }
-
-    /**
      * Show all posts of a given category
      *
      * @param int $categoryId
@@ -106,7 +85,8 @@ class BlogController extends Controller
 
         self::render(self::VIEW_BLOG, [
             'posts' => $posts,
-            'category' => $category
+            'category' => $category,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -125,7 +105,8 @@ class BlogController extends Controller
 
         self::render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
-            'tag' => $tag
+            'tag' => $tag,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -152,7 +133,8 @@ class BlogController extends Controller
 
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories
+            'categories' => $categories,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -177,7 +159,8 @@ class BlogController extends Controller
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
-            'categories' => $categories
+            'categories' => $categories,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -209,7 +192,8 @@ class BlogController extends Controller
             'postToEditId' => $postToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames
+            'selectedTags' => $selectedTagNames,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -239,7 +223,8 @@ class BlogController extends Controller
             'categoryToEditId' => $categoryToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames
+            'selectedTags' => $selectedTagNames,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 

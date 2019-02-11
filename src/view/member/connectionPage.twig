@@ -1,0 +1,52 @@
+{% extends "layout.twig" %}
+
+{# head #}
+{% block head %}
+    {{ parent() }}
+    <link href="/css/member-style.css" rel="stylesheet" />
+{% endblock %}
+
+{% block title %}
+    Connexion
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <div class="site-heading">
+        <h1>Connexion</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section id="connection">
+
+        {% include 'message.twig' %}
+
+        <div class="form-wrapper">
+            <form action="/connection?action=connect" method="post">
+                <div class="form-row elements-wrapper">
+                    <div class="form-group col-12">
+                        <input class="form-control" type="email" id="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group col-12">
+                        <input class="form-control" type="password" id="password" name="password" placeholder="Mot de passe">
+                    </div>
+                    <div class="form-group col-12 text-center">
+                        <input class="btn btn-primary" type="submit" value="Se connecter">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="form-row elements-wrapper">
+            <p class="col-12 text-center">
+                Vous êtes nouveau ?
+            </p>
+            <div class="col-12 text-center">
+                <a class="btn btn-primary" href="/registration">S'incrire</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,12 @@
+.form-wrapper {
+    margin: 20px 0;
+}
+
+.elements-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.btn {
+    border-radius: .25rem;
+}

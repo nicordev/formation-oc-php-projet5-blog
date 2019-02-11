@@ -22,6 +22,6 @@ class ErrorController extends Controller
      */
     public function showError404()
     {
-        echo $this->twig->render(self::VIEW_404);
+        echo $this->twig->render(self::VIEW_404, ['connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null]);
     }
 }
