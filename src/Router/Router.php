@@ -3,6 +3,7 @@
 namespace Application\Router;
 
 use Controller\BlogController;
+use Controller\ErrorController;
 use Controller\HomeController;
 use Controller\MemberController;
 
@@ -24,6 +25,14 @@ class Router
         $url = self::getUrl();
 
         switch ($url) {
+
+            // Home
+
+            case '/home':
+                $controller = HomeController::class;
+                $method = 'showHome';;
+                $params = [];
+                break;
 
             // Blog
 
@@ -160,9 +169,8 @@ class Router
                 break;
 
             default:
-                // Default route : Home
-                $controller = HomeController::class;
-                $method = 'showHome';;
+                $controller = ErrorController::class;
+                $method = 'showError404';;
                 $params = [];
                 break;
         }
