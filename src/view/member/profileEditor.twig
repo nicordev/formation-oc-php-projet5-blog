@@ -1,0 +1,83 @@
+{% extends "member/memberLayout.twig" %}
+
+{# head #}
+
+{% block title %}
+    Profil de {{ member.getName }}
+{% endblock %}
+
+{# body #}
+
+{% block headerTitle %}
+    <div class="site-heading">
+        <h1>Profil de {{ member.getName }}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section id="profile">
+
+        <h2>Informations</h2>
+
+        {# Roles #}
+        <div>
+            <p>
+                {% for role in member.getRoles %}
+                    {{ role.getName }}
+                {% endfor %}
+            </p>
+        </div>
+
+        <form action="/profile-editor?action=update" method="post">
+            {# Id #}
+            <input type="hidden" name="id" value="{{ member.getId }}">
+
+            {# Name #}
+            <div class="form-group col-12">
+                <input class="form-control" type="text" id="name" name="name" value="{{ member.getName }}" placeholder="Votre nom">
+            </div>
+
+            {# Description #}
+            <div class="form-group col-12">
+                <textarea class="form-control" name="description" id="description" cols="30" rows="10" placeholder="Votre description">{{ member.getDescription }}</textarea>
+            </div>
+
+            {# Websites #}
+            <div class="form-group col-12">
+                {% for website in member.getWebsites %}
+                    <input class="form-control" type="url" name="websites[]" value="{{ website.getUrl }}"><button class="btn btn-small" type="button">-</button>
+                {% endfor %}
+                <input class="form-control" type="url" id="new-website" placeholder="Ajouter un site"><button class="btn btn-small" type="button">+</button>
+            </div>
+
+            <h2>Compte</h2>
+
+            {# Email #}
+            <div class="form-group col-12">
+                <input class="form-control" type="email" id="email" name="email" value="{{ member.getEmail }}" placeholder="Votre email">
+            </div>
+
+            {# Password #}
+            <div class="form-group col-12">
+                <input class="form-control" type="password" id="new-password" name="new-password" placeholder="Entrez votre nouveau mot de passe">
+            </div>
+
+            <div class="form-group col-12">
+                <input class="btn btn-primary" type="submit" value="Mettre à jour mes informations">
+            </div>
+
+            <div class="form-group col-12">
+                <a class="btn btn-primary" href="/member-profile">Annuler</a>
+            </div>
+        </form>
+
+        <h3>Suppression du compte</h3>
+
+        {# Delete account #}
+        <form action="/profile-editor?action=delete" method="post">
+            <input type="hidden" name="id" value="{{ member.getId }}">
+            <input class="btn btn-primary" type="submit" value="Supprimer le compte">
+        </form>
+
+    </section>
+{% endblock %}

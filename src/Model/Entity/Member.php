@@ -13,6 +13,38 @@ class Member extends Entity
     protected $websites = [];
 
     /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param array $roles
+     */
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWebsites(): array
+    {
+        return $this->websites;
+    }
+
+    /**
+     * @param array $websites
+     */
+    public function setWebsites(array $websites): void
+    {
+        $this->websites = $websites;
+    }
+
+    /**
      * @return string|null
      */
     public function getEmail(): ?string

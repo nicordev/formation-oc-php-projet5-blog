@@ -3,26 +3,35 @@
 namespace Controller;
 
 
+use Application\Exception\AppException;
 use Application\Exception\MemberException;
 use Model\Entity\Member;
+use Model\Entity\Role;
 use Model\Manager\MemberManager;
+use Model\Manager\RoleManager;
 use Twig_Environment;
 
 class MemberController extends Controller
 {
     protected $memberManager;
+    protected $roleManager;
+    protected $websiteManager; // TODO: implement the manager
 
     const VIEW_REGISTRATION = 'member/registrationPage.twig';
     const VIEW_CONNECTION = 'member/connectionPage.twig';
     const VIEW_WELCOME = 'member/welcomePage.twig';
+    const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
+    const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
 
     public function __construct(
         MemberManager $memberManager,
+        RoleManager $roleManager,
         Twig_Environment $twig
     )
     {
         parent::__construct($twig);
         $this->memberManager = $memberManager;
+        $this->roleManager = $roleManager;
     }
 
     // Views
@@ -62,10 +71,80 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME);
+        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null]);
+    }
+
+    /**
+     * Show the static profile of a member
+     *
+     * @param Member $member
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showMemberProfile(?Member $member = null)
+    {
+        if ($member === null) {
+            $member = $_SESSION['connected-member'];
+        }
+        echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
+            'member' => $member,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+        ]);
+    }
+
+    /**
+     * Show the profile of a member with the ability to edit it
+     *
+     * @param Member|null $member
+     * @throws AppException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showMemberProfileEditor(?Member $member = null)
+    {
+        if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
+            echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
+                'member' => isset($member) ? $member : $_SESSION['connected-member'],
+                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            ]);
+        } else {
+            throw new AppException('You can not edit a profile if you are not connected.');
+        }
     }
 
     // Actions
+
+    /**
+     * Update the profile of a member
+     *
+     * @throws AppException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function updateProfile()
+    {
+        if (
+            isset($_POST['name']) &&
+            isset($_POST['email']) &&
+            isset($_POST['description'])
+        ) {
+            $modifiedMember = $this->buildMemberFromForm();
+            $this->memberManager->edit($modifiedMember);
+            $this->showMemberProfile($modifiedMember);
+
+        } else {
+            throw new AppException('$_POST lacks the requested keys to update the member.');
+        }
+    }
+
+    public function deleteMember(int $memberId)
+    {
+        $this->memberManager->delete($memberId);
+        header('Location: /home'); // TODO: make a dedicated page
+    }
 
     /**
      * Register a new member
@@ -91,9 +170,8 @@ class MemberController extends Controller
                 $this->showRegistrationPage("Le nom, l'email et le mot de passe doivent être renseignés.");
             } else {
                 $member = $this->buildMemberFromForm();
-                if ($this->memberManager->isNewMember($member)) {
-                    $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
-                    $this->memberManager->add($member);
+                if ($this->addNewMember($member)) {
+                    $_SESSION['connected-member'] = $member;
                     $this->showWelcomePage();
                 } else {
                     $this->showRegistrationPage("Cet email est déjà pris.");
@@ -154,11 +232,19 @@ class MemberController extends Controller
         $member = new Member();
 
         $member->setEmail(htmlspecialchars($_POST['email']));
-        $member->setPassword(htmlspecialchars($_POST['password']));
+
+        if (isset($_POST['password'])) {
+            $member->setPassword(htmlspecialchars($_POST['password']));
+        }
+
         $member->setName(htmlspecialchars($_POST['name']));
 
-        if (isset($_POST['description']) && !empty($_POST['description'])) {
+        if (isset($_POST['description'])) {
             $member->setDescription(htmlspecialchars($_POST['description']));
+        }
+
+        if (isset($_POST['websites'])) {
+            $member->setWebsites($_POST['websites']);
         }
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
@@ -166,5 +252,29 @@ class MemberController extends Controller
         }
 
         return $member;
+    }
+
+    /**
+     * Add a new Member
+     *
+     * @param Member $member
+     * @return bool
+     * @throws \Application\Exception\BlogException
+     */
+    private function addNewMember(Member $member): bool
+    {
+        if ($this->memberManager->isNewMember($member)) {
+            $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
+            $role = new Role([
+                'id' => $this->roleManager->getId('member'),
+                'name' => 'member'
+            ]);
+            $member->setRoles([$role]);
+            $this->memberManager->add($member);
+
+            return true;
+        }
+
+        return false;
     }
 }

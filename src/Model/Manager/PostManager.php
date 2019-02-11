@@ -263,6 +263,13 @@ class PostManager extends Manager
         return $posts;
     }
 
+    /**
+     * Get all the posts associated to a given tag
+     *
+     * @param int $tagId
+     * @return array
+     * @throws BlogException
+     */
     public function getPostsOfATag(int $tagId)
     {
         $posts = [];
@@ -291,15 +298,14 @@ class PostManager extends Manager
      *
      * @param Post $post
      * @param array $tags
+     * @throws BlogException
      */
     private function associatePostAndTags(Post $post, array $tags)
     {
         // Delete
         $query = 'DELETE FROM bl_post_tag WHERE pt_post_id_fk = :postId';
-        $requestDelete = $this->database->prepare($query);
-        $requestDelete->execute([
-            'postId' => $post->getId()
-        ]);
+
+        $this->query($query, ['postId' => $post->getId()]);
 
         // Add
         $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)

@@ -66,6 +66,29 @@ class Router
 
             // Member
 
+            case '/member-profile':
+                $controller = MemberController::class;
+                $method = 'showMemberProfile';
+                $params = [];
+                break;
+
+            case '/profile-editor':
+                $controller = MemberController::class;
+                $method = 'showMemberProfileEditor';
+                $params = [];
+                if (isset($_GET['action']) && !empty($_GET['action'])) {
+                    switch ($_GET['action']) {
+                        case 'update':
+                            $method = 'updateProfile';
+                            break;
+                        case 'delete':
+                            $method = 'deleteMember';
+                            $params = ['id' => $_POST['id']];
+                            break;
+                    }
+                }
+                break;
+
             case '/registration':
                 $controller = MemberController::class;
 
@@ -99,9 +122,15 @@ class Router
             // Admin
 
             case '/admin':
-                $controller = BlogController::class;
-                $method = 'showAdminPanel';
-                $params = [];
+                if (isset($_SESSION['connected-member'])) {
+                    $controller = BlogController::class;
+                    $method = 'showAdminPanel';
+                    $params = [];
+                } else {
+                    $controller = MemberController::class;
+                    $method = 'showConnectionPage';
+                    $params = ['message' => 'Vous devez être connecté et disposer des droits suffisants pour accéder.'];
+                }
                 break;
 
             case '/admin/add-post':
@@ -170,7 +199,7 @@ class Router
 
             default:
                 $controller = ErrorController::class;
-                $method = 'showError404';;
+                $method = 'showError404';
                 $params = [];
                 break;
         }

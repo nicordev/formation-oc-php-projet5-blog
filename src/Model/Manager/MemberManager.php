@@ -35,6 +35,10 @@ class MemberManager extends Manager
     public function add($newMember): void
     {
         parent::add($newMember);
+
+        // Associate roles
+        $newMember->setId($this->getLastId());
+        $this->associateMemberRoles($newMember);
     }
 
     /**
@@ -144,5 +148,32 @@ class MemberManager extends Manager
         $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
 
         return $id;
+    }
+
+    // Private
+
+    /**
+     * Fill the table bl_role_member
+     *
+     * @param Member $member
+     * @throws \Application\Exception\BlogException
+     */
+    private function associateMemberRoles(Member $member)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_role_member WHERE rm_member_id_fk = :memberId';
+        $this->query($query, ['memberId' => $member->getId()]);
+
+        // Add
+        $query = 'INSERT INTO bl_role_member(rm_member_id_fk, rm_role_id_fk)
+                VALUES (:memberId, :roleId)';
+        $requestAdd = $this->database->prepare($query);
+
+        foreach ($member->getRoles() as $role) {
+            $requestAdd->execute([
+                'memberId' => $member->getId(),
+                'roleId' => $role->getId()
+            ]);
+        }
     }
 }

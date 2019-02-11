@@ -17,6 +17,7 @@ use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
+use Model\Manager\RoleManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
 use Twig_Loader_Filesystem;
@@ -95,6 +96,7 @@ class DIC
 
         return new MemberController(
             new MemberManager(),
+            new RoleManager(),
             $twig
         );
     }
