@@ -10,7 +10,7 @@
     <div class="post-heading">
         <h1>{{ post.getTitle }}</h1>
         <h2 class="subheading">{{ post.getExcerpt }}</h2>
-        <span class="meta">Ecrit par <a href="#">TODO: insert author name here</a> le {{ post.getCreationDate }}</span>
+        <span class="meta">Ecrit par <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a> le {{ post.getCreationDate }}</span>
     </div>
 {% endblock %}
 
