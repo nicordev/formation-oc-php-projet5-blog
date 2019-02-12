@@ -15,7 +15,7 @@
                         <h5 class="card-title">{{ post.getTitle }}</h5>
                         <p class="card-text">{{ post.getExcerpt }}</p>
                     </a>
-                    <div class="card-info">Ecrit par TODO: insert the author name le {{ post.getCreationDate }}</div>
+                    <div class="card-info">Ecrit par {{ post.getAuthorName }} le {{ post.getCreationDate }}</div>
                 </div>
             </div>
         {% endfor %}

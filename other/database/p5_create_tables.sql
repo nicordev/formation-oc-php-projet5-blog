@@ -26,7 +26,7 @@ CREATE TABLE bl_member(
 	m_email VARCHAR(100) NOT NULL UNIQUE,
 	m_password VARCHAR(100) NOT NULL,
 	m_language VARCHAR(100) NOT NULL,
-	m_name VARCHAR(100) NOT NULL,
+	m_name VARCHAR(100) NOT NULL UNIQUE,
 	m_description VARCHAR(1000),
 
 	CONSTRAINT pk_m_id

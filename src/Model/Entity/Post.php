@@ -18,8 +18,44 @@ class Post extends Entity
     protected $title = null;
     protected $excerpt = null;
     protected $content = null;
+
+    // Associated properties
     protected $tags = [];
     protected $categories = [];
+    protected $authorName = null;
+    protected $editorName = null;
+
+    /**
+     * @return null
+     */
+    public function getAuthorName()
+    {
+        return $this->authorName;
+    }
+
+    /**
+     * @param null $authorName
+     */
+    public function setAuthorName($authorName): void
+    {
+        $this->authorName = $authorName;
+    }
+
+    /**
+     * @return null
+     */
+    public function getEditorName()
+    {
+        return $this->editorName;
+    }
+
+    /**
+     * @param null $editorName
+     */
+    public function setEditorName($editorName): void
+    {
+        $this->editorName = $editorName;
+    }
 
     /**
      * @return array

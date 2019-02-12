@@ -45,6 +45,10 @@ class HomeController extends Controller
 
         foreach ($categories as $category) {
             $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
+            // Format creation dates
+            foreach ($postsByCategory[$category->getId()] as $post) {
+                $post->setCreationDate(self::formatDate($post->getCreationDate()));
+            }
         }
 
         self::render(self::VIEW_HOME, [

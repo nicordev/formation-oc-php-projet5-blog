@@ -99,8 +99,12 @@ class PostManager extends Manager
     {
         $post = parent::get($postId);
 
+        // Tags
         $associatedTags = $this->getTagsOfAPost($post->getId());
         $post->setTags($associatedTags);
+
+        // Author and editor
+        $this->setMembersOfAPost($post);
 
         return $post;
     }
@@ -163,6 +167,25 @@ class PostManager extends Manager
     }
 
     /**
+     * Set the author and editor names of a post
+     *
+     * @param Post $post
+     * @throws BlogException
+     */
+    public function setMembersOfAPost(Post $post)
+    {
+        // Author
+        $authorName = $this->getMemberName($post->getAuthorId());
+        $post->setAuthorName($authorName);
+
+        // Editor
+        if ($post->getLastEditorId() !== null) {
+            $editorName = $this->getMemberName($post->getLastEditorId());
+            $post->setEditorName($editorName);
+        }
+    }
+
+    /**
      * Get all posts from the database
      *
      * @return array
@@ -172,10 +195,11 @@ class PostManager extends Manager
     {
         $posts = parent::getAll();
 
-        // Set tags and categories
+        // Set tags, categories, author name and editor name
         foreach ($posts as $post) {
             $post->setTags($this->getTagsOfAPost($post->getId()));
             $post->setCategories($this->getCategoriesOfAPost($post->getId()));
+            $this->setMembersOfAPost($post);
         }
 
         return $posts;
@@ -257,7 +281,9 @@ class PostManager extends Manager
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
             $postData['p_content'] = 'Excerpt only';
-            $posts[] = $this->createEntityFromTableData($postData);
+            $post = $this->createEntityFromTableData($postData);
+            $this->setMembersOfAPost($post);
+            $posts[] = $post;
         }
 
         return $posts;
@@ -285,7 +311,9 @@ class PostManager extends Manager
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
-            $posts[] = $this->createEntityFromTableData($postData);
+            $post = $this->createEntityFromTableData($postData);
+            $this->setMembersOfAPost($post);
+            $posts[] = $post;
         }
 
         return $posts;
@@ -318,6 +346,23 @@ class PostManager extends Manager
                 'tagId' => $tag->getId()
             ]);
         }
+    }
+
+    /**
+     * Get the name of a member
+     *
+     * @param int $memberId
+     * @return mixed
+     * @throws BlogException
+     */
+    private function getMemberName(int $memberId)
+    {
+        $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
+
+        $requestMemberName = $this->query($query, ['id' => $memberId]);
+        $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
+
+        return $memberNameData[0];
     }
 
     // Old

@@ -77,10 +77,11 @@ class BlogController extends Controller
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
-        if ($htmlDecode) {
-            foreach ($posts as $post) {
+        foreach ($posts as $post) {
+            if ($htmlDecode) {
                 self::decodePostContent($post);
             }
+            self::convertDatesOfPost($post);
         }
 
         self::render(self::VIEW_BLOG, [
@@ -97,10 +98,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showPostsOfATag(int $tagId)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
+        foreach ($posts as $post) {
+            self::convertDatesOfPost($post);
+        }
         $tag = $this->tagManager->get($tagId);
 
         self::render(self::VIEW_BLOG_TAG, [

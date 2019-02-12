@@ -46,7 +46,7 @@
                             </form>
                         </td>
                         <td scope="row">
-                            coming soon...
+                            {{ post.getAuthorName }}
                         </td>
                         <td scope="row">
                             {% set postTags = post.getTags %}
@@ -76,7 +76,7 @@
                         </td>
                         <td scope="row">
                             {% if post.getLastModificationDate %}
-                            <span class="table-date">Le {{ post.getLastModificationDate }} par TODO: insert the editor name here</span>
+                            <span class="table-date">Le {{ post.getLastModificationDate }} par {{ post.getEditorName }}</span>
                             {% else %}
                                 -
                             {% endif %}

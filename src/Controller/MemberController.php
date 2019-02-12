@@ -143,6 +143,7 @@ class MemberController extends Controller
     public function deleteMember(int $memberId)
     {
         $this->memberManager->delete($memberId);
+        unset($_SESSION['connected-member']);
         header('Location: /home'); // TODO: make a dedicated page
     }
 
