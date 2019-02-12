@@ -12,6 +12,8 @@ namespace Controller;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
+use Model\Entity\Category;
+use Model\Entity\Entity;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
@@ -31,6 +33,7 @@ class BlogController extends Controller
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
     const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'blog/postEditor.twig';
+    const VIEW_CATEGORY_EDITOR = 'blog/categoryEditor.twig';
 
     const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
 
@@ -71,18 +74,38 @@ class BlogController extends Controller
     }
 
     /**
+     * Show all posts of a given category
+     *
+     * @param int $categoryId
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showPostsOfACategory(int $categoryId)
+    {
+        $posts = $this->postManager->getPostsOfACategory($categoryId);
+        $category = $this->categoryManager->get($categoryId);
+
+        self::render(self::VIEW_BLOG, [
+            'posts' => $posts,
+            'category' => $category
+        ]);
+    }
+
+    /**
      * Show an entire blog post
      *
      * @param $postId
      * @return void
      * @throws Exception
      */
-    public function showASinglePost(int $postId)
+    public function showASinglePost(int $postId, int $categoryId)
     {
         try {
             $post = $this->postManager->get($postId);
-            $nextPostId = $this->getNextPostId($postId);
-            $previousPostId = $this->getPreviousPostId($postId);
+            $nextPostId = $this->getNextPostId($postId, $categoryId);
+            $previousPostId = $this->getPreviousPostId($postId, $categoryId);
+            $category = $this->categoryManager->get($categoryId);
 
         } catch (BlogException $e) {
             $this->pageNotFound404(); // TODO throw an Exception instead
@@ -91,7 +114,8 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'nextPostId' => $nextPostId,
-            'previousPostId' => $previousPostId
+            'previousPostId' => $previousPostId,
+            'category' => $category
         ]);
     }
 
@@ -107,11 +131,13 @@ class BlogController extends Controller
     {
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
+        $categories = $this->categoryManager->getAll();
 
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
-            'tags' => $tags
+            'tags' => $tags,
+            'categories' => $categories
         ]);
     }
 
@@ -129,24 +155,47 @@ class BlogController extends Controller
     {
         $postToEdit = null;
         $availableTags = $this->tagManager->getAll();
-        $availableTagNames = [];
+        $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
-
-        foreach ($availableTags as $availableTag) {
-            $availableTagNames[] = $availableTag->getName();
-        }
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
-
-            foreach ($postToEdit->getTags() as $tag) {
-                $selectedTagNames[] = $tag->getName();
-            }
+            $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
         self::render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
+            'message' => $message,
+            'availableTags' => $availableTagNames,
+            'selectedTags' => $selectedTagNames
+        ]);
+    }
+
+    /**
+     * Show the category editor
+     *
+     * @param int|null $categoryToEditId
+     * @param string $message
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
+    {
+        $categoryToEdit = null;
+        $availableTags = $this->tagManager->getAll();
+        $availableTagNames = self::getTagNames($availableTags);
+        $selectedTagNames = [];
+
+        if ($categoryToEditId !== null) {
+            $categoryToEdit = $this->categoryManager->get($categoryToEditId);
+            $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
+        }
+
+        self::render(self::VIEW_CATEGORY_EDITOR, [
+            'categoryToEdit' => $categoryToEdit,
+            'categoryToEditId' => $categoryToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames
@@ -167,22 +216,13 @@ class BlogController extends Controller
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
-        $tags = self::getTagsFromForm();
 
         if ($newPost !== null) {
+            $tags = $newPost->getTags();
 
-            if ($tags !== null) {
-                foreach ($tags as $tag) {
-                    // Add new tag
-                    if ($this->tagManager->isNewTag($tag)) {
-                        $this->tagManager->add($tag);
-                    }
-                    // Set tag id
-                    $id = $this->tagManager->getId($tag->getName());
-                    $tag->setId($id);
-                }
-                // Associate tags and post
-                $newPost->setTags($tags);
+            if (!empty($tags)) {
+                // Add tags in the database and get their ids
+                $newPost->setTags($this->addNewTags($tags));
             }
 
             $this->postManager->add($newPost);
@@ -208,8 +248,15 @@ class BlogController extends Controller
     public function editPost()
     {
         $modifiedPost = self::buildPostFromForm();
+        $tags = $modifiedPost->getTags();
 
         if ($modifiedPost !== null) {
+
+            if (!empty($tags)) {
+                // Add tags in the database and get their ids
+                $modifiedPost->setTags($this->addNewTags($tags));
+            }
+
             $this->postManager->edit($modifiedPost);
             // Come back to the admin panel
             $this->showAdminPanel("Un article a été modifié.");
@@ -236,24 +283,32 @@ class BlogController extends Controller
     }
 
     /**
-     * Update the list of tags
+     * Update the list of tags in the database
      *
      * @param array $tagIds
      * @param array $tagNames
+     * @return bool
      * @throws Exception
      */
-    public function updateTagList(array $tagIds, array $tagNames)
+    public function updateTagList(?array $tagIds, ?array $tagNames)
     {
+        if ($tagIds === null || $tagNames === null) {
+            $this->tagManager->deleteAll();
+            // Head back to the admin panel
+            $this->showAdminPanel('La liste des étiquettes a été vidée.');
+            return false;
+        }
+
         $oldTags = $this->tagManager->getAll();
 
         // Add new tags
-        $this->addNewTags($tagIds, $tagNames);
+        $this->addNewTagsFromTagList($tagIds, $tagNames);
 
         // Update of delete tags
         $tagIds = array_map('intval', $tagIds); // Convert string to int
         foreach ($oldTags as $oldTag) {
             // Delete or update tag ?
-            if (self::isTagToDelete($oldTag, $tagIds)) {
+            if (self::isEntityToDelete($oldTag, $tagIds)) {
                 $this->tagManager->delete($oldTag->getId());
             } else {
                 $this->updateTag($oldTag, $tagIds, $tagNames);
@@ -263,7 +318,122 @@ class BlogController extends Controller
         $this->showAdminPanel('La liste des étiquettes a été mise à jour.');
     }
 
+    /**
+     * Add a new category from $_POST and add associated tags (note: a category must have a name and at least 1 associated tag)
+     */
+    public function addCategory()
+    {
+        $newCategory = self::buildCategoryFromForm();
+
+        if ($newCategory !== null) {
+            $tags = $newCategory->getTags();
+
+            if (!empty($tags)) {
+                // Add tags in the database and get their ids
+                $newCategory->setTags($this->addNewTags($tags));
+            } else {
+                $this->showCategoryEditor(null, "Erreur : la catégorie doit être associée à au moins une étiquette.");
+                return false;
+            }
+
+            $this->categoryManager->add($newCategory);
+
+            // Come back to the admin panel
+            $this->showAdminPanel("Une catégorie a été créée.");
+
+        } else {
+            // Try again...
+            $this->showCategoryEditor(null, "Erreur : la catégorie doit avoir un nom.");
+        }
+    }
+
+    /**
+     * Edit a category in the database
+     *
+     * @return bool
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function editCategory()
+    {
+        $modifiedCategory = self::buildCategoryFromForm();
+
+        if ($modifiedCategory !== null) {
+            $tags = $modifiedCategory->getTags();
+
+            if (!empty($tags)) {
+                // Add tags in the database and get their ids
+                $modifiedCategory->setTags($this->addNewTags($tags));
+            } else {
+                $this->showCategoryEditor((int) $_POST['edit-category'], "Erreur : la catégorie doit être associée à au moins une étiquette.");
+                return false;
+            }
+
+            $this->categoryManager->edit($modifiedCategory);
+
+            // Come back to the admin panel
+            $this->showAdminPanel("Une catégorie a été modifiée.");
+
+        } else {
+            // Try again...
+            $this->showCategoryEditor((int) $_POST['edit-category'], "Erreur : la catégorie doit avoir un nom.");
+        }
+    }
+
+    /**
+     * Delete a category from $_POST
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function deleteCategory()
+    {
+        $categoryId = (int) $_POST['delete-category'];
+        $this->categoryManager->delete($categoryId);
+        // Come back to the admin panel
+        $this->showAdminPanel("Une catégorie a été supprimée.");
+    }
+
     // Private
+
+    /**
+     * Add new tags in the database and get theirs ids
+     *
+     * @param array|null $tags
+     * @return array|null
+     * @throws Exception
+     */
+    private function addNewTags(array $tags)
+    {
+        foreach ($tags as $tag) {
+            // Add new tag
+            if ($this->tagManager->isNewTag($tag)) {
+                $this->tagManager->add($tag);
+            }
+            // Set tag id
+            $id = $this->tagManager->getId($tag->getName());
+            $tag->setId($id);
+        }
+
+        return $tags;
+    }
+
+    /**
+     * Extract names from an array of Tag
+     *
+     * @param array $tags
+     * @return mixed
+     */
+    private static function getTagNames(array $tags)
+    {
+        $tagNames = [];
+        foreach ($tags as $tag) {
+            $tagNames[] = $tag->getName();
+        }
+        return $tagNames;
+    }
 
     /**
      * Add new tags to the database if tag id === 'new'
@@ -273,7 +443,7 @@ class BlogController extends Controller
      * @return int
      * @throws AppException
      */
-    private function addNewTags(array $tagIds, array $tagNames)
+    private function addNewTagsFromTagList(array $tagIds, array $tagNames)
     {
         $numberOfNewTags = 0;
 
@@ -330,16 +500,16 @@ class BlogController extends Controller
     }
 
     /**
-     * Check if a tag has to be deleted
+     * Check if an Entity has to be deleted
      *
-     * @param Tag $oldTag
-     * @param array $tagIds
+     * @param Entity $oldEntity
+     * @param array $entityIdsToDelete
      * @return bool
      */
-    private static function isTagToDelete(Tag $oldTag, array $tagIds)
+    private function isEntityToDelete(Entity $oldEntity, array $entityIdsToDelete): bool
     {
-        foreach ($tagIds as $tagId) {
-            if ($tagId === $oldTag->getId()) {
+        foreach ($entityIdsToDelete as $entityIdToDelete) {
+            if ($entityIdToDelete === $oldEntity->getId()) {
                 return false;
             }
         }
@@ -351,7 +521,7 @@ class BlogController extends Controller
      *
      * @return array
      */
-    private static function getTagsFromForm(): array
+    private static function getTagsFromForm(): ?array
     {
         $tags = null;
 
@@ -399,7 +569,43 @@ class BlogController extends Controller
                 $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));
             }
 
+            // Tags
+            $tags = self::getTagsFromForm();
+            if ($tags) {
+                $post->setTags($tags);
+            }
+
             return $post;
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Create a Category from a form with $_POST
+     *
+     * @return Category|null
+     */
+    private function buildCategoryFromForm(): ?Category
+    {
+        $category = new Category();
+
+        if (isset($_POST['category-name']) && !empty($_POST['category-name'])) {
+            $category->setName(htmlspecialchars($_POST['category-name']));
+
+            // Category to edit
+            if (isset($_POST['edit-category'])) {
+                $category->setId((int) $_POST['edit-category']);
+            }
+
+            // Tags
+            $tags = self::getTagsFromForm();
+            if ($tags) {
+                $category->setTags($tags);
+            }
+
+            return $category;
 
         } else {
             return null;
@@ -410,11 +616,12 @@ class BlogController extends Controller
      * Get the next Post id or false if it's the last post
      *
      * @param int $postId
+     * @param int|null $categoryId
      * @return bool
      */
-    private function getNextPostId(int $postId)
+    private function getNextPostId(int $postId, ?int $categoryId = null)
     {
-        $ids = $this->postManager->getAllIds();
+        $ids = $this->postManager->getAllIds($categoryId);
 
         for ($i = 0, $size = count($ids); $i < $size; $i++) {
             if ($postId < $ids[$i]) {
@@ -429,11 +636,12 @@ class BlogController extends Controller
      * Get the previous Post id or false if it's the first post
      *
      * @param int $postId
+     * @param int|null $categoryId
      * @return bool
      */
-    private function getPreviousPostId(int $postId)
+    private function getPreviousPostId(int $postId, ?int $categoryId = null)
     {
-        $ids = $this->postManager->getAllIds();
+        $ids = $this->postManager->getAllIds($categoryId);
 
         for ($i = count($ids) - 1; $i >= 0; $i--) {
             if ($postId > $ids[$i]) {

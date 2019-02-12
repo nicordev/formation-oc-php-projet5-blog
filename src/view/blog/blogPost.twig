@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block header %}
-    <h1>Blog</h1>
+    <h1>{{ category.getName }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -34,13 +34,13 @@
         <div class="blogpost-navigation">
             <ul>
                 {% if previousPostId %}
-                    <li><a href="blog-post?post-id={{ previousPostId }}">Article précédent</a></li>
+                    <li><a href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a></li>
                 {% endif %}
 
-                <li><a href="/blog">Revenir à la liste des articles</a></li>
+                <li><a href="/blog?category-id={{ category.getId }}">Revenir à la liste des articles</a></li>
 
                 {% if nextPostId %}
-                    <li><a href="/blog-post?post-id={{ nextPostId }}">Article suivant</a></li>
+                    <li><a href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}">Article suivant</a></li>
                 {% endif %}
             </ul>
         </div>

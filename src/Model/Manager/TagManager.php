@@ -9,7 +9,9 @@ use PDO;
 
 class TagManager extends Manager
 {
-
+    /**
+     * TagManager constructor.
+     */
     public function __construct()
     {
         $this->tableName = 'bl_tag';

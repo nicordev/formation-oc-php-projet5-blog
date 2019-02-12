@@ -15,7 +15,7 @@
                 <nav>
                     <ul>
                         <li>
-                            <a href="index.php">Accueil</a>
+                            <a href="/home">Accueil</a>
                         </li>
                     </ul>
                 </nav>
@@ -24,6 +24,7 @@
 
         <header>
             {% block header %}
+                <h1>Mon super site</h1>
             {% endblock %}
         </header>
 
@@ -38,5 +39,9 @@
                 <p><a href="/admin">Administration</a></p>
             {% endblock %}
         </footer>
+
+        {% block scripts %}
+            <script src="/js/application.js"></script>
+        {% endblock %}
     </body>
 </html>

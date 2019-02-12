@@ -33,8 +33,8 @@
     function createTagElt(tag)
     {
         let tagElt = document.createElement('li');
-        let checkboxElt = createCheckboxElt('tags[]', tag, true);
-        let labelElt = createLabelElt(tag, tag);
+        let checkboxElt = myApp.elementBuilder.createCheckboxElt('tags[]', tag, true);
+        let labelElt = myApp.elementBuilder.createLabelElt(tag, tag);
 
         labelElt.setAttribute('class', 'available-tag');
 
@@ -42,38 +42,6 @@
         tagElt.appendChild(labelElt);
 
         return tagElt;
-    }
-
-    /**
-     * Create a label
-     * 
-     * @param {string} forAttribute 
-     * @param {string} text 
-     */
-    function createLabelElt(forAttribute, text)
-    {
-        let labelElt = document.createElement('label');
-        labelElt.setAttribute('for', forAttribute);
-        labelElt.textContent = text;
-
-        return labelElt;
-    }
-
-    /**
-     * Create a checkbox
-     *
-     * @returns {HTMLElement}
-     */
-    function createCheckboxElt(name, value, checked = true)
-    {
-        let checkboxElt = document.createElement('input');
-        checkboxElt.type = 'checkbox';
-        checkboxElt.name = name;
-        checkboxElt.value = value;
-        checkboxElt.id = value;
-        checkboxElt.checked = checked;
-
-        return checkboxElt;
     }
 
     /**

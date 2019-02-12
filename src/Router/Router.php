@@ -3,6 +3,7 @@
 namespace Application\Router;
 
 use Controller\BlogController;
+use Controller\HomeController;
 
 class Router
 {
@@ -25,18 +26,21 @@ class Router
 
             case '/blog':
                 $controller = BlogController::class;
-                $method = 'showAllPosts';
-                $params = [];
+                $method = 'showPostsOfACategory';
+                $params = ['categoryId' => (int) $_GET['category-id']];
                 break;
 
             case '/blog-post':
                 if (
-                    isset($_GET['post-id']) &&
-                    is_numeric($_GET['post-id'])
+                    isset($_GET['post-id']) && is_numeric($_GET['post-id']) &&
+                    isset($_GET['category-id']) && is_numeric($_GET['category-id'])
                 ) {
                     $controller = BlogController::class;
                     $method = 'showASinglePost';
-                    $params = ['postId' => $_GET['post-id']];
+                    $params = [
+                        'postId' => $_GET['post-id'],
+                        'categoryId' => $_GET['category-id']
+                    ];
                 } else {
                     $controller = BlogController::class;
                     $method = 'pageNotFound404';
@@ -45,22 +49,9 @@ class Router
                 break;
 
             case '/admin':
-
-                // Manage tags
-                if (isset($_POST['tag_ids']) &&
-                    isset($_POST['tag_names'])
-                ) {
-                    $controller = 'Controller\BlogController';
-                    $method = 'updateTagList';
-                    $params = [
-                        'tagIds' => $_POST['tag_ids'],
-                        'tagNames' => $_POST['tag_names']
-                    ];
-                } else {
-                    $controller = BlogController::class;
-                    $method = 'showAdminPanel';
-                    $params = [];
-                }
+                $controller = BlogController::class;
+                $method = 'showAdminPanel';
+                $params = [];
                 break;
 
             case '/admin/add-post':
@@ -90,6 +81,33 @@ class Router
                 $params = isset($postId) ? ['postId' => $postId] : [];
                 break;
 
+            case '/admin/category-editor':
+                if (isset($_POST['category-id'])) {
+                    $categoryId = (int) $_POST['category-id'];
+                }
+                $controller = BlogController::class;
+                $method = 'showCategoryEditor';
+                $params = isset($categoryId) ? ['categoryId' => $categoryId] : [];
+                break;
+
+            case '/admin/add-category':
+                $controller = BlogController::class;
+                $method = 'addCategory';
+                $params = [];
+                break;
+
+            case '/admin/edit-category':
+                $controller = BlogController::class;
+                $method = 'editCategory';
+                $params = [];
+                break;
+
+            case '/admin/delete-category':
+                $controller = BlogController::class;
+                $method = 'deleteCategory';
+                $params = [];
+                break;
+
             case '/admin/update-tags':
                 $controller = BlogController::class;
                 $method = 'updateTagList';
@@ -101,8 +119,8 @@ class Router
 
             default:
                 // Default route : Home
-                $controller = BlogController::class;
-                $method = 'showAllPosts';
+                $controller = HomeController::class;
+                $method = 'showHome';;
                 $params = [];
                 break;
         }

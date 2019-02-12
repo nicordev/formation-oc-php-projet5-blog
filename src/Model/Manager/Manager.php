@@ -115,7 +115,7 @@ abstract class Manager
     }
 
     /**
-     * Delete an Entity in the database
+     * Delete a line in the table
      *
      * @param int $entityId
      * @throws BlogException
@@ -125,6 +125,16 @@ abstract class Manager
         $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
         $this->prepareThenExecuteQuery($query, [$entityId]);
+    }
+
+    /**
+     * Delete all lines in the table
+     */
+    public function deleteAll()
+    {
+        $query = 'DELETE FROM ' . $this->tableName;
+
+        $this->database->query($query);
     }
 
     /**
@@ -165,8 +175,23 @@ abstract class Manager
         return $entities;
     }
 
+    /**
+     * Get the last id.
+     *
+     * @return int
+     */
+    public function getLastId(): int
+    {
+        $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
+        $requestLastId = $this->database->query($query);
 
-    // Private
+        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
+
+        return $lastId;
+    }
+
+
+    // Protected
 
     /**
      * Create an Entity child from database data
@@ -174,7 +199,7 @@ abstract class Manager
      * @param array $tableData
      * @return mixed
      */
-    private function createEntityFromTableData(array $tableData)
+    protected function createEntityFromTableData(array $tableData)
     {
         $entityClass = self::getEntityClass();
         $entityData = [];
@@ -185,6 +210,9 @@ abstract class Manager
 
         return new $entityClass($entityData);
     }
+
+
+    // Private
 
     /**
      * Get the Entity child class
@@ -257,7 +285,7 @@ abstract class Manager
     }
 
     /**
-     * Get filled properties of an Entity (filter null values)
+     * Get filled properties of an Entity (filter null values and arrays)
      *
      * @param Entity $entity
      * @return array
@@ -272,8 +300,12 @@ abstract class Manager
         foreach ($reflectionMethods as $reflectionMethod) {
             if (strpos($reflectionMethod, 'get')) {
                 $value = $reflectionMethod->invoke($entity);
-                if ($value !== null)
+                if (
+                    $value !== null &&
+                    !is_array($value
+                    )) {
                     $properties[lcfirst(substr($reflectionMethod->name, 3))] = $value;
+                }
             }
         }
 

@@ -1,0 +1,64 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    {% if categoryToEdit %}
+        {{ categoryToEdit.getName }}
+    {% else %}
+        Créer une catégorie
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    <h1>Editeur de catégories</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        {% include "blog/message.twig" %}
+
+        {# Delete button #}
+        {% if categoryToEdit %}
+            <div>
+                <form action="/admin/delete-category" method="post">
+                    <input type="hidden" name="delete-category" value="{{ categoryToEdit.getId }}">
+                    <p>
+                        <input class="btn" type="submit" value="Supprimer la catégorie">
+                    </p>
+                </form>
+            </div>
+        {% endif %}
+
+        <div>
+            {% if categoryToEdit %}
+            <form action="/admin/edit-category" method="post">
+                <input type="hidden" name="edit-category" value="{{ categoryToEdit.getId }}">
+            {% else %}
+            <form action="/admin/add-category" method="post">
+                <input type="hidden" name="add-category">
+            {% endif %}
+
+                <!-- Visible fields-->
+                <p>
+                    <input class="btn" type="submit" value="Enregistrer">
+                </p>
+
+                {# Category name #}
+                <p>
+                    <label for="category-name">Nom de la catégorie</label><br>
+                    <input class="admin-input" type="text" name="category-name" id="category-name" value="{{ categoryToEdit.getName }}">
+                </p>
+
+                {# Tags #}
+                {% include "blog/tagHandler.twig" %}
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "blog/adminFooter.twig" %}
+    <script src="/js/tagHandler.js"></script>
+{% endblock %}
+
+
+

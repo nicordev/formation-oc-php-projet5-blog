@@ -1,7 +1,11 @@
 {% extends 'layout.twig' %}
 
 {% block title %}
-    {{ post.getTitle }}
+    {% if postToEdit %}
+        {{ postToEdit.getTitle }}
+    {% else %}
+        Ecrire un article
+    {% endif %}
 {% endblock %}
 
 {% block header %}
@@ -13,6 +17,7 @@
         {% include "blog/message.twig" %}
 
         {% if postToEdit %}
+            {# Delete post button #}
             <div>
                 <form action="/admin/delete-post" method="post">
                     <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
@@ -28,14 +33,13 @@
             <form action="/admin/edit-post" method="post">
                 <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
                 <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
-
             {% else %}
             <form action="/admin/add-post" method="post">
                 <input type="hidden" name="add-post">
             {% endif %}
-                
                 <input type="hidden" name="post-author-id" value="58"><!-- TODO put the true author id here -->
 
+                <!-- Visible fields-->
                 <p>
                     <input class="btn" type="submit" value="Publier l'article">
                 </p>
@@ -56,29 +60,7 @@
                 </p>
 
                 {# Tags #}
-                <div id="post-tags-wrapper">
-                    <h3>Etiquettes</h3>
-
-                    <div class="post-editor-box" id="available-tags-wrapper">
-                        <ul id="available-tags">
-                            {% if availableTags %}
-                                {% for tag in availableTags %}
-                                    <li>
-                                        <input type="checkbox" name="tags[]" value="{{ tag }}" {% if tag in selectedTags %}checked{% endif %}>
-                                        <label class="available-tag" for="{{ tag }}">{{ tag }}</label>
-                                    </li>
-                                {% endfor %}
-                            {% endif %}
-                        </ul>
-                    </div>
-
-                    {# New tag #}
-                    <div class="post-editor-box" id="new-tag-wrapper">
-                        <label for="new-tag">Créer une étiquette</label><br>
-                        <input class="tag-input" type="text" id="new-tag">
-                        <button type="button" class="btn" id="new-tag-btn">+</button>
-                    </div>
-                </div>
+                {% include "blog/tagHandler.twig" %}
             </form>
         </div>
     </section>
@@ -86,7 +68,7 @@
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
-    <script src="/js/tagManager.js"></script>
+    <script src="/js/tagHandler.js"></script>
 {% endblock %}
 
 

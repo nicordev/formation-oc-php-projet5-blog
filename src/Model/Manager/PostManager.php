@@ -9,6 +9,7 @@
 namespace Model\Manager;
 
 
+use Model\Entity\Category;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use \PDO;
@@ -16,6 +17,9 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
+    /**
+     * PostManager constructor.
+     */
     public function __construct()
     {
         $this->tableName = 'bl_post';
@@ -53,21 +57,6 @@ class PostManager extends Manager
     }
 
     /**
-     * Get the last post id.
-     *
-     * @return int
-     */
-    public function getLastId(): int
-    {
-        $query = 'SELECT MAX(p_id) FROM bl_post';
-        $requestLastId = $this->database->query($query);
-
-        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
-
-        return $lastId;
-    }
-
-    /**
      * Edit a blog post in the database
      *
      * @param Post $modifiedPost
@@ -77,6 +66,12 @@ class PostManager extends Manager
     public function edit($modifiedPost): void
     {
         parent::edit($modifiedPost);
+
+        // Associate tags and post
+        $tags = $modifiedPost->getTags();
+        if (!empty($tags)) {
+            $this->associatePostAndTags($modifiedPost, $tags);
+        }
     }
 
     /**
@@ -141,20 +136,49 @@ class PostManager extends Manager
      */
     public function getAll(): array
     {
-        return parent::getAll();
+        $posts = parent::getAll();
+
+        // Get tags
+        foreach ($posts as $post) {
+            $post->setTags($this->getTagsOfAPost($post->getId()));
+        }
+
+        return $posts;
     }
 
     /**
      * Get only the ids of the posts
      *
+     * @param int|null $categoryId
      * @return array
      */
-    public function getAllIds(): array
+    public function getAllIds(?int $categoryId = null): array
     {
-        $query = 'SELECT p_id FROM bl_post ORDER BY p_id';
-        $requestAllId = $this->database->query($query);
+        if ($categoryId === null) {
+            $query = 'SELECT ' . $this->fields['id'] . ' FROM ' . $this->tableName . ' ORDER BY ' . $this->fields['id'];
 
-        $idsFromDb = $requestAllId->fetchAll(PDO::FETCH_ASSOC);
+            $requestAllIds = $this->database->query($query);
+
+        } else {
+            $query = 'SELECT p_id FROM bl_post
+                WHERE p_id IN (
+                    SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
+                    WHERE pt_tag_id_fk IN (
+                        SELECT tag_id FROM bl_tag
+                            INNER JOIN bl_category_tag
+                                ON tag_id = ct_tag_id_fk
+                            INNER JOIN bl_category
+                                ON cat_id = ct_category_id_fk
+                        WHERE cat_id = :id)
+                )';
+
+            $requestAllIds = $this->database->prepare($query);
+            $requestAllIds->execute([
+                'id' => $categoryId
+            ]);
+        }
+
+        $idsFromDb = $requestAllIds->fetchAll(PDO::FETCH_ASSOC);
         $ids = [];
 
         foreach ($idsFromDb as $idFromDb) {
@@ -164,8 +188,47 @@ class PostManager extends Manager
         return $ids;
     }
 
+    /**
+     * Get the posts associated to a category via its tags
+     *
+     * @param int $categoryId
+     * @return array
+     */
+    public function getPostsOfACategory(int $categoryId)
+    {
+        $posts = [];
+
+        $query = 'SELECT * FROM bl_post
+            WHERE p_id IN (
+                SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
+                WHERE pt_tag_id_fk IN (
+                    SELECT tag_id FROM bl_tag
+                        INNER JOIN bl_category_tag
+                            ON tag_id = ct_tag_id_fk
+                        INNER JOIN bl_category
+                            ON cat_id = ct_category_id_fk
+                    WHERE cat_id = :id) # Use the requested category id here
+            )';
+        $requestPosts = $this->database->prepare($query);
+        $requestPosts->execute([
+            'id' => $categoryId
+        ]);
+
+        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $posts[] = $this->createEntityFromTableData($postData);
+        }
+
+        return $posts;
+    }
+
     // Private
 
+    /**
+     * Fill the table bl_post_tag
+     *
+     * @param Post $post
+     * @param array $tags
+     */
     private function associatePostAndTags(Post $post, array $tags)
     {
         // Delete

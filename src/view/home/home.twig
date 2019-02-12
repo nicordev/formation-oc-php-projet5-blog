@@ -10,16 +10,16 @@
 
 {% block content %}
     <section class="home-list">
-        <section class="home-category">
-            {% embed "home/postDeck.twig" %}
-                {% block deckTitle %}<a href="?page=blog">Blog</a>{% endblock %}
-            {% endembed %}
-        </section>
-
-        <section class="home-category">
-            {% embed "home/postDeck.twig" %}
-                {% block deckTitle %}<a href="?page=about">A propos</a>{% endblock %}
-            {% endembed %}
-        </section>
+        {% if postsByCategory %}
+            {% for categoryId, posts in postsByCategory %}
+                <section class="home-category">
+                    {% embed "home/postDeck.twig" %}
+                        {% block deckTitle %}<a href="/blog?category-id={{ categoryId }}">{{ categories[loop.index0].getName }}</a>{% endblock %}
+                    {% endembed %}
+                </section>
+            {% endfor %}
+        {% else %}
+            Aucune catégorie n'est diponible.
+        {% endif %}
     </section>
 {% endblock %}

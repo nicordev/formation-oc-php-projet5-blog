@@ -68,6 +68,11 @@ input[type='text'], textarea {
 
 }
 
+#blog-admin {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 
 /*
     class
@@ -211,8 +216,19 @@ input[type='text'], textarea {
 
 .available-tag {
     color: chocolate;
+    padding: 5px;
+}
+
+.available-category {
+    color: chocolate;
     font-weight: bold;
     padding: 5px;
+    background-color: transparent;
+    border: none;
+}
+
+.available-category:hover {
+    cursor: pointer;
 }
 
 /* postEditor.twig */
@@ -245,8 +261,8 @@ input[type='text'], textarea {
 .closing-cross {
     font-weight: bold;
     border: 1px solid lightslategrey;
-    background-color: lightslategrey;
-    color: #ddddff;
+    background-color: rgb(237, 237, 237);
+    color: lightslategrey;
     border-radius: 50%;
     padding: 0 7px 2px 7px;
     margin: 5px;
@@ -254,4 +270,10 @@ input[type='text'], textarea {
 
 .closing-cross:hover {
     cursor: pointer;
+}
+
+/* common */
+.bad {
+    background-color: #dd4444;
+    color: whitesmoke;
 }
