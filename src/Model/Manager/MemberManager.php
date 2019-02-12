@@ -5,7 +5,6 @@ namespace Model\Manager;
 
 use Exception;
 use Model\Entity\Member;
-use Model\Entity\Role;
 use PDO;
 
 class MemberManager extends Manager
@@ -51,6 +50,9 @@ class MemberManager extends Manager
     public function edit($modifiedMember): void
     {
         parent::edit($modifiedMember);
+
+        // Roles
+        $this->associateMemberRoles($modifiedMember);
     }
 
     /**
@@ -189,11 +191,18 @@ class MemberManager extends Manager
                 VALUES (:memberId, :roleId)';
         $requestAdd = $this->database->prepare($query);
 
-        foreach ($member->getRoles() as $role) {
-            $requestAdd->execute([
-                'memberId' => $member->getId(),
-                'roleId' => $role->getId()
-            ]);
+        $roleManager = new RoleManager();
+        $roles = $roleManager->getAll();
+
+        foreach ($member->getRoles() as $roleName) {
+            foreach ($roles as $role) {
+                if ($role->getName() === $roleName) {
+                    $requestAdd->execute([
+                        'memberId' => $member->getId(),
+                        'roleId' => $role->getId()
+                    ]);
+                }
+            }
         }
     }
 

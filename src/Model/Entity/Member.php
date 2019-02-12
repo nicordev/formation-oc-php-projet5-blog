@@ -10,7 +10,6 @@ class Member extends Entity
     protected $name = null;
     protected $description = null;
     protected $roles = [];
-    protected $websites = [];
 
     /**
      * @return array
@@ -26,22 +25,6 @@ class Member extends Entity
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
-    }
-
-    /**
-     * @return array
-     */
-    public function getWebsites(): array
-    {
-        return $this->websites;
-    }
-
-    /**
-     * @param array $websites
-     */
-    public function setWebsites(array $websites): void
-    {
-        $this->websites = $websites;
     }
 
     /**

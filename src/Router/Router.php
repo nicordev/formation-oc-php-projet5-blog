@@ -82,7 +82,8 @@ class Router
             case '/profile-editor':
                 $controller = MemberController::class;
                 $method = 'showMemberProfileEditor';
-                $params = [];
+                $params = ['memberId' => isset($_GET['id']) ? $_GET['id'] : null];
+
                 if (isset($_GET['action']) && !empty($_GET['action'])) {
                     switch ($_GET['action']) {
                         case 'update':

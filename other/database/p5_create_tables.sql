@@ -2,7 +2,6 @@
 DROP TABLE IF EXISTS bl_role_member;
 DROP TABLE IF EXISTS bl_category_tag;
 DROP TABLE IF EXISTS bl_post_tag;
-DROP TABLE IF EXISTS bl_member_website;
 
 DROP TABLE IF EXISTS bl_comment;
 DROP TABLE IF EXISTS bl_post;
@@ -10,7 +9,6 @@ DROP TABLE IF EXISTS bl_member;
 DROP TABLE IF EXISTS bl_role;
 DROP TABLE IF EXISTS bl_category;
 DROP TABLE IF EXISTS bl_tag;
-DROP TABLE IF EXISTS bl_website;
 
 CREATE TABLE bl_role(
 	r_id INT UNSIGNED AUTO_INCREMENT,
@@ -21,11 +19,17 @@ CREATE TABLE bl_role(
 )
 ENGINE = InnoDB;
 
+INSERT INTO bl_role
+VALUES (null, 'member'),
+	(null, 'author'),
+	(null, 'editor'),
+	(null, 'moderator'),
+	(null, 'admin');
+
 CREATE TABLE bl_member(
 	m_id INT UNSIGNED AUTO_INCREMENT,
 	m_email VARCHAR(100) NOT NULL UNIQUE,
 	m_password VARCHAR(100) NOT NULL,
-	m_language VARCHAR(100) NOT NULL,
 	m_name VARCHAR(100) NOT NULL UNIQUE,
 	m_description VARCHAR(1000),
 
@@ -50,38 +54,6 @@ CREATE TABLE bl_role_member(
 	CONSTRAINT fk_rm_role_id_r_id
 		FOREIGN KEY (rm_role_id_fk)
 			REFERENCES bl_role(r_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_website(
-	web_id INT UNSIGNED AUTO_INCREMENT,
-	web_url VARCHAR(100),
-	web_name VARCHAR(100) NOT NULL,
-	web_description VARCHAR(1000),
-
-	CONSTRAINT pk_web_id
-		PRIMARY KEY (web_id)
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_member_website(
-	mw_website_id_fk INT UNSIGNED,
-	mw_member_id_fk INT UNSIGNED,
-
-	CONSTRAINT pk_mw_website_id_mw_member_id
-		PRIMARY KEY (mw_website_id_fk, mw_member_id_fk),
-
-	CONSTRAINT fk_mw_website_id_web_id
-		FOREIGN KEY (mw_website_id_fk)
-			REFERENCES bl_website(web_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_mw_member_id_m_id
-		FOREIGN KEY (mw_member_id_fk)
-			REFERENCES bl_member(m_id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE
 )

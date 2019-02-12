@@ -16,7 +16,6 @@ class MemberController extends Controller
 {
     protected $memberManager;
     protected $roleManager;
-    protected $websiteManager; // TODO: implement the manager
 
     public const VIEW_REGISTRATION = 'member/registrationPage.twig';
     public const VIEW_CONNECTION = 'member/connectionPage.twig';
@@ -128,11 +127,18 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showMemberProfileEditor(?Member $member = null)
+    public function showMemberProfileEditor($member = null)
     {
         if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
+
+            if (!($member instanceof Member) && in_array('admin', $_SESSION['connected-member']->getRoles())) {
+                $member = $this->memberManager->get($member);
+            } elseif ($member === null) {
+                $member = $_SESSION['connected-member'];
+            }
+
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
-                'member' => isset($member) ? $member : $_SESSION['connected-member'],
+                'member' => $member,
                 'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
             ]);
         } else {
@@ -149,6 +155,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Application\Exception\BlogException
      */
     public function updateProfile()
     {
@@ -159,6 +166,9 @@ class MemberController extends Controller
         ) {
             $modifiedMember = $this->buildMemberFromForm();
             $this->memberManager->edit($modifiedMember);
+            if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
+                $_SESSION['connected-member'] = $modifiedMember;
+            }
             $this->showMemberProfile($modifiedMember->getId());
 
         } else {
@@ -253,6 +263,7 @@ class MemberController extends Controller
      * Create a Member from a form with $_POST
      *
      * @return Member
+     * @throws \Application\Exception\BlogException
      */
     private function buildMemberFromForm(): Member
     {
@@ -276,6 +287,16 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
+        }
+
+        if (isset($_POST['roles'])) {
+            $roles = ['member'];
+            foreach ($_POST['roles'] as $role) {
+                if ($this->roleManager->isValid($role)) {
+                    $roles[] = $role;
+                }
+            }
+            $member->setRoles($roles);
         }
 
         return $member;

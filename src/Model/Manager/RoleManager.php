@@ -119,4 +119,39 @@ class RoleManager extends Manager
 
         return $id;
     }
+
+    /**
+     * Check if the role is a valid one
+     *
+     * @param string $role
+     * @return bool
+     * @throws \Application\Exception\BlogException
+     */
+    public function isValid(string $role): bool
+    {
+        $roles = $this->getRoleNames();
+
+        if (in_array($role, $roles)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the names of the roles
+     *
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getRoleNames()
+    {
+        $roles = $this->getAll();
+        $roleNames = [];
+
+        foreach ($roles as $role) {
+            $roleNames[] = $role->getName();
+        }
+
+        return $roleNames;
+    }
 }

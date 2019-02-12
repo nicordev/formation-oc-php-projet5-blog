@@ -20,17 +20,30 @@
         <h2>Informations</h2>
 
         {# Roles #}
-        <div>
-            <p>
-                {% for role in member.getRoles %}
-                    {{ role }}
-                {% endfor %}
-            </p>
-        </div>
+        {% if not 'admin' in connectedMember.getRoles %}
+            <div>
+                <p>
+                    {% for role in member.getRoles %}
+                        {{ role }}
+                    {% endfor %}
+                </p>
+            </div>
+        {% endif %}
 
         <form action="/profile-editor?action=update" method="post">
+            
             {# Id #}
             <input type="hidden" name="id" value="{{ member.getId }}">
+
+            {# Roles #}
+            {% if 'admin' in connectedMember.getRoles %}
+                <div class="form-group col-12">
+                    <input type="checkbox" id="role-author" name="roles[]" value="author" {% if 'author' in member.getRoles %}{{ 'checked' }}{% endif %}><label for="role-author">Auteur</label><br>
+                    <input type="checkbox" id="role-editor" name="roles[]" value="editor" {% if 'editor' in member.getRoles %}{{ 'checked' }}{% endif %}><label for="role-editor">Editeur</label><br>
+                    <input type="checkbox" id="role-moderator" name="roles[]" value="moderator" {% if 'moderator' in member.getRoles %}{{ 'checked' }}{% endif %}><label for="role-moderator">Modérateur</label><br>
+                    <input type="checkbox" id="role-admin" name="roles[]" value="admin" {% if 'admin' in member.getRoles %}{{ 'checked' }}{% endif %}><label for="role-admin">Administrateur</label><br>
+                </div>
+            {% endif %}
 
             {# Name #}
             <div class="form-group col-12">

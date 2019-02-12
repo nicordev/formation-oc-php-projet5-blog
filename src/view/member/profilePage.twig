@@ -22,6 +22,10 @@
             <div>
                 <a href="/profile-editor">Modifier mon profil</a>
             </div>
+        {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
+            <div>
+                <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+            </div>
         {% endif %}
 
         {# Roles #}
