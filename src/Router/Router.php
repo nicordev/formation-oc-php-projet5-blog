@@ -14,11 +14,12 @@ class Router
      */
     private function __construct()
     {}
-    
+
     /**
      * Analyze the url and return the controller name, the method to call and the parameters
      *
      * @return Route
+     * @throws \Application\Exception\AccessException
      */
     public static function run(): Route
     {
@@ -27,6 +28,12 @@ class Router
         switch ($url) {
 
             // Home
+
+            case '/':
+                $controller = HomeController::class;
+                $method = 'showHome';;
+                $params = [];
+                break;
 
             case '/home':
                 $controller = HomeController::class;
@@ -122,36 +129,35 @@ class Router
             // Admin
 
             case '/admin':
-                if (isset($_SESSION['connected-member']) && MemberController::hasAccessToAdminPanel($_SESSION['connected-member'])) {
-                    $controller = BlogController::class;
-                    $method = 'showAdminPanel';
-                    $params = [];
-                } else {
-                    $controller = MemberController::class;
-                    $method = 'showConnectionPage';
-                    $params = ['message' => 'Vous devez être connecté et disposer des droits suffisants pour accéder.'];
-                }
+                MemberController::verifyAccess();
+                $controller = BlogController::class;
+                $method = 'showAdminPanel';
+                $params = [];
                 break;
 
             case '/admin/add-post':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'addPost';
                 $params = [];
                 break;
 
             case '/admin/edit-post':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'editPost';
                 $params = [];
                 break;
 
             case '/admin/delete-post':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'deletePost';
                 $params = [];
                 break;
 
             case '/admin/post-editor':
+                MemberController::verifyAccess();
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
                 }
@@ -161,6 +167,7 @@ class Router
                 break;
 
             case '/admin/category-editor':
+                MemberController::verifyAccess();
                 if (isset($_POST['category-id'])) {
                     $categoryId = (int) $_POST['category-id'];
                 }
@@ -170,24 +177,28 @@ class Router
                 break;
 
             case '/admin/add-category':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'addCategory';
                 $params = [];
                 break;
 
             case '/admin/edit-category':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'editCategory';
                 $params = [];
                 break;
 
             case '/admin/delete-category':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'deleteCategory';
                 $params = [];
                 break;
 
             case '/admin/update-tags':
+                MemberController::verifyAccess();
                 $controller = BlogController::class;
                 $method = 'updateTagList';
                 $params = [

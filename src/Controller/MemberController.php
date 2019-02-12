@@ -3,6 +3,7 @@
 namespace Controller;
 
 
+use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\MemberException;
 use Model\Entity\Member;
@@ -36,19 +37,22 @@ class MemberController extends Controller
     }
 
     /**
-     * Check if a member has access to the admin panel
+     * Check if the connected member can have access to the admin section
      *
-     * @param Member $member
      * @return bool
+     * @throws AccessException
      */
-    public static function hasAccessToAdminPanel(Member $member): bool
+    public static function verifyAccess(): bool
     {
-        foreach ($member->getRoles() as $role) {
-            if (in_array($role, self::AUTHORIZED_ROLES)) {
-                return true;
+        if (isset($_SESSION['connected-member'])) {
+            foreach ($_SESSION['connected-member']->getRoles() as $role) {
+                if (in_array($role->getName(), self::AUTHORIZED_ROLES)) {
+                    return true;
+                }
             }
+            throw new AccessException('Access denied. You lack the proper role.');
         }
-        return false;
+        throw new AccessException('Access denied. You are not connected.');
     }
 
     // Views

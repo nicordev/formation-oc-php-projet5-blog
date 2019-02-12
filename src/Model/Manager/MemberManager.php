@@ -5,6 +5,7 @@ namespace Model\Manager;
 
 use Exception;
 use Model\Entity\Member;
+use Model\Entity\Role;
 use PDO;
 
 class MemberManager extends Manager
@@ -80,7 +81,12 @@ class MemberManager extends Manager
         $memberData = $requestMember->fetch(PDO::FETCH_ASSOC);
 
         if ($memberData) {
-            return $this->createEntityFromTableData($memberData);
+            $member = $this->createEntityFromTableData($memberData);
+            $roles = $this->getAssociatedRoles($member->getId());
+            $member->setRoles($roles);
+
+            return $member;
+
         } else {
             return null;
         }
@@ -95,7 +101,13 @@ class MemberManager extends Manager
      */
     public function get(int $memberId): Member
     {
-        return parent::get($memberId);
+        $member = parent::get($memberId);
+
+        // Roles
+        $roles = $this->getAssociatedRoles($member->getId());
+        $member->setRoles($roles);
+
+        return $member;
     }
 
     /**
@@ -106,7 +118,15 @@ class MemberManager extends Manager
      */
     public function getAll(): array
     {
-        return parent::getAll();
+        $members = parent::getAll();
+
+        // Roles
+        foreach ($members as $member) {
+            $roles = $this->getAssociatedRoles($member->getId());
+            $member->setRoles($roles);
+        }
+
+        return $members;
     }
 
     /**
@@ -175,5 +195,30 @@ class MemberManager extends Manager
                 'roleId' => $role->getId()
             ]);
         }
+    }
+
+    /**
+     * Get the roles of a member
+     *
+     * @param int $memberId
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    private function getAssociatedRoles(int $memberId)
+    {
+        $query = 'SELECT * FROM bl_role
+            WHERE r_id IN (
+                SELECT rm_role_id_fk FROM bl_role_member
+                WHERE rm_member_id_fk = :id
+            )';
+
+        $requestRoles = $this->query($query, ['id' => $memberId]);
+
+        $roles = [];
+        while ($roleData = $requestRoles->fetch(PDO::FETCH_ASSOC)) {
+            $roles[] = $this->createEntityFromTableData($roleData, 'Role');
+        }
+
+        return $roles;
     }
 }
