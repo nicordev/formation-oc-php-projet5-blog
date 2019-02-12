@@ -12,6 +12,8 @@ namespace Application;
 use Application\Exception\AppException;
 use Application\Router\Router;
 use Controller\BlogController;
+use Controller\ErrorController;
+use Controller\HomeController;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -29,12 +31,22 @@ class Application
             case BlogController::class:
                 $controller = DIC::newBlogController();
                 break;
+
+            case HomeController::class:
+                $controller = DIC::newHomeController();
+                break;
+
+            case ErrorController::class:
+                $controller = DIC::newErrorController();
+                break;
+
             default:
                 throw new AppException('The DIC does not know the controller ' . $route->controller);
         }
 
         try {
             $method = new ReflectionMethod($route->controller, $route->method);
+
         } catch (ReflectionException $e) {
             throw new AppException('The method ' . $route->method . ' was not found in ' . $route->controller);
         }

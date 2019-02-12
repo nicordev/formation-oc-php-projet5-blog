@@ -13,6 +13,16 @@
 
         <h2 class="blogpost-title">{{ post.getTitle }}</h2>
 
+        {# Tags #}
+        {% if post.getTags() %}
+            <div class="blogpost-tags">
+                Etiquettes :
+                {% for tag in post.getTags() %}
+                    {{ tag.getName() }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="blogpost-content">
             {{ post.getContent }}
         </div>

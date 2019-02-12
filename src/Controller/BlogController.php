@@ -9,9 +9,11 @@
 namespace Controller;
 
 
+use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
 use Model\Entity\Post;
+use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\PostManager;
@@ -24,7 +26,6 @@ class BlogController extends Controller
     protected $tagManager;
     protected $categoryManager;
     protected $commentManager;
-    protected $twig;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
@@ -105,10 +106,12 @@ class BlogController extends Controller
     public function showAdminPanel(string $message = '')
     {
         $posts = $this->postManager->getAll();
+        $tags = $this->tagManager->getAll();
 
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
-            'message' => $message
+            'message' => $message,
+            'tags' => $tags
         ]);
     }
 
@@ -125,24 +128,38 @@ class BlogController extends Controller
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
+        $availableTags = $this->tagManager->getAll();
+        $availableTagNames = [];
+        $selectedTagNames = [];
+
+        foreach ($availableTags as $availableTag) {
+            $availableTagNames[] = $availableTag->getName();
+        }
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
+
+            foreach ($postToEdit->getTags() as $tag) {
+                $selectedTagNames[] = $tag->getName();
+            }
         }
 
         self::render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
-            'message' => $message
+            'message' => $message,
+            'availableTags' => $availableTagNames,
+            'selectedTags' => $selectedTagNames
         ]);
     }
 
     // Actions
 
     /**
-     * Add a new post from $_POST
+     * Add a new post from $_POST and add associated tags
      *
      * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -150,9 +167,26 @@ class BlogController extends Controller
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
+        $tags = self::getTagsFromForm();
 
         if ($newPost !== null) {
+
+            if ($tags !== null) {
+                foreach ($tags as $tag) {
+                    // Add new tag
+                    if ($this->tagManager->isNewTag($tag)) {
+                        $this->tagManager->add($tag);
+                    }
+                    // Set tag id
+                    $id = $this->tagManager->getId($tag->getName());
+                    $tag->setId($id);
+                }
+                // Associate tags and post
+                $newPost->setTags($tags);
+            }
+
             $this->postManager->add($newPost);
+
             // Come back to the admin panel
             $this->showAdminPanel("Un article a été publié.");
 
@@ -166,6 +200,7 @@ class BlogController extends Controller
      * Edit an existing post from $_POST
      *
      * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -200,7 +235,134 @@ class BlogController extends Controller
         $this->showAdminPanel("Un article a été supprimé.");
     }
 
+    /**
+     * Update the list of tags
+     *
+     * @param array $tagIds
+     * @param array $tagNames
+     * @throws Exception
+     */
+    public function updateTagList(array $tagIds, array $tagNames)
+    {
+        $oldTags = $this->tagManager->getAll();
+
+        // Add new tags
+        $this->addNewTags($tagIds, $tagNames);
+
+        // Update of delete tags
+        $tagIds = array_map('intval', $tagIds); // Convert string to int
+        foreach ($oldTags as $oldTag) {
+            // Delete or update tag ?
+            if (self::isTagToDelete($oldTag, $tagIds)) {
+                $this->tagManager->delete($oldTag->getId());
+            } else {
+                $this->updateTag($oldTag, $tagIds, $tagNames);
+            }
+        }
+        // Head back to the admin panel
+        $this->showAdminPanel('La liste des étiquettes a été mise à jour.');
+    }
+
     // Private
+
+    /**
+     * Add new tags to the database if tag id === 'new'
+     *
+     * @param array $tagIds
+     * @param array $tagNames
+     * @return int
+     * @throws AppException
+     */
+    private function addNewTags(array $tagIds, array $tagNames)
+    {
+        $numberOfNewTags = 0;
+
+        for ($i = count($tagIds) - 1; $i >= 0; $i--) {
+            if ($tagIds[$i] === 'new') {
+                try {
+                    $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to add the tag ' . $tagNames[$i]);
+                }
+                $numberOfNewTags++;
+
+            } else {
+                break;
+            }
+        }
+        return $numberOfNewTags;
+    }
+
+    /**
+     * Update a tag in the database if necessary
+     * Return true if the tag has been updated
+     *
+     * @param Tag $tagToUpdate
+     * @param array $tagIds
+     * @param array $tagNames
+     * @return bool
+     * @throws AppException
+     */
+    private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)
+    {
+        $tagToUpdateId = $tagToUpdate->getId();
+        $tagToUpdateName = $tagToUpdate->getName();
+
+        for ($i = 0, $size = count($tagIds); $i < $size; $i++) {
+            if ($tagToUpdateId === $tagIds[$i] && $tagToUpdateName !== $tagNames[$i]) {
+                $tagData = [
+                    'id' => $tagToUpdateId,
+                    'name' => $tagNames[$i]
+                ];
+                $updatedTag = new Tag($tagData);
+                try {
+                    $this->tagManager->edit($updatedTag);
+                } catch (Exception $e) {
+                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true));
+                }
+                return true;
+
+            } elseif ($tagIds[$i] === 'new') {
+                break;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a tag has to be deleted
+     *
+     * @param Tag $oldTag
+     * @param array $tagIds
+     * @return bool
+     */
+    private static function isTagToDelete(Tag $oldTag, array $tagIds)
+    {
+        foreach ($tagIds as $tagId) {
+            if ($tagId === $oldTag->getId()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Return Tag entities
+     *
+     * @return array
+     */
+    private static function getTagsFromForm(): array
+    {
+        $tags = null;
+
+        if (isset($_POST['tags'])) {
+            foreach ($_POST['tags'] as $tag) {
+                $tags[] = new Tag(['name' => $tag]);
+            }
+        }
+
+        return $tags;
+    }
 
     /**
      * Create a Post from a form (thanks to $_POST)

@@ -9,64 +9,94 @@
 {% endblock %}
 
 {% block content %}
-    <section class="blog-admin">
-        <h2>Articles</h2>
+    <section id="blog-admin">
+        <div class="admin-box">
+            <h2>Articles</h2>
 
         <p>
             <a class="btn" href="/admin/post-editor">Ajouter un article</a>
         </p>
 
-        {% include "blog/message.twig" %}
+            {% include "blog/message.twig" %}
 
-        <table>
-            <thead>
-            <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Etiquettes</th>
-                <th>Commentaires</th>
-                <th>Date de création</th>
-            </tr>
-            </thead>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Etiquettes</th>
+                        <th>Commentaires</th>
+                        <th>Date de création</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-            {% for post in posts %}
-                <tr>
-                    <td>
-                        <form action="/admin/post-editor" method="post">
-                            <input type="hidden" name="post-id" value="{{ post.getId }}">
-                            <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
-                        </form>
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        coming soon...
-                    </td>
-                    <td>
-                        {{ post.getCreationDate }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
+                <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>
+                            <form action="/admin/post-editor" method="post">
+                                <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                <input class="admin-blogpost-title" type="submit" value="{{ post.getTitle }}">
+                            </form>
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            coming soon...
+                        </td>
+                        <td>
+                            {{ post.getCreationDate }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
 
-            <tfoot>
-            <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Etiquettes</th>
-                <th>Commentaires</th>
-                <th>Date de création</th>
-            </tr>
-            </tfoot>
-        </table>
+                <tfoot>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Etiquettes</th>
+                        <th>Commentaires</th>
+                        <th>Date de création</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="admin-box">
+            <h2>Etiquettes</h2>
+
+            <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
+
+                <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+
+                <ul id="tag-list">
+                    {% for tag in tags %}
+                        <li>
+                            <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
+                            <input class="available-tag" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="refreshValue(event); highlightIncorrectTags();">
+                            <span class="closing-cross" onclick="eraseElementFromEvent(event)">X</span>
+                        </li>
+                    {% endfor %}
+
+                    <li id="new-tag-input-li">
+                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Ajouter une nouvelle étiquette">
+                        <button type="button" id="new-tag-btn" class="btn btn-small">+</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
+
     </section>
 {% endblock %}
 
 {% block footer %}
     {% include "blog/adminFooter.twig" %}
+    <script src="/js/erase.js"></script>
+    <script src="/js/refreshValue.js"></script>
+    <script src="/js/adminTagManager.js"></script>
 {% endblock %}

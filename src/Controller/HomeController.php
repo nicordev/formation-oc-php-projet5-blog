@@ -16,10 +16,6 @@ class HomeController extends Controller
      * @var CategoryManager
      */
     protected $categoryManager;
-    /**
-     * @var Twig_Environment
-     */
-    protected $twig;
 
     const VIEW_HOME = 'home/home.twig';
 

@@ -45,9 +45,22 @@ class Router
                 break;
 
             case '/admin':
-                $controller = BlogController::class;
-                $method = 'showAdminPanel';
-                $params = [];
+
+                // Manage tags
+                if (isset($_POST['tag_ids']) &&
+                    isset($_POST['tag_names'])
+                ) {
+                    $controller = 'Controller\BlogController';
+                    $method = 'updateTagList';
+                    $params = [
+                        'tagIds' => $_POST['tag_ids'],
+                        'tagNames' => $_POST['tag_names']
+                    ];
+                } else {
+                    $controller = BlogController::class;
+                    $method = 'showAdminPanel';
+                    $params = [];
+                }
                 break;
 
             case '/admin/add-post':
@@ -75,6 +88,15 @@ class Router
                 $controller = BlogController::class;
                 $method = 'showPostEditor';
                 $params = isset($postId) ? ['postId' => $postId] : [];
+                break;
+
+            case '/admin/update-tags':
+                $controller = BlogController::class;
+                $method = 'updateTagList';
+                $params = [
+                    'tagIds' => $_POST['tag_ids'],
+                    'tagNames' => $_POST['tag_names']
+                ];
                 break;
 
             default:

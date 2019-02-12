@@ -10,6 +10,7 @@ namespace Model\Manager;
 
 
 use Model\Entity\Post;
+use Model\Entity\Tag;
 use \PDO;
 use Application\Exception\BlogException;
 
@@ -42,6 +43,28 @@ class PostManager extends Manager
     public function add($newPost): void
     {
         parent::add($newPost);
+
+        // Associate tags and post
+        $tags = $newPost->getTags();
+        if (!empty($tags)) {
+            $newPost->setId($this->getLastId());
+            $this->associatePostAndTags($newPost, $tags);
+        }
+    }
+
+    /**
+     * Get the last post id.
+     *
+     * @return int
+     */
+    public function getLastId(): int
+    {
+        $query = 'SELECT MAX(p_id) FROM bl_post';
+        $requestLastId = $this->database->query($query);
+
+        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
+
+        return $lastId;
     }
 
     /**
@@ -76,7 +99,39 @@ class PostManager extends Manager
      */
     public function get(int $postId): Post
     {
-        return parent::get($postId);
+        $post = parent::get($postId);
+
+        $associatedTags = $this->getTagsOfAPost($post->getId());
+        $post->setTags($associatedTags);
+
+        return $post;
+    }
+
+    /**
+     * Get associated tags of a post
+     *
+     * @param int $postId
+     * @return array
+     */
+    public function getTagsOfAPost(int $postId)
+    {
+        $tags = [];
+
+        $query = 'SELECT bl_tag.* FROM bl_tag
+            INNER JOIN bl_post_tag
+                ON tag_id = pt_tag_id_fk
+            INNER JOIN bl_post ON pt_post_id_fk = p_id
+            WHERE p_id = :postId';
+
+        $requestTags = $this->database->prepare($query);
+        $requestTags->execute([
+            'postId' => $postId
+        ]);
+        while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
+            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+        }
+
+        return $tags;
     }
 
     /**
@@ -107,5 +162,51 @@ class PostManager extends Manager
         }
 
         return $ids;
+    }
+
+    // Private
+
+    private function associatePostAndTags(Post $post, array $tags)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_post_tag WHERE pt_post_id_fk = :postId';
+        $requestDelete = $this->database->prepare($query);
+        $requestDelete->execute([
+            'postId' => $post->getId()
+        ]);
+
+        // Add
+        $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
+                VALUES (:postId, :tagId)';
+        $requestAdd = $this->database->prepare($query);
+
+        foreach ($tags as $tag) {
+            $requestAdd->execute([
+                'postId' => $post->getId(),
+                'tagId' => $tag->getId()
+            ]);
+        }
+    }
+
+    // Old
+
+    /**
+     * @param array $data
+     * @return Post
+     */
+    private static function createAPostFromDatabaseData(array $data): Post
+    {
+        $attributes = [
+            'id' => $data['p_id'],
+            'authorId' => $data['p_author_id_fk'],
+            'lastEditorId' => $data['p_last_editor_id_fk'],
+            'creationDate' => $data['p_creation_date'],
+            'lastModificationDate' => $data['p_last_modification_date'],
+            'title' => $data['p_title'],
+            'excerpt' => $data['p_excerpt'],
+            'content' => $data['p_content']
+        ];
+
+        return new Post($attributes);
     }
 }

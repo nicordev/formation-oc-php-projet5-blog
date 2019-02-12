@@ -1,4 +1,5 @@
 .idea/
 vendor/
+workbench/
 composer.lock
 workbench/

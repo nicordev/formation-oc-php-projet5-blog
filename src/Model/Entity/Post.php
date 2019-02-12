@@ -18,6 +18,7 @@ class Post extends Entity
     protected $title = null;
     protected $excerpt = null;
     protected $content = null;
+    protected $tags = [];
 
     /**
      * @return int
@@ -129,5 +130,21 @@ class Post extends Entity
     public function setContent(string $content): void
     {
         $this->content = $content;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     */
+    public function setTags(array $tags): void
+    {
+        $this->tags = $tags;
     }
 }

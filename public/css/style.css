@@ -49,16 +49,34 @@ td, th {
     padding: 5px 20px;
 }
 
+input[type='text'], textarea {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
 /*
     id
     --
 */
+#post-tags-wrapper {
+    margin: 0 0 20px 0;
+}
+
+#new-tag-wrapper {
+
+}
 
 
 /*
     class
     -----
 */
+.w100 {
+    width: 100%;
+}
+
 .content {
     margin: 0 auto;
     max-width: 1300px;
@@ -127,11 +145,17 @@ td, th {
 }
 
 .blogpost-content {
-    /* Feeling well? */
+
 }
 
 .blogpost-info {
-    padding: 10px 0 10px 0;
+    padding: 10px 0;
+    font-size: 0.75em;
+    color: burlywood;
+}
+
+.blogpost-tags {
+    padding: 10px 0;
     font-size: 0.75em;
     color: burlywood;
 }
@@ -145,12 +169,9 @@ td, th {
     list-style-type: none;
 }
 
+/* blogAdmin.twig */
+
 .admin-input, .admin-textarea {
-    border-radius: 10px;
-    border: 1px solid lightslategrey;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px;
 }
 
 .btn, .btn:visited {
@@ -163,6 +184,15 @@ td, th {
     padding: 10px 20px;
 }
 
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn-small {
+    font-size: 0.75em;
+    padding: 5px 10px;
+}
+
 .admin-blogpost-title {
     border: none;
     background-color: transparent;
@@ -173,6 +203,30 @@ td, th {
 
 .admin-blogpost-title:hover {
     cursor: pointer;
+}
+
+.admin-box {
+    margin: 20px;
+}
+
+.available-tag {
+    color: chocolate;
+    font-weight: bold;
+    padding: 5px;
+}
+
+/* postEditor.twig */
+
+.post-editor-box {
+    margin: 20px;
+}
+
+.tag-input {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px 0;
 }
 
 /* message.twig */
@@ -195,4 +249,9 @@ td, th {
     color: #ddddff;
     border-radius: 50%;
     padding: 0 7px 2px 7px;
+    margin: 5px;
+}
+
+.closing-cross:hover {
+    cursor: pointer;
 }
