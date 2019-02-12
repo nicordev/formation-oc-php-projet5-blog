@@ -69,7 +69,7 @@ class Router
             case '/member-profile':
                 $controller = MemberController::class;
                 $method = 'showMemberProfile';
-                $params = [];
+                $params = ['memberId' => isset($_GET['id']) ? $_GET['id'] : null];
                 break;
 
             case '/profile-editor':
@@ -122,7 +122,7 @@ class Router
             // Admin
 
             case '/admin':
-                if (isset($_SESSION['connected-member'])) {
+                if (isset($_SESSION['connected-member']) && MemberController::hasAccessToAdminPanel($_SESSION['connected-member'])) {
                     $controller = BlogController::class;
                     $method = 'showAdminPanel';
                     $params = [];

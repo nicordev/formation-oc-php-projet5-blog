@@ -17,11 +17,12 @@ class MemberController extends Controller
     protected $roleManager;
     protected $websiteManager; // TODO: implement the manager
 
-    const VIEW_REGISTRATION = 'member/registrationPage.twig';
-    const VIEW_CONNECTION = 'member/connectionPage.twig';
-    const VIEW_WELCOME = 'member/welcomePage.twig';
-    const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
-    const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
+    public const VIEW_REGISTRATION = 'member/registrationPage.twig';
+    public const VIEW_CONNECTION = 'member/connectionPage.twig';
+    public const VIEW_WELCOME = 'member/welcomePage.twig';
+    public const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
+    public const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
+    public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
     public function __construct(
         MemberManager $memberManager,
@@ -32,6 +33,22 @@ class MemberController extends Controller
         parent::__construct($twig);
         $this->memberManager = $memberManager;
         $this->roleManager = $roleManager;
+    }
+
+    /**
+     * Check if a member has access to the admin panel
+     *
+     * @param Member $member
+     * @return bool
+     */
+    public static function hasAccessToAdminPanel(Member $member): bool
+    {
+        foreach ($member->getRoles() as $role) {
+            if (in_array($role, self::AUTHORIZED_ROLES)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Views
@@ -59,7 +76,10 @@ class MemberController extends Controller
      */
     public function showConnectionPage(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_CONNECTION, ['message' => $message]);
+        echo $this->twig->render(self::VIEW_CONNECTION, [
+            'message' => $message,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+        ]);
     }
 
     /**
@@ -77,14 +97,16 @@ class MemberController extends Controller
     /**
      * Show the static profile of a member
      *
-     * @param Member $member
+     * @param int|null $memberId
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showMemberProfile(?Member $member = null)
+    public function showMemberProfile(?int $memberId = null)
     {
-        if ($member === null) {
+        if ($memberId !== null) {
+            $member = $this->memberManager->get($memberId);
+        } else {
             $member = $_SESSION['connected-member'];
         }
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
@@ -133,7 +155,7 @@ class MemberController extends Controller
         ) {
             $modifiedMember = $this->buildMemberFromForm();
             $this->memberManager->edit($modifiedMember);
-            $this->showMemberProfile($modifiedMember);
+            $this->showMemberProfile($modifiedMember->getId());
 
         } else {
             throw new AppException('$_POST lacks the requested keys to update the member.');
