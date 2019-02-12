@@ -201,10 +201,11 @@ class MemberManager extends Manager
      * Get the roles of a member
      *
      * @param int $memberId
+     * @param bool $namesOnly
      * @return array
      * @throws \Application\Exception\BlogException
      */
-    private function getAssociatedRoles(int $memberId)
+    private function getAssociatedRoles(int $memberId, bool $namesOnly = true)
     {
         $query = 'SELECT * FROM bl_role
             WHERE r_id IN (
@@ -216,7 +217,11 @@ class MemberManager extends Manager
 
         $roles = [];
         while ($roleData = $requestRoles->fetch(PDO::FETCH_ASSOC)) {
-            $roles[] = $this->createEntityFromTableData($roleData, 'Role');
+            if ($namesOnly) {
+                $roles[] = $roleData['r_name'];
+            } else {
+                $roles[] = $this->createEntityFromTableData($roleData, 'Role');
+            }
         }
 
         return $roles;

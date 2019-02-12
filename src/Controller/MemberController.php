@@ -46,7 +46,7 @@ class MemberController extends Controller
     {
         if (isset($_SESSION['connected-member'])) {
             foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                if (in_array($role->getName(), self::AUTHORIZED_ROLES)) {
+                if (in_array($role, self::AUTHORIZED_ROLES)) {
                     return true;
                 }
             }

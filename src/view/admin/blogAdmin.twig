@@ -19,9 +19,11 @@
         <div class="admin-box w100">
             <h2>Articles</h2>
 
-            <p>
-                <a class="btn" href="/admin/post-editor">Ajouter un article</a>
-            </p>
+            {% if 'author' in roles %}
+                <p>
+                    <a class="btn" href="/admin/post-editor">Ajouter un article</a>
+                </p>
+            {% endif %}
 
             <table class="table table-striped">
                 <thead>
@@ -40,10 +42,14 @@
                 {% for post in posts %}
                     <tr>
                         <td scope="row">
-                            <form action="/admin/post-editor" method="post">
-                                <input type="hidden" name="post-id" value="{{ post.getId }}">
-                                <input class="admin-link" type="submit" value="{{ post.getTitle }}">
-                            </form>
+                            {% if 'author' in roles and post.getAuthorId is same as(connectedMember.getId) or 'editor' in roles %}
+                                <form action="/admin/post-editor" method="post">
+                                    <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                    <input class="admin-link" type="submit" value="{{ post.getTitle }}">
+                                </form>
+                            {% else %}
+                                <span>{{ post.getTitle }}</span>
+                            {% endif %}
                         </td>
                         <td scope="row">
                             {{ post.getAuthorName }}
@@ -101,6 +107,7 @@
 
         <hr>
 
+        {% if 'editor' in roles %}
         {# Categories #}
         <div class="admin-box">
             <h2>Catégories</h2>
@@ -179,6 +186,8 @@
                 </ul>
             </form>
         </div>
+        {% endif %}
+
     </section>
 {% endblock %}
 

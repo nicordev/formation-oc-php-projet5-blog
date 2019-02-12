@@ -1,5 +1,8 @@
 {% extends "layout.twig" %}
 
+{# Authorisations #}
+{% set roles = connectedMember.getRoles %}
+
 {# head #}
 {% block head %}
     {{ parent() }}
