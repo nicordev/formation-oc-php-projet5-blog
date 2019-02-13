@@ -112,6 +112,7 @@ class MemberController extends Controller
         } else {
             $member = $_SESSION['connected-member'];
         }
+
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
@@ -165,7 +166,7 @@ class MemberController extends Controller
             isset($_POST['description'])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
-            $this->memberManager->edit($modifiedMember);
+            $this->updateMember($modifiedMember);
             if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
                 $_SESSION['connected-member'] = $modifiedMember;
             }
@@ -273,7 +274,7 @@ class MemberController extends Controller
 
         $member->setEmail(htmlspecialchars($_POST['email']));
 
-        if (isset($_POST['password'])) {
+        if (isset($_POST['password']) && !empty($_POST['password'])) {
             $member->setPassword(htmlspecialchars($_POST['password']));
         }
 
@@ -315,16 +316,25 @@ class MemberController extends Controller
     {
         if ($this->memberManager->isNewMember($member)) {
             $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
-            $role = new Role([
-                'id' => $this->roleManager->getId('member'),
-                'name' => 'member'
-            ]);
-            $member->setRoles([$role]);
+            $member->setRoles(['member']);
             $this->memberManager->add($member);
 
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Update a member in the database
+     *
+     * @param Member $updatedMember
+     * @return void
+     * @throws \Exception
+     */
+    private function updateMember(Member $updatedMember)
+    {
+        $updatedMember->setPassword(password_hash($updatedMember->getPassword(), PASSWORD_DEFAULT));
+        $this->memberManager->edit($updatedMember);
     }
 }
