@@ -20,7 +20,7 @@
         {# Edit button #}
         {% if connectedMember and connectedMember.getEmail is same as(member.getEmail) %}
             <div>
-                <a href="/profile-editor">Modifier mon profil</a>
+                <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
             </div>
         {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
             <div>
