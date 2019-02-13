@@ -47,6 +47,7 @@ class DIC
             new TagManager(),
             new CategoryManager(),
             new CommentManager(),
+            new MemberManager(),
             $twig
         );
     }
@@ -85,6 +86,9 @@ class DIC
         return new ErrorController($twig);
     }
 
+    /**
+     * @return MemberController
+     */
     public static function newMemberController(): MemberController
     {
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');

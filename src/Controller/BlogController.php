@@ -9,6 +9,7 @@
 namespace Controller;
 
 
+use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
@@ -18,6 +19,7 @@ use Model\Entity\Post;
 use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
+use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
@@ -28,6 +30,7 @@ class BlogController extends Controller
     protected $tagManager;
     protected $categoryManager;
     protected $commentManager;
+    protected $memberManager;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -39,17 +42,19 @@ class BlogController extends Controller
     /**
      * BlogController constructor.
      *
-     * @param Twig_Environment $twig
      * @param PostManager $postManager
      * @param TagManager $tagManager
      * @param CategoryManager $categoryManager
      * @param CommentManager $commentManager
+     * @param MemberManager $memberManager
+     * @param Twig_Environment $twig
      */
     public function __construct(
                                 PostManager $postManager,
                                 TagManager $tagManager,
                                 CategoryManager $categoryManager,
                                 CommentManager $commentManager,
+                                MemberManager $memberManager,
                                 Twig_Environment $twig
     )
     {
@@ -58,6 +63,7 @@ class BlogController extends Controller
         $this->tagManager = $tagManager;
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
+        $this->memberManager = $memberManager;
     }
 
     // Views
@@ -152,6 +158,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function showAdminPanel(string $message = '', array $yesNoForm = [])
     {
@@ -159,13 +166,23 @@ class BlogController extends Controller
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
 
+        if (isset($_SESSION['connected-member'])) {
+            $connectedMember = $_SESSION['connected-member'];
+            if (in_array('admin', $connectedMember->getRoles())) {
+                $members = $this->memberManager->getAll();
+            }
+        } else {
+            throw new AccessException('No connected member found.');
+        }
+
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'members' => isset($members) ? $members : null,
+            'connectedMember' => $connectedMember
         ]);
     }
 
