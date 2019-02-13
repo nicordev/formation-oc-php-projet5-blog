@@ -55,14 +55,6 @@
                 <textarea class="form-control" name="description" id="description" cols="30" rows="10" placeholder="Votre description">{{ member.getDescription }}</textarea>
             </div>
 
-            {# Websites #}
-            <div class="form-group col-12">
-                {% for website in member.getWebsites %}
-                    <input class="form-control" type="url" name="websites[]" value="{{ website.getUrl }}"><button class="btn btn-small" type="button">-</button>
-                {% endfor %}
-                <input class="form-control" type="url" id="new-website" placeholder="Ajouter un site"><button class="btn btn-small" type="button">+</button>
-            </div>
-
             <h2>Compte</h2>
 
             {# Email #}

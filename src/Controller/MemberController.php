@@ -131,10 +131,10 @@ class MemberController extends Controller
     {
         if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
 
-            if (!($member instanceof Member) && in_array('admin', $_SESSION['connected-member']->getRoles())) {
-                $member = $this->memberManager->get($member);
-            } elseif ($member === null) {
+            if ($member === null) {
                 $member = $_SESSION['connected-member'];
+            } elseif (!($member instanceof Member) && in_array('admin', $_SESSION['connected-member']->getRoles())) {
+                $member = $this->memberManager->get($member);
             }
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
