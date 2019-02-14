@@ -172,6 +172,35 @@ class MemberManager extends Manager
         return $id;
     }
 
+    /**
+     * Get all the member of a given role
+     *
+     * @param string $role
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getMembersByRole(string $role = 'member')
+    {
+        $members = [];
+
+        $query = 'SELECT * FROM bl_member
+            WHERE m_id IN (
+                SELECT rm_member_id_fk FROM bl_role_member
+                WHERE rm_role_id_fk = (
+                    SELECT r_id FROM bl_role
+                    WHERE r_name = :role
+                )
+            )';
+
+        $requestMembers = $this->query($query, ['role' => $role]);
+
+        while ($memberData = $requestMembers->fetch(PDO::FETCH_ASSOC)) {
+            $members[] = $this->createEntityFromTableData($memberData, 'Member');
+        }
+
+        return $members;
+    }
+
     // Private
 
     /**

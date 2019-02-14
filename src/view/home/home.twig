@@ -13,6 +13,9 @@
 
 {% block content %}
     <section class="home-list">
+
+        {% include 'message.twig' %}
+
         {% if postsByCategory %}
             {% for categoryId, posts in postsByCategory %}
                 <section class="home-category">

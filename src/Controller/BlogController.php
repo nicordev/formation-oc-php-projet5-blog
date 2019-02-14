@@ -268,29 +268,26 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastEditorId($newPost->getAuthorId());
+        $message = '';
 
         if ($newPost !== null) {
-            if (strlen($newPost->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
-                // Try again...
-                $this->showPostEditor(null, "Erreur : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères.");
+            // Cut if title and excerpt are too big
+            $message = self::cutPost($newPost);
 
-            } elseif (strlen($newPost->getTitle()) > PostManager::TITLE_LENGTH) {
-                // Try again...
-                $this->showPostEditor(null, "Erreur : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères.");
+            // Tags
+            $tags = $newPost->getTags();
 
-            } else {
-                $tags = $newPost->getTags();
-
-                if (!empty($tags)) {
-                    // Add tags in the database and get their ids
-                    $newPost->setTags($this->addNewTags($tags));
-                }
-
-                $this->postManager->add($newPost);
-
-                // Come back to the admin panel
-                $this->showAdminPanel("Un article a été publié.");
+            if (!empty($tags)) {
+                // Add tags in the database and get their ids
+                $newPost->setTags($this->addNewTags($tags));
             }
+
+            // Add
+            $this->postManager->add($newPost);
+
+            // Come back to the admin panel
+            $message .= "Un article a été publié.";
+            $this->showAdminPanel($message);
 
         } else {
             // Try again...
@@ -312,8 +309,11 @@ class BlogController extends Controller
     {
         $modifiedPost = self::buildPostFromForm();
         $tags = $modifiedPost->getTags();
+        $message = '';
 
         if ($modifiedPost !== null) {
+
+            $message = self::cutPost($modifiedPost);
 
             if (!empty($tags)) {
                 // Add tags in the database and get their ids
@@ -322,7 +322,8 @@ class BlogController extends Controller
 
             $this->postManager->edit($modifiedPost);
             // Come back to the admin panel
-            $this->showAdminPanel("Un article a été modifié.");
+            $message .= "Un article a été modifié.";
+            $this->showAdminPanel($message);
         } else {
             // Try again...
             $this->showPostEditor(htmlspecialchars($_POST['edit-post']), "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
@@ -719,5 +720,32 @@ class BlogController extends Controller
         if ($post->getLastModificationDate() !== null) {
             $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
         }
+    }
+
+    /**
+     * Cut the title and the excerpt of a post if they are too big. Return a message explaining the modifications.
+     *
+     * @param Post $post
+     * @param string $message
+     * @return string
+     */
+    private static function cutPost(Post $post, string $message = '')
+    {
+        // Excerpt
+        if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
+            // We cut
+            $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
+            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
+
+        }
+        // Title
+        if (strlen($post->getTitle()) > PostManager::TITLE_LENGTH) {
+            // We cut
+            $post->setTitle(substr($post->getTitle(), 0, PostManager::TITLE_LENGTH));
+            $message .= "Attention : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères. Il a été coupé.<br>";
+
+        }
+
+        return $message;
     }
 }

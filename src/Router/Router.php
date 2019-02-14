@@ -37,8 +37,12 @@ class Router
 
             case '/home':
                 $controller = HomeController::class;
-                $method = 'showHome';;
+                $method = 'showHome';
                 $params = [];
+
+                if (isset($_GET['action']) && $_GET['action'] === 'contact') {
+                    $method = 'contact';
+                }
                 break;
 
             // Blog

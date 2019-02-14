@@ -7,7 +7,9 @@
         </p>
 
     {% else %}
-        {% for post in posts %}
+        {% set i = 0 %}
+        {% for post in posts if i < numberOfPosts %}
+        {% set i = loop.index %}
         <div class="card">
             <div class="card-body">
                 <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
