@@ -113,8 +113,17 @@
                     </div>
                 </div>
 
-                <p class="text-center"><a href="/admin">Administration</a></p>
-                <p class="text-center"><a href="/cv/cv.pdf">Mon CV</a></p>
+                <div class="row">
+                    <div class="col-12">
+                        <p class="text-center"><a href="/admin">Administration</a></p>
+                        <p class="text-center"><a href="/cv/cv.pdf">Mon CV</a></p>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <aside class="col-12 col-md-8 text-center">
+                        <h5>Contactez-moi</h5>
+                        {% include 'contact.twig' %}
+                    </aside>
+                </div>
             </div>
         </footer>
         {% endblock %}

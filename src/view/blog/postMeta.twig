@@ -1,4 +1,4 @@
 Ecrit par <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a> le {{ post.getCreationDate }}
-{% if post.getLastModificationDate %}
+{% if post.getLastModificationDate and post.getLastModificationDate is not same as(post.getCreationDate) %}
     <br>Modifié le {{ post.getLastModificationDate }}
 {% endif %}
