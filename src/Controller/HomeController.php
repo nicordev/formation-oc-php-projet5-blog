@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-use Application\Exception\AppException;
 use Model\Manager\CategoryManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
@@ -74,12 +73,13 @@ class HomeController extends Controller
     public function contact()
     {
         if (
+            !empty($_POST['contact-name']) &&
             !empty($_POST['contact-email']) &&
             !empty($_POST['contact-message'])
         ) {
             $admins = $this->memberManager->getMembersByRole('admin');
-
-            $subject = "Blog de Nicolas Renvoisé : un message pour l'admin.";
+            $contactName = htmlspecialchars($_POST['contact-name']);
+            $subject = "Blog de Nicolas Renvoisé : un message de {$contactName} pour l'admin.";
             $message = htmlspecialchars($_POST['contact-message']);
             $header = 'From:' . htmlspecialchars($_POST['contact-email']);
 
@@ -89,7 +89,7 @@ class HomeController extends Controller
             $this->showHome('Votre message a été envoyé.');
 
         } else {
-            $this->showHome('Votre email et votre message doivent être remplis.');
+            $this->showHome('Votre nom, prénom, email et message doivent être remplis.');
         }
     }
 }
