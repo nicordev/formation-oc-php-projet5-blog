@@ -166,7 +166,7 @@ class MemberController extends Controller
             isset($_POST['description'])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
-            $this->updateMember($modifiedMember);
+            $this->memberManager->edit($modifiedMember);
             if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
                 $_SESSION['connected-member'] = $modifiedMember;
             }
@@ -238,6 +238,7 @@ class MemberController extends Controller
                 $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.");
             } else {
                 $member = $this->memberManager->getFromEmail($_POST['email']);
+
                 if ($member !== null) {
                     if (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
@@ -275,7 +276,7 @@ class MemberController extends Controller
         $member->setEmail(htmlspecialchars($_POST['email']));
 
         if (isset($_POST['password']) && !empty($_POST['password'])) {
-            $member->setPassword(htmlspecialchars($_POST['password']));
+            $member->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
         }
 
         $member->setName(htmlspecialchars($_POST['name']));
@@ -315,7 +316,6 @@ class MemberController extends Controller
     private function addNewMember(Member $member): bool
     {
         if ($this->memberManager->isNewMember($member)) {
-            $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
             $member->setRoles(['member']);
             $this->memberManager->add($member);
 
@@ -323,18 +323,5 @@ class MemberController extends Controller
         }
 
         return false;
-    }
-
-    /**
-     * Update a member in the database
-     *
-     * @param Member $updatedMember
-     * @return void
-     * @throws \Exception
-     */
-    private function updateMember(Member $updatedMember)
-    {
-        $updatedMember->setPassword(password_hash($updatedMember->getPassword(), PASSWORD_DEFAULT));
-        $this->memberManager->edit($updatedMember);
     }
 }
