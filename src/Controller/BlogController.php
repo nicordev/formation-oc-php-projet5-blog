@@ -260,11 +260,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+        $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
+        $newPost->setLastEditorId($newPost->getAuthorId());
 
         if ($newPost !== null) {
             if (strlen($newPost->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
@@ -303,6 +306,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function editPost()
     {
@@ -332,6 +336,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function deletePost()
     {
@@ -353,6 +358,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function updateTagList(?array $tagIds, ?array $tagNames, ?string $action = null)
     {
@@ -428,6 +434,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
+     * @throws AccessException
      */
     public function editCategory()
     {
@@ -462,6 +469,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
+     * @throws AccessException
      */
     public function deleteCategory()
     {

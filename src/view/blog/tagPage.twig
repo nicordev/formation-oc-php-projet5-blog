@@ -34,7 +34,7 @@
                                 </h3>
                             </a>
                             <p class="post-meta">
-                                Ecrit par <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a> le {{ post.getCreationDate }}
+                            {% include 'blog/postMeta.twig' %}
                             </p>
                         </div>
                         <hr>

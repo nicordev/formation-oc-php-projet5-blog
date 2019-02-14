@@ -28,10 +28,6 @@ footer ul li a, footer ul li a:hover {
     color: white;
 }
 
-#new-tag-input {
-    font-size: 0.75em;
-}
-
 .content {
     max-width: unset;
 }
@@ -39,7 +35,7 @@ footer ul li a, footer ul li a:hover {
 .admin-header {
     background-color: #0c5460;
     color: white;
-    padding: 50px 0;
+    padding: 150px 0;
 }
 
 .btn, .btn:visited {
@@ -98,4 +94,8 @@ footer ul li a, footer ul li a:hover {
 
 .btn {
     font-weight: normal;
+}
+
+#new-tag-input {
+    font-size: 0.75em;
 }

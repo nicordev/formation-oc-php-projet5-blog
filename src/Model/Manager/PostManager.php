@@ -274,7 +274,8 @@ class PostManager extends Manager
                         INNER JOIN bl_category
                             ON cat_id = ct_category_id_fk
                     WHERE cat_id = :id) # Use the requested category id here
-            )';
+            )
+            ORDER BY p_last_modification_date DESC, p_creation_date DESC';
         $requestPosts = $this->query($query, [
             'id' => $categoryId
         ]);
@@ -304,7 +305,8 @@ class PostManager extends Manager
             WHERE p_id IN (
                 SELECT pt_post_id_fk FROM bl_post_tag
                 WHERE pt_tag_id_fk = :id
-            )';
+            )
+            ORDER BY p_last_modification_date DESC, p_creation_date DESC';
 
         $requestPosts = $this->query($query, [
             'id' => $tagId
@@ -363,27 +365,5 @@ class PostManager extends Manager
         $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
 
         return $memberNameData[0];
-    }
-
-    // Old
-
-    /**
-     * @param array $data
-     * @return Post
-     */
-    private static function createAPostFromDatabaseData(array $data): Post
-    {
-        $attributes = [
-            'id' => $data['p_id'],
-            'authorId' => $data['p_author_id_fk'],
-            'lastEditorId' => $data['p_last_editor_id_fk'],
-            'creationDate' => $data['p_creation_date'],
-            'lastModificationDate' => $data['p_last_modification_date'],
-            'title' => $data['p_title'],
-            'excerpt' => $data['p_excerpt'],
-            'content' => $data['p_content']
-        ];
-
-        return new Post($attributes);
     }
 }

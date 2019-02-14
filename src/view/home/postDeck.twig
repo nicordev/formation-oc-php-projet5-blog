@@ -15,7 +15,7 @@
                         <h5 class="card-title">{{ post.getTitle }}</h5>
                         <p class="card-text">{{ post.getExcerpt }}</p>
                     </a>
-                    <div class="card-info">Ecrit par <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a> le {{ post.getCreationDate }}</div>
+                    <div class="card-info">{% include 'blog/postMeta.twig' %}</div>
                 </div>
             </div>
         {% endfor %}
