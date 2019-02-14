@@ -127,6 +127,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Application\Exception\BlogException
      */
     public function showMemberProfileEditor($member = null)
     {
@@ -138,9 +139,12 @@ class MemberController extends Controller
                 $member = $this->memberManager->get($member);
             }
 
+            $availableRoles = $this->roleManager->getRoleNames();
+
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
-                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
+                'availableRoles' => $availableRoles
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
@@ -294,12 +298,17 @@ class MemberController extends Controller
         }
 
         if (isset($_POST['roles'])) {
-            $roles = ['member'];
+            $roles = [];
             foreach ($_POST['roles'] as $role) {
                 if ($this->roleManager->isValid($role)) {
                     $roles[] = $role;
                 }
             }
+
+            if (empty($roles)) {
+                $roles = ['member'];
+            }
+
             $member->setRoles($roles);
         }
 

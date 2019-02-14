@@ -1,0 +1,15 @@
+{% macro translateRole(word) %}
+    {% if word is same as('member') %}
+        {{ 'Membre' }}
+    {% elseif word is same as('author') %}
+        {{ 'Auteur' }}
+    {% elseif word is same as('editor') %}
+        {{ 'Editeur' }}
+    {% elseif word is same as('moderator') %}
+        {{ 'Modérateur' }}
+    {% elseif word is same as('admin') %}
+        {{ 'Administrateur' }}
+    {% else %}
+        {{ word }}
+    {% endif %}
+{% endmacro %}

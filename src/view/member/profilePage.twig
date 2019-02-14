@@ -1,5 +1,7 @@
 {% extends "member/memberLayout.twig" %}
 
+{% import 'macros.twig' as macros %}
+
 {# head #}
 
 {% block title %}
@@ -31,16 +33,20 @@
         {# Roles #}
         <div>
             <p>
-                {% for role in member.getRoles %}
-                    {{ role }}
-                {% endfor %}
+                {% if member.getRoles %}
+                    {% for role in member.getRoles %}
+                        {{ macros.translateRole(role) }}
+                    {% endfor %}
+                {% else %}
+                    {{ "Vos rôles ont été suspendus." }}
+                {% endif %}
             </p>
         </div>
 
         {# Informations #}
         <div>
             <p>
-                {{ member.getName }} {{ member.getEmail }}
+                {{ member.getName }} <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
             </p>
             <p>
                 {{ member.getDescription }}
