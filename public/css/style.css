@@ -5,6 +5,43 @@ a, p a, a:hover {
     text-decoration: none;
 }
 
+pre, code {
+    background-color: #5a6268;
+    color: whitesmoke;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 0.75em;
+}
+
+dt {
+    font-weight: normal;
+    margin: 10px 0;
+}
+
+dd {
+    margin-left: 50px;
+    padding-left: 10px;
+    border-left: #b9bbbe 2px solid;
+}
+
+blockquote {
+    margin-left: 75px;
+    border-left: #868e96 2px solid;
+    padding-left: 10px;
+}
+
+blockquote p {
+    text-align: justify;
+}
+
+blockquote p::before {
+    content: '\201C';
+}
+
+blockquote p::after {
+    content: '\201D';
+}
+
 .post-nav-link {
     color: burlywood;
 }
@@ -148,6 +185,13 @@ a, p a, a:hover {
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
     color: burlywood;
+}
+
+.blogpost-excerpt {
+    padding: 50px;
+    background-color: #5a6268;
+    color: whitesmoke;
+    margin: 0 0 50px 0;
 }
 
 @media all and (max-width: 576px) {

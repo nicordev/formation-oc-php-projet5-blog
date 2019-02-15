@@ -12,6 +12,7 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
+use Application\Exception\PageNotFoundException;
 use Exception;
 use Model\Entity\Category;
 use Model\Entity\Entity;
@@ -72,25 +73,17 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
-     * @param bool $decodeExcerpt
-     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfACategory(int $categoryId, bool $decodeExcerpt = true, bool $decodeContent = false)
+    public function showPostsOfACategory(int $categoryId)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
-            if ($decodeContent) {
-                self::decodePostContent($post);
-            }
-            if ($decodeExcerpt) {
-                self::decodePostExcerpt($post);
-            }
             self::convertDatesOfPost($post);
         }
 
@@ -105,23 +98,15 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
-     * @param bool $decodeExcerpt
-     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfATag(int $tagId, bool $decodeExcerpt = true, bool $decodeContent = false)
+    public function showPostsOfATag(int $tagId)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
         foreach ($posts as $post) {
-            if ($decodeContent) {
-                self::decodePostContent($post);
-            }
-            if ($decodeExcerpt) {
-                self::decodePostExcerpt($post);
-            }
             self::convertDatesOfPost($post);
         }
         $tag = $this->tagManager->get($tagId);
@@ -141,18 +126,17 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws PageNotFoundException
      */
     public function showASinglePost(int $postId)
     {
         try {
             $post = $this->postManager->get($postId);
             self::convertDatesOfPost($post);
-            self::decodePostContent($post);
-            self::decodePostExcerpt($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
 
         } catch (BlogException $e) {
-            $this->pageNotFound404(); // TODO throw an Exception instead
+            throw new PageNotFoundException('This post do not exists.');
         }
 
         self::render(self::VIEW_BLOG_POST, [
@@ -218,7 +202,6 @@ class BlogController extends Controller
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
-            self::decodePostContent($postToEdit);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
@@ -493,28 +476,6 @@ class BlogController extends Controller
         $this->showAdminPanel("Une catégorie a été supprimée.");
     }
 
-    /**
-     * Unescape HTML tags in the content of the post
-     *
-     * @param Post $post
-     */
-    public static function decodePostContent(Post $post)
-    {
-        $post->setContent(htmlspecialchars_decode($post->getContent()));
-        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
-    }
-
-    /**
-     * Unescape HTML tags in the content of the post
-     *
-     * @param Post $post
-     */
-    public static function decodePostExcerpt(Post $post)
-    {
-        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt()));
-        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt())); // Do it another time to be sure
-    }
-
     // Private
 
     /**
@@ -670,10 +631,10 @@ class BlogController extends Controller
             isset($_POST['post-author-id'])
         ) {
             // Common
-            $post->setTitle(htmlspecialchars($_POST['post-title']));
-            $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
-            $post->setContent(htmlspecialchars($_POST['post-content']));
-            $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
+            $post->setTitle($_POST['post-title']);
+            $post->setExcerpt($_POST['post-excerpt']);
+            $post->setContent($_POST['post-content']);
+            $post->setAuthorId($_POST['post-author-id']);
 
             if (isset($_POST['add-post'])) {
                 $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
@@ -681,11 +642,11 @@ class BlogController extends Controller
 
             // Edit a post
             if (isset($_POST['edit-post'])) {
-                $post->setId(htmlspecialchars($_POST['edit-post']));
+                $post->setId($_POST['edit-post']);
                 $post->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
             }
             if (isset($_POST['post-editor-id'])) {
-                $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));
+                $post->setLastEditorId($_POST['post-editor-id']);
             }
 
             // Tags
