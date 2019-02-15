@@ -72,20 +72,24 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
-     * @param bool $htmlDecode
+     * @param bool $decodeExcerpt
+     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfACategory(int $categoryId, bool $htmlDecode = false)
+    public function showPostsOfACategory(int $categoryId, bool $decodeExcerpt = true, bool $decodeContent = false)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
-            if ($htmlDecode) {
+            if ($decodeContent) {
                 self::decodePostContent($post);
+            }
+            if ($decodeExcerpt) {
+                self::decodePostExcerpt($post);
             }
             self::convertDatesOfPost($post);
         }
@@ -101,15 +105,23 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
+     * @param bool $decodeExcerpt
+     * @param bool $decodeContent
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
      */
-    public function showPostsOfATag(int $tagId)
+    public function showPostsOfATag(int $tagId, bool $decodeExcerpt = true, bool $decodeContent = false)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
         foreach ($posts as $post) {
+            if ($decodeContent) {
+                self::decodePostContent($post);
+            }
+            if ($decodeExcerpt) {
+                self::decodePostExcerpt($post);
+            }
             self::convertDatesOfPost($post);
         }
         $tag = $this->tagManager->get($tagId);
@@ -136,6 +148,7 @@ class BlogController extends Controller
             $post = $this->postManager->get($postId);
             self::convertDatesOfPost($post);
             self::decodePostContent($post);
+            self::decodePostExcerpt($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
 
         } catch (BlogException $e) {
@@ -480,6 +493,28 @@ class BlogController extends Controller
         $this->showAdminPanel("Une catégorie a été supprimée.");
     }
 
+    /**
+     * Unescape HTML tags in the content of the post
+     *
+     * @param Post $post
+     */
+    public static function decodePostContent(Post $post)
+    {
+        $post->setContent(htmlspecialchars_decode($post->getContent()));
+        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
+    }
+
+    /**
+     * Unescape HTML tags in the content of the post
+     *
+     * @param Post $post
+     */
+    public static function decodePostExcerpt(Post $post)
+    {
+        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt()));
+        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt())); // Do it another time to be sure
+    }
+
     // Private
 
     /**
@@ -694,17 +729,6 @@ class BlogController extends Controller
         } else {
             return null;
         }
-    }
-
-    /**
-     * Unescape HTML tags in the content of the post
-     *
-     * @param Post $post
-     */
-    private static function decodePostContent(Post $post)
-    {
-        $post->setContent(htmlspecialchars_decode($post->getContent()));
-        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
     }
 
     /**

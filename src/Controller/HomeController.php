@@ -47,6 +47,7 @@ class HomeController extends Controller
             // Format creation dates
             foreach ($postsByCategory[$category->getId()] as $post) {
                 $post->setCreationDate(self::formatDate($post->getCreationDate()));
+                BlogController::decodePostExcerpt($post);
                 if ($post->getLastModificationDate()) {
                     $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
                 }
