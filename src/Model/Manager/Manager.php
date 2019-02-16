@@ -161,13 +161,18 @@ abstract class Manager
     /**
      * Get all Entities form database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
      * @throws BlogException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
         $entities = [];
         $query = "SELECT * FROM " . $this->tableName;
+        if ($numberOfLines) {
+            self::addLimitToQuery($query, $numberOfLines, $start);
+        }
 
         $requestAllEntities = $this->query($query);
 
@@ -253,6 +258,21 @@ abstract class Manager
         }
 
         return $request;
+    }
+
+    /**
+     * Add a LIMIT and OFFSET statement to a query
+     *
+     * @param string $query
+     * @param int $numberOfLines
+     * @param int|null $start
+     */
+    protected static function addLimitToQuery(string &$query, int $numberOfLines, ?int $start = null)
+    {
+        $query .= ' LIMIT ' . $numberOfLines;
+        if ($start) {
+            $query .= ' OFFSET ' . $start;
+        }
     }
 
 

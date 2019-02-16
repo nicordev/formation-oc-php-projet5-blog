@@ -132,11 +132,11 @@ blockquote p::after {
 
 /* postDeck.twig */
 
-.card-deck {
+.card-deck-wrapper {
     padding: 10px;
-    background-color: rgb(247, 247, 247);
-    border-radius: 5px;
-    border: 10px solid rgb(247, 247, 247);
+}
+
+.card-deck {
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
@@ -148,8 +148,8 @@ blockquote p::after {
 }
 
 .card {
-    margin: 15px;
-    min-width: 200px;
+    margin: 10px !important;
+    min-width: 400px;
     transition-duration: 0.5s;
     transition-property: background-color, color;
 }
@@ -178,6 +178,25 @@ blockquote p::after {
     margin-top: 10px;
     font-size: 0.75em;
     color: burlywood;
+}
+
+.post-deck-more {
+    text-align: center;
+    height: available;
+    font-size: 3em;
+    background-color: rgb(247, 247, 247);
+    border-radius: 5px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-duration: 0.5s;
+    transition-property: background-color;
+}
+
+.post-deck-more:hover {
+    background-color: lightskyblue;
+    color: white;
 }
 
 /* blogPost.twig */

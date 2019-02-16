@@ -1,203 +1,117 @@
+-- phpMyAdmin SQL Dump
+-- version 4.7.9
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : 127.0.0.1:3306
+-- Généré le :  sam. 16 fév. 2019 à 07:17
+-- Version du serveur :  5.7.21
+-- Version de PHP :  7.2.4
 
-DROP TABLE IF EXISTS bl_role_member;
-DROP TABLE IF EXISTS bl_category_tag;
-DROP TABLE IF EXISTS bl_post_tag;
-
-DROP TABLE IF EXISTS bl_comment;
-DROP TABLE IF EXISTS bl_post;
-DROP TABLE IF EXISTS bl_member;
-DROP TABLE IF EXISTS bl_role;
-DROP TABLE IF EXISTS bl_category;
-DROP TABLE IF EXISTS bl_tag;
-
-CREATE TABLE bl_role(
-	r_id INT UNSIGNED AUTO_INCREMENT,
-	r_name VARCHAR(100),
-
-	CONSTRAINT pk_r_id
-		PRIMARY KEY (r_id)
-)
-ENGINE = InnoDB;
-
-INSERT INTO bl_role
-VALUES (null, 'member'),
-	(null, 'author'),
-	(null, 'editor'),
-	(null, 'moderator'),
-	(null, 'admin');
-
-CREATE TABLE bl_member(
-	m_id INT UNSIGNED AUTO_INCREMENT,
-	m_email VARCHAR(100) NOT NULL UNIQUE,
-	m_password VARCHAR(100) NOT NULL,
-	m_name VARCHAR(100) NOT NULL UNIQUE,
-	m_description VARCHAR(1000),
-
-	CONSTRAINT pk_m_id
-		PRIMARY KEY (m_id)
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_role_member(
-	rm_member_id_fk INT UNSIGNED,
-	rm_role_id_fk INT UNSIGNED,
-
-	CONSTRAINT pk_rm_member_id_rm_role_id
-		PRIMARY KEY (rm_member_id_fk, rm_role_id_fk),
-
-	CONSTRAINT fk_rm_member_id_m_id
-		FOREIGN KEY (rm_member_id_fk)
-			REFERENCES bl_member(m_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_rm_role_id_r_id
-		FOREIGN KEY (rm_role_id_fk)
-			REFERENCES bl_role(r_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_post(
-	p_id INT UNSIGNED AUTO_INCREMENT,
-	p_author_id_fk INT UNSIGNED,
-	p_title VARCHAR(100) NOT NULL,
-	p_excerpt VARCHAR(300) NOT NULL,
-	p_content TEXT NOT NULL,
-	p_creation_date DATETIME NOT NULL,
-	p_last_modification_date DATETIME,
-	p_last_editor_id_fk INT UNSIGNED,
-
-	CONSTRAINT pk_p_id
-		PRIMARY KEY (p_id),
-
-	CONSTRAINT fk_p_author_id_m_id
-		FOREIGN KEY (p_author_id_fk)
-			REFERENCES bl_member(m_id)
-			ON UPDATE CASCADE
-			ON DELETE SET NULL,
-
-	CONSTRAINT fk_p_last_editor_id_m_id
-		FOREIGN KEY (p_last_editor_id_fk)
-			REFERENCES bl_member(m_id)
-			ON UPDATE CASCADE
-			ON DELETE SET NULL
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_tag(
-	tag_id INT UNSIGNED AUTO_INCREMENT,
-	tag_name VARCHAR(100),
-
-	CONSTRAINT pk_tag_id
-		PRIMARY KEY (tag_id)
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_post_tag(
-	pt_post_id_fk INT UNSIGNED,
-	pt_tag_id_fk INT UNSIGNED,
-
-	CONSTRAINT pk_pt_post_id_pt_tag_id
-		PRIMARY KEY (pt_post_id_fk, pt_tag_id_fk),
-
-	CONSTRAINT fk_pt_post_id_p_id
-		FOREIGN KEY (pt_post_id_fk)
-			REFERENCES bl_post(p_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_pt_tag_tag_id
-		FOREIGN KEY (pt_tag_id_fk)
-			REFERENCES bl_tag(tag_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_category(
-	cat_id INT UNSIGNED AUTO_INCREMENT,
-	cat_name VARCHAR(100),
-
-	CONSTRAINT pk_cat_id
-		PRIMARY KEY (cat_id)
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_category_tag(
-	ct_category_id_fk INT UNSIGNED,
-	ct_tag_id_fk INT UNSIGNED,
-
-	CONSTRAINT pk_ct_category_id_ct_tag_id
-		PRIMARY KEY (ct_category_id_fk, ct_tag_id_fk),
-
-	CONSTRAINT fk_ct_category_cat_id
-		FOREIGN KEY (ct_category_id_fk)
-			REFERENCES bl_category(cat_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_ct_tag_id_tag_id
-		FOREIGN KEY (ct_tag_id_fk)
-			REFERENCES bl_tag(tag_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
-)
-ENGINE = InnoDB;
-
-CREATE TABLE bl_comment(
-	com_id INT UNSIGNED AUTO_INCREMENT,
-	com_parent_id_fk INT UNSIGNED,
-	com_post_id_fk INT UNSIGNED,
-	com_author_id_fk INT UNSIGNED,
-	com_last_editor_id_fk INT UNSIGNED,
-	com_creation_date DATETIME NOT NULL,
-	com_last_modification_date DATETIME,
-	com_content TEXT NOT NULL,
-
-	CONSTRAINT pk_com_id
-		PRIMARY KEY (com_id),
-
-	CONSTRAINT fk_com_parent_id_com_id
-		FOREIGN KEY (com_parent_id_fk)
-			REFERENCES bl_comment(com_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_com_author_id_m_id
-		FOREIGN KEY (com_author_id_fk)
-			REFERENCES bl_member(m_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_com_post_id_p_id
-		FOREIGN KEY (com_post_id_fk)
-			REFERENCES bl_post(p_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE,
-
-	CONSTRAINT fk_com_last_editor_id_m_id
-		FOREIGN KEY (com_last_editor_id_fk)
-			REFERENCES bl_member(m_id)
-			ON UPDATE CASCADE
-			ON DELETE CASCADE
-)
-ENGINE = InnoDB;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
 
 
--- Données
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données :  `oc_projet5_blog`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_category`
+--
+
+DROP TABLE IF EXISTS `bl_category`;
+CREATE TABLE IF NOT EXISTS `bl_category` (
+  `cat_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `cat_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`cat_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_category`
+--
 
 INSERT INTO `bl_category` (`cat_id`, `cat_name`) VALUES
 (21, 'A propos'),
 (22, 'Blog'),
 (23, 'Réalisations');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_category_tag`
+--
+
+DROP TABLE IF EXISTS `bl_category_tag`;
+CREATE TABLE IF NOT EXISTS `bl_category_tag` (
+  `ct_category_id_fk` int(10) UNSIGNED NOT NULL,
+  `ct_tag_id_fk` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ct_category_id_fk`,`ct_tag_id_fk`),
+  KEY `fk_ct_tag_id_tag_id` (`ct_tag_id_fk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_category_tag`
+--
+
 INSERT INTO `bl_category_tag` (`ct_category_id_fk`, `ct_tag_id_fk`) VALUES
 (21, 71),
 (22, 73),
 (23, 74),
-(22, 92);	
+(22, 92);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_comment`
+--
+
+DROP TABLE IF EXISTS `bl_comment`;
+CREATE TABLE IF NOT EXISTS `bl_comment` (
+  `com_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `com_parent_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  `com_post_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  `com_author_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  `com_last_editor_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  `com_creation_date` datetime NOT NULL,
+  `com_last_modification_date` datetime DEFAULT NULL,
+  `com_content` text NOT NULL,
+  PRIMARY KEY (`com_id`),
+  KEY `fk_com_parent_id_com_id` (`com_parent_id_fk`),
+  KEY `fk_com_author_id_m_id` (`com_author_id_fk`),
+  KEY `fk_com_post_id_p_id` (`com_post_id_fk`),
+  KEY `fk_com_last_editor_id_m_id` (`com_last_editor_id_fk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_member`
+--
+
+DROP TABLE IF EXISTS `bl_member`;
+CREATE TABLE IF NOT EXISTS `bl_member` (
+  `m_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `m_email` varchar(100) NOT NULL,
+  `m_password` varchar(100) NOT NULL,
+  `m_name` varchar(100) NOT NULL,
+  `m_description` varchar(1000) DEFAULT NULL,
+  PRIMARY KEY (`m_id`),
+  UNIQUE KEY `m_email` (`m_email`),
+  UNIQUE KEY `m_name` (`m_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_member`
+--
 
 INSERT INTO `bl_member` (`m_id`, `m_email`, `m_password`, `m_name`, `m_description`) VALUES
 (87, 'admin@admin.adm', '$2y$10$MUyFQplVCEYj44iA7jnUu.iZoMHYvKUycm6NR2WDBCMNalKJEc.Wu', 'admin', ''),
@@ -208,6 +122,31 @@ INSERT INTO `bl_member` (`m_id`, `m_email`, `m_password`, `m_name`, `m_descripti
 (93, 'paul.emploi@gmail.com', '$2y$10$qfkWgJGDaLSKEiGI4seGMuAR0R4Xdm8RTKpu6hdofjH1R5W07Bzia', 'Paul Emploi', NULL),
 (94, 'lenny.bards@gmail.com', '$2y$10$UyLhlo3DGXZniMGcbAEXqec183r3vxyPZOKqVxHrYoUAtj2X89xU2', 'Lenny Bards', ''),
 (95, 'jean.tenbien@yahoo.fr', '$2y$10$L0qq2VnymYIphczV0c1nveww8rTKPEAkmn3tX/uHtgFrptfdXWMd2', 'Jean Tenbien', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_post`
+--
+
+DROP TABLE IF EXISTS `bl_post`;
+CREATE TABLE IF NOT EXISTS `bl_post` (
+  `p_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `p_author_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  `p_title` varchar(100) NOT NULL,
+  `p_excerpt` varchar(300) NOT NULL,
+  `p_content` longtext NOT NULL,
+  `p_creation_date` datetime NOT NULL,
+  `p_last_modification_date` datetime DEFAULT NULL,
+  `p_last_editor_id_fk` int(10) UNSIGNED DEFAULT NULL,
+  PRIMARY KEY (`p_id`),
+  KEY `fk_p_author_id_m_id` (`p_author_id_fk`),
+  KEY `fk_p_last_editor_id_m_id` (`p_last_editor_id_fk`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_post`
+--
 
 INSERT INTO `bl_post` (`p_id`, `p_author_id_fk`, `p_title`, `p_excerpt`, `p_content`, `p_creation_date`, `p_last_modification_date`, `p_last_editor_id_fk`) VALUES
 (12, 90, 'En bref', 'Je suis Nicolas Renvoisé, 31 ans à l\'heure où j\'écris cet article, et je me suis reconverti en tant que développeur backend avec l\'aide d\'OpenClassrooms. Pourquoi ? Parce que j\'ai découvert que le code, j\'adore ça !!!', '<h2>Comment j\'en suis arrivé là ?</h2><p>Au départ, j\'ai fais 3 ans d\'études dans le domaine de l\'eau et de l\'environnement après mon bac scientifique. A l\'issue, je me suis engagé dans l\'armée en tant que contrôleur aérien. Finalement, l\'armée ce n\'était pas aussi bien que ce que j\'espérais et j\'ai arrêté à la fin de mon contrat initial. J\'ai alors intégré un bureau d\'études spécialisé dans l\'eau et l\'environnement où je me suis découvert une passion pour la programmation lorsque j\'ai eu à faire des fichiers excel en VBA. Depuis ce jour, je n\'arrête pas de coder !</p><p>Un ami programmeur m\'a conseillé de suivre les cours du site du zéro sur le langage C pour débuter sur de bonnes bases. C\'est alors que j\'ai découvert que le site du zéro était devenu OpenClassrooms et je m\'y suis inscrit.</p><p>Après le cours de Mathieu Nebra sur le C (un super cours, je le recommande !), j\'ai enchainé sur les cours liés au web, domaine qui m\'intriguait beaucoup. Entre temps, j\'en avais marre de mon travail au bureau d\'études (la boîte était super, mais je n\'aimais pas rédiger des rapports de 600 pages refoulés pour un oui ou pour un non par l\'administration...) et finalement j\'ai décidé de partir pour me reconvertir dans le développement web en suivant la formation de développeur d\'application PHP/Symfony d\'OpenClassrooms.</p><h2>Pourquoi cette formation et pas une autre ?</h2><p>Une école Simplon s\'était ouverte à 40 minutes de chez moi depuis 2 ans, mais rien n\'indiquait que la formation gratuite qu\'elle proposait aller être reconduite. Du coup j\'ai opté pour OpenClassrooms en demandant un financement de la part de Pôle emploi, ce qui fut accepté ! Ouf ! Du coup non seulement j\'ai l\'avantage de suivre une formation reconnue par l\'Etat, mais en plus je n\'ai pas à me déplacer !</p><h2>Finalement, comment ça se passe ?</h2><p>Bien. Vraiment très bien même ! Je m\'éclate tous les jours à programmer, dès que je sèche je peux en parler soit avec mon mentor, soit avec les autres étudiants d\'OpenClassrooms. Je n\'ai jamais aussi bien vécu une formation.</p>', '2019-02-14 22:38:10', '2019-02-15 21:01:44', 90),
@@ -220,7 +159,27 @@ INSERT INTO `bl_post` (`p_id`, `p_author_id_fk`, `p_title`, `p_excerpt`, `p_cont
 (24, 90, 'Apprendre l\'électronique avec un microcontroleur attiny85', 'J\'ai décidé de me mettre à l\'électronique après avoir reçu un microcontrolleur attiny85 de DigiSpark en cadeau de mon abonnement à <a href=\"https://www.programmez.com/magazine.php\">[Programmez!]</a>. Cet article recense les infos que je glane à droite à gauche pour apprendre.', '<h2>Ressources pour débuter</h2>\r\n\r\n<p>\r\n    Je suis allé sur ce site pour trouver des tutos en électronique : <a href=\"http://www.supercondensateur.com/debuter-en-electronique\">supercondensateur.com/debuter-en-electronique</a>\r\n</p>\r\n\r\n<h2>Utiliser le microcontroleur attiny85 de DigiSpark</h2>\r\n\r\n<h3>C\'est quoi un microcontroleur ?</h3>\r\n\r\n<blockquote cite=\"https://fr.wikipedia.org/wiki/Microcontr%C3%B4leur\">\r\n    <p>\r\n        Un microcontrôleur (en notation abrégée µc, ou uc ou encore MCU en anglais) est un circuit intégré qui rassemble les éléments essentiels d\'un ordinateur : processeur, mémoires (mémoire morte et mémoire vive), unités périphériques et interfaces d\'entrées-sorties. Les microcontrôleurs se caractérisent par un plus haut degré d\'intégration, une plus faible consommation électrique, une vitesse de fonctionnement plus faible (de quelques mégahertz jusqu\'à plus d\'un gigahertz1) et un coût réduit par rapport aux microprocesseurs polyvalents utilisés dans les ordinateurs personnels.\r\n    </p>\r\n\r\n    <cite>\r\n        - <a href=\"https://fr.wikipedia.org/wiki/Microcontr%C3%B4leur\">Wikipédia</a>\r\n    </cite>\r\n</blockquote>\r\n\r\n<h3>Comment je le programme, ce machin ?</h3>\r\n\r\n<p>\r\n    Il se programme en utilisant le langage C. Voici un super cours pour apprendre ce merveilleux langage : <a\r\n        href=\"https://openclassrooms.com/fr/courses/19980-apprenez-a-programmer-en-c\">cours d\'OpenClassrooms</a>\r\n</p>\r\n\r\n<h3>Liens utiles</h3>\r\n\r\n<ul>\r\n    <li>\r\n        <a href=\"http://digistump.com/wiki/\">Wiki</a>\r\n    </li>\r\n    <li>\r\n        <a href=\"http://digistump.com/wiki/digispark/tutorials/connecting\">Instruction d\'installation en anglais</a>\r\n    </li>\r\n</ul>\r\n\r\n<h3>Intallation du bazar</h3>\r\n\r\n<p>\r\n<ol>\r\n    <li>\r\n        <a href=\"https://github-production-release-asset-2e65be.s3.amazonaws.com/28220127/e05aa054-9020-11e6-9de6-61504f7ad160?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20181225%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20181225T081436Z&X-Amz-Expires=300&X-Amz-Signature=c1c608f01721e12808b2ab917147ad9f69679a08cb37e88fea0d8733c7981c22&X-Amz-SignedHeaders=host&actor_id=43814948&response-content-disposition=attachment%3B%20filename%3DDigistump.Drivers.zip&response-content-type=application%2Foctet-stream\" target=\"_blank\">Installer les drivers</a> -> Exécuter DPinst64.exe\r\n    </li>\r\n    <li>\r\n        <a href=\"https://www.arduino.cc/en/Main/Software\">Installer Arduino IDE</a>\r\n    </li>\r\n</ol>\r\n</p>\r\n\r\n<h2>Mon premier programme</h2>\r\n\r\n<p>\r\n    Un programme permettant d\'allumer la LED de l\'attiny pour \"dire\" des phrases en code morse. Indispensable.\r\n</p>\r\n\r\n<p>\r\n    Voici le code : <a href=\"https://github.com/nicordev/attiny85-morse-code\">repo GitHub</a>\r\n</p>', '2019-02-15 22:21:30', '2019-02-15 22:41:56', 90),
 (25, 90, 'Créer un thème enfant pour WordPress', 'En gros l\'idée c\'est de copier / coller un thème existant pour éviter que nos modifications apportées au thème ne soient perdu lors d\'une mise à jour.', '<h2>Thême enfant</h2>\r\n\r\n            <h3>Création</h3>\r\n\r\n            <ol>\r\n                <li>Aller dans le dossier <em>wp-content/themes</em> de Wordpress</li>\r\n                <li>Créer un nouveau dossier (exemple : <em>nomDuThemeParent-child</em>)</li>\r\n                <li>Copier les fichiers <em>functions.php</em> et <em>style.css</em> présents dans le dossier du thême parent et les placer dans le dossier du thême enfant</li>\r\n                <li>\r\n                    Faire les modifs suivantes dans les fichiers du dossier enfant :\r\n                    <ul>\r\n                        <li>\r\n                            Fichier style.css\r\n                            <ol>\r\n                                <li>\r\n                                    Copier le gros bloc de commentaires situé au début du fichier<br />\r\n                                    Exemple :\r\n                                    <pre>\r\n/*\r\nTheme Name: Nom du thème\r\nTheme URI: https://wordpress.org/themes/twentyfifteen/\r\nAuthor: the WordPress team\r\nAuthor URI: https://wordpress.org/\r\nDescription: Voilà, c\'est une description, on met ce qu\'on veut. C\'est cool.\r\nVersion: 2.0\r\nLicense: GNU General Public License v2 or later\r\nLicense URI: http://www.gnu.org/licenses/gpl-2.0.html\r\nTags: bootstrap\r\nText Domain: twentyfifteen\r\n\r\nThis theme, like WordPress, is licensed under the GPL.\r\nUse it to make something cool, have fun, and share what you\'ve learned with others.\r\n*/\r\n                                    </pre>\r\n                                </li>\r\n                                <li>Changez le <em>Theme Name:</em> avec le nom du dossier du thème enfant</li>\r\n                                <li>\r\n                                    Ajouter la ligne suivante sous <em>Theme Name:</em> :\r\n<pre>\r\nTemplate: nomDuDossierDuThèmeParent\r\n</pre>\r\n                                </li>\r\n                                <li>Effacer le contenu du fichier</li>\r\n                                <li>Coller le gros bloc de commentaires</li>\r\n                                <li>Enregistrer</li>\r\n                            </ol>\r\n                        </li>\r\n                        <li>\r\n                            Fichier functions.php\r\n                            <ol>\r\n                                <li>Effacer le contenu du fichier</li>\r\n                                <li>\r\n                                    Copier/coller le bloc de code suivant :\r\n<pre>\r\n&lt;?php\r\nadd_action( \'wp_enqueue_scripts\', \'theme_enqueue_styles\' );\r\n\r\nfunction theme_enqueue_styles() {\r\n    wp_enqueue_style( \'parent-style\', get_template_directory_uri() . \'/style.css\' );\r\n    wp_enqueue_style( \'child-style\', get_stylesheet_uri(), array( \'parent-style\' ) );\r\n}</pre>\r\n                                </li>\r\n                                <li>Enregistrer</li>\r\n                            </ol>\r\n                        </li>\r\n                    </ul>\r\n                </li>\r\n            </ol>\r\n\r\n            <h3>Utilisation</h3>\r\n\r\n            <ol>\r\n                <li>Dans le tableau de bord Wordpress : <em>Apparence/Thèmes</em></li>\r\n                <li>Activer le thême enfant</li>\r\n            </ol>', '2019-02-15 23:31:15', '2019-02-16 07:37:58', 90);
 INSERT INTO `bl_post` (`p_id`, `p_author_id_fk`, `p_title`, `p_excerpt`, `p_content`, `p_creation_date`, `p_last_modification_date`, `p_last_editor_id_fk`) VALUES
-(26, 90, 'Créer un thème WordPress à partir de rien.', 'Là on monte en gamme, l\'idée est de créer son propre thème.', '<h2>Création d\'un thème WordPress</h2>\r\n\r\n            <p>\r\n                Tuto repris du site de <a href=\"https://www.taniarascia.com/developing-a-wordpress-theme-from-scratch/\" target=\"_blank\">Tania Rascia</a>. J\'ai juste synthétisé les modifs que l\'auteure fait au fur et à mesure de son tuto qui est du coup plus détaillé et progressif.\r\n            </p>\r\n\r\n            <!-- Version statique -->\r\n            <article>\r\n                <h3>Version HTML statique (pour comprendre la base)</h3>\r\n\r\n                <p>\r\n                    <ol>\r\n                        <li>Créer un dossier portant le nom du thème à créer dans le dossier <em>wp-content/themes</em> de Wordpress</li>\r\n                        <li>Créer 2 fichiers\r\n                            <ul>\r\n                                <li><em>index.php</em></li>\r\n                                <li><em>style.css</em>\r\n                                </li>\r\n                            </ul>\r\n                        </li>\r\n                    </ol>\r\n                    <p>\r\n                        Le fichier index.php est constitué de votre page HTML statique.\r\n                    </p>\r\n                    <p>Contenu du fichier <em>style.css</em> (à personnaliser) :\r\n<pre>\r\n/*\r\nTheme Name: Nom du thème\r\nAuthor: Votre nom\r\nDescription: Alors c\'est un super thème, joli et tout et tout...\r\nVersion: 0.0.1\r\nTags: bootstrap\r\n*/\r\n</pre>\r\n                    </p>\r\n                    <p class=\"note\">\r\n                        Ces 2 fichiers suffisent pour voir apparaître votre thème dans l\'interface de WordPress. Vous avez réussi ! Bravo !\r\n                    </p>\r\n                    <p>\r\n                        Vous pouvez aussi ajouter un autre fichier css dans le dossier de votre thème pour la mise en forme de votre site. Pensez alors à mettre un lien dans le <code>&lt;head&gt;</code> du fichier <em>index.php</em> (exemple <code>&lt;link href=\"blog.css\" rel=\"stylesheet\"&gt;</code>).\r\n                    </p>\r\n                    <p>\r\n                        Voici maintenant <a href=\"https://github.com/taniarascia/bootstrapblog\">un lien vers un repository GitHub de Tania Rascia</a> où vous trouverez 2 fichiers pour vous entraîner et qui serviront de base à la suite de ce tuto. N\'oubliez pas de renommer le fichier <em>index.html</em> en <em>index.php</em> ni de créer le fichier <em>style.css</em> !\r\n                    </p>\r\n                    <p class=\"note\">Conclusion : c\'est pas compliqué mais pour l\'instant le résultat n\'est pas ouf non plus... Passons maintenant aux choses sérieuses !</p>\r\n                </p>\r\n            </article>\r\n\r\n            <!-- Version dynamique -->\r\n            <article>\r\n                <h3>Version dynamique !</h3>\r\n\r\n                <p>\r\n                    On va diviser le contenu du fichier <em>index.php</em> dans 4 fichiers : <em>header.php</em>, <em>footer.php</em>, <em>sidebar.php</em> et <em>content.php</em>\r\n                </p>\r\n                <p>\r\n                    Le fichier <em>index.php</em> servira alors de lien entre ces fichiers.\r\n                </p>\r\n                <p>C\'est parti !</p>\r\n\r\n                <!-- header.php -->\r\n                <h4>header.php</h4>\r\n<pre>\r\n&lt;!DOCTYPE html>\r\n&lt;html lang=\"en\">\r\n\r\n&lt;head>\r\n    &lt;meta charset=\"utf-8\">\r\n    &lt;meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\r\n    &lt;meta name=\"description\" content=\"\">\r\n    &lt;meta name=\"author\" content=\"\">\r\n\r\n    &lt;title><span class=\"php_code\">&lt;?php echo get_bloginfo( \'name\' ); ?></span>&lt;/title>\r\n    &lt;link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n    &lt;!-- Custom CSS -->\r\n    &lt;link href=\"<span class=\"php_code\">&lt;?php echo get_bloginfo( \'template_directory\' );?></span>/blog.css\" rel=\"stylesheet\">\r\n    &lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->\r\n    &lt;!--[if lt IE 9]>\r\n        &lt;script src=\"https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js\">&lt;/script>\r\n        &lt;script src=\"https://oss.maxcdn.com/respond/1.4.2/respond.min.js\">&lt;/script>\r\n    &lt;![endif]-->\r\n&lt;?php wp_head();?>\r\n&lt;/head>\r\n\r\n&lt;body>\r\n\r\n    &lt;div class=\"blog-masthead\">\r\n        &lt;div class=\"container\">\r\n            &lt;nav class=\"blog-nav\">\r\n                &lt;a class=\"blog-nav-item active\" href=\"#\">Home&lt;/a>\r\n                <span class=\"php_code\">&lt;?php wp_list_pages( \'&title_li=\' ); ?></span>\r\n            &lt;/nav>\r\n        &lt;/div>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"container\">\r\n\r\n    &lt;div class=\"blog-header\">\r\n        &lt;h1 class=\"blog-title\">&lt;a href=\"&lt;?php echo get_bloginfo( \'wpurl\' );?>\">&lt;?php echo get_bloginfo( \'name\' ); ?>&lt;/a>&lt;/h1>\r\n        &lt;p class=\"lead blog-description\">&lt;?php echo get_bloginfo( \'description\' ); ?>&lt;/p>\r\n    &lt;/div>\r\n</pre>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php echo get_bloginfo( \'name\' ); ?></span></code> va permettre d\'insérer le titre du site que vous avez choisi dans l\'interface d\'administration de WordPress.\r\n                </p>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php echo get_bloginfo( \'template_directory\' );?></span></code> va elle insérer automatiquement le chemin d\'accès au dossier de votre thème.\r\n                </p>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php wp_list_pages( \'&title_li=\' ); ?></span></code> va insérer les liens vers les différentes pages du site.\r\n                </p>\r\n                <p class=\"note\">Les liens vont mal s\'afficher en utilisant le fichier <em>blog.css</em> du repo de Tanya. Il faut alors ajouter le code suivant dans le fichier <em>blog.css</em> :</p>\r\n<pre>\r\n.blog-nav li {\r\n    position: relative;\r\n    display: inline-block;\r\n    padding: 10px;\r\n    font-weight: 500;   \r\n}\r\n.blog-nav li a {\r\n    color: #fff;\r\n}\r\n</pre>\r\n\r\n                <!-- footer.php -->\r\n                <h4>footer.php</h4>\r\n<pre>\r\n        &lt;/div> &lt;!-- /.container -->\r\n\r\n        &lt;footer class=\"blog-footer\">\r\n            &lt;p>Blog template built for &lt;a href=\"http://getbootstrap.com\">Bootstrap&lt;/a> by &lt;a href=\"https://twitter.com/mdo\">@mdo&lt;/a>.&lt;/p>\r\n            \r\n            &lt;p>&lt;a href=\"#\">Back to top&lt;/a>&lt;/p>\r\n        &lt;/footer>\r\n\r\n        &lt;script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\">&lt;/script>\r\n        &lt;script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\">&lt;/script>\r\n        &lt;?php wp_footer(); ?> \r\n    &lt;/body>\r\n&lt;/html>\r\n</pre>\r\n    \r\n                <!-- sidebar.php -->\r\n                <h4>sidebar.php</h4>\r\n<pre>\r\n&lt;div class=\"col-sm-3 col-sm-offset-1 blog-sidebar\">\r\n\r\n    &lt;div class=\"sidebar-module sidebar-module-inset\">\r\n\r\n        &lt;h4>About&lt;/h4>\r\n\r\n        &lt;p><span class=\"php_code\">&lt;?php the_author_meta( \'description\' ); ?></span> &lt;/p>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"sidebar-module\">\r\n\r\n        &lt;h4>Archives&lt;/h4>\r\n\r\n        &lt;ol class=\"list-unstyled\">\r\n            <span class=\"php_code\">&lt;?php wp_get_archives( \'type=monthly\' ); ?></span>\r\n        &lt;/ol>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"sidebar-module\">\r\n\r\n        &lt;h4>Elsewhere&lt;/h4>\r\n        \r\n        &lt;ol class=\"list-unstyled\">\r\n            &lt;li>&lt;a href=\"#\">GitHub&lt;/a>&lt;/li>\r\n            &lt;li>&lt;a href=\"#\">Twitter&lt;/a>&lt;/li>\r\n            &lt;li>&lt;a href=\"#\">Facebook&lt;/a>&lt;/li>\r\n        &lt;/ol>\r\n    &lt;/div>\r\n&lt;/div>&lt;!-- /.blog-sidebar -->\r\n</pre>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_author_meta( \'description\' ); ?></span></code> va afficher la description de l\'auteur.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php wp_get_archives( \'type=monthly\' ); ?></span></code> va regrouper les archives triées par mois.\r\n                </p>\r\n                \r\n                <!-- content.php -->\r\n                <h4>content.php</h4>\r\n<pre>\r\n&lt;div class=\"blog-post\">\r\n    &lt;!-- Titre du billet de blog -->\r\n    &lt;h2 class=\"blog-post-title\"><span class=\"php_code\">&lt;?php the_title(); ?></span>&lt;/h2>\r\n\r\n    &lt;!-- Auteur et date du billet de blog -->\r\n    &lt;p class=\"blog-post-meta\"><span class=\"php_code\">&lt;?php the_date(); ?></span> by &lt;a href=\"#\"><span class=\"php_code\">&lt;?php the_author(); ?></span>&lt;/a>&lt;/p>\r\n\r\n    &lt;!-- Contenu du billet de blog -->\r\n    <span class=\"php_code\">&lt;?php the_content(); ?></span>\r\n&lt;/div>&lt;!-- /.blog-post -->\r\n</pre>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_title(); ?></span></code> permet d\'afficher le titre du billet de blog.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_date(); ?></span></code> affiche la date de création du billet de blog.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_author(); ?></code> affiche l\'auteur du billet.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_content(); ?></span></code> affiche le contenu du billet.\r\n                </p>\r\n\r\n                <!-- index.php -->\r\n                <h4>index.php</h4>\r\n\r\n<pre>\r\n<span class=\"php_code\">&lt;?php get_header(); ?></span>\r\n\r\n    &lt;div class=\"row\">\r\n\r\n        &lt;div class=\"col-sm-8 blog-main\">\r\n            <span class=\"php_code\">&lt;?php\r\n            if ( have_posts() ) : while ( have_posts() ) : the_post(); \r\n                get_template_part( \'content\', get_post_format() );\r\n            endwhile; endif; \r\n            ?></span>\r\n        &lt;/div> &lt;!-- /.blog-main -->\r\n\r\n        <span class=\"php_code\">&lt;?php get_sidebar(); ?></span>\r\n\r\n    &lt;/div> &lt;!-- /.row -->\r\n\r\n<span class=\"php_code\">&lt;?php get_footer(); ?></span>\r\n</pre>\r\n                <p>\r\n                    Les instructions suivantes servent à générer les articles de blogs disponibles :\r\n<pre>\r\n    <span class=\"php_code\">&lt;?php\r\n    if ( have_posts() ) : while ( have_posts() ) : the_post(); \r\n        get_template_part( \'content\', get_post_format() );\r\n    endwhile; endif; \r\n    ?></span>\r\n</pre>\r\n                </p>\r\n                <p>\r\n                    Les instructions <code><span class=\"php_code\">&lt;?php get_header(); ?></span></code>, <code><span class=\"php_code\">&lt;?php get_sidebar(); ?></span></code> et <code><span class=\"php_code\">&lt;?php get_footer(); ?></span></code> servent à insérer le code contenu dans les fichiers <em>header.php</em>, <em>sidebar.php</em> et <em>footer.php</em>.\r\n                </p>\r\n                <p class=\"note\">\r\n                    Essayez maintenant d\'ajouter des articles de blog, de changer le nom et le slogan du site via l\'interface WordPress et admirez le résultat !\r\n                </p>\r\n            </article>\r\n\r\n            <!-- Création d\'un affichage différent pour les pages du site -->\r\n            <article>\r\n                <h3>On se pose en douceur... Création d\'un affichage différent pour les pages du site</h3>\r\n\r\n                <p>\r\n                    Il faut créer un fichier <em>page.php</em> qui va ressembler fortement à <em>index.php</em>.\r\n                </p>\r\n                <p>\r\n                    Dans l\'exemple suivant, on a choisit de ne pas afficher la barre latérale (en omettant le fichier <em>sidebar.php</em>) et d\'afficher le contenu des pages sur toutes la largeur (avec la classe Bootstrap <em>col-sm-12</em>).\r\n                </p>\r\n<pre>\r\n<span class=\"php_code\">&lt;?php get_header(); ?></span>\r\n\r\n    &lt;div class=\"row\">\r\n        &lt;div class=\"col-sm-12\">\r\n\r\n            <span class=\"php_code\">&lt;?php \r\n                if ( have_posts() ) : while ( have_posts() ) : the_post();\r\n    \r\n                    get_template_part( \'content\', get_post_format() );\r\n  \r\n                endwhile; endif; \r\n            ?></span>\r\n\r\n        &lt;/div> &lt;!-- /.col -->\r\n    &lt;/div> &lt;!-- /.row -->\r\n\r\n<span class=\"php_code\">&lt;?php get_footer(); ?></span>\r\n</pre>\r\n                <p class=\"note\">\r\n                    Un grand merci à Tania Rascia pour avoir fait le tuto sur lequel j\'ai honteusement pompé. <a href=\"https://ko-fi.com/taniarascia\">Vous pouvez d\'ailleurs lui payer un café pour la remercier.</a>\r\n                </p>\r\n            </article>', '2019-02-15 23:33:34', '2019-02-15 23:33:34', 90);
+(26, 90, 'Créer un thème WordPress à partir de rien.', 'Là on monte en gamme, l\'idée est de créer son propre thème.', '<h2>Création d\'un thème WordPress</h2>\r\n\r\n            <p>\r\n                Tuto repris du site de <a href=\"https://www.taniarascia.com/developing-a-wordpress-theme-from-scratch/\" target=\"_blank\">Tania Rascia</a>. J\'ai juste synthétisé les modifs que l\'auteure fait au fur et à mesure de son tuto qui est du coup plus détaillé et progressif.\r\n            </p>\r\n\r\n            <!-- Version statique -->\r\n            <article>\r\n                <h3>Version HTML statique (pour comprendre la base)</h3>\r\n\r\n                <p>\r\n                    <ol>\r\n                        <li>Créer un dossier portant le nom du thème à créer dans le dossier <em>wp-content/themes</em> de Wordpress</li>\r\n                        <li>Créer 2 fichiers\r\n                            <ul>\r\n                                <li><em>index.php</em></li>\r\n                                <li><em>style.css</em>\r\n                                </li>\r\n                            </ul>\r\n                        </li>\r\n                    </ol>\r\n                    <p>\r\n                        Le fichier index.php est constitué de votre page HTML statique.\r\n                    </p>\r\n                    <p>Contenu du fichier <em>style.css</em> (à personnaliser) :\r\n<pre>\r\n/*\r\nTheme Name: Nom du thème\r\nAuthor: Votre nom\r\nDescription: Alors c\'est un super thème, joli et tout et tout...\r\nVersion: 0.0.1\r\nTags: bootstrap\r\n*/\r\n</pre>\r\n                    </p>\r\n                    <p class=\"note\">\r\n                        Ces 2 fichiers suffisent pour voir apparaître votre thème dans l\'interface de WordPress. Vous avez réussi ! Bravo !\r\n                    </p>\r\n                    <p>\r\n                        Vous pouvez aussi ajouter un autre fichier css dans le dossier de votre thème pour la mise en forme de votre site. Pensez alors à mettre un lien dans le <code>&lt;head&gt;</code> du fichier <em>index.php</em> (exemple <code>&lt;link href=\"blog.css\" rel=\"stylesheet\"&gt;</code>).\r\n                    </p>\r\n                    <p>\r\n                        Voici maintenant <a href=\"https://github.com/taniarascia/bootstrapblog\">un lien vers un repository GitHub de Tania Rascia</a> où vous trouverez 2 fichiers pour vous entraîner et qui serviront de base à la suite de ce tuto. N\'oubliez pas de renommer le fichier <em>index.html</em> en <em>index.php</em> ni de créer le fichier <em>style.css</em> !\r\n                    </p>\r\n                    <p class=\"note\">Conclusion : c\'est pas compliqué mais pour l\'instant le résultat n\'est pas ouf non plus... Passons maintenant aux choses sérieuses !</p>\r\n                </p>\r\n            </article>\r\n\r\n            <!-- Version dynamique -->\r\n            <article>\r\n                <h3>Version dynamique !</h3>\r\n\r\n                <p>\r\n                    On va diviser le contenu du fichier <em>index.php</em> dans 4 fichiers : <em>header.php</em>, <em>footer.php</em>, <em>sidebar.php</em> et <em>content.php</em>\r\n                </p>\r\n                <p>\r\n                    Le fichier <em>index.php</em> servira alors de lien entre ces fichiers.\r\n                </p>\r\n                <p>C\'est parti !</p>\r\n\r\n                <!-- header.php -->\r\n                <h4>header.php</h4>\r\n<pre>\r\n&lt;!DOCTYPE html>\r\n&lt;html lang=\"en\">\r\n\r\n&lt;head>\r\n    &lt;meta charset=\"utf-8\">\r\n    &lt;meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\r\n    &lt;meta name=\"description\" content=\"\">\r\n    &lt;meta name=\"author\" content=\"\">\r\n\r\n    &lt;title><span class=\"php_code\">&lt;?php echo get_bloginfo( \'name\' ); ?></span>&lt;/title>\r\n    &lt;link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\" rel=\"stylesheet\">\r\n    &lt;!-- Custom CSS -->\r\n    &lt;link href=\"<span class=\"php_code\">&lt;?php echo get_bloginfo( \'template_directory\' );?></span>/blog.css\" rel=\"stylesheet\">\r\n    &lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->\r\n    &lt;!--[if lt IE 9]>\r\n        &lt;script src=\"https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js\">&lt;/script>\r\n        &lt;script src=\"https://oss.maxcdn.com/respond/1.4.2/respond.min.js\">&lt;/script>\r\n    &lt;![endif]-->\r\n&lt;?php wp_head();?>\r\n&lt;/head>\r\n\r\n&lt;body>\r\n\r\n    &lt;div class=\"blog-masthead\">\r\n        &lt;div class=\"container\">\r\n            &lt;nav class=\"blog-nav\">\r\n                &lt;a class=\"blog-nav-item active\" href=\"#\">Home&lt;/a>\r\n                <span class=\"php_code\">&lt;?php wp_list_pages( \'&title_li=\' ); ?></span>\r\n            &lt;/nav>\r\n        &lt;/div>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"container\">\r\n\r\n    &lt;div class=\"blog-header\">\r\n        &lt;h1 class=\"blog-title\">&lt;a href=\"&lt;?php echo get_bloginfo( \'wpurl\' );?>\">&lt;?php echo get_bloginfo( \'name\' ); ?>&lt;/a>&lt;/h1>\r\n        &lt;p class=\"lead blog-description\">&lt;?php echo get_bloginfo( \'description\' ); ?>&lt;/p>\r\n    &lt;/div>\r\n</pre>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php echo get_bloginfo( \'name\' ); ?></span></code> va permettre d\'insérer le titre du site que vous avez choisi dans l\'interface d\'administration de WordPress.\r\n                </p>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php echo get_bloginfo( \'template_directory\' );?></span></code> va elle insérer automatiquement le chemin d\'accès au dossier de votre thème.\r\n                </p>\r\n                <p>\r\n                    La fonction php <code><span class=\"php_code\">&lt;?php wp_list_pages( \'&title_li=\' ); ?></span></code> va insérer les liens vers les différentes pages du site.\r\n                </p>\r\n                <p class=\"note\">Les liens vont mal s\'afficher en utilisant le fichier <em>blog.css</em> du repo de Tanya. Il faut alors ajouter le code suivant dans le fichier <em>blog.css</em> :</p>\r\n<pre>\r\n.blog-nav li {\r\n    position: relative;\r\n    display: inline-block;\r\n    padding: 10px;\r\n    font-weight: 500;   \r\n}\r\n.blog-nav li a {\r\n    color: #fff;\r\n}\r\n</pre>\r\n\r\n                <!-- footer.php -->\r\n                <h4>footer.php</h4>\r\n<pre>\r\n        &lt;/div> &lt;!-- /.container -->\r\n\r\n        &lt;footer class=\"blog-footer\">\r\n            &lt;p>Blog template built for &lt;a href=\"http://getbootstrap.com\">Bootstrap&lt;/a> by &lt;a href=\"https://twitter.com/mdo\">@mdo&lt;/a>.&lt;/p>\r\n            \r\n            &lt;p>&lt;a href=\"#\">Back to top&lt;/a>&lt;/p>\r\n        &lt;/footer>\r\n\r\n        &lt;script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\">&lt;/script>\r\n        &lt;script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\">&lt;/script>\r\n        &lt;?php wp_footer(); ?> \r\n    &lt;/body>\r\n&lt;/html>\r\n</pre>\r\n    \r\n                <!-- sidebar.php -->\r\n                <h4>sidebar.php</h4>\r\n<pre>\r\n&lt;div class=\"col-sm-3 col-sm-offset-1 blog-sidebar\">\r\n\r\n    &lt;div class=\"sidebar-module sidebar-module-inset\">\r\n\r\n        &lt;h4>About&lt;/h4>\r\n\r\n        &lt;p><span class=\"php_code\">&lt;?php the_author_meta( \'description\' ); ?></span> &lt;/p>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"sidebar-module\">\r\n\r\n        &lt;h4>Archives&lt;/h4>\r\n\r\n        &lt;ol class=\"list-unstyled\">\r\n            <span class=\"php_code\">&lt;?php wp_get_archives( \'type=monthly\' ); ?></span>\r\n        &lt;/ol>\r\n    &lt;/div>\r\n\r\n    &lt;div class=\"sidebar-module\">\r\n\r\n        &lt;h4>Elsewhere&lt;/h4>\r\n        \r\n        &lt;ol class=\"list-unstyled\">\r\n            &lt;li>&lt;a href=\"#\">GitHub&lt;/a>&lt;/li>\r\n            &lt;li>&lt;a href=\"#\">Twitter&lt;/a>&lt;/li>\r\n            &lt;li>&lt;a href=\"#\">Facebook&lt;/a>&lt;/li>\r\n        &lt;/ol>\r\n    &lt;/div>\r\n&lt;/div>&lt;!-- /.blog-sidebar -->\r\n</pre>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_author_meta( \'description\' ); ?></span></code> va afficher la description de l\'auteur.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php wp_get_archives( \'type=monthly\' ); ?></span></code> va regrouper les archives triées par mois.\r\n                </p>\r\n                \r\n                <!-- content.php -->\r\n                <h4>content.php</h4>\r\n<pre>\r\n&lt;div class=\"blog-post\">\r\n    &lt;!-- Titre du billet de blog -->\r\n    &lt;h2 class=\"blog-post-title\"><span class=\"php_code\">&lt;?php the_title(); ?></span>&lt;/h2>\r\n\r\n    &lt;!-- Auteur et date du billet de blog -->\r\n    &lt;p class=\"blog-post-meta\"><span class=\"php_code\">&lt;?php the_date(); ?></span> by &lt;a href=\"#\"><span class=\"php_code\">&lt;?php the_author(); ?></span>&lt;/a>&lt;/p>\r\n\r\n    &lt;!-- Contenu du billet de blog -->\r\n    <span class=\"php_code\">&lt;?php the_content(); ?></span>\r\n&lt;/div>&lt;!-- /.blog-post -->\r\n</pre>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_title(); ?></span></code> permet d\'afficher le titre du billet de blog.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_date(); ?></span></code> affiche la date de création du billet de blog.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_author(); ?></code> affiche l\'auteur du billet.\r\n                </p>\r\n                <p>\r\n                    La fonction <code><span class=\"php_code\">&lt;?php the_content(); ?></span></code> affiche le contenu du billet.\r\n                </p>\r\n\r\n                <!-- index.php -->\r\n                <h4>index.php</h4>\r\n\r\n<pre>\r\n<span class=\"php_code\">&lt;?php get_header(); ?></span>\r\n\r\n    &lt;div class=\"row\">\r\n\r\n        &lt;div class=\"col-sm-8 blog-main\">\r\n            <span class=\"php_code\">&lt;?php\r\n            if ( have_posts() ) : while ( have_posts() ) : the_post(); \r\n                get_template_part( \'content\', get_post_format() );\r\n            endwhile; endif; \r\n            ?></span>\r\n        &lt;/div> &lt;!-- /.blog-main -->\r\n\r\n        <span class=\"php_code\">&lt;?php get_sidebar(); ?></span>\r\n\r\n    &lt;/div> &lt;!-- /.row -->\r\n\r\n<span class=\"php_code\">&lt;?php get_footer(); ?></span>\r\n</pre>\r\n                <p>\r\n                    Les instructions suivantes servent à générer les articles de blogs disponibles :\r\n<pre>\r\n    <span class=\"php_code\">&lt;?php\r\n    if ( have_posts() ) : while ( have_posts() ) : the_post(); \r\n        get_template_part( \'content\', get_post_format() );\r\n    endwhile; endif; \r\n    ?></span>\r\n</pre>\r\n                </p>\r\n                <p>\r\n                    Les instructions <code><span class=\"php_code\">&lt;?php get_header(); ?></span></code>, <code><span class=\"php_code\">&lt;?php get_sidebar(); ?></span></code> et <code><span class=\"php_code\">&lt;?php get_footer(); ?></span></code> servent à insérer le code contenu dans les fichiers <em>header.php</em>, <em>sidebar.php</em> et <em>footer.php</em>.\r\n                </p>\r\n                <p class=\"note\">\r\n                    Essayez maintenant d\'ajouter des articles de blog, de changer le nom et le slogan du site via l\'interface WordPress et admirez le résultat !\r\n                </p>\r\n            </article>\r\n\r\n            <!-- Création d\'un affichage différent pour les pages du site -->\r\n            <article>\r\n                <h3>On se pose en douceur... Création d\'un affichage différent pour les pages du site</h3>\r\n\r\n                <p>\r\n                    Il faut créer un fichier <em>page.php</em> qui va ressembler fortement à <em>index.php</em>.\r\n                </p>\r\n                <p>\r\n                    Dans l\'exemple suivant, on a choisit de ne pas afficher la barre latérale (en omettant le fichier <em>sidebar.php</em>) et d\'afficher le contenu des pages sur toutes la largeur (avec la classe Bootstrap <em>col-sm-12</em>).\r\n                </p>\r\n<pre>\r\n<span class=\"php_code\">&lt;?php get_header(); ?></span>\r\n\r\n    &lt;div class=\"row\">\r\n        &lt;div class=\"col-sm-12\">\r\n\r\n            <span class=\"php_code\">&lt;?php \r\n                if ( have_posts() ) : while ( have_posts() ) : the_post();\r\n    \r\n                    get_template_part( \'content\', get_post_format() );\r\n  \r\n                endwhile; endif; \r\n            ?></span>\r\n\r\n        &lt;/div> &lt;!-- /.col -->\r\n    &lt;/div> &lt;!-- /.row -->\r\n\r\n<span class=\"php_code\">&lt;?php get_footer(); ?></span>\r\n</pre>\r\n                <p class=\"note\">\r\n                    Un grand merci à Tania Rascia pour avoir fait le tuto sur lequel j\'ai honteusement pompé. <a href=\"https://ko-fi.com/taniarascia\">Vous pouvez d\'ailleurs lui payer un café pour la remercier.</a>\r\n                </p>\r\n            </article>', '2019-02-15 23:33:34', '2019-02-15 23:33:34', 90),
+(27, 90, 'Mes sites perso', 'Vous trouverez les sites que je créé pour le plaisir dans cet article.', '<h2>Au menu</h2>\r\n<ul>\r\n    <li>\r\n        <a href=\"https://sansgodasses.com/\">sansgodasses.com</a> Mon premier site : un blog sur la course pieds nus ou j\'explique pourquoi et comment je me suis mis à courir pieds nus. Je l\'ai réalisé avant ma formation, juste avec les cours gratuits d\'OpenClassrooms.\r\n    </li>\r\n    <li>\r\n        <a href=\"https://carte.ovh\">carte.ovh</a> Un site pour s\'orienter en balade. Réalisé aussi avant ma formation, à l\'aide des cours gratuits d\'OpenClassrooms.\r\n    </li>\r\n</ul>', '2019-02-16 08:09:10', '2019-02-16 08:09:35', 90),
+(28, 90, 'Les projets réalisés pendant ma formation', 'Vous trouverez ici les sites que j\'ai créé lors de ma formation de <a href=\"https://openclassrooms.com/fr/paths/59-developpeur-dapplication-php-symfony\">développeur d\'application PHP/Symfony d\'OpenClassrooms</a>.', '<h2>Au menu :</h2>\r\n\r\n<ul>\r\n    <li>\r\n        <a href=\"https://formation-oc-php.sansgodasses.com/projet-2/\">Intégrez un thème Wordpress pour un client</a>\r\n    </li>\r\n    <li>\r\n        <a href=\"https://formation-oc-php.sansgodasses.com/projet-3/\">Analysez les besoins de votre client pour son Festival de films</a>\r\n    </li>\r\n    <li>\r\n        <a href=\"https://formation-oc-php.sansgodasses.com/projet-4/\">Concevez la solution technique d\'une application de restauration en ligne, Express Food</a>\r\n    </li>\r\n</ul>\r\n\r\n<h2>Projets à venir...</h2>\r\n\r\n<ul>\r\n    <li>Créez votre premier blog en PHP (c\'est ce site)</li>\r\n    <li>Développez de A à Z le site communautaire SnowTricks</li>\r\n    <li>Créez un web service exposant une API</li>\r\n    <li>Améliorez une application existante de ToDo & Co</li>\r\n</ul>', '2019-02-16 08:14:40', '2019-02-16 08:17:24', 90);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_post_tag`
+--
+
+DROP TABLE IF EXISTS `bl_post_tag`;
+CREATE TABLE IF NOT EXISTS `bl_post_tag` (
+  `pt_post_id_fk` int(10) UNSIGNED NOT NULL,
+  `pt_tag_id_fk` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`pt_post_id_fk`,`pt_tag_id_fk`),
+  KEY `fk_pt_tag_tag_id` (`pt_tag_id_fk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_post_tag`
+--
 
 INSERT INTO `bl_post_tag` (`pt_post_id_fk`, `pt_tag_id_fk`) VALUES
 (12, 71),
@@ -232,6 +191,8 @@ INSERT INTO `bl_post_tag` (`pt_post_id_fk`, `pt_tag_id_fk`) VALUES
 (24, 73),
 (25, 73),
 (26, 73),
+(27, 74),
+(28, 74),
 (23, 90),
 (16, 91),
 (16, 92),
@@ -250,7 +211,26 @@ INSERT INTO `bl_post_tag` (`pt_post_id_fk`, `pt_tag_id_fk`) VALUES
 (25, 98),
 (26, 98),
 (24, 99),
-(24, 100);
+(24, 100),
+(27, 101),
+(28, 102);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_role`
+--
+
+DROP TABLE IF EXISTS `bl_role`;
+CREATE TABLE IF NOT EXISTS `bl_role` (
+  `r_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `r_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`r_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_role`
+--
 
 INSERT INTO `bl_role` (`r_id`, `r_name`) VALUES
 (1, 'member'),
@@ -258,6 +238,24 @@ INSERT INTO `bl_role` (`r_id`, `r_name`) VALUES
 (3, 'editor'),
 (4, 'moderator'),
 (5, 'admin');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_role_member`
+--
+
+DROP TABLE IF EXISTS `bl_role_member`;
+CREATE TABLE IF NOT EXISTS `bl_role_member` (
+  `rm_member_id_fk` int(10) UNSIGNED NOT NULL,
+  `rm_role_id_fk` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`rm_member_id_fk`,`rm_role_id_fk`),
+  KEY `fk_rm_role_id_r_id` (`rm_role_id_fk`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_role_member`
+--
 
 INSERT INTO `bl_role_member` (`rm_member_id_fk`, `rm_role_id_fk`) VALUES
 (87, 1),
@@ -283,6 +281,23 @@ INSERT INTO `bl_role_member` (`rm_member_id_fk`, `rm_role_id_fk`) VALUES
 (87, 5),
 (90, 5);
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `bl_tag`
+--
+
+DROP TABLE IF EXISTS `bl_tag`;
+CREATE TABLE IF NOT EXISTS `bl_tag` (
+  `tag_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tag_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`tag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8;
+
+--
+-- Déchargement des données de la table `bl_tag`
+--
+
 INSERT INTO `bl_tag` (`tag_id`, `tag_name`) VALUES
 (71, 'A propos'),
 (73, 'Blog'),
@@ -297,4 +312,52 @@ INSERT INTO `bl_tag` (`tag_id`, `tag_name`) VALUES
 (97, 'Electronique'),
 (98, 'Apprendre'),
 (99, 'Attiny85'),
-(100, 'C');
+(100, 'C'),
+(101, 'Sites perso'),
+(102, 'Formation PHP/Symfony');
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `bl_category_tag`
+--
+ALTER TABLE `bl_category_tag`
+  ADD CONSTRAINT `fk_ct_category_cat_id` FOREIGN KEY (`ct_category_id_fk`) REFERENCES `bl_category` (`cat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ct_tag_id_tag_id` FOREIGN KEY (`ct_tag_id_fk`) REFERENCES `bl_tag` (`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `bl_comment`
+--
+ALTER TABLE `bl_comment`
+  ADD CONSTRAINT `fk_com_author_id_m_id` FOREIGN KEY (`com_author_id_fk`) REFERENCES `bl_member` (`m_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_com_last_editor_id_m_id` FOREIGN KEY (`com_last_editor_id_fk`) REFERENCES `bl_member` (`m_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_com_parent_id_com_id` FOREIGN KEY (`com_parent_id_fk`) REFERENCES `bl_comment` (`com_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_com_post_id_p_id` FOREIGN KEY (`com_post_id_fk`) REFERENCES `bl_post` (`p_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `bl_post`
+--
+ALTER TABLE `bl_post`
+  ADD CONSTRAINT `fk_p_author_id_m_id` FOREIGN KEY (`p_author_id_fk`) REFERENCES `bl_member` (`m_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_p_last_editor_id_m_id` FOREIGN KEY (`p_last_editor_id_fk`) REFERENCES `bl_member` (`m_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `bl_post_tag`
+--
+ALTER TABLE `bl_post_tag`
+  ADD CONSTRAINT `fk_pt_post_id_p_id` FOREIGN KEY (`pt_post_id_fk`) REFERENCES `bl_post` (`p_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pt_tag_tag_id` FOREIGN KEY (`pt_tag_id_fk`) REFERENCES `bl_tag` (`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `bl_role_member`
+--
+ALTER TABLE `bl_role_member`
+  ADD CONSTRAINT `fk_rm_member_id_m_id` FOREIGN KEY (`rm_member_id_fk`) REFERENCES `bl_member` (`m_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_rm_role_id_r_id` FOREIGN KEY (`rm_role_id_fk`) REFERENCES `bl_role` (`r_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

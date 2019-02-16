@@ -40,12 +40,14 @@ class HomeController extends Controller
     public function showHome(?string $message = null)
     {
         $categories = $this->categoryManager->getAll();
+        $numberOfPostsByCategory = 6;
         $postsByCategory = [];
 
         foreach ($categories as $category) {
-            $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
+            $catId = $category->getId();
+            $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1);
             // Format creation dates
-            foreach ($postsByCategory[$category->getId()] as $post) {
+            foreach ($postsByCategory[$catId] as $post) {
                 $post->setCreationDate(self::formatDate($post->getCreationDate()));
                 if ($post->getLastModificationDate()) {
                     $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
@@ -56,7 +58,7 @@ class HomeController extends Controller
         self::render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory,
-            'numberOfPosts' => 5,
+            'numberOfPosts' => $numberOfPostsByCategory,
             'message' => $message,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);

@@ -40,6 +40,10 @@ class Router
                 $method = 'showHome';
                 $params = [];
 
+                if (isset($_GET['categories'])) {
+                    $params = $_GET['categories'];
+                }
+
                 if (isset($_GET['action']) && $_GET['action'] === 'contact') {
                     $method = 'contact';
                 }
