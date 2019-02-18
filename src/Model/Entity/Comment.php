@@ -15,9 +15,27 @@ class Comment extends Entity
     protected $postId = null;
     protected $authorId = null;
     protected $lastEditorId = null;
-    protected $creationDate = '';
-    protected $lastModificationDate = '';
-    protected $content = '';
+    protected $creationDate = null;
+    protected $lastModificationDate = null;
+    protected $content = null;
+
+    protected $author = null;
+
+    /**
+     * @return string|null
+     */
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param string|null $author
+     */
+    public function setAuthor(?string $author): void
+    {
+        $this->author = $author;
+    }
 
     /**
      * @return int
@@ -78,7 +96,7 @@ class Comment extends Entity
     /**
      * @param int $lastEditorId
      */
-    public function setLastEditorId(int $lastEditorId): void
+    public function setLastEditorId(?int $lastEditorId): void
     {
         $this->lastEditorId = $lastEditorId;
     }
@@ -110,7 +128,7 @@ class Comment extends Entity
     /**
      * @param string $lastModificationDate
      */
-    public function setLastModificationDate(string $lastModificationDate): void
+    public function setLastModificationDate(?string $lastModificationDate): void
     {
         $this->lastModificationDate = $lastModificationDate;
     }

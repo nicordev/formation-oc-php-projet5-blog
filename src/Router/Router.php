@@ -2,6 +2,7 @@
 
 namespace Application\Router;
 
+use Application\Exception\PageNotFoundException;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -20,6 +21,7 @@ class Router
      *
      * @return Route
      * @throws \Application\Exception\AccessException
+     * @throws PageNotFoundException
      */
     public static function run(): Route
     {
@@ -73,10 +75,14 @@ class Router
                         'postId' => $_GET['post-id']
                     ];
                 } else {
-                    $controller = BlogController::class;
-                    $method = 'pageNotFound404';
-                    $params = [];
+                    throw new PageNotFoundException("L'article demandé n'existe pas.");
                 }
+                break;
+
+            case '/add-comment':
+                $controller = BlogController::class;
+                $method = 'addComment';
+                $params = [];
                 break;
 
             // Member

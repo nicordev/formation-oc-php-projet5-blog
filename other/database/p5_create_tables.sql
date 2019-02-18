@@ -155,6 +155,7 @@ CREATE TABLE bl_comment(
 	com_creation_date DATETIME NOT NULL,
 	com_last_modification_date DATETIME,
 	com_content TEXT NOT NULL,
+	com_approuved TINYINT(1) DEFAULT 0,
 
 	CONSTRAINT pk_com_id
 		PRIMARY KEY (com_id),

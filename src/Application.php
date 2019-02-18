@@ -11,6 +11,7 @@ namespace Application;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
+use Application\Exception\PageNotFoundException;
 use Application\Router\Router;
 use Controller\BlogController;
 use Controller\ErrorController;
@@ -67,6 +68,9 @@ class Application
         } catch (AccessException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError403();
+        } catch (PageNotFoundException $e) {
+            $errorController = DIC::newErrorController();
+            $errorController->showError404();
         }
 
     }

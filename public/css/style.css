@@ -213,6 +213,11 @@ blockquote p::after {
     margin: 0 0 50px 0;
 }
 
+.comment-info {
+    font-size: 0.75em;
+    color: burlywood;
+}
+
 @media all and (max-width: 576px) {
 
     .content {

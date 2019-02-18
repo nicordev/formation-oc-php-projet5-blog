@@ -15,6 +15,7 @@ use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
 use Exception;
 use Model\Entity\Category;
+use Model\Entity\Comment;
 use Model\Entity\Entity;
 use Model\Entity\Post;
 use Model\Entity\Tag;
@@ -122,18 +123,23 @@ class BlogController extends Controller
      * Show an entire blog post
      *
      * @param int $postId
+     * @param string|null $message
      * @return void
+     * @throws PageNotFoundException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws PageNotFoundException
      */
-    public function showASinglePost(int $postId)
+    public function showASinglePost(int $postId, ?string $message = null)
     {
         try {
             $post = $this->postManager->get($postId);
             self::convertDatesOfPost($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
+            $comments = $this->commentManager->getFromPost($postId);
+            foreach ($comments as $comment) {
+                self::convertDatesOfComment($comment);
+            }
 
         } catch (BlogException $e) {
             throw new PageNotFoundException('This post do not exists.');
@@ -142,7 +148,9 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'categories' => $categories,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'comments' => $comments,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
+            'message' => $message
         ]);
     }
 
@@ -476,6 +484,28 @@ class BlogController extends Controller
         $this->showAdminPanel("Une catégorie a été supprimée.");
     }
 
+    /**
+     * Add a comment to the database
+     *
+     * @throws PageNotFoundException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function addComment()
+    {
+        $comment = $this->buildCommentFromForm();
+
+        if (empty($comment->getContent())) {
+            $this->showASinglePost($comment->getPostId(), 'Votre commentaire ne doit pas être vide.');
+
+        } else {
+            $comment->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+            $this->commentManager->add($comment);
+            $this->showASinglePost($comment->getPostId(), 'Votre commentaire a été envoyé. Il sera vérifié dans les prochains jours.');
+        }
+    }
+
     // Private
 
     /**
@@ -693,6 +723,30 @@ class BlogController extends Controller
     }
 
     /**
+     * Create a Comment from $_POST
+     *
+     * @return Comment|null
+     */
+    private function buildCommentFromForm(): ?Comment
+    {
+        $comment = new Comment();
+
+        if (isset($_POST['author-id'])) {
+            $comment->setAuthorId((int) $_POST['author-id']);
+        }
+
+        if (isset($_POST['post-id'])) {
+            $comment->setPostId((int) $_POST['post-id']);
+        }
+
+        if (isset($_POST['comment'])) {
+            $comment->setContent($_POST['comment']);
+        }
+
+        return $comment;
+    }
+
+    /**
      * Change the date format use in a post
      *
      * @param Post $post
@@ -704,6 +758,21 @@ class BlogController extends Controller
 
         if ($post->getLastModificationDate() !== null) {
             $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
+    }
+
+    /**
+     * Change the date format use in a comment
+     *
+     * @param Comment $comment
+     * @throws Exception
+     */
+    private static function convertDatesOfComment(Comment $comment)
+    {
+        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
+
+        if ($comment->getLastModificationDate() !== null) {
+            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
         }
     }
 
