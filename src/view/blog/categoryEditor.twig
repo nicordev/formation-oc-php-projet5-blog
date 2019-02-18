@@ -1,15 +1,15 @@
-{% extends 'layout.twig' %}
+{% extends 'blog/admin.twig' %}
 
 {% block title %}
     {% if categoryToEdit %}
-        {{ categoryToEdit.getName }}
+        Edition de {{ categoryToEdit.getName }}
     {% else %}
         Créer une catégorie
     {% endif %}
 {% endblock %}
 
-{% block header %}
-    <h1>Editeur de catégories</h1>
+{% block headerTitle %}
+    <h1>Editeur de catégorie</h1>
 {% endblock %}
 
 {% block content %}
@@ -56,7 +56,7 @@
 {% endblock %}
 
 {% block footer %}
-    {% include "blog/adminFooter.twig" %}
+    {{ parent() }}
     <script src="/js/tagHandler.js"></script>
 {% endblock %}
 

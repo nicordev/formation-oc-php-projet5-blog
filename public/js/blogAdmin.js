@@ -7,14 +7,14 @@
 *
 * */
 
-const AVAILABLE_TAG_CLASS = 'available-tag';
+const TAG_CLASSES = 'available-tag text-center admin-link';
 
 /**
  * Highlight any incorrect tag from the list of tags
  */
 function highlightIncorrectTags()
 {
-    let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
+    let tagElts = document.getElementsByClassName(TAG_CLASSES);
 
     myApp.formatBadElements(tagElts, 'bad', true, true, true);
 }
@@ -33,7 +33,7 @@ tagListFormElt.addEventListener('submit', submitTagList);
 function submitTagList(evt)
 {
     evt.preventDefault();
-    let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
+    let tagElts = document.getElementsByClassName(TAG_CLASSES);
 
     if (myApp.elementValuesAreCorrect(tagElts)) {
         evt.target.submit();
@@ -68,7 +68,7 @@ function addTag()
      */
     function isUniqueTag(tag)
     {
-        let tagElts = document.getElementsByClassName(AVAILABLE_TAG_CLASS);
+        let tagElts = document.getElementsByClassName(TAG_CLASSES);
 
         return !myApp.isInElements(tag, tagElts);
     }
@@ -97,15 +97,15 @@ function addTag()
         let tagElt = document.createElement('li');
         let tagHiddenInfoElt = myApp.elementBuilder.createInputElt('hidden', 'tag_ids[]', 'new');
         let tagInputElt = myApp.elementBuilder.createInputElt('text', '', tag);
-        let closingCrossElt = myApp.elementBuilder.createClosingCrossElt();
+        let deleteBtnElt = myApp.elementBuilder.createDeleteBtnElt();
 
-        tagInputElt.setAttribute('class', AVAILABLE_TAG_CLASS);
+        tagInputElt.setAttribute('class', TAG_CLASSES);
         tagInputElt.setAttribute('onkeyup', 'highlightIncorrectTags()');
         tagInputElt.setAttribute('name', 'tag_names[]');
 
         tagElt.appendChild(tagHiddenInfoElt);
         tagElt.appendChild(tagInputElt);
-        tagElt.appendChild(closingCrossElt);
+        tagElt.appendChild(deleteBtnElt);
 
         return tagElt;
     }

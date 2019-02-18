@@ -4,45 +4,54 @@
     {{ post.getTitle }}
 {% endblock %}
 
-{% block header %}
-    <h1>{{ category.getName }}</h1>
+{% block headerTitle %}
+    <div class="post-heading">
+        <h1>{{ post.getTitle }}</h1>
+        <h2 class="subheading">{{ post.getExcerpt }}</h2>
+        <span class="meta">Ecrit par <a href="#">TODO: insert author name here</a> le {{ post.getCreationDate }}</span>
+    </div>
 {% endblock %}
 
 {% block content %}
-    <section class="blogpost">
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
 
-        <h2 class="blogpost-title">{{ post.getTitle }}</h2>
+                    {# Classification #}
+                    <div class="blogpost-classification">
+                        {# Category #}
+                        <p>
+                            Catégorie <a href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a>
+                        </p>
+                        {# Tags #}
+                        <p>
+                            {% for tag in post.getTags %}
+                                <a href="#">#{{ tag.getName }}</a>
+                            {% endfor %}
+                        </p>
+                    </div>
 
-        {# Tags #}
-        {% if post.getTags() %}
-            <div class="blogpost-tags">
-                Etiquettes :
-                {% for tag in post.getTags() %}
-                    {{ tag.getName() }}
-                {% endfor %}
+                    <div class="blogpost-content">
+                        {{ post.getContent }}
+                    </div>
+
+                    <div class="blogpost-navigation">
+                        <ul>
+                            {% if previousPostId %}
+                                <li><a href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a></li>
+                            {% endif %}
+
+                            <li><a href="/blog?category-id={{ category.getId }}">Revenir au sommaire de la catégorie {{ category.getName }}</a></li>
+
+                            {% if nextPostId %}
+                                <li><a href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}">Article suivant</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
             </div>
-        {% endif %}
-
-        <div class="blogpost-content">
-            {{ post.getContent }}
         </div>
-
-        <div class="blogpost-info">
-            {{ post.getCreationDate }}
-        </div>
-
-        <div class="blogpost-navigation">
-            <ul>
-                {% if previousPostId %}
-                    <li><a href="/blog-post?post-id={{ previousPostId }}&amp;category-id={{ category.getId }}">Article précédent</a></li>
-                {% endif %}
-
-                <li><a href="/blog?category-id={{ category.getId }}">Revenir à la liste des articles</a></li>
-
-                {% if nextPostId %}
-                    <li><a href="/blog-post?post-id={{ nextPostId }}&amp;category-id={{ category.getId }}">Article suivant</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </section>
+    </article>
 {% endblock %}

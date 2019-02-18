@@ -157,15 +157,15 @@ var myApp = {
     elementBuilder: {
 
         /**
-         * Create a closing cross which erase the parent node on click
+         * Create a button which erase the parent node on click
          *
          * @returns {HTMLElement}
          */
-        createClosingCrossElt: function ()
+        createDeleteBtnElt: function ()
         {
             let closingCrossElt = document.createElement('span');
-            closingCrossElt.textContent = 'X';
-            closingCrossElt.setAttribute('class', 'closing-cross');
+            closingCrossElt.textContent = '🗑';
+            closingCrossElt.setAttribute('class', 'btn sign-btn');
 
             myApp.eraseTool.eraseElementOnClick(closingCrossElt);
 
@@ -269,7 +269,7 @@ var myApp = {
         {
             let messageWrapperElt = document.createElement('div');
             let messageTextElt = document.createElement('p');
-            let closingCrossElt = myApp.elementBuilder.createClosingCrossElt();
+            let closingCrossElt = myApp.elementBuilder.createDeleteBtnElt();
 
             messageTextElt.textContent = message;
             messageTextElt.classList.add('message');

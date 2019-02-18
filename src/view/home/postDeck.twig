@@ -1,22 +1,23 @@
-
 <h2 class="card-deck-title">{% block deckTitle %}{% endblock %}</h2>
 
 <div class="card-deck">
+
     {% if posts is empty %}
         <p>
             Il n'y a aucun article pour l'instant.
         </p>
 
     {% else %}
-
         {% for post in posts %}
             <div class="card">
-                <h3 class="card-title"><a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">{{ post.getTitle }}</a></h3>
-
-                <div class="card-content">{{ post.getExcerpt }}</div>
-                <div class="card-info">{{ post.getCreationDate }}</div>
+                <div class="card-body">
+                    <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
+                        <h5 class="card-title">{{ post.getTitle }}</h5>
+                        <p class="card-text">{{ post.getExcerpt }}</p>
+                    </a>
+                    <div class="card-info">Ecrit par TODO: insert the author name le {{ post.getCreationDate }}</div>
+                </div>
             </div>
         {% endfor %}
-
     {% endif %}
 </div>

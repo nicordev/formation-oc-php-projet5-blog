@@ -2,46 +2,128 @@
 <html lang="fr">
     <head>
         <meta charset="utf-8" />
-         {% block head %}
-            <title>{% block title %}Bienvenue{% endblock %} - Mon super site</title>
-            <link href="/css/style.css" rel="stylesheet" />
-            <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Blog">
+        <meta name="author" content="Nicolas Renvoisé">
+
+        {% block head %}
+        <title>{% block title %}Bienvenue{% endblock %} - Nicolas R Blog</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom fonts for this template -->
+        <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <!-- Custom styles for this template -->
+        <link href="/css/clean-blog.min.css" rel="stylesheet">
+
+        <!-- My own css -->
+        <link href="/css/style.css" rel="stylesheet" />
         {% endblock %}
     </head>
     
     <body>
-        <nav>
-            {% block navigation %}
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="/home">Accueil</a>
+        <!-- Navigation -->
+        {% block navigation %}
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="/home">Nicolas Renvoisé / Blog</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">Accueil</a>
                         </li>
+                        {% block navigationItems %}{% endblock %}
                     </ul>
-                </nav>
-            {% endblock %}
+                </div>
+            </div>
         </nav>
+        {% endblock %}
 
-        <header>
-            {% block header %}
-                <h1>Mon super site</h1>
-            {% endblock %}
+        <!-- Page Header -->
+        {% block header %}
+        <header class="masthead" style="background-image: url({% block backgroundImageUrl %}'/img/home-bg.jpg'{% endblock %})">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        {% block headerTitle %}
+                        <div class="site-heading">
+                            <h1>Nicolas Renvoisé</h1>
+                            <span class="subheading">Bienvenue</span>
+                        </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
         </header>
+        {% endblock %}
 
+        <!-- Main Content -->
         <section class="content">
-            {% block content %}
-                C'est un schtroumpf, il court, il tombe, il s'est fait un bleu.
-            {% endblock %}
+        {% block content %}{% endblock %}
         </section>
 
+        <!-- Footer -->
+        {% block footer %}
+
+        <hr>
+
         <footer>
-            {% block footer %}
-                <p><a href="/admin">Administration</a></p>
-            {% endblock %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.linkedin.com/in/nicolas-renvoise-developer/">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://ko-fi.com/nicolas_renvoise">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fas fa-coffee fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/SansGodasse">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <p class="copyright text-muted">Copyright &copy; Nicolas Renvoisé 2019</p>
+                    </div>
+                </div>
+                <p class="text-center"><a href="/admin">Administration</a></p>
+            </div>
         </footer>
+        {% endblock %}
 
         {% block scripts %}
-            <script src="/js/application.js"></script>
+        <!-- My own scripts -->
+        <script src="/js/application.js"></script>
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="/vendor/jquery/jquery.min.js"></script>
+        <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Custom scripts for the bootstrap template -->
+        <script src="/js/clean-blog.min.js"></script>
         {% endblock %}
     </body>
 </html>

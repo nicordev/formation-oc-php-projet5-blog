@@ -1,0 +1,69 @@
+
+td, th {
+    padding: 5px 20px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    margin: 10px 0 10px 0;
+}
+
+input[type='text'], textarea {
+    border-radius: 10px;
+    border: 1px solid lightslategrey;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+footer {
+    background-color: #0c5460;
+    color: white;
+}
+
+footer ul li a, footer ul li a:hover {
+    color: white;
+}
+
+#tag-list {
+
+}
+
+.admin-header {
+    background-color: #0c5460;
+    color: white;
+    padding: 50px 0;
+}
+
+.btn, .btn:visited {
+    background-color: lightslategrey;
+    color: rgb(237, 237, 237);
+    border-radius: 10px;
+    border: none;
+    margin: 5px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    color: #212529;
+    background-color: #ddddff;
+}
+
+.admin-link {
+    color: #dd4444;
+    font-weight: bold;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.admin-link:hover {
+    cursor: pointer;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+
+.admin-box {
+    margin: 50px 0;
+}
