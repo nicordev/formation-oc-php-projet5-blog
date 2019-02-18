@@ -130,6 +130,14 @@ blockquote p::after {
     margin-bottom: 50px;
 }
 
+.catch-phrase {
+    position: relative;
+    top: 10px;
+    left: 160px;
+    font-family: 'Dancing Script', cursive;
+    transform: rotate(-10deg);
+}
+
 /* postDeck.twig */
 
 .card-deck-wrapper {
@@ -237,4 +245,9 @@ blockquote p::after {
         border: 2px solid rgb(247, 247, 247);
     }
 
+    .catch-phrase {
+        position: relative;
+        top: 30px;
+        left: 0;
+    }
 }
