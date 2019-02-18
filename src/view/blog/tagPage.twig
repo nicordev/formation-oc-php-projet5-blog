@@ -29,9 +29,9 @@
                                 <h2 class="post-title">
                                     {{ post.getTitle }}
                                 </h2>
-                                <h3 class="post-subtitle">
-                                    {{ post.getExcerpt }}
-                                </h3>
+                                <p class="post-subtitle">
+                                    {{ post.getExcerpt|raw }}
+                                </p>
                             </a>
                             <p class="post-meta">
                             {% include 'blog/postMeta.twig' %}
