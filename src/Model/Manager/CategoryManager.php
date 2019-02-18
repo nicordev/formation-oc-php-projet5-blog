@@ -88,6 +88,36 @@ class CategoryManager extends Manager
     }
 
     /**
+     * Get the categories where we can find the post
+     *
+     * @param int $postId
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getCategoriesFromPostId(int $postId): array
+    {
+        $categories = [];
+
+        $query = 'SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
+            WHERE ct_tag_id_fk IN (
+                SELECT pt_tag_id_fk FROM bl_post_tag
+                WHERE pt_post_id_fk = 23
+            )';
+
+        $requestPostId = $this->database->prepare($query);
+        $requestPostId->execute([
+
+        ]);
+        $categoryIds = $requestPostId->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($categoryIds as $categoryId) {
+            $categories[] = parent::get($categoryId['ct_category_id_fk']);
+        }
+
+        return $categories;
+    }
+
+    /**
      * Get associated tags of a category
      *
      * @param int $categoryId
