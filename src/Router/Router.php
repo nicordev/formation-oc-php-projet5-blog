@@ -165,6 +165,12 @@ class Router
                 $params = [];
                 break;
 
+            case '/admin/delete-comment':
+                $controller = BlogController::class;
+                $method = 'deleteComment';
+                $params = [];
+                break;
+
             case '/admin/add-post':
                 MemberController::verifyAccess(['author']);
                 $controller = BlogController::class;

@@ -556,6 +556,15 @@ class BlogController extends Controller
         }
     }
 
+    public function deleteComment()
+    {
+        $commentId = (int) $_POST['delete-comment'];
+        $this->commentManager->delete($commentId);
+
+        // Come back to the admin panel
+        $this->showAdminPanel("Un commentaire a été supprimé.");
+    }
+
     // Private
 
     /**
