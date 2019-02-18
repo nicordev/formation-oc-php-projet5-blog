@@ -69,6 +69,15 @@
 {% block footer %}
     {{ parent() }}
     <script src="/js/tagHandler.js"></script>
+    {# CKEditor #}
+    <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#post-content' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
 {% endblock %}
 
 
