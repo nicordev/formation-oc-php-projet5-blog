@@ -51,11 +51,11 @@
                                 <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
                             </td>
                             <td>
-                                {{ comment.getCreationDate }}
+                                <span class="table-date">{{ comment.getCreationDate }}</span>
                             </td>
                             <td>
                                 {% if comment.getLastModificationDate %}
-                                    Le {{ comment.getLastModificationDate }} par {{ comment.getLastEditor }}
+                                    <span class="table-date">{{ comment.getLastModificationDate }} par <a href="/member-profile?id={{ comment.getLastEditorId }}">{{ comment.getLastEditor }}</a></span>
                                 {% else %}
                                     -
                                 {% endif %}
@@ -84,7 +84,6 @@
                         <th scope="col">Auteur</th>
                         <th scope="col">Etiquettes</th>
                         <th scope="col">Catégories</th>
-                        <th scope="col">Commentaires</th>
                         <th scope="col">Date de création</th>
                         <th scope="col">Dernière modification</th>
                     </tr>
@@ -104,7 +103,7 @@
                             {% endif %}
                         </td>
                         <td scope="row">
-                            {{ post.getAuthorName }}
+                            <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
                         </td>
                         <td scope="row">
                             {% set postTags = post.getTags %}
@@ -127,14 +126,11 @@
                             {% endif %}
                         </td>
                         <td scope="row">
-                            coming soon...
-                        </td>
-                        <td scope="row">
                             <span class="table-date">{{ post.getCreationDate }}</span>
                         </td>
                         <td scope="row">
                             {% if post.getLastModificationDate %}
-                            <span class="table-date">Le {{ post.getLastModificationDate }} par {{ post.getEditorName }}</span>
+                                <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
                             {% else %}
                                 -
                             {% endif %}
@@ -149,7 +145,6 @@
                         <th scope="col">Auteur</th>
                         <th scope="col">Etiquettes</th>
                         <th scope="col">Catégories</th>
-                        <th scope="col">Commentaires</th>
                         <th scope="col">Date de création</th>
                         <th scope="col">Dernière modification</th>
                     </tr>
