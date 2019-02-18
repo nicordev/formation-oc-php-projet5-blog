@@ -327,6 +327,7 @@ abstract class Manager
      *
      * @param Entity $entity
      * @return array
+     * @throws \ReflectionException
      */
     private function filterEmptyFields(Entity $entity)
     {
@@ -334,12 +335,34 @@ abstract class Manager
 
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
-            if ($entity->$getter() !== null) {
-                $fields[$key] = $this->fields[$key];
+            if (self::isAMethodOf($entity, $getter)) {
+                if ($entity->$getter() !== null) {
+                    $fields[$key] = $this->fields[$key];
+                }
+            } else {
+                $getter = 'is' . ucfirst($key);
+                if (self::isAMethodOf($entity, $getter) && $entity->$getter() !== null) {
+                    $fields[$key] = $this->fields[$key];
+                }
             }
         }
 
         return $fields;
+    }
+
+    /**
+     * Check if a method exists in an Entity
+     *
+     * @param Entity $entity
+     * @param string $method
+     * @return bool
+     * @throws \ReflectionException
+     */
+    private static function isAMethodOf(Entity $entity, string $method)
+    {
+        $refClass = new ReflectionClass($entity);
+
+        return $refClass->hasMethod($method);
     }
 
     /**
@@ -363,6 +386,14 @@ abstract class Manager
                     !is_array($value
                     )) {
                     $properties[lcfirst(substr($reflectionMethod->name, 3))] = $value;
+                }
+            } elseif (strpos($reflectionMethod, 'is')) {
+                $value = $reflectionMethod->invoke($entity);
+                if (
+                    $value !== null &&
+                    !is_array($value
+                    )) {
+                    $properties[lcfirst(substr($reflectionMethod->name, 2))] = $value;
                 }
             }
         }

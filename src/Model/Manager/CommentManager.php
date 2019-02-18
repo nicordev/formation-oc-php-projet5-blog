@@ -25,7 +25,8 @@ class CommentManager extends Manager
             'lastEditorId' => 'com_last_editor_id_fk',
             'creationDate' => 'com_creation_date',
             'lastModificationDate' => 'com_last_modification_date',
-            'content' => 'com_content'
+            'content' => 'com_content',
+            'approved' => 'com_approved'
         ];
 
         parent::__construct();
@@ -73,7 +74,15 @@ class CommentManager extends Manager
      */
     public function get(int $commentId): Comment
     {
-        return parent::get($commentId);
+        $comment = parent::get($commentId);
+
+        $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
+        $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
+        if ($comment->getLastEditorId) {
+            $comment->setLastEditor($this->getCommentMember($comment->getLastEditorId()));
+        }
+
+        return $comment;
     }
 
     /**
@@ -84,7 +93,17 @@ class CommentManager extends Manager
      */
     public function getAll(): array
     {
-        return parent::getAll();
+        $comments =  parent::getAll();
+
+        foreach ($comments as $comment) {
+            $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
+            $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
+            if ($comment->getLastEditorId()) {
+                $comment->setLastEditor($this->getCommentMember($comment->getLastEditorId()));
+            }
+        }
+
+        return $comments;
     }
 
     /**
@@ -104,7 +123,11 @@ class CommentManager extends Manager
 
         while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
             $comment = $this->createEntityFromTableData($commentData, 'Comment');
-            $comment->setAuthor($this->getCommentAuthor($comment->getAuthorId()));
+            $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
+            $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
+            if ($comment->getLastEditorId()) {
+                $comment->setLastEditor = $this->getCommentMember($comment->getLastEditorId());
+            }
             $comments[] = $comment;
         }
 
@@ -114,21 +137,42 @@ class CommentManager extends Manager
     /**
      * Get the name of the comment's author
      *
-     * @param int $authorId
+     * @param int $memberId
      * @return string|null
      * @throws \Application\Exception\BlogException
      */
-    public function getCommentAuthor(int $authorId): ?string
+    public function getCommentMember(int $memberId): ?string
     {
-        $author = null;
+        $member = null;
 
         $query = 'SELECT m_name FROM bl_member
             WHERE m_id = :id';
 
-        $requestAuthor = $this->query($query, ['id' => $authorId]);
+        $requestAuthor = $this->query($query, ['id' => $memberId]);
 
-        $author = $requestAuthor->fetch(PDO::FETCH_ASSOC);
+        $member = $requestAuthor->fetch(PDO::FETCH_ASSOC);
 
-        return $author['m_name'];
+        return $member['m_name'];
+    }
+
+    /**
+     * Get the title of the post associated to the comment
+     *
+     * @param int $postId
+     * @return mixed
+     * @throws \Application\Exception\BlogException
+     */
+    public function getPostTitle(int $postId)
+    {
+        $postTitle = null;
+
+        $query = 'SELECT p_title FROM bl_post
+            WHERE p_id = :id';
+
+        $requestAuthor = $this->query($query, ['id' => $postId]);
+
+        $postTitle = $requestAuthor->fetch(PDO::FETCH_ASSOC);
+
+        return $postTitle['p_title'];
     }
 }

@@ -79,6 +79,8 @@ class Router
                 }
                 break;
 
+            // Comments
+
             case '/add-comment':
                 $controller = BlogController::class;
                 $method = 'addComment';
@@ -150,29 +152,42 @@ class Router
                 $params = [];
                 break;
 
+            case '/admin/comment-editor':
+                MemberController::verifyAccess(['moderator']);
+                $controller = BlogController::class;
+                $method = 'showCommentEditor';
+                $params = ['commentToEditId' => $_GET['id']];
+                break;
+
+            case '/admin/edit-comment':
+                $controller = BlogController::class;
+                $method = 'editComment';
+                $params = [];
+                break;
+
             case '/admin/add-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author']);
                 $controller = BlogController::class;
                 $method = 'addPost';
                 $params = [];
                 break;
 
             case '/admin/edit-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 $controller = BlogController::class;
                 $method = 'editPost';
                 $params = [];
                 break;
 
             case '/admin/delete-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 $controller = BlogController::class;
                 $method = 'deletePost';
                 $params = [];
                 break;
 
             case '/admin/post-editor':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
                 }
@@ -182,7 +197,7 @@ class Router
                 break;
 
             case '/admin/category-editor':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 if (isset($_POST['category-id'])) {
                     $categoryId = (int) $_POST['category-id'];
                 }
@@ -192,28 +207,28 @@ class Router
                 break;
 
             case '/admin/add-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'addCategory';
                 $params = [];
                 break;
 
             case '/admin/edit-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'editCategory';
                 $params = [];
                 break;
 
             case '/admin/delete-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'deleteCategory';
                 $params = [];
                 break;
 
             case '/admin/update-tags':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'updateTagList';
                 $params = [

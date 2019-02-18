@@ -40,6 +40,7 @@ class BlogController extends Controller
     const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'admin/postEditor.twig';
     const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
+    const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
 
     /**
      * BlogController constructor.
@@ -170,6 +171,7 @@ class BlogController extends Controller
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
+        $comments = $this->commentManager->getAll();
 
         if (isset($_SESSION['connected-member'])) {
             $connectedMember = $_SESSION['connected-member'];
@@ -186,6 +188,7 @@ class BlogController extends Controller
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
+            'comments' => $comments,
             'members' => isset($members) ? $members : null,
             'connectedMember' => $connectedMember
         ]);
@@ -250,6 +253,34 @@ class BlogController extends Controller
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+        ]);
+    }
+
+    /**
+     * Show the comment editor page
+     *
+     * @param int|null $commentToEditId
+     * @param string $message
+     * @throws PageNotFoundException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showCommentEditor(?int $commentToEditId = null, string $message = '')
+    {
+        if (!$commentToEditId) {
+            if (isset($_POST['comment-id']) && !empty($_POST['comment-id'])) {
+                $commentToEditId = (int) $_POST['comment-id'];
+            } else {
+                throw new PageNotFoundException('It lacks the comment to edit id.');
+            }
+        }
+
+        $comment = $this->commentManager->get($commentToEditId);
+
+        self::render(self::VIEW_COMMENT_EDITOR, [
+            'commentToEdit' => $comment,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
@@ -506,6 +537,25 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Edit a comment in the database
+     */
+    public function editComment()
+    {
+        $modifiedComment = $this->buildCommentFromForm();
+        $modifiedComment->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
+
+        $this->commentManager->edit($modifiedComment);
+
+        if ($modifiedComment->isApproved()) {
+            // Come back to the admin panel
+            $this->showAdminPanel("Un commentaire a été approuvé.");
+        } else {
+            // Come back to the admin panel
+            $this->showAdminPanel("Un commentaire non approuvé a été modifié.");
+        }
+    }
+
     // Private
 
     /**
@@ -730,6 +780,22 @@ class BlogController extends Controller
     private function buildCommentFromForm(): ?Comment
     {
         $comment = new Comment();
+
+        if (isset($_POST['comment-id'])) {
+            $comment->setId((int) $_POST['comment-id']);
+        }
+
+        if (isset($_POST['editor-id'])) {
+            $comment->setLastEditorId((int) $_POST['editor-id']);
+        }
+
+        if (isset($_POST['creation-date'])) {
+            $comment->setCreationDate($_POST['creation-date']);
+        }
+
+        if (isset($_POST['comment-approved'])) {
+            $comment->setApproved(true);
+        }
 
         if (isset($_POST['author-id'])) {
             $comment->setAuthorId((int) $_POST['author-id']);

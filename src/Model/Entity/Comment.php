@@ -18,8 +18,59 @@ class Comment extends Entity
     protected $creationDate = null;
     protected $lastModificationDate = null;
     protected $content = null;
+    protected $approved = false;
 
     protected $author = null;
+    protected $lastEditor = null;
+    protected $postTitle = null;
+
+    /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
+     * @param bool $approved
+     */
+    public function setApproved(bool $approved): void
+    {
+        $this->approved = $approved;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLastEditor(): ?string
+    {
+        return $this->lastEditor;
+    }
+
+    /**
+     * @param string|null $lastEditor
+     */
+    public function setLastEditor(?string $lastEditor): void
+    {
+        $this->lastEditor = $lastEditor;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPostTitle(): ?string
+    {
+        return $this->postTitle;
+    }
+
+    /**
+     * @param string|null $postTitle
+     */
+    public function setPostTitle(?string $postTitle): void
+    {
+        $this->postTitle = $postTitle;
+    }
 
     /**
      * @return string|null

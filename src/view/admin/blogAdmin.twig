@@ -15,6 +15,58 @@
 
         {% include "message.twig" %}
 
+        {# Comments #}
+        {% if 'moderator' in roles %}
+            <div class="admin-box">
+                <h2>Commentaires</h2>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Statut</th>
+                        <th>Commentaire</th>
+                        <th>Auteur</th>
+                        <th>Article</th>
+                        <th>Date de création</th>
+                        <th>Dernière modification</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in comments %}
+                        <tr>
+                            <td>
+                                {% if comment.isApproved %}
+                                    Approuvé
+                                {% else %}
+                                    En attente
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="admin-link font-weight-normal" href="/admin/comment-editor?id={{ comment.getId }}">{{ comment.getContent }}</a>
+                            </td>
+                            <td>
+                                <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a>
+                            </td>
+                            <td>
+                                <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
+                            </td>
+                            <td>
+                                {{ comment.getCreationDate }}
+                            </td>
+                            <td>
+                                {% if comment.getLastModificationDate %}
+                                    Le {{ comment.getLastModificationDate }} par {{ comment.getLastEditor }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
         {# Posts#}
         <div class="admin-box w100">
             <h2>Articles</h2>
