@@ -250,6 +250,16 @@ abstract class Manager
 
             $request = $this->database->prepare($query);
 
+            foreach ($params as &$param) {
+                if (is_bool($param)) {
+                    if ($param) {
+                        $param = 1;
+                    } else {
+                        $param = 0;
+                    }
+                }
+            }
+
             if (!$request->execute($params)) {
                 throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
             }

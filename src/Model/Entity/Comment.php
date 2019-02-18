@@ -25,22 +25,6 @@ class Comment extends Entity
     protected $postTitle = null;
 
     /**
-     * @return bool
-     */
-    public function isApproved(): bool
-    {
-        return $this->approved;
-    }
-
-    /**
-     * @param bool $approved
-     */
-    public function setApproved(bool $approved): void
-    {
-        $this->approved = $approved;
-    }
-
-    /**
      * @return string|null
      */
     public function getLastEditor(): ?string
@@ -200,4 +184,19 @@ class Comment extends Entity
         $this->content = $content;
     }
 
+    /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
+     * @param bool $approved
+     */
+    public function setApproved(bool $approved): void
+    {
+        $this->approved = $approved;
+    }
 }

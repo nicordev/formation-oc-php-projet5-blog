@@ -2,12 +2,14 @@
     {% if comments %}
         <dl>
             {% for comment in comments %}
-                <dt>
-                    <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a> <span class="comment-info">le {{ comment.getCreationDate }}</span>
-                </dt>
-                <dd>
-                    {{ comment.getContent|striptags('<a>') }}
-                </dd>
+                {% if comment.isApproved %}
+                    <dt>
+                        <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a> <span class="comment-info">le {{ comment.getCreationDate }}</span>
+                    </dt>
+                    <dd>
+                        {{ comment.getContent|striptags('<a>') }}
+                    </dd>
+                {% endif %}
             {% endfor %}
         </dl>
     {% else %}
