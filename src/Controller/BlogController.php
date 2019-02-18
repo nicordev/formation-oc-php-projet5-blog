@@ -818,6 +818,10 @@ class BlogController extends Controller
             $comment->setContent($_POST['comment']);
         }
 
+        if (isset($_POST['parent-id'])) {
+            $comment->setParentId((int) $_POST['parent-id']);
+        }
+
         return $comment;
     }
 

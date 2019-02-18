@@ -1,14 +1,12 @@
+
+{% import 'macros.twig' as macros %}
+
 <div class="comments-wrapper row">
     {% if comments %}
         <dl>
             {% for comment in comments %}
-                {% if comment.isApproved %}
-                    <dt>
-                        <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a> <span class="comment-info">le {{ comment.getCreationDate }}</span>
-                    </dt>
-                    <dd>
-                        {{ comment.getContent|striptags('<a>') }}
-                    </dd>
+                {% if not comment.getParentId %}
+                    {{ macros.showAComment(comment, connectedMember) }}
                 {% endif %}
             {% endfor %}
         </dl>

@@ -23,6 +23,50 @@ class Comment extends Entity
     protected $author = null;
     protected $lastEditor = null;
     protected $postTitle = null;
+    protected $parent = null;
+    protected $children = [];
+
+    /**
+     * @return Comment|null
+     */
+    public function getParent(): ?Comment
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param Comment|null $parent
+     */
+    public function setParent(?Comment $parent): void
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Add a child to the array of children
+     *
+     * @param Comment $comment
+     */
+    public function addAChild(Comment $comment): void
+    {
+        $this->children[] = $comment;
+    }
+
+    /**
+     * @return array
+     */
+    public function getChildren(): array
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param array $children
+     */
+    public function setChildren(array $children): void
+    {
+        $this->children = $children;
+    }
 
     /**
      * @return string|null

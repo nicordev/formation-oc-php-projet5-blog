@@ -27,6 +27,7 @@
                         <th>Commentaire</th>
                         <th>Auteur</th>
                         <th>Article</th>
+                        <th>En réponse à</th>
                         <th>Date de création</th>
                         <th>Dernière modification</th>
                     </tr>
@@ -49,6 +50,15 @@
                             </td>
                             <td>
                                 <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
+                            </td>
+                            <td>
+                                {% if comment.getParentId %}
+                                    <a class="comment-info" href="/member-profile?id={{ comment.getParent.getAuthorId }}">{{ comment.getParent.getAuthor }}</a><br>
+                                    <span class="comment-info">{{ comment.getParent.getCreationDate }}</span><br>
+                                    <a class="admin-link font-weight-normal comment-info" href="/admin/comment-editor?id={{ comment.getParent.getId }}">{{ comment.getParent.getContent }}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
                             </td>
                             <td>
                                 <span class="table-date">{{ comment.getCreationDate }}</span>

@@ -179,7 +179,8 @@ abstract class Manager
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($tableData as $tableDatum) {
-            $entities[] = $this->createEntityFromTableData($tableDatum);
+            $entity = $this->createEntityFromTableData($tableDatum);
+            $entities[$entity->getId()] = $entity;
         }
 
         return $entities;

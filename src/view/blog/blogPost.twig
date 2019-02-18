@@ -46,3 +46,8 @@
         {% include'blog/comments.twig' %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="/js/comment.js"></script>
+{% endblock %}

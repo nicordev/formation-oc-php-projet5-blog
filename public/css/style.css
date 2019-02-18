@@ -213,6 +213,14 @@ blockquote p::after {
     margin: 0 0 50px 0;
 }
 
+.comment-info-wrapper {
+    display: flex;
+}
+
+.comment-response-wrapper {
+    margin: 50px;
+}
+
 .comment-info {
     font-size: 0.75em;
     color: burlywood;

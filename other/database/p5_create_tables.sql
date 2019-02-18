@@ -149,8 +149,8 @@ ENGINE = InnoDB;
 CREATE TABLE bl_comment(
 	com_id INT UNSIGNED AUTO_INCREMENT,
 	com_parent_id_fk INT UNSIGNED,
-	com_post_id_fk INT UNSIGNED,
-	com_author_id_fk INT UNSIGNED,
+	com_post_id_fk INT UNSIGNED NOT NULL,
+	com_author_id_fk INT UNSIGNED NOT NULL,
 	com_last_editor_id_fk INT UNSIGNED,
 	com_creation_date DATETIME NOT NULL,
 	com_last_modification_date DATETIME,

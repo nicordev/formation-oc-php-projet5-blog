@@ -13,3 +13,32 @@
         {{ word }}
     {% endif %}
 {% endmacro %}
+
+{% macro showAComment(comment, connectedMember) %}
+    {% import _self as macros %}
+    {% if comment.isApproved %}
+        <dt class="comment-info-wrapper">
+            <div>
+                <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a> <span class="comment-info">le {{ comment.getCreationDate }}</span>
+            </div>
+        </dt>
+        <dd>
+            <div>
+                {{ comment.getContent|striptags('<a>') }}
+            </div>
+            {% if connectedMember %}
+                <div class="comment-response-wrapper">
+                    <button type="button" class="btn btn-small" onclick="myCommentForm.showForm(event, {{ connectedMember.getId }}, {{ comment.getId }}, {{ comment.getPostId }});">Répondre</button>
+                </div>
+            {% endif %}
+
+            {% if comment.getChildren %}
+                <dl>
+                    {% for child in comment.getChildren %}
+                        {{ macros.showAComment(child, connectedMember) }}
+                    {% endfor %}
+                </dl>
+            {% endif %}
+        </dd>
+    {% endif %}
+{% endmacro %}

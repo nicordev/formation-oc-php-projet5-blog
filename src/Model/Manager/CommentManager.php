@@ -20,6 +20,7 @@ class CommentManager extends Manager
         $this->tableName = 'bl_comment';
         $this->fields = [
             'id' => 'com_id',
+            'parentId' => 'com_parent_id_fk',
             'postId' => 'com_post_id_fk',
             'authorId' => 'com_author_id_fk',
             'lastEditorId' => 'com_last_editor_id_fk',
@@ -93,13 +94,19 @@ class CommentManager extends Manager
      */
     public function getAll(): array
     {
-        $comments =  parent::getAll();
+        $comments = parent::getAll();
 
         foreach ($comments as $comment) {
             $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
             $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
             if ($comment->getLastEditorId()) {
                 $comment->setLastEditor($this->getCommentMember($comment->getLastEditorId()));
+            }
+            // Parent and children
+            if ($comment->getParentId()) {
+                $parent = $comments[$comment->getParentId()];
+                $comment->setParent($parent);
+                $parent->addAChild($comment);
             }
         }
 
@@ -128,8 +135,11 @@ class CommentManager extends Manager
             if ($comment->getLastEditorId()) {
                 $comment->setLastEditor = $this->getCommentMember($comment->getLastEditorId());
             }
-            $comments[] = $comment;
+            $comments[$comment->getId()] = $comment;
         }
+
+        // Parent and children
+        self::fillParentsAndChildren($comments);
 
         return $comments;
     }
@@ -174,5 +184,23 @@ class CommentManager extends Manager
         $postTitle = $requestAuthor->fetch(PDO::FETCH_ASSOC);
 
         return $postTitle['p_title'];
+    }
+
+    // Private
+
+    /**
+     * Fill parents and children properties of comments
+     *
+     * @param array $comments
+     */
+    private static function fillParentsAndChildren(array $comments)
+    {
+        foreach ($comments as $comment) {
+            if ($comment->getParentId()) {
+                $parent = $comments[$comment->getParentId()];
+                $comment->setParent($parent);
+                $parent->addAChild($comment);
+            }
+        }
     }
 }
