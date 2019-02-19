@@ -46,12 +46,9 @@ class HomeController extends Controller
         foreach ($categories as $category) {
             $catId = $category->getId();
             $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1);
-            // Format creation dates
+            // Format creation dates and translate markdown
             foreach ($postsByCategory[$catId] as $post) {
-                $post->setCreationDate(self::formatDate($post->getCreationDate()));
-                if ($post->getLastModificationDate()) {
-                    $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
-                }
+                BlogController::prepareAPost($post);
             }
         }
 

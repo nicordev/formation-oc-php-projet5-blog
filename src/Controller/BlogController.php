@@ -14,6 +14,7 @@ use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
 use Exception;
+use Michelf\Markdown;
 use Model\Entity\Category;
 use Model\Entity\Comment;
 use Model\Entity\Entity;
@@ -86,7 +87,7 @@ class BlogController extends Controller
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
-            self::convertDatesOfPost($post);
+            self::prepareAPost($post);
         }
 
         self::render(self::VIEW_BLOG, [
@@ -109,7 +110,7 @@ class BlogController extends Controller
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
         foreach ($posts as $post) {
-            self::convertDatesOfPost($post);
+            self::prepareAPost($post);
         }
         $tag = $this->tagManager->get($tagId);
 
@@ -135,7 +136,7 @@ class BlogController extends Controller
     {
         try {
             $post = $this->postManager->get($postId);
-            self::convertDatesOfPost($post);
+            self::prepareAPost($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
@@ -565,6 +566,21 @@ class BlogController extends Controller
         $this->showAdminPanel("Un commentaire a été supprimé.");
     }
 
+    /**
+     * Prepare a post before showing it (convert dates and markdown contents)
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    public static function prepareAPost(Post $post)
+    {
+        self::convertDatesOfPost($post);
+        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
+        if (!empty($post->getContent())) {
+            $post->setContent(self::convertMarkdown($post->getContent()));
+        }
+    }
+
     // Private
 
     /**
@@ -880,5 +896,16 @@ class BlogController extends Controller
         }
 
         return $message;
+    }
+
+    /**
+     * Convert markdown content
+     *
+     * @param string $content
+     * @return string
+     */
+    private static function convertMarkdown(string $content)
+    {
+        return Markdown::defaultTransform($content);
     }
 }
