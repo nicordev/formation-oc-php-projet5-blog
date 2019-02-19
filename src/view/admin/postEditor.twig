@@ -27,7 +27,7 @@
             {% if postToEdit %}
                 {# Delete post button #}
                 <div>
-                    <form action="/admin/delete-post" method="post">
+                    <form id="delete-post-form" action="/admin/delete-post" method="post">
                         <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                         <p>
                             <input class="btn" type="submit" value="Supprimer l'article">
@@ -39,12 +39,12 @@
 
         <div>
             {% if postToEdit %}
-            <form action="/admin/edit-post" method="post">
+            <form id="publish-post-form" action="/admin/edit-post" method="post">
                 <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
                 <input type="hidden" name="post-editor-id" value="{{ connectedMember.getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
             {% else %}
-            <form action="/admin/add-post" method="post">
+            <form id="publish-post-form" action="/admin/add-post" method="post">
                 <input type="hidden" name="post-author-id" value="{{ connectedMember.getId }}">
             {% endif %}
 
@@ -81,13 +81,67 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Tags #}
     <script src="/js/tagHandler.js"></script>
     <script>
         myTagHandler.setTagEventListeners();
     </script>
+    {# Editor #}
     <script src="/js/chooseEditor.js"></script>
     {# TinyMCE #}
     <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
+    {# Confirmation messages #}
+    <script src="/js/areYouSure.js"></script>
+    <script>
+        // Delete the post
+        var deleteFormElt = document.getElementById('delete-post-form');
+        deleteFormElt.addEventListener('submit', function (event) {
+            event.preventDefault();
+            areYouSure.show("L'article sera supprimé. Continuer ?", submitForm);
+
+            function submitForm() {
+                event.target.submit();
+            }
+        });
+
+        // Publish the post
+        var publishFormElt = document.getElementById('publish-post-form');
+        publishFormElt.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            if (!checkTagsBeforeSubmit()) {
+                areYouSure.show("L'article n'a pas d'étiquette. Il n'apparaîtra pas sur le site. Continuer ?", submitForm);
+            }
+
+            function submitForm() {
+                event.target.submit();
+            }
+
+            function isChecked(element) {
+                if (element.hasAttribute('checked')) {
+                    return true;
+                }
+                return false;
+            }
+
+            /**
+             * Submit the form if there is at least one tag selected
+             *
+             * @returns {boolean}
+             */
+            function checkTagsBeforeSubmit() {
+                var tagElts = document.getElementsByName('tags[]');
+
+                for (tagElt of tagElts) {
+                    if (isChecked(tagElt)) {
+                        submitForm();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    </script>
 {% endblock %}
 
 

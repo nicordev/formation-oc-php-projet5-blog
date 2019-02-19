@@ -72,9 +72,7 @@ class PostManager extends Manager
 
         // Associate tags and post
         $tags = $modifiedPost->getTags();
-        if (!empty($tags)) {
-            $this->associatePostAndTags($modifiedPost, $tags);
-        }
+        $this->associatePostAndTags($modifiedPost, $tags);
     }
 
     /**
@@ -345,16 +343,18 @@ class PostManager extends Manager
 
         $this->query($query, ['postId' => $post->getId()]);
 
-        // Add
-        $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
+        if (!empty($tags)) {
+            // Add
+            $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
                 VALUES (:postId, :tagId)';
-        $requestAdd = $this->database->prepare($query);
+            $requestAdd = $this->database->prepare($query);
 
-        foreach ($tags as $tag) {
-            $requestAdd->execute([
-                'postId' => $post->getId(),
-                'tagId' => $tag->getId()
-            ]);
+            foreach ($tags as $tag) {
+                $requestAdd->execute([
+                    'postId' => $post->getId(),
+                    'tagId' => $tag->getId()
+                ]);
+            }
         }
     }
 
