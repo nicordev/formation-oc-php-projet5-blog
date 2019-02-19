@@ -35,11 +35,6 @@
                     </form>
                 </div>
             {% endif %}
-
-            {# Choose editor #}
-            <div>
-                <button class="btn" type="button" onclick="myEditor.switchEditor(event);">Ouvrir l'éditeur</button>
-            </div>
         </div>
 
         <div>
@@ -64,12 +59,16 @@
                 </p>
                 {# Post excerpt #}
                 <p>
-                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label><br>
+                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label>
+                    {# Choose editor #}
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-excerpt');">Ouvrir l'éditeur</button><br>
                     <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
                 </p>
                 {# Post content #}
                 <p>
-                    <label for="post-content">Contenu de l'article</label><br>
+                    <label for="post-content">Contenu de l'article</label>
+                    {# Choose editor #}
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
 

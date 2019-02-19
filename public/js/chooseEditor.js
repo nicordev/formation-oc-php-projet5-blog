@@ -7,31 +7,32 @@ var myEditor = {
      * Switch the editor on or off
      *
      * @param event
+     * @param elementId
      */
-    switchEditor: function (event) {
+    switchEditor: function (event, elementId) {
 
         var btnElt = event.target;
 
         if (btnElt.textContent === myEditor.openText) {
-            myEditor.runTinyMCE();
+            myEditor.runTinyMCE(elementId);
             btnElt.textContent = myEditor.closeText;
         } else {
-            myEditor.closeTinyMCE();
+            myEditor.closeTinyMCE(elementId);
             btnElt.textContent = myEditor.openText;
         }
     },
 
     /**
-     * Launch TinyMCE
+     * Launch TinyMCE in a DOM element
      */
-    runTinyMCE: function () {
-        tinymce.init({ selector:'#post-content' });
+    runTinyMCE: function (elementId) {
+        tinymce.init({ selector: elementId });
     },
 
     /**
-     * Remove TinyMCE
+     * Remove TinyMCE from a DOM element
      */
-    closeTinyMCE: function () {
-        tinymce.remove("#post-content");
+    closeTinyMCE: function (elementId) {
+        tinymce.remove(elementId);
     }
 }
