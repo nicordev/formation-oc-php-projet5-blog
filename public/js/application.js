@@ -146,6 +146,11 @@ var myApp = {
         elt.setAttribute('value', elt.value);
     },
 
+    /**
+     * Hide an element
+     *
+     * @param elementId
+     */
     hideElementFromId: function (elementId)
     {
         document.getElementById(elementId).style.display = 'none';
@@ -191,6 +196,7 @@ var myApp = {
             checkboxElt.value = value;
             checkboxElt.id = value;
             checkboxElt.checked = checked;
+            checkboxElt.setAttribute('checked', 'checked');
 
             return checkboxElt;
         },

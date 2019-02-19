@@ -8,7 +8,7 @@
             {% if availableTags %}
                 {% for tag in availableTags %}
                     <li>
-                        <input type="checkbox" name="tags[]" value="{{ tag }}" {% if tag in selectedTags %}checked{% endif %}>
+                        <input type="checkbox" name="tags[]" value="{{ tag }}" {% if tag in selectedTags %}checked{% endif %} onchange="refreshChecked(event);">
                         <label class="available-tag right-label" for="{{ tag }}">{{ tag }}</label>
                     </li>
                 {% endfor %}

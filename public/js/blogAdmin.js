@@ -38,7 +38,6 @@ var myBlogAdmin = {
     highlightIncorrectTags: function ()
     {
         let tagElts = document.getElementsByClassName(myBlogAdmin.TAG_CLASSES);
-        console.log(tagElts);
 
         myApp.formatBadElements(tagElts, 'bad', true, true, true);
     },
