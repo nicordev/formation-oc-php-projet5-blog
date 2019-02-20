@@ -32,6 +32,7 @@ class PostManager extends Manager
             'lastEditorId' => 'p_last_editor_id_fk',
             'creationDate' => 'p_creation_date',
             'lastModificationDate' => 'p_last_modification_date',
+            'markdown' => 'p_markdown',
             'title' => 'p_title',
             'excerpt' => 'p_excerpt',
             'content' => 'p_content'

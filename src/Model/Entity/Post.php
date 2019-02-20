@@ -15,6 +15,7 @@ class Post extends Entity
     protected $lastEditorId = null;
     protected $creationDate = null;
     protected $lastModificationDate = null;
+    protected $markdown = false;
     protected $title = null;
     protected $excerpt = null;
     protected $content = null;

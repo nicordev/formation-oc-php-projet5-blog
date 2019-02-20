@@ -570,14 +570,17 @@ class BlogController extends Controller
      * Prepare a post before showing it (convert dates and markdown contents)
      *
      * @param Post $post
+     * @param bool $translateMarkdown
      * @throws Exception
      */
-    public static function prepareAPost(Post $post)
+    public static function prepareAPost(Post $post, bool $translateMarkdown = true)
     {
         self::convertDatesOfPost($post);
-        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
-        if (!empty($post->getContent())) {
-            $post->setContent(self::convertMarkdown($post->getContent()));
+        if ($translateMarkdown) {
+            $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
+            if (!empty($post->getContent())) {
+                $post->setContent(self::convertMarkdown($post->getContent()));
+            }
         }
     }
 
@@ -902,6 +905,7 @@ class BlogController extends Controller
      * Convert markdown content
      *
      * @param string $content
+     * @param bool $defaultTransform
      * @return string
      */
     private static function convertMarkdown(string $content)
