@@ -578,7 +578,6 @@ class BlogController extends Controller
     public static function prepareAPost(Post $post)
     {
         self::convertDatesOfPost($post);
-        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
         if ($post->isMarkdown() && !empty($post->getContent())) {
             $post->setContent(self::convertMarkdown($post->getContent()));
         }

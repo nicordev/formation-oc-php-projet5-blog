@@ -269,9 +269,9 @@ VALUES
 (null, null, 1, 5, null, '2019-02-15 12:17:52', null, 'Un commentaire E.', 1),
 (null, null, 1, 5, null, '2019-02-15 12:17:52', null, 'Un commentaire en attente.', 0),
 (null, null, 2, 2, null, '2019-02-15 12:13:52', null, 'Purée mais cet article est <strong>bidon !!!</strong>', 1),
-(null, 1, 2, 3, null, '2019-02-15 12:13:52', null, 'Tu t''es fait avoir ! Tes balises ne sont pas passées !', 1),
-(null, 2, 2, 4, null, '2019-02-15 12:14:52', null, 'Ah oui. C''est triste.', 1),
-(null, 1, 2, 5, null, '2019-02-15 12:16:52', null, 'Au moins pas de risque de piratage via les commentaires.', 1),
+(null, 7, 2, 3, null, '2019-02-15 12:13:52', null, 'Tu t''es fait avoir ! Tes balises ne sont pas passées !', 1),
+(null, 8, 2, 4, null, '2019-02-15 12:14:52', null, 'Ah oui. C''est triste.', 1),
+(null, 7, 2, 5, null, '2019-02-15 12:16:52', null, 'Au moins pas de risque de piratage via les commentaires.', 1),
 (null, null, 2, 5, null, '2019-02-15 12:17:52', null, 'Cet article est un article d''exemple pour montrer à quel point le système de commentaires est génialissime.', 1),
 (null, null, 2, 5, null, '2019-02-15 12:17:52', null, 'Un commentaire écrit par un troll. Supprimez le !', 0),
 (null, null, 2, 5, null, '2019-02-15 12:17:52', null, 'Se komantère é bouré deu fotes. Modifiez le svp.', 0);
