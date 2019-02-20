@@ -20,60 +20,62 @@
             <div class="admin-box">
                 <h2>Commentaires</h2>
 
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Statut</th>
-                        <th>Commentaire</th>
-                        <th>Auteur</th>
-                        <th>Article</th>
-                        <th>En réponse à</th>
-                        <th>Date de création</th>
-                        <th>Dernière modification</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for comment in comments %}
+                <div class="limit-height">
+                    <table class="table table-striped">
+                        <thead>
                         <tr>
-                            <td>
-                                {% if comment.isApproved %}
-                                    Approuvé
-                                {% else %}
-                                    En attente
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a class="admin-link font-weight-normal" href="/admin/comment-editor?id={{ comment.getId }}">{{ comment.getContent }}</a>
-                            </td>
-                            <td>
-                                <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a>
-                            </td>
-                            <td>
-                                <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
-                            </td>
-                            <td>
-                                {% if comment.getParentId %}
-                                    <a class="comment-info" href="/member-profile?id={{ comment.getParent.getAuthorId }}">{{ comment.getParent.getAuthor }}</a><br>
-                                    <span class="comment-info">{{ comment.getParent.getCreationDate }}</span><br>
-                                    <a class="admin-link font-weight-normal comment-info" href="/admin/comment-editor?id={{ comment.getParent.getId }}">{{ comment.getParent.getContent }}</a>
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>
-                                <span class="table-date">{{ comment.getCreationDate }}</span>
-                            </td>
-                            <td>
-                                {% if comment.getLastModificationDate %}
-                                    <span class="table-date">{{ comment.getLastModificationDate }} par <a href="/member-profile?id={{ comment.getLastEditorId }}">{{ comment.getLastEditor }}</a></span>
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
+                            <th>Statut</th>
+                            <th>Commentaire</th>
+                            <th>Auteur</th>
+                            <th>Article</th>
+                            <th>En réponse à</th>
+                            <th>Date de création</th>
+                            <th>Dernière modification</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for comment in comments %}
+                            <tr>
+                                <td>
+                                    {% if comment.isApproved %}
+                                        Approuvé
+                                    {% else %}
+                                        En attente
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a class="admin-link font-weight-normal" href="/admin/comment-editor?id={{ comment.getId }}">{{ comment.getContent }}</a>
+                                </td>
+                                <td>
+                                    <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a>
+                                </td>
+                                <td>
+                                    <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
+                                </td>
+                                <td>
+                                    {% if comment.getParentId %}
+                                        <a class="comment-info" href="/member-profile?id={{ comment.getParent.getAuthorId }}">{{ comment.getParent.getAuthor }}</a><br>
+                                        <span class="comment-info">{{ comment.getParent.getCreationDate }}</span><br>
+                                        <a class="admin-link font-weight-normal comment-info" href="/admin/comment-editor?id={{ comment.getParent.getId }}">{{ comment.getParent.getContent }}</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="table-date">{{ comment.getCreationDate }}</span>
+                                </td>
+                                <td>
+                                    {% if comment.getLastModificationDate %}
+                                        <span class="table-date">{{ comment.getLastModificationDate }} par <a href="/member-profile?id={{ comment.getLastEditorId }}">{{ comment.getLastEditor }}</a></span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         {% endif %}
 
@@ -87,79 +89,70 @@
                 </p>
             {% endif %}
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Titre</th>
-                        <th scope="col">Auteur</th>
-                        <th scope="col">Etiquettes</th>
-                        <th scope="col">Catégories</th>
-                        <th scope="col">Date de création</th>
-                        <th scope="col">Dernière modification</th>
-                    </tr>
-                </thead>
+            <div class="limit-height">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Titre</th>
+                            <th scope="col">Auteur</th>
+                            <th scope="col">Etiquettes</th>
+                            <th scope="col">Catégories</th>
+                            <th scope="col">Date de création</th>
+                            <th scope="col">Dernière modification</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                {% for post in posts %}
-                    <tr>
-                        <td scope="row">
-                            {% if 'author' in roles and post.getAuthorId is same as(connectedMember.getId) or 'editor' in roles %}
-                                <form action="/admin/post-editor" method="post">
-                                    <input type="hidden" name="post-id" value="{{ post.getId }}">
-                                    <input class="admin-link" type="submit" value="{{ post.getTitle }}">
-                                </form>
-                            {% else %}
-                                <span>{{ post.getTitle }}</span>
-                            {% endif %}
-                        </td>
-                        <td scope="row">
-                            <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
-                        </td>
-                        <td scope="row">
-                            {% set postTags = post.getTags %}
-                            {% if postTags %}
-                                {% for tag in postTags %}
-                                    <span class="table-tag">#{{ tag.getName }}</span>
-                                {% endfor %}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td scope="row">
-                            {% set postCategories = post.getCategories %}
-                            {% if postCategories %}
-                                {% for category in postCategories %}
-                                    {{ category.getName }}
-                                {% endfor %}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td scope="row">
-                            <span class="table-date">{{ post.getCreationDate }}</span>
-                        </td>
-                        <td scope="row">
-                            {% if post.getLastModificationDate %}
-                                <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-
-                <tfoot>
-                    <tr>
-                        <th scope="col">Titre</th>
-                        <th scope="col">Auteur</th>
-                        <th scope="col">Etiquettes</th>
-                        <th scope="col">Catégories</th>
-                        <th scope="col">Date de création</th>
-                        <th scope="col">Dernière modification</th>
-                    </tr>
-                </tfoot>
-            </table>
+                    <tbody>
+                    {% for post in posts %}
+                        <tr>
+                            <td scope="row">
+                                {% if 'author' in roles and post.getAuthorId is same as(connectedMember.getId) or 'editor' in roles %}
+                                    <form action="/admin/post-editor" method="post">
+                                        <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                        <input class="admin-link" type="submit" value="{{ post.getTitle }}">
+                                    </form>
+                                {% else %}
+                                    <span>{{ post.getTitle }}</span>
+                                {% endif %}
+                            </td>
+                            <td scope="row">
+                                <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
+                            </td>
+                            <td scope="row">
+                                {% set postTags = post.getTags %}
+                                {% if postTags %}
+                                    {% for tag in postTags %}
+                                        <span class="table-tag">#{{ tag.getName }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td scope="row">
+                                {% set postCategories = post.getCategories %}
+                                {% if postCategories %}
+                                    {% for category in postCategories %}
+                                        {{ category.getName }}
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td scope="row">
+                                <span class="table-date">{{ post.getCreationDate }}</span>
+                            </td>
+                            <td scope="row">
+                                {% if post.getLastModificationDate %}
+                                    <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <hr>
@@ -174,37 +167,39 @@
                 <a class="btn" href="/admin/category-editor">Ajouter une catégorie</a>
             </p>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Catégorie</th>
-                        <th>Etiquettes associées</th>
-                    </tr>
-                </thead>
+            <div class="limit-height">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Catégorie</th>
+                            <th>Etiquettes associées</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                {% for category in categories %}
-                    <tr>
-                        <td>
-                            <form action="/admin/category-editor" method="post">
-                                <input type="hidden" name="category-id" value="{{ category.getId() }}">
-                                <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
-                            </form>
-                        </td>
-                        <td>
-                            {% set categoryTags = category.getTags() %}
-                            {% if categoryTags %}
-                                {% for tag in categoryTags %}
-                                    <span class="table-tag">#{{ tag.getName }}</span>
-                                {% endfor %}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>
+                                <form action="/admin/category-editor" method="post">
+                                    <input type="hidden" name="category-id" value="{{ category.getId() }}">
+                                    <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
+                                </form>
+                            </td>
+                            <td>
+                                {% set categoryTags = category.getTags() %}
+                                {% if categoryTags %}
+                                    {% for tag in categoryTags %}
+                                        <span class="table-tag">#{{ tag.getName }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <hr>
@@ -225,7 +220,7 @@
                         </div>
                 </p>
 
-                <ul id="tag-list">
+                <ul id="tag-list" class="limit-height">
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
@@ -252,38 +247,40 @@
         <div class="admin-box">
             <h2>Membres du site</h2>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">
-                            Nom
-                        </th>
-                        <th scope="col">
-                            Email
-                        </th>
-                        <th scope="col">
-                            Rôles
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for member in members %}
-                    <tr>
-                        <td scope="row">
-                            <a class="admin-link" href="/member-profile?id={{ member.getId }}">{{ member.getName }}</a>
-                        </td>
-                        <td scope="row">
-                            {{ member.getEmail }}
-                        </td>
-                        <td scope="row">
-                            {% for role in member.getRoles %}
-                                {{ role }}
-                            {% endfor %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="limit-height">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                Nom
+                            </th>
+                            <th scope="col">
+                                Email
+                            </th>
+                            <th scope="col">
+                                Rôles
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for member in members %}
+                        <tr>
+                            <td scope="row">
+                                <a class="admin-link" href="/member-profile?id={{ member.getId }}">{{ member.getName }}</a>
+                            </td>
+                            <td scope="row">
+                                {{ member.getEmail }}
+                            </td>
+                            <td scope="row">
+                                {% for role in member.getRoles %}
+                                    {{ role }}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         {% endif %}
 
