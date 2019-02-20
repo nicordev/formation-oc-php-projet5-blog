@@ -166,10 +166,6 @@ blockquote p::after {
     color: white;
 }
 
-.card:hover a {
-    color: black;
-}
-
 .card:hover {
     background-color: #0c5460;
 }

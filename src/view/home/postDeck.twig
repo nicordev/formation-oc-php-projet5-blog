@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
                         <h5 class="card-title">{{ post.getTitle }}</h5>
-                        <p class="card-text">{{ post.getExcerpt|raw }}</p>
+                        <p class="card-text">{{ post.getExcerpt }}</p>
                     </a>
                     <div class="card-info">{% include 'blog/postMeta.twig' %}</div>
                 </div>

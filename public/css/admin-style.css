@@ -96,6 +96,11 @@ footer ul li a, footer ul li a:hover {
     font-weight: normal;
 }
 
+.editor-info {
+    font-size: 0.75em;
+    color: #b9bbbe;
+}
+
 #new-tag-input {
     font-size: 0.75em;
 }

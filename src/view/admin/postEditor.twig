@@ -54,13 +54,13 @@
                 </p>
                 {# Post title #}
                 <p>
-                    <label for="post-title">Titre de l'article</label><br>
-                    <input class="admin-input w100" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}">
+                    <label for="post-title">Titre de l'article <span class="editor-info">(100 caractères maximum)</span></label><span class="badge" id="title-character-counter"></span><br>
+                    <input class="admin-input w100" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}" onkeyup="countCharacters(event.target, 'title-character-counter', 100);">
                 </p>
                 {# Post excerpt #}
                 <p>
-                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label>
-                    <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
+                    <label for="post-excerpt">Extrait de l'article <span class="editor-info">(300 caractères maximum)</span></label><span class="badge" id="excerpt-character-counter"></span><br>
+                    <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5" onkeyup="countCharacters(event.target, 'excerpt-character-counter', 300);">{{ postToEdit.getExcerpt }}</textarea>
                 </p>
                 {# Post content #}
                 <p>
@@ -92,6 +92,8 @@
     {# Confirmation messages #}
     <script src="/js/areYouSure.js"></script>
     <script>
+        // Confirmation messages
+
         /**
          * Refresh the checked attribute
          */
@@ -108,14 +110,16 @@
 
         // Delete the post
         var deleteFormElt = document.getElementById('delete-post-form');
-        deleteFormElt.addEventListener('submit', function (event) {
-            event.preventDefault();
-            areYouSure.show("L'article sera supprimé. Continuer ?", submitForm);
+        if (deleteFormElt) {
+            deleteFormElt.addEventListener('submit', function (event) {
+                event.preventDefault();
+                areYouSure.show("L'article sera supprimé. Continuer ?", submitForm);
 
-            function submitForm() {
-                event.target.submit();
-            }
-        });
+                function submitForm() {
+                    event.target.submit();
+                }
+            });
+        }
 
         // Publish the post
         var publishFormElt = document.getElementById('publish-post-form');
@@ -154,6 +158,39 @@
                 return false;
             }
         });
+    </script>
+    {# Character counter #}
+    <script>
+        /**
+         * Fill an element with the number of characters of the target element
+         *
+         * @param targetElt
+         * @param counterId
+         * @param limit
+         */
+        function countCharacters(targetElt, counterId, limit = null) {
+
+            var characterCounterElt = document.getElementById(counterId),
+                count = 0;
+
+            count = targetElt.value.length;
+
+            if (count > 1) {
+                characterCounterElt.textContent = count + ' caractères';
+            } else if (count === 1) {
+                characterCounterElt.textContent = count + ' caractère';
+            } else {
+                characterCounterElt.textContent = '';
+            }
+
+            if (limit) {
+                if (count > limit) {
+                    characterCounterElt.style.color = '#dd4444';
+                } else {
+                    characterCounterElt.style.color = '#b9bbbe';
+                }
+            }
+        }
     </script>
 {% endblock %}
 
