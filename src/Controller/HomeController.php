@@ -45,7 +45,7 @@ class HomeController extends Controller
 
         foreach ($categories as $category) {
             $catId = $category->getId();
-            $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1);
+            $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1, null, false);
             // Format creation dates and translate markdown
             foreach ($postsByCategory[$catId] as $post) {
                 BlogController::prepareAPost($post);

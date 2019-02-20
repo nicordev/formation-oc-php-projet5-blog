@@ -264,7 +264,7 @@ class PostManager extends Manager
         if ($withContent) {
             $columns = '*';
         } else {
-            $columns = 'p_id, p_excerpt, p_last_modification_date, p_last_editor_id_fk, p_author_id_fk, p_creation_date, p_title';
+            $columns = 'p_id, p_author_id_fk, p_last_editor_id_fk, p_creation_date, p_last_modification_date, p_markdown, p_excerpt, p_title';
         }
 
         $query = 'SELECT ' . $columns . ' FROM bl_post

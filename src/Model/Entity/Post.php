@@ -139,6 +139,22 @@ class Post extends Entity
     }
 
     /**
+     * @return bool
+     */
+    public function isMarkdown(): bool
+    {
+        return $this->markdown;
+    }
+
+    /**
+     * @param bool $markdown
+     */
+    public function setMarkdown(bool $markdown): void
+    {
+        $this->markdown = $markdown;
+    }
+
+    /**
      * @return string
      */
     public function getTitle(): ?string

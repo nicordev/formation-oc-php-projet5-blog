@@ -68,7 +68,8 @@
                 <p>
                     <label for="post-content">Contenu de l'article</label>
                     {# Choose editor #}
-                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button><br>
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button>
+                    <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
 

@@ -211,10 +211,12 @@ class BlogController extends Controller
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
+        $markdown = true;
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
+            $markdown = $postToEdit->isMarkdown();
         }
 
         self::render(self::VIEW_POST_EDITOR, [
@@ -223,6 +225,7 @@ class BlogController extends Controller
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames,
+            'markdown' => $markdown,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
@@ -570,17 +573,14 @@ class BlogController extends Controller
      * Prepare a post before showing it (convert dates and markdown contents)
      *
      * @param Post $post
-     * @param bool $translateMarkdown
      * @throws Exception
      */
-    public static function prepareAPost(Post $post, bool $translateMarkdown = true)
+    public static function prepareAPost(Post $post)
     {
         self::convertDatesOfPost($post);
-        if ($translateMarkdown) {
-            $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
-            if (!empty($post->getContent())) {
-                $post->setContent(self::convertMarkdown($post->getContent()));
-            }
+        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
+        if ($post->isMarkdown() && !empty($post->getContent())) {
+            $post->setContent(self::convertMarkdown($post->getContent()));
         }
     }
 
@@ -761,6 +761,11 @@ class BlogController extends Controller
             $tags = self::getTagsFromForm();
             if ($tags) {
                 $post->setTags($tags);
+            }
+
+            // Markdown
+            if (isset($_POST['markdown-content']) && !empty($_POST['markdown-content'])) {
+                $post->setMarkdown(true);
             }
 
             return $post;
