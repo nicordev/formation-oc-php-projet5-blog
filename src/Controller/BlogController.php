@@ -310,7 +310,7 @@ class BlogController extends Controller
         $message = '';
 
         if ($newPost !== null) {
-            // Cut if title and excerpt are too big
+            // Cut if title, excerpt or content are too big
             $message = self::cutPost($newPost);
 
             // Tags
@@ -887,19 +887,23 @@ class BlogController extends Controller
      */
     private static function cutPost(Post $post, string $message = '')
     {
-        // Excerpt
-        if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
-            // We cut
-            $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
-            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
-
-        }
         // Title
         if (strlen($post->getTitle()) > PostManager::TITLE_LENGTH) {
             // We cut
             $post->setTitle(substr($post->getTitle(), 0, PostManager::TITLE_LENGTH));
             $message .= "Attention : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères. Il a été coupé.<br>";
-
+        }
+        // Excerpt
+        if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
+            // We cut
+            $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
+            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
+        }
+        // Content
+        if (strlen($post->getContent()) > PostManager::CONTENT_LENGTH) {
+            // We cut
+            $post->setContent(substr($post->getContent(), 0, PostManager::CONTENT_LENGTH));
+            $message .= "Attention : le contenu ne doit pas dépasser " . PostManager::CONTENT_LENGTH . " caractères. Il a été coupé.<br>";
         }
 
         return $message;

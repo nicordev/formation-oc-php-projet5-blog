@@ -19,6 +19,7 @@ class PostManager extends Manager
 {
     public const EXCERPT_LENGTH = 300;
     public const TITLE_LENGTH = 100;
+    const CONTENT_LENGTH = 300000;
 
     /**
      * PostManager constructor.

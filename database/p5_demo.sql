@@ -61,7 +61,7 @@ CREATE TABLE bl_post(
                         p_markdown TINYINT(1) NOT NULL DEFAULT 0,
                         p_title VARCHAR(100) NOT NULL,
                         p_excerpt VARCHAR(300) NOT NULL,
-                        p_content TEXT NOT NULL,
+                        p_content LONGTEXT NOT NULL,
 
                         CONSTRAINT pk_p_id
                             PRIMARY KEY (p_id),
