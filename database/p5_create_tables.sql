@@ -10,6 +10,17 @@ DROP TABLE IF EXISTS bl_role;
 DROP TABLE IF EXISTS bl_category;
 DROP TABLE IF EXISTS bl_tag;
 
+DROP TABLE IF EXISTS bl_key;
+
+CREATE TABLE bl_key(
+    key_id INT UNSIGNED AUTO_INCREMENT,
+    key_value INT UNSIGNED NOT NULL,
+
+    CONSTRAINT pk_key_id
+        PRIMARY KEY (key_id)
+)
+ENGINE = InnoDB;
+
 CREATE TABLE bl_role(
 	r_id INT UNSIGNED AUTO_INCREMENT,
 	r_name VARCHAR(100),
