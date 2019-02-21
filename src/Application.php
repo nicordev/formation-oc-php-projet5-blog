@@ -17,7 +17,6 @@ use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
 use Controller\MemberController;
-use Exception;
 use ReflectionException;
 use ReflectionMethod;
 

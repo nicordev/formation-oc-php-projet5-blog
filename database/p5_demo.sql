@@ -289,7 +289,7 @@ VALUES
 <p>
     <a href="https://carte.ovh">carte.ovh</a> utilise l''API de Google Maps et celle du géoportail.
 </p>'),
-(null, 3, null, '2019-01-07 14:51:11', null, 0, 'Mes projets réalisés lors de ma formation de développeur backend', 'Voici les liens vers les projets mis en ligne. Vous trouverez aussi les fichiers sources sur mon profil GitHub.', '<h2>Les projets en ligne</h2>
+(null, 3, null, '2019-01-07 14:51:11', null, 0, 'Mes projets réalisés pendant la formation d''OpenClassrooms', 'Voici les liens vers les projets mis en ligne. Vous trouverez aussi les fichiers sources sur mon profil GitHub.', '<h2>Les projets en ligne</h2>
 
 <div class="card-deck">
     <div class="card">

@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Application\MailSender\MailSender;
 use Model\Manager\CategoryManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
@@ -80,10 +81,15 @@ class HomeController extends Controller
             $contactName = htmlspecialchars($_POST['contact-name']);
             $subject = "Blog de Nicolas Renvoisé : un message de {$contactName} pour l'admin.";
             $message = htmlspecialchars($_POST['contact-message']);
-            $header = 'From:' . htmlspecialchars($_POST['contact-email']);
+            $from = htmlspecialchars($_POST['contact-email']);
 
             foreach ($admins as $admin) {
-                mail($admin->getEmail(), $subject, $message, $header);
+                MailSender::send(
+                    $admin->getEmail(),
+                    $subject,
+                    $message,
+                    $from
+                );
             }
             $this->showHome('Votre message a été envoyé.');
 
