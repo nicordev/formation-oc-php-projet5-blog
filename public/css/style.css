@@ -94,6 +94,20 @@ blockquote p::after {
     border-radius: 5px;
 }
 
+.small-link-wrap {
+    margin: 0 0 10px 10px;
+}
+
+.small-link-wrap a {
+    font-size: 0.75em;
+    color: #5a6268;
+}
+
+.small-link-wrap a:hover {
+    color: #0c5460;
+    text-decoration: underline;
+}
+
 #logo {
     width: 50px;
     height: 50px;

@@ -6,6 +6,7 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\MemberException;
+use Application\MailSender\MailSender;
 use Model\Entity\Member;
 use Model\Entity\Role;
 use Model\Manager\MemberManager;
@@ -22,6 +23,8 @@ class MemberController extends Controller
     public const VIEW_WELCOME = 'member/welcomePage.twig';
     public const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
     public const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
+    public const VIEW_PASSWORD_RECOVERY = 'member/passwordRecovery.twig';
+
     public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
     public function __construct(
@@ -160,6 +163,21 @@ class MemberController extends Controller
         }
     }
 
+    /**
+     * Show a page to recover a lost password
+     *
+     * @param string|null $message
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showPasswordRecovery(?string $message = null)
+    {
+        echo $this->twig->render(self::VIEW_PASSWORD_RECOVERY, [
+            'message' => $message
+        ]);
+    }
+
     // Actions
 
     /**
@@ -272,6 +290,32 @@ class MemberController extends Controller
     {
         unset($_SESSION['connected-member']);
         header('Location: /home');
+    }
+
+    /**
+     * Send an email with a link to reset a password
+     *
+     * @param string $email
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \Application\Exception\BlogException
+     */
+    public function sendPasswordRecoveryMail(string $email)
+    {
+        $link = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/reset-password?email=' . $email;
+
+        if (!empty($email) && $this->memberManager->emailExists($email)) {
+            $subject = 'Blog de Nicolas Renvoisé - Mot de passe perdu';
+            $content = 'Bonjour, pour réinitialiser votre mot de passe, suivez ce lien : ' . $link;
+            if (!MailSender::send($email, $subject, $content)) {
+                $this->showPasswordRecovery("L'email n'a pas pu être envoyé. Veuillez réessayer.");
+            } else {
+                $this->showConnectionPage('Un email a été envoyé à l\'adresse ' . $email . ' pour vous permettre de réinitialiser votre mot de passe');
+            }
+        } else {
+            $this->showPasswordRecovery('Vous devez entrer un email valide');
+        }
     }
 
     // Private

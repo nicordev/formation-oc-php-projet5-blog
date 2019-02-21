@@ -90,6 +90,21 @@ class Router
 
             // Member
 
+            case '/password-lost':
+                $controller = MemberController::class;
+
+                if (isset($_GET['action']) && $_GET['action'] = 'send') {
+                    $method = 'sendPasswordRecoveryMail';
+                    $params = [
+                        'email' => htmlspecialchars($_POST['email'])
+                    ];
+                } else {
+                    $method = 'showPasswordRecovery';
+                    $message = 'Un mail contenant la marche à suivre va vous être envoyé en remplissant ce formulaire';
+                    $params = ['message' => $message];
+                }
+                break;
+
             case '/member-profile':
                 $controller = MemberController::class;
                 $method = 'showMemberProfile';

@@ -201,6 +201,27 @@ class MemberManager extends Manager
         return $members;
     }
 
+    /**
+     * Check if an email is associated to a member
+     *
+     * @param string $email
+     * @return bool
+     * @throws \Application\Exception\BlogException
+     */
+    public function emailExists(string $email)
+    {
+        $query = 'SELECT COUNT(m_email) FROM bl_member WHERE m_email = :email';
+
+        $requestCount = $this->query($query, ['email' => $email]);
+
+        $count = $requestCount->fetch(PDO::FETCH_NUM);
+
+        if (empty($count[0])) {
+            return false;
+        }
+        return true;
+    }
+
     // Private
 
     /**
