@@ -333,15 +333,17 @@ class PostManager extends Manager
      * Get the posts written by a member
      *
      * @param int $memberId
+     * @param bool $getContent
+     * @param bool $filterWithTags
      * @param int|null $numberOfPosts
      * @param int|null $start
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws BlogException
      */
-    public function getPostsOfAMember(int $memberId, bool $withContent = false, ?int $numberOfPosts = null, ?int $start = null): array
+    public function getPostsOfAMember(int $memberId, bool $getContent = false, bool $filterWithTags = true, ?int $numberOfPosts = null, ?int $start = null): array
     {
         $posts = [];
-        if ($withContent) {
+        if ($getContent) {
             $columns = '*';
         } else {
             $columns = $this->fields;
@@ -355,9 +357,21 @@ class PostManager extends Manager
         }
         $requestPosts = $this->query($query, ['memberId' => $memberId]);
 
-        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
-            $post = $this->createEntityFromTableData($postData, 'Post');
-            $posts[] = $post;
+        if ($filterWithTags) {
+            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+                $post = $this->createEntityFromTableData($postData, 'Post');
+                $post->setTags($this->getTagsOfAPost($post->getId()));
+                if ($post->getTags()) {
+                    $posts[] = $post;
+                }
+            }
+
+        } else {
+            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+                $post = $this->createEntityFromTableData($postData, 'Post');
+                $post->setTags($this->getTagsOfAPost($post->getId()));
+                $posts[] = $post;
+            }
         }
 
         return $posts;

@@ -141,7 +141,7 @@ class MemberController extends Controller
             $member = $_SESSION['connected-member'];
         }
 
-        $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false);
+        $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false, true);
         $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true);
 
         foreach ($memberComments as $memberComment) {
