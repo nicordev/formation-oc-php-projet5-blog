@@ -1,7 +1,7 @@
 
 <div class="blogpost-classification">
     {# Category #}
-    {% for category in categories %}
+    {% for category in post.getCategories %}
         <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a><span> </span>
     {% endfor %}
     <span> | </span>

@@ -80,6 +80,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showPostsOfACategory(int $categoryId)
     {
@@ -131,13 +132,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showASinglePost(int $postId, ?string $message = null)
     {
         try {
             $post = $this->postManager->get($postId);
             self::prepareAPost($post);
-            $categories = $this->categoryManager->getCategoriesFromPostId($postId);
+
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
                 self::convertDatesOfComment($comment);
@@ -149,7 +151,6 @@ class BlogController extends Controller
 
         self::render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories,
             'comments' => $comments,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
             'message' => $message
@@ -238,6 +239,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {

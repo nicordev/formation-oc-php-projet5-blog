@@ -103,6 +103,10 @@ class PostManager extends Manager
         $associatedTags = $this->getTagsOfAPost($post->getId());
         $post->setTags($associatedTags);
 
+        // Categories
+        $associatedCategories = $this->getCategoriesOfAPost($post->getId());
+        $post->setCategories($associatedCategories);
+
         // Author and editor
         $this->setMembersOfAPost($post);
 
@@ -150,14 +154,11 @@ class PostManager extends Manager
 
         $query = 'SELECT DISTINCT * FROM bl_category
             WHERE cat_id IN (
-                SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
-                WHERE ct_tag_id_fk IN (
-                    SELECT DISTINCT pt_tag_id_fk FROM bl_post_tag
-                    WHERE pt_post_id_fk = :id
-                )
+                SELECT DISTINCT pc_category_id_fk FROM bl_post_category
+                WHERE pc_post_id_fk = :postId
             )';
 
-        $requestCategories = $this->query($query, ['id' => $postId]);
+        $requestCategories = $this->query($query, ['postId' => $postId]);
 
         while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
             $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
@@ -265,19 +266,15 @@ class PostManager extends Manager
         if ($withContent) {
             $columns = '*';
         } else {
-            $columns = 'p_id, p_author_id_fk, p_last_editor_id_fk, p_creation_date, p_last_modification_date, p_markdown, p_excerpt, p_title';
+            $columns = $this->fields;
+            unset($columns['content']);
+            $columns = implode(', ', $columns);
         }
 
         $query = 'SELECT ' . $columns . ' FROM bl_post
             WHERE p_id IN (
-                SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
-                WHERE pt_tag_id_fk IN (
-                    SELECT tag_id FROM bl_tag
-                        INNER JOIN bl_category_tag
-                            ON tag_id = ct_tag_id_fk
-                        INNER JOIN bl_category
-                            ON cat_id = ct_category_id_fk
-                    WHERE cat_id = :id) # Use the requested category id here
+                SELECT DISTINCT pc_post_id_fk FROM bl_post_category
+                WHERE pc_category_id_fk = :categoryId
             )
             ORDER BY p_last_modification_date DESC, p_creation_date DESC';
         if ($numberOfLines) {
@@ -285,7 +282,7 @@ class PostManager extends Manager
         }
 
         $requestPosts = $this->query($query, [
-            'id' => $categoryId
+            'categoryId' => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
