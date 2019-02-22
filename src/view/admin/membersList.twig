@@ -1,0 +1,38 @@
+<div class="admin-box">
+    <h2>Membres du site</h2>
+
+    <div class="limit-height">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">
+                    Nom
+                </th>
+                <th scope="col">
+                    Email
+                </th>
+                <th scope="col">
+                    Rôles
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for member in members %}
+                <tr>
+                    <td scope="row">
+                        <a class="admin-link" href="/member-profile?id={{ member.getId }}">{{ member.getName }}</a>
+                    </td>
+                    <td scope="row">
+                        {{ member.getEmail }}
+                    </td>
+                    <td scope="row">
+                        {% for role in member.getRoles %}
+                            {{ role }}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
