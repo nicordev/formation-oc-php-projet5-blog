@@ -81,6 +81,7 @@
                 {% for post in memberPosts %}
                     <li>
                         <a href="/blog-post?post-id={{ post.getId }}">{{ post.getTitle }}</a>
+                        {% for tag in post.getTags %}<a class="classification" href="/blog/tag?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
                     </li>
                 {% endfor %}
                 </ul>
