@@ -329,6 +329,40 @@ class PostManager extends Manager
         return $posts;
     }
 
+    /**
+     * Get the posts written by a member
+     *
+     * @param int $memberId
+     * @param int|null $numberOfPosts
+     * @param int|null $start
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getPostsOfAMember(int $memberId, bool $withContent = false, ?int $numberOfPosts = null, ?int $start = null): array
+    {
+        $posts = [];
+        if ($withContent) {
+            $columns = '*';
+        } else {
+            $columns = $this->fields;
+            unset($columns['content']);
+            $columns = implode(', ', $columns);
+        }
+
+        $query = 'SELECT ' . $columns . ' FROM bl_post WHERE p_author_id_fk = :memberId';
+        if ($numberOfPosts) {
+            self::addLimitToQuery($query, $numberOfPosts, $start);
+        }
+        $requestPosts = $this->query($query, ['memberId' => $memberId]);
+
+        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $post = $this->createEntityFromTableData($postData, 'Post');
+            $posts[] = $post;
+        }
+
+        return $posts;
+    }
+
     // Private
 
     /**

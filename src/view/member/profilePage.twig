@@ -18,51 +18,73 @@
 
 {% block content %}
     <section id="profile">
-
-        {# Edit button #}
-        {% if connectedMember and connectedMember.getEmail is same as(member.getEmail) %}
-            <div>
-                <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
-            </div>
-        {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
-            <div>
-                <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
-            </div>
-        {% endif %}
-
-        {# Roles #}
         <div>
-            <dl>
-                <dt>Roles</dt>
-                <dd>
-                    {% if member.getRoles %}
-                        {% for role in member.getRoles %}
-                            {{ macros.translateRole(role) }}<br>
-                        {% endfor %}
-                    {% else %}
-                        {{ "Vos rôles ont été suspendus." }}
-                    {% endif %}
-                </dd>
-            </dl>
-        </div>
+            <h3>Profil</h3>
 
-        {# Informations #}
-        <div>
-            <dl>
-                <dt>Nom et email</dt>
-                <dd>
-                    {{ member.getName }}<br>
-                    <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
-                </dd>
-            </dl>
-            {% if member.getDescription %}
+            {# Edit button #}
+            {% if connectedMember and connectedMember.getEmail is same as(member.getEmail) %}
+                <div>
+                    <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
+                </div>
+            {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
+                <div>
+                    <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+                </div>
+            {% endif %}
+
+            {# Roles #}
+            <div>
                 <dl>
-                    <dt>Description</dt>
+                    <dt>Roles</dt>
                     <dd>
-                        {{ member.getDescription }}
+                        {% if member.getRoles %}
+                            {% for role in member.getRoles %}
+                                {{ macros.translateRole(role) }}<br>
+                            {% endfor %}
+                        {% else %}
+                            {{ "Vos rôles ont été suspendus." }}
+                        {% endif %}
                     </dd>
                 </dl>
-            {% endif %}
+            </div>
+
+            {# Informations #}
+            <div>
+                <dl>
+                    <dt>Nom et email</dt>
+                    <dd>
+                        {{ member.getName }}<br>
+                        <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
+                    </dd>
+                </dl>
+                {% if member.getDescription %}
+                    <dl>
+                        <dt>Description</dt>
+                        <dd>
+                            {{ member.getDescription }}
+                        </dd>
+                    </dl>
+                {% endif %}
+            </div>
         </div>
+
+        {# Posts #}
+        {% if memberPosts %}
+            <div>
+                <h3>Articles</h3>
+
+                <p>
+                    Nombre d'articles écrits : {{ memberPosts|length }}
+                </p>
+
+                <ul>
+                {% for post in memberPosts %}
+                    <li>
+                        <a href="/blog-post?post-id={{ post.getId }}">{{ post.getTitle }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </section>
 {% endblock %}

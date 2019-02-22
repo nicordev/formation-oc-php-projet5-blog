@@ -13,6 +13,7 @@ use Model\Entity\Member;
 use Model\Entity\Role;
 use Model\Manager\KeyManager;
 use Model\Manager\MemberManager;
+use Model\Manager\PostManager;
 use Model\Manager\RoleManager;
 use Twig_Environment;
 
@@ -20,6 +21,7 @@ class MemberController extends Controller
 {
     protected $memberManager;
     protected $roleManager;
+    protected $postManager;
     protected $keyManager;
 
     public const VIEW_REGISTRATION = 'member/registrationPage.twig';
@@ -34,6 +36,7 @@ class MemberController extends Controller
     public function __construct(
         MemberManager $memberManager,
         RoleManager $roleManager,
+        PostManager $postManager,
         KeyManager $keyManager,
         Twig_Environment $twig
     )
@@ -41,6 +44,7 @@ class MemberController extends Controller
         parent::__construct($twig);
         $this->memberManager = $memberManager;
         $this->roleManager = $roleManager;
+        $this->postManager = $postManager;
         $this->keyManager = $keyManager;
     }
 
@@ -122,6 +126,8 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
+     * @throws \Exception
      */
     public function showMemberProfile(?int $memberId = null)
     {
@@ -131,9 +137,12 @@ class MemberController extends Controller
             $member = $_SESSION['connected-member'];
         }
 
+        $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false);
+
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
+            'memberPosts' => $memberPosts
         ]);
     }
 

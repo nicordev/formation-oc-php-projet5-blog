@@ -103,6 +103,7 @@ class DIC
         return new MemberController(
             new MemberManager(),
             new RoleManager(),
+            new PostManager(),
             new KeyManager(),
             $twig
         );

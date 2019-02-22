@@ -161,7 +161,7 @@ abstract class Manager
     }
 
     /**
-     * Get all Entities form database
+     * Get all Entities form database (or just some Entities)
      *
      * @param int|null $numberOfLines
      * @param int|null $start
