@@ -246,21 +246,15 @@ class BlogController extends Controller
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {
         $categoryToEdit = null;
-        $availableTags = $this->tagManager->getAll();
-        $availableTagNames = self::getTagNames($availableTags);
-        $selectedTagNames = [];
 
         if ($categoryToEditId !== null) {
             $categoryToEdit = $this->categoryManager->get($categoryToEditId);
-            $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
         self::render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
             'message' => $message,
-            'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
@@ -457,23 +451,13 @@ class BlogController extends Controller
     }
 
     /**
-     * Add a new category from $_POST and add associated tags (note: a category must have a name and at least 1 associated tag)
+     * Add a new category from $_POST
      */
     public function addCategory()
     {
         $newCategory = self::buildCategoryFromForm();
 
         if ($newCategory !== null) {
-            $tags = $newCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor(null, "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->add($newCategory);
 
             // Come back to the admin panel
@@ -500,16 +484,6 @@ class BlogController extends Controller
         $modifiedCategory = self::buildCategoryFromForm();
 
         if ($modifiedCategory !== null) {
-            $tags = $modifiedCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $modifiedCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor((int) $_POST['edit-category'], "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->edit($modifiedCategory);
 
             // Come back to the admin panel
@@ -862,12 +836,6 @@ class BlogController extends Controller
             // Category to edit
             if (isset($_POST['edit-category'])) {
                 $category->setId((int) $_POST['edit-category']);
-            }
-
-            // Tags
-            $tags = self::getTagsFromForm();
-            if ($tags) {
-                $category->setTags($tags);
             }
 
             return $category;

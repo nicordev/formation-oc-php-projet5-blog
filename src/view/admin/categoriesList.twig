@@ -11,7 +11,6 @@
             <thead>
             <tr>
                 <th>Catégorie</th>
-                <th>Etiquettes associées</th>
             </tr>
             </thead>
 
@@ -23,16 +22,6 @@
                             <input type="hidden" name="category-id" value="{{ category.getId() }}">
                             <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
                         </form>
-                    </td>
-                    <td>
-                        {% set categoryTags = category.getTags() %}
-                        {% if categoryTags %}
-                            {% for tag in categoryTags %}
-                                <span class="table-tag">#{{ tag.getName }}</span>
-                            {% endfor %}
-                        {% else %}
-                            -
-                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
