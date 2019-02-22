@@ -583,6 +583,36 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Change the date format use in a post
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    public static function convertDatesOfPost(Post $post)
+    {
+        $post->setCreationDate(self::formatDate($post->getCreationDate()));
+
+        if ($post->getLastModificationDate() !== null) {
+            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
+    }
+
+    /**
+     * Change the date format use in a comment
+     *
+     * @param Comment $comment
+     * @throws Exception
+     */
+    public static function convertDatesOfComment(Comment $comment)
+    {
+        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
+
+        if ($comment->getLastModificationDate() !== null) {
+            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
+        }
+    }
+
     // Private
 
     /**
@@ -846,36 +876,6 @@ class BlogController extends Controller
         }
 
         return $comment;
-    }
-
-    /**
-     * Change the date format use in a post
-     *
-     * @param Post $post
-     * @throws Exception
-     */
-    private static function convertDatesOfPost(Post $post)
-    {
-        $post->setCreationDate(self::formatDate($post->getCreationDate()));
-
-        if ($post->getLastModificationDate() !== null) {
-            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
-        }
-    }
-
-    /**
-     * Change the date format use in a comment
-     *
-     * @param Comment $comment
-     * @throws Exception
-     */
-    private static function convertDatesOfComment(Comment $comment)
-    {
-        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
-
-        if ($comment->getLastModificationDate() !== null) {
-            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
-        }
     }
 
     /**

@@ -186,6 +186,44 @@ class CommentManager extends Manager
         return $postTitle['p_title'];
     }
 
+    /**
+     * Get the comments written by a member
+     *
+     * @param int $memberId
+     * @param bool $filterApproved
+     * @param int|null $numberOfComments
+     * @param int|null $start
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getCommentsOfAMember(int $memberId, bool $filterApproved = true, ?int $numberOfComments = null, ?int $start = null)
+    {
+        $comments = [];
+
+        $query = 'SELECT ' . implode(', ', $this->fields) . ' FROM bl_comment WHERE com_author_id_fk = :memberId';
+        if ($numberOfComments) {
+            self::addLimitToQuery($query, $numberOfComments, $start);
+        }
+        $requestComments = $this->query($query, ['memberId' => $memberId]);
+
+        if ($filterApproved) {
+            while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
+                $comment = $this->createEntityFromTableData($commentData, 'Comment');
+                if ($comment->isApproved()) {
+                    $comments[] = $comment;
+                }
+            }
+
+        } else {
+            while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
+                $comment = $this->createEntityFromTableData($commentData, 'Comment');
+                $comments[] = $comment;
+            }
+        }
+
+        return $comments;
+    }
+
     // Private
 
     /**

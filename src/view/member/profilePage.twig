@@ -86,5 +86,27 @@
                 </ul>
             </div>
         {% endif %}
+
+        {# Comments #}
+        {% if memberComments %}
+            <div>
+                <h3>Commentaires</h3>
+
+                <p>
+                    Nombre de commentaires publiés : {{ memberComments|length }}
+                </p>
+
+                <ul>
+                    {% for comment in memberComments %}
+                        <li>
+                            <dl>
+                                <dt>Le {{ comment.getCreationDate }} <a class="btn btn-small" href="/blog-post?post-id={{ comment.getPostId }}">Voir l'article</a></dt>
+                                <dd>{{ comment.getContent }}</dd>
+                            </dl>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </section>
 {% endblock %}

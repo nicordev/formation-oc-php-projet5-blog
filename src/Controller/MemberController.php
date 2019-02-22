@@ -11,6 +11,7 @@ use Application\MailSender\MailSender;
 use Model\Entity\Key;
 use Model\Entity\Member;
 use Model\Entity\Role;
+use Model\Manager\CommentManager;
 use Model\Manager\KeyManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
@@ -22,6 +23,7 @@ class MemberController extends Controller
     protected $memberManager;
     protected $roleManager;
     protected $postManager;
+    protected $commentManager;
     protected $keyManager;
 
     public const VIEW_REGISTRATION = 'member/registrationPage.twig';
@@ -37,6 +39,7 @@ class MemberController extends Controller
         MemberManager $memberManager,
         RoleManager $roleManager,
         PostManager $postManager,
+        CommentManager $commentManager,
         KeyManager $keyManager,
         Twig_Environment $twig
     )
@@ -45,6 +48,7 @@ class MemberController extends Controller
         $this->memberManager = $memberManager;
         $this->roleManager = $roleManager;
         $this->postManager = $postManager;
+        $this->commentManager = $commentManager;
         $this->keyManager = $keyManager;
     }
 
@@ -138,11 +142,17 @@ class MemberController extends Controller
         }
 
         $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false);
+        $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true);
+
+        foreach ($memberComments as $memberComment) {
+            BlogController::convertDatesOfComment($memberComment);
+        }
 
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
-            'memberPosts' => $memberPosts
+            'memberPosts' => $memberPosts,
+            'memberComments' => $memberComments
         ]);
     }
 

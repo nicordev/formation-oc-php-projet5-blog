@@ -104,6 +104,7 @@ class DIC
             new MemberManager(),
             new RoleManager(),
             new PostManager(),
+            new CommentManager(),
             new KeyManager(),
             $twig
         );
