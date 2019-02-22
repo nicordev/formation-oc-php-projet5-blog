@@ -32,25 +32,37 @@
 
         {# Roles #}
         <div>
-            <p>
-                {% if member.getRoles %}
-                    {% for role in member.getRoles %}
-                        {{ macros.translateRole(role) }}
-                    {% endfor %}
-                {% else %}
-                    {{ "Vos rôles ont été suspendus." }}
-                {% endif %}
-            </p>
+            <dl>
+                <dt>Roles</dt>
+                <dd>
+                    {% if member.getRoles %}
+                        {% for role in member.getRoles %}
+                            {{ macros.translateRole(role) }}<br>
+                        {% endfor %}
+                    {% else %}
+                        {{ "Vos rôles ont été suspendus." }}
+                    {% endif %}
+                </dd>
+            </dl>
         </div>
 
         {# Informations #}
         <div>
-            <p>
-                {{ member.getName }} <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
-            </p>
-            <p>
-                {{ member.getDescription }}
-            </p>
+            <dl>
+                <dt>Nom et email</dt>
+                <dd>
+                    {{ member.getName }}<br>
+                    <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
+                </dd>
+            </dl>
+            {% if member.getDescription %}
+                <dl>
+                    <dt>Description</dt>
+                    <dd>
+                        {{ member.getDescription }}
+                    </dd>
+                </dl>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
