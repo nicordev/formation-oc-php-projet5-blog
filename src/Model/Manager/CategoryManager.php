@@ -72,6 +72,22 @@ class CategoryManager extends Manager
     }
 
     /**
+     * Get a category from its name
+     *
+     * @param string $categoryName
+     * @return Category|null
+     * @throws \Application\Exception\BlogException
+     */
+    public function getFromName(string $categoryName): ?Category
+    {
+        $query = 'SELECT * FROM bl_category WHERE cat_name = :categoryName';
+        $requestCategory = $this->query($query, ['categoryName' => $categoryName]);
+        $categoryData = $requestCategory->fetch(PDO::FETCH_ASSOC);
+
+        return $this->createEntityFromTableData($categoryData);
+    }
+
+    /**
      * Get the categories where we can find the post
      *
      * @param int $postId

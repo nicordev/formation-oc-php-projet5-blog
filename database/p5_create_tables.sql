@@ -93,7 +93,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE bl_tag(
 	tag_id INT UNSIGNED AUTO_INCREMENT,
-	tag_name VARCHAR(100),
+	tag_name VARCHAR(100) UNIQUE,
 
 	CONSTRAINT pk_tag_id
 		PRIMARY KEY (tag_id)
@@ -123,7 +123,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE bl_category(
 	cat_id INT UNSIGNED AUTO_INCREMENT,
-	cat_name VARCHAR(100),
+	cat_name VARCHAR(100) UNIQUE,
 
 	CONSTRAINT pk_cat_id
 		PRIMARY KEY (cat_id)

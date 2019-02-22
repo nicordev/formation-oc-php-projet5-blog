@@ -53,10 +53,18 @@ class PostManager extends Manager
     {
         parent::add($newPost);
 
+        $newPost->setId($this->getLastId());
+        
+        // Associate categories and post
+        $categories = $newPost->getCategories();
+
+        if (!empty($categories)) {
+            $this->associatePostAndCategories($newPost, $categories);
+        }
+        
         // Associate tags and post
         $tags = $newPost->getTags();
         if (!empty($tags)) {
-            $newPost->setId($this->getLastId());
             $this->associatePostAndTags($newPost, $tags);
         }
     }
@@ -71,6 +79,10 @@ class PostManager extends Manager
     public function edit($modifiedPost): void
     {
         parent::edit($modifiedPost);
+
+        // Associate categories and post
+        $categories = $modifiedPost->getCategories();
+        $this->associatePostAndCategories($modifiedPost, $categories);
 
         // Associate tags and post
         $tags = $modifiedPost->getTags();
@@ -375,6 +387,35 @@ class PostManager extends Manager
     }
 
     // Private
+
+    /**
+     * Fill the table bl_post_category
+     *
+     * @param Post $post
+     * @param array $categories
+     * @throws BlogException
+     */
+    private function associatePostAndCategories(Post $post, array $categories)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_post_category WHERE pc_post_id_fk = :postId';
+        
+        $this->query($query, ['postId' => $post->getId()]);
+
+        if (!empty($categories)) {
+            // Add
+            $query = 'INSERT INTO bl_post_category(pc_post_id_fk, pc_category_id_fk)
+                VALUES (:postId, :categoryId)';
+            $requestAdd = $this->database->prepare($query);
+
+            foreach ($categories as $category) {
+                $requestAdd->execute([
+                    'postId' => $post->getId(),
+                    'categoryId' => $category->getId()
+                ]);
+            }
+        }
+    }
 
     /**
      * Fill the table bl_post_tag

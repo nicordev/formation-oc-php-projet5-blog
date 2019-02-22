@@ -42,3 +42,11 @@
         </dd>
     {% endif %}
 {% endmacro %}
+
+{% macro checkPostCategory(category, postCategories) %}
+    {% for postCategory in postCategories %}
+        {% if postCategory.getName is same as(category.getName) %}
+            checked
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

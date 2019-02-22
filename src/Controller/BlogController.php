@@ -209,6 +209,7 @@ class BlogController extends Controller
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
+        $categories = $this->categoryManager->getAll();
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
@@ -223,6 +224,7 @@ class BlogController extends Controller
         self::render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
+            'categories' => $categories,
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames,
@@ -323,6 +325,14 @@ class BlogController extends Controller
                 $newPost->setTags($this->addNewTags($tags));
             }
 
+            // Categories
+            if (!empty($newPost->getCategories())) {
+                foreach ($newPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $newPost->setCategories($categories);
+            }
+
             // Add
             $this->postManager->add($newPost);
 
@@ -359,6 +369,13 @@ class BlogController extends Controller
             if (!empty($tags)) {
                 // Add tags in the database and get their ids
                 $modifiedPost->setTags($this->addNewTags($tags));
+            }
+
+            if (!empty($modifiedPost->getCategories())) {
+                foreach ($modifiedPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $modifiedPost->setCategories($categories);
             }
 
             $this->postManager->edit($modifiedPost);
@@ -754,6 +771,24 @@ class BlogController extends Controller
     }
 
     /**
+     * Return Category entities
+     *
+     * @return array|null
+     */
+    private static function getCategoriesFromForm(): ?array
+    {
+        $categories = null;
+
+        if (isset($_POST['categories'])) {
+            foreach ($_POST['categories'] as $category) {
+                $categories[] = new Category(['name' => $category]);
+            }
+        }
+
+        return $categories;
+    }
+
+    /**
      * Create a Post from a form (thanks to $_POST)
      * Work for addPost and editPost
      *
@@ -792,6 +827,12 @@ class BlogController extends Controller
             $tags = self::getTagsFromForm();
             if ($tags) {
                 $post->setTags($tags);
+            }
+
+            // Categories
+            $categories = self::getCategoriesFromForm();
+            if ($categories) {
+                $post->setCategories($categories);
             }
 
             // Markdown

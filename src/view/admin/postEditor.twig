@@ -1,5 +1,7 @@
 {% extends 'admin/adminLayout.twig' %}
 
+{% import 'macros.twig' as macros %}
+
 {# head #}
 {% block title %}
     {% if postToEdit %}
@@ -70,6 +72,21 @@
                     <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
+
+                <hr>
+                {# Categories #}
+                <div>
+                    <h3>Catégories</h3>
+
+                    <ul>
+                    {% for category in categories %}
+                        <li>
+                            <input type="checkbox" name="categories[]" id="cat-{{ category.getName }}" value="{{ category.getName }}" {{ macros.checkPostCategory(category, postToEdit.getCategories) }}>
+                            <label for="cat-{{ category.getName }}">{{ category.getName }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
 
                 {# Tags #}
                 {% include "admin/tagHandler.twig" %}
