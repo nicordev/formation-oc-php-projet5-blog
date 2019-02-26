@@ -219,7 +219,9 @@ INSERT INTO bl_tag (tag_id, tag_name) VALUES
 (10, 'PHP'),
 (11, 'HTML'),
 (12, 'Git'),
-(13, 'GitHub');
+(13, 'GitHub'),
+(14, 'Wordpress'),
+(15, 'CMS');
 
 INSERT INTO bl_category (cat_id, cat_name)
 VALUES
@@ -267,7 +269,7 @@ VALUES
 
 INSERT INTO bl_post (p_id, p_author_id_fk, p_last_editor_id_fk, p_creation_date, p_last_modification_date, p_markdown, p_title, p_excerpt, p_content)
 VALUES
-(1, 1, null, '2018-09-24 12:15:35', null, 0, 'Article exemple', 'Un article du site.', '<h2>Un article.</h2><p>I can explain. It''s very valuable. Dear God, they''ll be killed on our doorstep! And there''s no trash pickup until January 3rd. And until then, I can never die? I didn''t ask for a completely reasonable excuse! I asked you to get busy!</p>
+(1, 1, null, '2018-09-24 12:15:35', '2018-09-24 12:15:35', 0, 'Article exemple', 'Un article du site.', '<h2>Un article.</h2><p>I can explain. It''s very valuable. Dear God, they''ll be killed on our doorstep! And there''s no trash pickup until January 3rd. And until then, I can never die? I didn''t ask for a completely reasonable excuse! I asked you to get busy!</p>
 <p><strong>Our love isn''t any different from yours, except it''s hotter, because I''m involved.</strong> <em> It may comfort you to know that Fry''s death took only fifteen seconds, yet the pain was so intense, that it felt to him like fifteen years.</em> And it goes without saying, it caused him to empty his bowels.</p>
 <h2>No, of course not. It was… uh… porno. Yeah, that''s it.</h2>
 <p>Is the Space Pope reptilian!? You can crush me but you can''t crush my spirit! Yeah, and if you were the pope they''d be all, "Straighten your pope hat." And "Put on your good vestments." Leela, are you alright? You got wanged on the head.</p>
@@ -325,7 +327,7 @@ VALUES
 <p>Bender! Ship! Stop bickering or I''m going to come back there and change your opinions manually! Well, then good news! It''s a suppository. And why did ''I'' have to take a cab? Guards! Bring me the forms I need to fill out to have her taken away!</p>
 <p>There''s no part of that sentence I didn''t like! Ummm…to eBay? I''m sorry, guys. I never meant to hurt you. Just to destroy everything you ever believed in. I had more, but you go ahead. I''m a thing.</p>
 <p>Quite possible. We live long and are celebrated poopers. Yeah, I do that with my stupidness. Why not indeed! Professor, make a woman out of me. Why not indeed!</p>'),
-(3, 1, null, '2019-02-18 14:20:12', null, 1, 'Article écrit en Markdown', 'Un article écrit en Markdown. Merci fillerama.io !', '## Cet article contient du **Markdown** et c''est bien *sympa*.
+(3, 1, null, '2019-02-18 14:20:12', '2019-02-18 14:20:12', 1, 'Article écrit en Markdown', 'Un article écrit en Markdown. Merci fillerama.io !', '## Cet article contient du **Markdown** et c''est bien *sympa*.
 Good man. Nixon''s pro-war and pro-family. With a warning label this big, you know they gotta be fun! Good man. Nixon''s pro-war and pro-family. Well, let''s just dump it in the sewer and say we delivered it.
 
 With gusto. Is that a cooking show? It''s just like the story of the grasshopper and the octopus. All year long, the grasshopper kept burying acorns for winter, while the octopus mooched off his girlfriend and watched TV. __But then the winter came, and the grasshopper died, and the octopus ate all his acorns.__ *Also he got a race car.* Is any of this getting through to you?
@@ -367,7 +369,7 @@ One hundred dollars. What are you hacking off? Is it my torso?! ''It is!'' My pr
 In your time, yes, but nowadays shut up! Besides, these are adult stemcells, harvested from perfectly healthy adults whom I killed for their stemcells. Bender?! You stole the atom. With gusto. You are the last hope of the universe.
 
 We can''t compete with Mom! Her company is big and evil! Ours is small and neutral! I guess if you want children beaten, you have to do it yourself. Large bet on myself in round one. Okay, it''s 500 dollars, you have no choice of carrier, the battery can''t hold the charge and the reception isn''t very…'),
-(4, 3, null, '2019-02-02 10:52:45', null, 0, 'En bref', 'Je suis Nicolas Renvoisé, 31 ans à l''heure où j''écris cet article, et je me forme au métier de développeur backend avec l''aide d''OpenClassrooms. Pourquoi ? Parce que j''ai découvert que le code, j''adore ça !!!', '<h2>Comment j''en suis arriv&eacute; l&agrave; ?</h2>
+(4, 3, null, '2019-02-02 10:52:45', '2019-02-02 10:52:45', 0, 'En bref', 'Je suis Nicolas Renvoisé, 31 ans à l''heure où j''écris cet article, et je me forme au métier de développeur backend avec l''aide d''OpenClassrooms. Pourquoi ? Parce que j''ai découvert que le code, j''adore ça !!!', '<h2>Comment j''en suis arriv&eacute; l&agrave; ?</h2>
 <p>Au d&eacute;part, j''ai fais 3 ans d''&eacute;tudes dans le domaine de l''eau et de l''environnement apr&egrave;s mon bac scientifique. A l''issue, je me suis engag&eacute; dans l''arm&eacute;e en tant que contr&ocirc;leur a&eacute;rien. Finalement, l''arm&eacute;e ce n''&eacute;tait pas aussi bien que ce que j''esp&eacute;rais et j''ai arr&ecirc;t&eacute; &agrave; la fin de mon contrat initial. J''ai alors int&eacute;gr&eacute; un bureau d''&eacute;tudes sp&eacute;cialis&eacute; dans l''eau et l''environnement o&ugrave; je me suis d&eacute;couvert une passion pour la programmation lorsque j''ai eu &agrave; faire des fichiers excel en VBA. Depuis ce jour, je n''arr&ecirc;te pas de coder !</p>
 <p>Un ami programmeur m''a conseill&eacute; de suivre les cours du site du z&eacute;ro sur le langage C pour d&eacute;buter sur de bonnes bases. C''est alors que j''ai d&eacute;couvert que le site du z&eacute;ro &eacute;tait devenu OpenClassrooms et je m''y suis inscrit.</p>
 <p>Apr&egrave;s le cours de Mathieu Nebra sur le C (un super cours, je le recommande !), j''ai enchain&eacute; sur les cours li&eacute;s au web, domaine qui m''intriguait beaucoup. Entre temps, j''en avais marre de mon travail au bureau d''&eacute;tudes (la bo&icirc;te &eacute;tait super, mais je n''aimais pas r&eacute;diger des rapports de 600 pages refoul&eacute;s pour un oui ou pour un non par l''administration...) et finalement j''ai d&eacute;cid&eacute; de partir pour me reconvertir dans le d&eacute;veloppement web en suivant la formation de d&eacute;veloppeur d''application PHP/Symfony d''OpenClassrooms.</p>
@@ -375,12 +377,12 @@ We can''t compete with Mom! Her company is big and evil! Ours is small and neutr
 <p>Une &eacute;cole Simplon s''&eacute;tait ouverte &agrave; 40 minutes de chez moi depuis 2 ans, mais rien n''indiquait que la formation gratuite qu''elle proposait aller &ecirc;tre reconduite. Du coup j''ai opt&eacute; pour OpenClassrooms en demandant un financement de la part de P&ocirc;le emploi, ce qui fut accept&eacute; ! Ouf ! Du coup non seulement j''ai l''avantage de suivre une formation reconnue par l''Etat, mais en plus je n''ai pas &agrave; me d&eacute;placer !</p>
 <h2>Comment se passe cette formation ?</h2>
 <p>Bien. Vraiment tr&egrave;s bien m&ecirc;me ! Je m''&eacute;clate tous les jours &agrave; programmer, d&egrave;s que je s&egrave;che je peux en parler soit avec mon mentor, soit avec les autres &eacute;tudiants d''OpenClassrooms. Je n''ai jamais aussi bien v&eacute;cu une formation.</p>'),
-(5, 3, null, '2019-02-03 11:00:01', null, 1, 'Pourquoi ce site ?', 'Ce site présente mes réalisations web, mon CV et des articles sur divers thèmes. Je l''ai créé pendant ma formation de développeur backend (c''est le projet 5).', 'Voici quelques liens utiles pour naviguer sur le site :
+(5, 3, null, '2019-02-03 11:00:01', '2019-02-03 11:00:01', 1, 'Pourquoi ce site ?', 'Ce site présente mes réalisations web, mon CV et des articles sur divers thèmes. Je l''ai créé pendant ma formation de développeur backend (c''est le projet 5).', 'Voici quelques liens utiles pour naviguer sur le site :
 
 * [Mon CV](/cv/cv.pdf)
 * [Mes réalisations](/blog?category-id=3)
 * [Le blog](/blog?category-id=1)'),
-(6, 3, null, '2019-01-06 16:23:14', null, 0, 'Mes sites web perso', 'Les 2 sites que j''ai réalisés avant ma formation de développeur backend, juste à l''aide des cours gratuits d''OpenClassrooms. Le premier est un site sur le barefoot running et le second est un site pour s''orienter en balade.', '<h2>Les sites web</h2>
+(6, 3, null, '2019-01-06 16:23:14', '2019-01-06 16:23:14', 0, 'Mes sites web perso', 'Les 2 sites que j''ai réalisés avant ma formation de développeur backend, juste à l''aide des cours gratuits d''OpenClassrooms. Le premier est un site sur le barefoot running et le second est un site pour s''orienter en balade.', '<h2>Les sites web</h2>
 
 <div class="card-deck">
     <div class="card">
@@ -403,7 +405,7 @@ We can''t compete with Mom! Her company is big and evil! Ours is small and neutr
 <p>
     <a href="https://carte.ovh">carte.ovh</a> utilise l''API de Google Maps et celle du géoportail.
 </p>'),
-(7, 3, null, '2019-01-07 14:51:11', null, 0, 'Mes projets réalisés pendant la formation d''OpenClassrooms', 'Voici les liens vers les projets mis en ligne. Vous trouverez aussi les fichiers sources sur mon profil GitHub.', '<h2>Les projets en ligne</h2>
+(7, 3, null, '2019-01-07 14:51:11', '2019-01-07 14:51:11', 0, 'Mes projets réalisés pendant la formation d''OpenClassrooms', 'Voici les liens vers les projets mis en ligne. Vous trouverez aussi les fichiers sources sur mon profil GitHub.', '<h2>Les projets en ligne</h2>
 
 <div class="card-deck">
     <div class="card">
@@ -441,7 +443,7 @@ We can''t compete with Mom! Her company is big and evil! Ours is small and neutr
 <p>
     <a href="https://openclassrooms.com/fr/paths/59-developpeur-dapplication-php-symfony">Contenu de la formation</a>
 </p>'),
-(8, 3, null, '2019-02-25 22:50:23', null, 0, 'Recueil CSS', 'Un recueil non exhaustif de propriétés CSS que je rencontre.', '            <article>
+(8, 3, null, '2019-02-25 22:50:23', '2019-02-25 22:50:23', 0, 'Recueil CSS', 'Un recueil non exhaustif de propriétés CSS que je rencontre.', '            <article>
                 <h2>Les propriétés</h2>
 
                 <table>
@@ -531,7 +533,7 @@ We can''t compete with Mom! Her company is big and evil! Ours is small and neutr
                     </dd>
                 </dl>
             </article>'),
-(9, 3, null, '2019-02-12 12:52:44', null, 0, 'Recueil PHP', 'Des infos que je découvre en utilisant PHP.', '<article>
+(9, 3, null, '2019-02-12 12:52:44', '2019-02-12 12:52:44', 0, 'Recueil PHP', 'Des infos que je découvre en utilisant PHP.', '<article>
                 <h2>Serveur</h2>
 
                 <dl>
@@ -1581,7 +1583,7 @@ echo $hello->sayHello();
                     </pre>
                 </div>
             </article>'),
-(10, 3, null, '2019-02-18 11:42:31', null, 0, 'Recueil Git et GitHub', 'Des infos que je note en utilisant Git et GitHub.', '<!-- Git -->
+(10, 3, null, '2019-02-18 11:42:31', '2019-02-18 11:42:31', 0, 'Recueil Git et GitHub', 'Des infos que je note en utilisant Git et GitHub.', '<!-- Git -->
 
     	<article>
             <h2>Git</h2>
@@ -1966,7 +1968,370 @@ nom_du_dossier_a_ignorer/
 			<ul id="tipsList">
 				<li>touche T : Faire une recherche</li>
 			</ul>
-    	</article>');
+    	</article>'),
+(11, 3, null, '2019-02-26 22:02:10', '2019-02-26 22:02:10', 0, 'Créer un thème enfant pour WordPress', 'Tuto rapide pour apprendre à créer un thème à partir d''un autre déjà existant.', '<article>
+            <h2>Thême enfant</h2>
+
+            <h3>Création</h3>
+
+            <ol>
+                <li>Aller dans le dossier <em>wp-content/themes</em> de Wordpress</li>
+                <li>Créer un nouveau dossier (exemple : <em>nomDuThemeParent-child</em>)</li>
+                <li>Copier les fichiers <em>functions.php</em> et <em>style.css</em> présents dans le dossier du thême parent et les placer dans le dossier du thême enfant</li>
+                <li>
+                    Faire les modifs suivantes dans les fichiers du dossier enfant :
+                    <ul>
+                        <li>
+                            Fichier style.css
+                            <ol>
+                                <li>
+                                    Copier le gros bloc de commentaires situé au début du fichier<br />
+                                    Exemple :
+                                    <pre>
+/*
+Theme Name: Nom du thème
+Theme URI: https://wordpress.org/themes/twentyfifteen/
+Author: the WordPress team
+Author URI: https://wordpress.org/
+Description: Voilà, c''est une description, on met ce qu''on veut. C''est cool.
+Version: 2.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: bootstrap
+Text Domain: twentyfifteen
+
+This theme, like WordPress, is licensed under the GPL.
+Use it to make something cool, have fun, and share what you''ve learned with others.
+*/
+                                    </pre>
+                                </li>
+                                <li>Changez le <em>Theme Name:</em> avec le nom du dossier du thème enfant</li>
+                                <li>
+                                    Ajouter la ligne suivante sous <em>Theme Name:</em> :
+<pre>
+Template: nomDuDossierDuThèmeParent
+</pre>
+                                </li>
+                                <li>Effacer le contenu du fichier</li>
+                                <li>Coller le gros bloc de commentaires</li>
+                                <li>Enregistrer</li>
+                            </ol>
+                        </li>
+                        <li>
+                            Fichier functions.php
+                            <ol>
+                                <li>Effacer le contenu du fichier</li>
+                                <li>
+                                    Copier/coller le bloc de code suivant :
+<pre>
+&lt;?php
+add_action( ''wp_enqueue_scripts'', ''theme_enqueue_styles'' );
+
+function theme_enqueue_styles() {
+    wp_enqueue_style( ''parent-style'', get_template_directory_uri() . ''/style.css'' );
+    wp_enqueue_style( ''child-style'', get_stylesheet_uri(), array( ''parent-style'' ) );
+}</pre>
+                                </li>
+                                <li>Enregistrer</li>
+                            </ol>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Utilisation</h3>
+
+            <ol>
+                <li>Dans le tableau de bord Wordpress : <em>Apparence/Thèmes</em></li>
+                <li>Activer le thême enfant</li>
+            </ol>
+        </article>'),
+(12, 3, null, '2019-02-26 22:10:12', '2019-02-26 22:10:12', 0, 'Créer un thème WordPress à partir de rien', 'Cette fois-ci un tuto pour créer un thème de zéro. Pour des explications plus détaillées, vous pouvez vous rendre sur le blog de Tania Rascia (https://www.taniarascia.com/).', '<article>
+            <h2>Création d''un thème WordPress</h2>
+
+            <p>
+                Tuto repris du site de <a href="https://www.taniarascia.com/developing-a-wordpress-theme-from-scratch/" target="_blank">Tania Rascia</a>. J''ai juste synthétisé les modifs que l''auteure fait au fur et à mesure de son tuto qui est du coup plus détaillé et progressif.
+            </p>
+
+            <!-- Version statique -->
+            <article>
+                <h3>Version HTML statique (pour comprendre la base)</h3>
+
+                <p>
+                    <ol>
+                        <li>Créer un dossier portant le nom du thème à créer dans le dossier <em>wp-content/themes</em> de Wordpress</li>
+                        <li>Créer 2 fichiers
+                            <ul>
+                                <li><em>index.php</em></li>
+                                <li><em>style.css</em>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>
+                        Le fichier index.php est constitué de votre page HTML statique.
+                    </p>
+                    <p>Contenu du fichier <em>style.css</em> (à personnaliser) :
+<pre>
+/*
+Theme Name: Nom du thème
+Author: Votre nom
+Description: Alors c''est un super thème, joli et tout et tout...
+Version: 0.0.1
+Tags: bootstrap
+*/
+</pre>
+                    </p>
+                    <p class="note">
+                        Ces 2 fichiers suffisent pour voir apparaître votre thème dans l''interface de WordPress. Vous avez réussi ! Bravo !
+                    </p>
+                    <p>
+                        Vous pouvez aussi ajouter un autre fichier css dans le dossier de votre thème pour la mise en forme de votre site. Pensez alors à mettre un lien dans le <code>&lt;head&gt;</code> du fichier <em>index.php</em> (exemple <code>&lt;link href="blog.css" rel="stylesheet"&gt;</code>).
+                    </p>
+                    <p>
+                        Voici maintenant <a href="https://github.com/taniarascia/bootstrapblog">un lien vers un repository GitHub de Tania Rascia</a> où vous trouverez 2 fichiers pour vous entraîner et qui serviront de base à la suite de ce tuto. N''oubliez pas de renommer le fichier <em>index.html</em> en <em>index.php</em> ni de créer le fichier <em>style.css</em> !
+                    </p>
+                    <p class="note">Conclusion : c''est pas compliqué mais pour l''instant le résultat n''est pas ouf non plus... Passons maintenant aux choses sérieuses !</p>
+                </p>
+            </article>
+
+            <!-- Version dynamique -->
+            <article>
+                <h3>Version dynamique !</h3>
+
+                <p>
+                    On va diviser le contenu du fichier <em>index.php</em> dans 4 fichiers : <em>header.php</em>, <em>footer.php</em>, <em>sidebar.php</em> et <em>content.php</em>
+                </p>
+                <p>
+                    Le fichier <em>index.php</em> servira alors de lien entre ces fichiers.
+                </p>
+                <p>C''est parti !</p>
+
+                <!-- header.php -->
+                <h4>header.php</h4>
+<pre>
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+
+&lt;head>
+    &lt;meta charset="utf-8">
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge">
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1">
+    &lt;meta name="description" content="">
+    &lt;meta name="author" content="">
+
+    &lt;title><span class="php_code">&lt;?php echo get_bloginfo( ''name'' ); ?></span>&lt;/title>
+    &lt;link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    &lt;!-- Custom CSS -->
+    &lt;link href="<span class="php_code">&lt;?php echo get_bloginfo( ''template_directory'' );?></span>/blog.css" rel="stylesheet">
+    &lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    &lt;!--[if lt IE 9]>
+        &lt;script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js">&lt;/script>
+        &lt;script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js">&lt;/script>
+    &lt;![endif]-->
+&lt;?php wp_head();?>
+&lt;/head>
+
+&lt;body>
+
+    &lt;div class="blog-masthead">
+        &lt;div class="container">
+            &lt;nav class="blog-nav">
+                &lt;a class="blog-nav-item active" href="#">Home&lt;/a>
+                <span class="php_code">&lt;?php wp_list_pages( ''&title_li='' ); ?></span>
+            &lt;/nav>
+        &lt;/div>
+    &lt;/div>
+
+    &lt;div class="container">
+
+    &lt;div class="blog-header">
+        &lt;h1 class="blog-title">&lt;a href="&lt;?php echo get_bloginfo( ''wpurl'' );?>">&lt;?php echo get_bloginfo( ''name'' ); ?>&lt;/a>&lt;/h1>
+        &lt;p class="lead blog-description">&lt;?php echo get_bloginfo( ''description'' ); ?>&lt;/p>
+    &lt;/div>
+</pre>
+                <p>
+                    La fonction php <code><span class="php_code">&lt;?php echo get_bloginfo( ''name'' ); ?></span></code> va permettre d''insérer le titre du site que vous avez choisi dans l''interface d''administration de WordPress.
+                </p>
+                <p>
+                    La fonction php <code><span class="php_code">&lt;?php echo get_bloginfo( ''template_directory'' );?></span></code> va elle insérer automatiquement le chemin d''accès au dossier de votre thème.
+                </p>
+                <p>
+                    La fonction php <code><span class="php_code">&lt;?php wp_list_pages( ''&title_li='' ); ?></span></code> va insérer les liens vers les différentes pages du site.
+                </p>
+                <p class="note">Les liens vont mal s''afficher en utilisant le fichier <em>blog.css</em> du repo de Tanya. Il faut alors ajouter le code suivant dans le fichier <em>blog.css</em> :</p>
+<pre>
+.blog-nav li {
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+    font-weight: 500;
+}
+.blog-nav li a {
+    color: #fff;
+}
+</pre>
+
+                <!-- footer.php -->
+                <h4>footer.php</h4>
+<pre>
+        &lt;/div> &lt;!-- /.container -->
+
+        &lt;footer class="blog-footer">
+            &lt;p>Blog template built for &lt;a href="http://getbootstrap.com">Bootstrap&lt;/a> by &lt;a href="https://twitter.com/mdo">@mdo&lt;/a>.&lt;/p>
+
+            &lt;p>&lt;a href="#">Back to top&lt;/a>&lt;/p>
+        &lt;/footer>
+
+        &lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">&lt;/script>
+        &lt;script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">&lt;/script>
+        &lt;?php wp_footer(); ?>
+    &lt;/body>
+&lt;/html>
+</pre>
+
+                <!-- sidebar.php -->
+                <h4>sidebar.php</h4>
+<pre>
+&lt;div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+
+    &lt;div class="sidebar-module sidebar-module-inset">
+
+        &lt;h4>About&lt;/h4>
+
+        &lt;p><span class="php_code">&lt;?php the_author_meta( ''description'' ); ?></span> &lt;/p>
+    &lt;/div>
+
+    &lt;div class="sidebar-module">
+
+        &lt;h4>Archives&lt;/h4>
+
+        &lt;ol class="list-unstyled">
+            <span class="php_code">&lt;?php wp_get_archives( ''type=monthly'' ); ?></span>
+        &lt;/ol>
+    &lt;/div>
+
+    &lt;div class="sidebar-module">
+
+        &lt;h4>Elsewhere&lt;/h4>
+
+        &lt;ol class="list-unstyled">
+            &lt;li>&lt;a href="#">GitHub&lt;/a>&lt;/li>
+            &lt;li>&lt;a href="#">Twitter&lt;/a>&lt;/li>
+            &lt;li>&lt;a href="#">Facebook&lt;/a>&lt;/li>
+        &lt;/ol>
+    &lt;/div>
+&lt;/div>&lt;!-- /.blog-sidebar -->
+</pre>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php the_author_meta( ''description'' ); ?></span></code> va afficher la description de l''auteur.
+                </p>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php wp_get_archives( ''type=monthly'' ); ?></span></code> va regrouper les archives triées par mois.
+                </p>
+
+                <!-- content.php -->
+                <h4>content.php</h4>
+<pre>
+&lt;div class="blog-post">
+    &lt;!-- Titre du billet de blog -->
+    &lt;h2 class="blog-post-title"><span class="php_code">&lt;?php the_title(); ?></span>&lt;/h2>
+
+    &lt;!-- Auteur et date du billet de blog -->
+    &lt;p class="blog-post-meta"><span class="php_code">&lt;?php the_date(); ?></span> by &lt;a href="#"><span class="php_code">&lt;?php the_author(); ?></span>&lt;/a>&lt;/p>
+
+    &lt;!-- Contenu du billet de blog -->
+    <span class="php_code">&lt;?php the_content(); ?></span>
+&lt;/div>&lt;!-- /.blog-post -->
+</pre>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php the_title(); ?></span></code> permet d''afficher le titre du billet de blog.
+                </p>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php the_date(); ?></span></code> affiche la date de création du billet de blog.
+                </p>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php the_author(); ?></span></code> affiche l''auteur du billet.
+                </p>
+                <p>
+                    La fonction <code><span class="php_code">&lt;?php the_content(); ?></span></code> affiche le contenu du billet.
+                </p>
+
+                <!-- index.php -->
+                <h4>index.php</h4>
+
+<pre>
+<span class="php_code">&lt;?php get_header(); ?></span>
+
+    &lt;div class="row">
+
+        &lt;div class="col-sm-8 blog-main">
+            <span class="php_code">&lt;?php
+            if ( have_posts() ) : while ( have_posts() ) : the_post();
+                get_template_part( ''content'', get_post_format() );
+            endwhile; endif;
+            ?></span>
+        &lt;/div> &lt;!-- /.blog-main -->
+
+        <span class="php_code">&lt;?php get_sidebar(); ?></span>
+
+    &lt;/div> &lt;!-- /.row -->
+
+<span class="php_code">&lt;?php get_footer(); ?></span>
+</pre>
+                <p>
+                    Les instructions suivantes servent à générer les articles de blogs disponibles :
+<pre>
+    <span class="php_code">&lt;?php
+    if ( have_posts() ) : while ( have_posts() ) : the_post();
+        get_template_part( ''content'', get_post_format() );
+    endwhile; endif;
+    ?></span>
+</pre>
+                </p>
+                <p>
+                    Les instructions <code><span class="php_code">&lt;?php get_header(); ?></span></code>, <code><span class="php_code">&lt;?php get_sidebar(); ?></span></code> et <code><span class="php_code">&lt;?php get_footer(); ?></span></code> servent à insérer le code contenu dans les fichiers <em>header.php</em>, <em>sidebar.php</em> et <em>footer.php</em>.
+                </p>
+                <p class="note">
+                    Essayez maintenant d''ajouter des articles de blog, de changer le nom et le slogan du site via l''interface WordPress et admirez le résultat !
+                </p>
+            </article>
+
+            <!-- Création d''un affichage différent pour les pages du site -->
+            <article>
+                <h3>On se pose en douceur... Création d''un affichage différent pour les pages du site</h3>
+
+                <p>
+                    Il faut créer un fichier <em>page.php</em> qui va ressembler fortement à <em>index.php</em>.
+                </p>
+                <p>
+                    Dans l''exemple suivant, on a choisit de ne pas afficher la barre latérale (en omettant le fichier <em>sidebar.php</em>) et d''afficher le contenu des pages sur toutes la largeur (avec la classe Bootstrap <em>col-sm-12</em>).
+                </p>
+<pre>
+<span class="php_code">&lt;?php get_header(); ?></span>
+
+    &lt;div class="row">
+        &lt;div class="col-sm-12">
+
+            <span class="php_code">&lt;?php
+                if ( have_posts() ) : while ( have_posts() ) : the_post();
+
+                    get_template_part( ''content'', get_post_format() );
+
+                endwhile; endif;
+            ?></span>
+
+        &lt;/div> &lt;!-- /.col -->
+    &lt;/div> &lt;!-- /.row -->
+
+<span class="php_code">&lt;?php get_footer(); ?></span>
+</pre>
+                <p class="note">
+                    Un grand merci à Tania Rascia pour avoir fait le tuto sur lequel j''ai honteusement pompé. <a href="https://ko-fi.com/taniarascia">Vous pouvez d''ailleurs lui payer un café pour la remercier.</a>
+                </p>
+            </article>
+        </article>');
+
 
 INSERT INTO bl_post_tag (pt_post_id_fk, pt_tag_id_fk)
 VALUES
@@ -1985,7 +2350,15 @@ VALUES
 (9, 7),
 (10, 12),
 (10, 5),
-(10, 7);
+(10, 7),
+(11, 5),
+(11, 7),
+(11, 14),
+(11, 15),
+(12, 5),
+(12, 7),
+(12, 14),
+(12, 15);
 
 INSERT INTO bl_post_category (pc_post_id_fk, pc_category_id_fk)
 VALUES
@@ -1998,7 +2371,9 @@ VALUES
 (7, 3),
 (8, 1),
 (9, 1),
-(10, 1);
+(10, 1),
+(11, 1),
+(12, 1);
 
 INSERT INTO bl_comment (com_id, com_parent_id_fk, com_post_id_fk, com_author_id_fk, com_last_editor_id_fk, com_creation_date, com_last_modification_date, com_content, com_approved)
 VALUES
