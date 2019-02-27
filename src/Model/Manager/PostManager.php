@@ -386,6 +386,26 @@ class PostManager extends Manager
         return $posts;
     }
 
+    /**
+     * Count the number of posts of a category
+     *
+     * @param int $categoryId
+     * @return int
+     * @throws BlogException
+     */
+    public function countPostsOfACategory(int $categoryId): int
+    {
+        $query = 'SELECT COUNT(p_id) FROM bl_post WHERE p_id IN (
+            SELECT pc_post_id_fk FROM bl_post_category WHERE pc_category_id_fk = :categoryId
+        )';
+
+        $requestCount = $this->query($query, ['categoryId' => $categoryId]);
+
+        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
+
+        return $count;
+    }
+
     // Private
 
     /**

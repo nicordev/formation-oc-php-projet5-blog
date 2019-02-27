@@ -34,6 +34,7 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
+    protected $postsByPage = 3;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -76,15 +77,37 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
+     * @param int|null $page
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws Exception
      */
-    public function showPostsOfACategory(int $categoryId)
+    public function showPostsOfACategory(int $categoryId, ?int $page = null)
     {
-        $posts = $this->postManager->getPostsOfACategory($categoryId);
+        $numberOfPosts = $this->postManager->countPostsOfACategory($categoryId);
+        $numberOfPages = ceil($numberOfPosts / $this->postsByPage);
+
+        if ($page >= $numberOfPages) {
+            $page = $numberOfPages;
+        }
+
+        if (!$page || $page === 1) {
+            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
+        } elseif ($page > 1) {
+            $start = ($page - 1) * $this->postsByPage;
+            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, $start, false);
+            if ($page < $numberOfPages) {
+                $nextPage = $page + 1;
+            }
+
+        } else {
+            $posts = $this->postManager->getPostsOfACategory($categoryId, null, null, false);
+        }
+
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
@@ -94,6 +117,7 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG, [
             'posts' => $posts,
             'category' => $category,
+            'nextPage' => isset($nextPage) ? $nextPage : null,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }

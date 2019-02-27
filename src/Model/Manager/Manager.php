@@ -204,6 +204,22 @@ abstract class Manager
         return $lastId;
     }
 
+    /**
+     * Count the number of lines
+     *
+     * @return int
+     * @throws BlogException
+     */
+    public function countLines(): int
+    {
+        $query = 'SELECT COUNT(' . $this->fields['id'] . ') FROM ' . $this->tableName;
+        $requestCount = $this->query($query);
+
+        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
+
+        return $count;
+    }
+
 
     // Protected
 
