@@ -42,9 +42,15 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if nextPage %}
-                    <div>
-                        <a class="btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ nextPage }}">Articles précédents</a>
+                {% if nextPage or previousPage %}
+                    <div class="row">
+                        {% if previousPage %}
+                            <a class="col-4 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ previousPage }}">Articles suivants</a>
+                            <div class="col-4"></div>
+                        {% endif %}
+                        {% if nextPage %}
+                            <a class="col-4 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ nextPage }}">Articles précédents</a>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>

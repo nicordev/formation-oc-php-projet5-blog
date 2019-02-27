@@ -103,6 +103,7 @@ class BlogController extends Controller
             if ($page < $numberOfPages) {
                 $nextPage = $page + 1;
             }
+            $previousPage = $page - 1;
 
         } else {
             $posts = $this->postManager->getPostsOfACategory($categoryId, null, null, false);
@@ -118,6 +119,7 @@ class BlogController extends Controller
             'posts' => $posts,
             'category' => $category,
             'nextPage' => isset($nextPage) ? $nextPage : null,
+            'previousPage' => isset($previousPage) ? $previousPage : null,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
