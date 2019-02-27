@@ -128,14 +128,38 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
+     * @param int|null $page
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfATag(int $tagId)
+    public function showPostsOfATag(int $tagId, ?int $page = null)
     {
-        $posts = $this->postManager->getPostsOfATag($tagId);
+        $numberOfPosts = $this->postManager->countPostsOfATag($tagId);
+        $numberOfPages = ceil($numberOfPosts / $this->postsByPage);
+
+        if ($page >= $numberOfPages) {
+            $page = $numberOfPages;
+        }
+
+        if (!$page || $page === 1) {
+            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
+        } elseif ($page > 1) {
+            $start = ($page - 1) * $this->postsByPage;
+            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, $start, false);
+            if ($page < $numberOfPages) {
+                $nextPage = $page + 1;
+            }
+            $previousPage = $page - 1;
+
+        } else {
+            $posts = $this->postManager->getPostsOfATag($tagId, null, null, false);
+        }
+
         foreach ($posts as $post) {
             self::prepareAPost($post);
         }
@@ -144,6 +168,8 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
             'tag' => $tag,
+            'nextPage' => isset($nextPage) ? $nextPage : null,
+            'previousPage' => isset($previousPage) ? $previousPage : null,
             'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }

@@ -283,7 +283,7 @@ class PostManager extends Manager
             $columns = implode(', ', $columns);
         }
 
-        $query = 'SELECT ' . $columns . ' FROM bl_post
+        $query = 'SELECT ' . $columns . ' FROM ' . $this->tableName . '
             WHERE p_id IN (
                 SELECT DISTINCT pc_post_id_fk FROM bl_post_category
                 WHERE pc_category_id_fk = :categoryId
@@ -311,19 +311,32 @@ class PostManager extends Manager
      * Get all the posts associated to a given tag
      *
      * @param int $tagId
+     * @param int|null $numberOfLines
+     * @param int|null $start
+     * @param bool $withContent
      * @return array
      * @throws BlogException
      */
-    public function getPostsOfATag(int $tagId)
+    public function getPostsOfATag(int $tagId, ?int $numberOfLines = null, ?int $start = null, bool $withContent = false)
     {
         $posts = [];
+        if ($withContent) {
+            $columns = '*';
+        } else {
+            $columns = $this->fields;
+            unset($columns['content']);
+            $columns = implode(', ', $columns);
+        }
 
-        $query = 'SELECT * FROM bl_post
+        $query = 'SELECT ' . $columns . ' FROM ' . $this->tableName . '
             WHERE p_id IN (
                 SELECT pt_post_id_fk FROM bl_post_tag
                 WHERE pt_tag_id_fk = :id
             )
             ORDER BY p_last_modification_date DESC, p_creation_date DESC';
+        if ($numberOfLines) {
+            self::addLimitToQuery($query, $numberOfLines, $start);
+        }
 
         $requestPosts = $this->query($query, [
             'id' => $tagId
@@ -400,6 +413,26 @@ class PostManager extends Manager
         )';
 
         $requestCount = $this->query($query, ['categoryId' => $categoryId]);
+
+        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
+
+        return $count;
+    }
+
+    /**
+     * Count the number of posts of a tag
+     *
+     * @param int $tagId
+     * @return int
+     * @throws BlogException
+     */
+    public function countPostsOfATag(int $tagId): int
+    {
+        $query = 'SELECT COUNT(p_id) FROM bl_post WHERE p_id IN (
+            SELECT pt_post_id_fk FROM bl_post_tag WHERE pt_tag_id_fk = :tagId
+        )';
+
+        $requestCount = $this->query($query, ['tagId' => $tagId]);
 
         $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
 

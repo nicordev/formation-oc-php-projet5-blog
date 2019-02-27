@@ -65,7 +65,10 @@ class Router
             case '/blog/tag':
                 $controller = BlogController::class;
                 $method = 'showPostsOfATag';
-                $params = ['tagId' => (int) $_GET['tag-id']];
+                $params = [
+                    'tagId' => (int) $_GET['tag-id'],
+                    'page' => (int) $_GET['page']
+                ];
                 break;
 
             case '/blog-post':
