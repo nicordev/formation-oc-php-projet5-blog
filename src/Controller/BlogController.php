@@ -34,7 +34,7 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
-    protected $postsByPage = 3;
+    protected $postsByPage = 10;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -90,23 +90,22 @@ class BlogController extends Controller
 
         if ($page >= $numberOfPages) {
             $page = $numberOfPages;
+        } elseif ($page <= 0) {
+            $page = 1;
         }
 
-        if (!$page || $page === 1) {
-            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, null, false);
-            if ($numberOfPages > 1) {
-                $nextPage = 2;
-            }
-        } elseif ($page > 1) {
+        if ($page > 1) {
             $start = ($page - 1) * $this->postsByPage;
             $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, $start, false);
             if ($page < $numberOfPages) {
                 $nextPage = $page + 1;
             }
             $previousPage = $page - 1;
-
         } else {
-            $posts = $this->postManager->getPostsOfACategory($categoryId, null, null, false);
+            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
         }
 
         $category = $this->categoryManager->get($categoryId);
@@ -141,23 +140,22 @@ class BlogController extends Controller
 
         if ($page >= $numberOfPages) {
             $page = $numberOfPages;
+        } elseif ($page <= 0) {
+            $page = 1;
         }
 
-        if (!$page || $page === 1) {
-            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, null, false);
-            if ($numberOfPages > 1) {
-                $nextPage = 2;
-            }
-        } elseif ($page > 1) {
+        if ($page > 1) {
             $start = ($page - 1) * $this->postsByPage;
             $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, $start, false);
             if ($page < $numberOfPages) {
                 $nextPage = $page + 1;
             }
             $previousPage = $page - 1;
-
         } else {
-            $posts = $this->postManager->getPostsOfATag($tagId, null, null, false);
+            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
         }
 
         foreach ($posts as $post) {
