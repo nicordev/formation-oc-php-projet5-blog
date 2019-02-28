@@ -1,0 +1,19 @@
+{% if message %}
+    <div id="message-wrapper" class="text-center w100" onclick="myApp.hideElementFromId('message-wrapper');">
+        <p class="message">
+            {{ message }}
+        </p>
+        {% if yesNoForm %}
+        <div class="message-form">
+            <form action="{{ yesNoForm.yesAction }}" method="post">
+                <input class="btn" type="submit" value="{% if yesNoForm.yesValue %}{{ yesNoForm.yesValue }}{% else %}Oui{% endif %}">
+            </form>
+            {% if yesNoForm.noAction %}
+                <form action="{{ yesNoForm.noAction }}" method="post">
+                    <input class="btn" type="submit" value="{% if yesNoForm.noValue %}{{ yesNoForm.noValue }}{% else %}Non{% endif %}">
+                </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+{% endif %}

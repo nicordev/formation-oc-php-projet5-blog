@@ -1,9 +1,11 @@
 {% extends "layout.twig" %}
 
+{# head #}
 {% block title %}
     {{ post.getTitle }}
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <div class="post-heading">
         <h1>{{ post.getTitle }}</h1>

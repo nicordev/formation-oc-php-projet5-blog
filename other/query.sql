@@ -1,4 +1,14 @@
 
+SELECT DISTINCT * FROM bl_category
+WHERE cat_id IN (
+    SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
+    WHERE ct_tag_id_fk IN (
+        SELECT DISTINCT pt_tag_id_fk FROM bl_post_tag
+        WHERE pt_post_id_fk = :id
+    )
+)
+;
+
 SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
 WHERE ct_tag_id_fk IN (
     SELECT pt_tag_id_fk FROM bl_post_tag

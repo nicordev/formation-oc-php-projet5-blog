@@ -161,15 +161,22 @@ var myApp = {
          *
          * @returns {HTMLElement}
          */
-        createDeleteBtnElt: function ()
+        createDeleteBtnElt: function (smallBtn = false)
         {
-            let closingCrossElt = document.createElement('span');
-            closingCrossElt.textContent = '🗑';
-            closingCrossElt.setAttribute('class', 'btn sign-btn');
+            if (smallBtn) {
+                var deleteBtnClass = 'btn sign-btn-small';
 
-            myApp.eraseTool.eraseElementOnClick(closingCrossElt);
+            } else {
+                var deleteBtnClass = 'btn sign-btn';
+            }
 
-            return closingCrossElt;
+            let deleteBtnElt = document.createElement('span');
+            deleteBtnElt.textContent = '🗑';
+            deleteBtnElt.setAttribute('class', deleteBtnClass);
+
+            myApp.eraseTool.eraseElementOnClick(deleteBtnElt);
+
+            return deleteBtnElt;
         }, 
         /**
          * Create a checkbox
@@ -269,13 +276,13 @@ var myApp = {
         {
             let messageWrapperElt = document.createElement('div');
             let messageTextElt = document.createElement('p');
-            let closingCrossElt = myApp.elementBuilder.createDeleteBtnElt();
+            let deleteBtnElt = myApp.elementBuilder.createDeleteBtnElt();
 
             messageTextElt.textContent = message;
             messageTextElt.classList.add('message');
             messageWrapperElt.classList.add('message-wrapper');
 
-            messageWrapperElt.appendChild(closingCrossElt);
+            messageWrapperElt.appendChild(deleteBtnElt);
             messageWrapperElt.appendChild(messageTextElt);
 
             return messageWrapperElt;

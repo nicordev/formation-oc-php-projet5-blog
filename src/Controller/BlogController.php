@@ -32,11 +32,9 @@ class BlogController extends Controller
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
-    const VIEW_BLOG_ADMIN = 'blog/blogAdmin.twig';
-    const VIEW_POST_EDITOR = 'blog/postEditor.twig';
-    const VIEW_CATEGORY_EDITOR = 'blog/categoryEditor.twig';
-
-    const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
+    const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
+    const VIEW_POST_EDITOR = 'admin/postEditor.twig';
+    const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
 
     /**
      * BlogController constructor.
@@ -70,6 +68,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showAllPosts(bool $htmlDecode = false)
     {
@@ -89,6 +88,7 @@ class BlogController extends Controller
      *
      * @param int $categoryId
      * @param bool $htmlDecode
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -142,6 +142,7 @@ class BlogController extends Controller
     {
         try {
             $post = $this->postManager->get($postId);
+            self::convertDatesOfPost($post);
             self::decodePostContent($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
 
@@ -159,11 +160,13 @@ class BlogController extends Controller
      * Show the panel do manage blog posts
      *
      * @param string $message
+     * @param array $yesNoForm
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showAdminPanel(string $message = '')
+    public function showAdminPanel(string $message = '', array $yesNoForm = [])
     {
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
@@ -172,6 +175,7 @@ class BlogController extends Controller
         self::render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
+            'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories
         ]);
@@ -253,19 +257,30 @@ class BlogController extends Controller
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
+        $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
 
         if ($newPost !== null) {
-            $tags = $newPost->getTags();
+            if (strlen($newPost->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
+                // Try again...
+                $this->showPostEditor(null, "Erreur : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères.");
 
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newPost->setTags($this->addNewTags($tags));
+            } elseif (strlen($newPost->getTitle()) > PostManager::TITLE_LENGTH) {
+                // Try again...
+                $this->showPostEditor(null, "Erreur : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères.");
+
+            } else {
+                $tags = $newPost->getTags();
+
+                if (!empty($tags)) {
+                    // Add tags in the database and get their ids
+                    $newPost->setTags($this->addNewTags($tags));
+                }
+
+                $this->postManager->add($newPost);
+
+                // Come back to the admin panel
+                $this->showAdminPanel("Un article a été publié.");
             }
-
-            $this->postManager->add($newPost);
-
-            // Come back to the admin panel
-            $this->showAdminPanel("Un article a été publié.");
 
         } else {
             // Try again...
@@ -324,15 +339,29 @@ class BlogController extends Controller
      *
      * @param array $tagIds
      * @param array $tagNames
+     * @param string|null $action
      * @return bool
-     * @throws Exception
+     * @throws AppException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function updateTagList(?array $tagIds, ?array $tagNames)
+    public function updateTagList(?array $tagIds, ?array $tagNames, ?string $action = null)
     {
         if ($tagIds === null || $tagNames === null) {
-            $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
-            // Head back to the admin panel
-            $this->showAdminPanel('La liste des étiquettes a été vidée.');
+            if ($action === 'delete-all') {
+                $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
+                // Head back to the admin panel
+                $this->showAdminPanel('Toutes les etiquettes ont été supprimées.');
+            } else {
+                // Head back to the admin panel
+                $yesNoForm = [
+                    'yesAction' => '/admin/update-tags?action=delete-all',
+                    'noAction' => '/admin'
+                ];
+                $this->showAdminPanel('Vous êtes sur le point de supprimer toutes les étiquettes. Continuer ?', $yesNoForm);
+            }
             return false;
         }
 
@@ -391,6 +420,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function editCategory()
     {
@@ -424,6 +454,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function deleteCategory()
     {
@@ -657,6 +688,21 @@ class BlogController extends Controller
     private static function decodePostContent(Post $post)
     {
         $post->setContent(htmlspecialchars_decode($post->getContent()));
-        $post->setContent(htmlspecialchars_decode($post->getContent()));
+        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
+    }
+
+    /**
+     * Change the date format use in a post
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    private static function convertDatesOfPost(Post $post)
+    {
+        $post->setCreationDate(self::formatDate($post->getCreationDate()));
+
+        if ($post->getLastModificationDate() !== null) {
+            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
     }
 }

@@ -1,5 +1,6 @@
-{% extends 'blog/admin.twig' %}
+{% extends 'admin/admin.twig' %}
 
+{# head #}
 {% block title %}
     {% if postToEdit %}
         Edition de {{ postToEdit.getTitle }}
@@ -8,25 +9,33 @@
     {% endif %}
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <h1>Editeur d'article</h1>
 {% endblock %}
 
 {% block content %}
     <section class="blog-admin">
-        {% include "blog/message.twig" %}
+        {% include "message.twig" %}
 
-        {% if postToEdit %}
-            {# Delete post button #}
+        <div>
+            {# Cancel button #}
             <div>
-                <form action="/admin/delete-post" method="post">
-                    <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
-                    <p>
-                        <input class="btn" type="submit" value="Supprimer l'article">
-                    </p>
-                </form>
+                <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
             </div>
-        {% endif %}
+
+            {% if postToEdit %}
+                {# Delete post button #}
+                <div>
+                    <form action="/admin/delete-post" method="post">
+                        <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
+                        <p>
+                            <input class="btn" type="submit" value="Supprimer l'article">
+                        </p>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
 
         <div>
             {% if postToEdit %}
@@ -35,7 +44,6 @@
                 <input type="hidden" name="post-editor-id" value="59"><!-- TODO put the true editor id here -->
             {% else %}
             <form action="/admin/add-post" method="post">
-                <input type="hidden" name="add-post">
             {% endif %}
                 <input type="hidden" name="post-author-id" value="58"><!-- TODO put the true author id here -->
 
@@ -60,15 +68,18 @@
                 </p>
 
                 {# Tags #}
-                {% include "blog/tagHandler.twig" %}
+                {% include "admin/tagHandler.twig" %}
             </form>
         </div>
     </section>
 {% endblock %}
 
-{% block footer %}
+{% block scripts %}
     {{ parent() }}
     <script src="/js/tagHandler.js"></script>
+    <script>
+        myTagHandler.setTagEventListeners();
+    </script>
     {# CKEditor #}
     <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
     <script>
@@ -79,6 +90,5 @@
             } );
     </script>
 {% endblock %}
-
 
 

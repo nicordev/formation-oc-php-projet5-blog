@@ -1,9 +1,11 @@
-{% extends "blog/admin.twig" %}
+{% extends "admin/admin.twig" %}
 
+{# head #}
 {% block title %}
     Administration du blog
 {% endblock %}
 
+{# body #}
 {% block headerTitle %}
     <h1>Administration du blog</h1>
 {% endblock %}
@@ -11,7 +13,7 @@
 {% block content %}
     <section id="blog-admin">
 
-        {% include "blog/message.twig" %}
+        {% include "message.twig" %}
 
         {# Posts#}
         <div class="admin-box w100">
@@ -21,48 +23,63 @@
                 <a class="btn" href="/admin/post-editor">Ajouter un article</a>
             </p>
 
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Etiquettes</th>
-                        <th>Catégories</th>
-                        <th>Commentaires</th>
-                        <th>Date de création</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Etiquettes</th>
+                        <th scope="col">Catégories</th>
+                        <th scope="col">Commentaires</th>
+                        <th scope="col">Date de création</th>
+                        <th scope="col">Dernière modification</th>
                     </tr>
                 </thead>
 
                 <tbody>
                 {% for post in posts %}
                     <tr>
-                        <td>
+                        <td scope="row">
                             <form action="/admin/post-editor" method="post">
                                 <input type="hidden" name="post-id" value="{{ post.getId }}">
                                 <input class="admin-link" type="submit" value="{{ post.getTitle }}">
                             </form>
                         </td>
-                        <td>
+                        <td scope="row">
                             coming soon...
                         </td>
-                        <td>
-                            {% set postTags = post.getTags() %}
+                        <td scope="row">
+                            {% set postTags = post.getTags %}
                             {% if postTags %}
                                 {% for tag in postTags %}
-                                    {{ tag.getName() }}
+                                    <span class="table-tag">#{{ tag.getName }}</span>
                                 {% endfor %}
                             {% else %}
                                 -
                             {% endif %}
                         </td>
-                        <td>
+                        <td scope="row">
+                            {% set postCategories = post.getCategories %}
+                            {% if postCategories %}
+                                {% for category in postCategories %}
+                                    {{ category.getName }}
+                                {% endfor %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td scope="row">
                             coming soon...
                         </td>
-                        <td>
-                            coming soon...
+                        <td scope="row">
+                            <span class="table-date">{{ post.getCreationDate }}</span>
                         </td>
-                        <td>
-                            {{ post.getCreationDate }}
+                        <td scope="row">
+                            {% if post.getLastModificationDate %}
+                            <span class="table-date">Le {{ post.getLastModificationDate }} par TODO: insert the editor name here</span>
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
@@ -70,16 +87,19 @@
 
                 <tfoot>
                     <tr>
-                        <th>Titre</th>
-                        <th>Auteur</th>
-                        <th>Etiquettes</th>
-                        <th>Catégories</th>
-                        <th>Commentaires</th>
-                        <th>Date de création</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Etiquettes</th>
+                        <th scope="col">Catégories</th>
+                        <th scope="col">Commentaires</th>
+                        <th scope="col">Date de création</th>
+                        <th scope="col">Dernière modification</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
+
+        <hr>
 
         {# Categories #}
         <div class="admin-box">
@@ -90,7 +110,7 @@
                 <a class="btn" href="/admin/category-editor">Ajouter une catégorie</a>
             </p>
 
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Catégorie</th>
@@ -111,7 +131,7 @@
                             {% set categoryTags = category.getTags() %}
                             {% if categoryTags %}
                                 {% for tag in categoryTags %}
-                                    {{ tag.getName }}
+                                    <span class="table-tag">#{{ tag.getName }}</span>
                                 {% endfor %}
                             {% else %}
                                 -
@@ -123,31 +143,48 @@
             </table>
         </div>
 
+        <hr>
+
         {# Tags #}
         <div class="admin-box">
-            <h2>Etiquettes</h2>
+            <h2>#Etiquettes</h2>
 
             <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
-
-                <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
-
-                <input type="hidden" name="action" value="update-tag-list">
+                <p>
+                    {# Update list button #}
+                        <div>
+                            <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+                        </div>
+                        {# Cancel button #}
+                        <div>
+                            <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
+                        </div>
+                </p>
 
                 <ul id="tag-list">
                     {% for tag in tags %}
                         <li>
                             <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
-                            <input class="available-tag text-center admin-link" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); highlightIncorrectTags();">
-                            <span class="btn sign-btn" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
+                            <span>#</span>
+                            <input class="available-tag text-center admin-tag underline-input" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
+                            <span class="btn sign-btn-small" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
                         </li>
                     {% endfor %}
 
                     <li id="new-tag-input-li">
-                        <input id="new-tag-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette">
+                        <span>#</span>
+                        <input id="new-tag-input" class="underline-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="myBlogAdmin.addTagOnEnter(event);">
                         <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
                     </li>
                 </ul>
             </form>
         </div>
     </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        myBlogAdmin.setTagEventListeners();
+    </script>
 {% endblock %}

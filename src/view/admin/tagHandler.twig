@@ -1,5 +1,7 @@
+<hr>
+
 <div id="post-tags-wrapper">
-    <h3>Etiquettes</h3>
+    <h3>#Etiquettes</h3>
 
     <div class="post-editor-box" id="available-tags-wrapper">
         <ul id="available-tags">
@@ -7,7 +9,7 @@
                 {% for tag in availableTags %}
                     <li>
                         <input type="checkbox" name="tags[]" value="{{ tag }}" {% if tag in selectedTags %}checked{% endif %}>
-                        <label class="available-tag" for="{{ tag }}">{{ tag }}</label>
+                        <label class="available-tag right-label" for="{{ tag }}">{{ tag }}</label>
                     </li>
                 {% endfor %}
             {% endif %}
@@ -17,7 +19,7 @@
     {# New tag #}
     <div class="post-editor-box" id="new-tag-wrapper">
         <label for="new-tag">Créer une étiquette</label><br>
-        <input class="tag-input" type="text" id="new-tag">
-        <button class="btn sign-btn" id="new-tag-btn">+</button>
+        <input class="tag-input" type="text" id="new-tag" onkeydown="myTagHandler.addTagOnEnter(event);">
+        <button type="button" class="btn sign-btn" id="new-tag-btn">+</button>
     </div>
 </div>

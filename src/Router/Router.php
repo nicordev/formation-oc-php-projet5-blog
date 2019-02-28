@@ -117,7 +117,8 @@ class Router
                 $method = 'updateTagList';
                 $params = [
                     'tagIds' => $_POST['tag_ids'],
-                    'tagNames' => $_POST['tag_names']
+                    'tagNames' => $_POST['tag_names'],
+                    'action' => isset($_GET['action']) ? $_GET['action'] : null
                 ];
                 break;
 

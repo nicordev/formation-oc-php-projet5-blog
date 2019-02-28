@@ -17,6 +17,9 @@ use Application\Exception\BlogException;
 
 class PostManager extends Manager
 {
+    public const EXCERPT_LENGTH = 300;
+    public const TITLE_LENGTH = 100;
+
     /**
      * PostManager constructor.
      */
@@ -107,8 +110,9 @@ class PostManager extends Manager
      *
      * @param int $postId
      * @return array
+     * @throws BlogException
      */
-    public function getTagsOfAPost(int $postId)
+    public function getTagsOfAPost(int $postId): array
     {
         $tags = [];
 
@@ -118,29 +122,60 @@ class PostManager extends Manager
             INNER JOIN bl_post ON pt_post_id_fk = p_id
             WHERE p_id = :postId';
 
-        $requestTags = $this->database->prepare($query);
-        $requestTags->execute([
+        $requestTags = $this->query($query, [
             'postId' => $postId
         ]);
+
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
-            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+            $tags[] = $this->createEntityFromTableData($tagData, 'Tag');
         }
 
         return $tags;
     }
 
     /**
+     * Get associated categories of a post
+     *
+     * @param int $postId
+     * @return array
+     * @throws BlogException
+     */
+    public function getCategoriesOfAPost(int $postId): array
+    {
+        $categories = [];
+
+        $query = 'SELECT DISTINCT * FROM bl_category
+            WHERE cat_id IN (
+                SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
+                WHERE ct_tag_id_fk IN (
+                    SELECT DISTINCT pt_tag_id_fk FROM bl_post_tag
+                    WHERE pt_post_id_fk = :id
+                )
+            )';
+
+        $requestCategories = $this->query($query, ['id' => $postId]);
+
+        while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
+            $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
+        }
+
+        return $categories;
+    }
+
+    /**
      * Get all posts from the database
      *
      * @return array
+     * @throws BlogException
      */
     public function getAll(): array
     {
         $posts = parent::getAll();
 
-        // Get tags
+        // Set tags and categories
         foreach ($posts as $post) {
             $post->setTags($this->getTagsOfAPost($post->getId()));
+            $post->setCategories($this->getCategoriesOfAPost($post->getId()));
         }
 
         return $posts;
@@ -151,13 +186,14 @@ class PostManager extends Manager
      *
      * @param int|null $categoryId
      * @return array
+     * @throws BlogException
      */
     public function getAllIds(?int $categoryId = null): array
     {
         if ($categoryId === null) {
             $query = 'SELECT ' . $this->fields['id'] . ' FROM ' . $this->tableName . ' ORDER BY ' . $this->fields['id'];
 
-            $requestAllIds = $this->database->query($query);
+            $requestAllIds = $this->query($query);
 
         } else {
             $query = 'SELECT p_id FROM bl_post
@@ -172,8 +208,7 @@ class PostManager extends Manager
                         WHERE cat_id = :id)
                 )';
 
-            $requestAllIds = $this->database->prepare($query);
-            $requestAllIds->execute([
+            $requestAllIds = $this->query($query, [
                 'id' => $categoryId
             ]);
         }
@@ -192,13 +227,20 @@ class PostManager extends Manager
      * Get the posts associated to a category via its tags
      *
      * @param int $categoryId
+     * @param bool $withContent
      * @return array
+     * @throws BlogException
      */
-    public function getPostsOfACategory(int $categoryId)
+    public function getPostsOfACategory(int $categoryId, bool $withContent = false)
     {
         $posts = [];
+        if ($withContent) {
+            $columns = '*';
+        } else {
+            $columns = 'p_id, p_excerpt, p_last_modification_date, p_last_editor_id_fk, p_author_id_fk, p_creation_date, p_title';
+        }
 
-        $query = 'SELECT * FROM bl_post
+        $query = 'SELECT ' . $columns . ' FROM bl_post
             WHERE p_id IN (
                 SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
                 WHERE pt_tag_id_fk IN (
@@ -209,12 +251,12 @@ class PostManager extends Manager
                             ON cat_id = ct_category_id_fk
                     WHERE cat_id = :id) # Use the requested category id here
             )';
-        $requestPosts = $this->database->prepare($query);
-        $requestPosts->execute([
+        $requestPosts = $this->query($query, [
             'id' => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $postData['p_content'] = 'Excerpt only';
             $posts[] = $this->createEntityFromTableData($postData);
         }
 
@@ -231,8 +273,7 @@ class PostManager extends Manager
                 WHERE pt_tag_id_fk = :id
             )';
 
-        $requestPosts = $this->database->prepare($query);
-        $requestPosts->execute([
+        $requestPosts = $this->query($query, [
             'id' => $tagId
         ]);
 

@@ -3,8 +3,10 @@
 namespace Model\Manager;
 
 use Application\Exception\BlogException;
+use Exception;
 use Model\Entity\Entity;
 use \PDO;
+use PDOException;
 use ReflectionClass;
 
 /**
@@ -24,6 +26,8 @@ abstract class Manager
     protected $host = 'localhost';
     protected $user = 'root';
     protected $password = '';
+
+    protected const ENTITY_NAMESPACE = 'Model\\Entity\\';
 
     /**
      * Manager constructor.
@@ -92,7 +96,7 @@ abstract class Manager
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
-        $this->prepareThenExecuteQuery($query, $properties);
+        $this->query($query, $properties);
     }
 
     /**
@@ -111,7 +115,7 @@ abstract class Manager
             SET ' . self::buildSqlSet($fields) . '
             WHERE ' . $fields['id'] . ' = :id';
 
-        $this->prepareThenExecuteQuery($query, $properties);
+        $this->query($query, $properties);
     }
 
     /**
@@ -124,7 +128,7 @@ abstract class Manager
     {
         $query = 'DELETE FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
-        $this->prepareThenExecuteQuery($query, [$entityId]);
+        $this->query($query, [$entityId]);
     }
 
     /**
@@ -134,7 +138,7 @@ abstract class Manager
     {
         $query = 'DELETE FROM ' . $this->tableName;
 
-        $this->database->query($query);
+        $this->query($query);
     }
 
     /**
@@ -148,7 +152,7 @@ abstract class Manager
     {
         $query = 'SELECT * FROM ' . $this->tableName . ' WHERE ' . $this->fields['id'] . ' = ?';
 
-        $request = $this->prepareThenExecuteQuery($query, [$entityId]);
+        $request = $this->query($query, [$entityId]);
         $tableData = $request->fetch(PDO::FETCH_ASSOC);
 
         return $this->createEntityFromTableData($tableData);
@@ -158,13 +162,14 @@ abstract class Manager
      * Get all Entities form database
      *
      * @return array
+     * @throws BlogException
      */
     public function getAll(): array
     {
         $entities = [];
         $query = "SELECT * FROM " . $this->tableName;
 
-        $requestAllEntities = $this->database->query($query);
+        $requestAllEntities = $this->query($query);
 
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
@@ -179,11 +184,12 @@ abstract class Manager
      * Get the last id.
      *
      * @return int
+     * @throws BlogException
      */
     public function getLastId(): int
     {
         $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
-        $requestLastId = $this->database->query($query);
+        $requestLastId = $this->query($query);
 
         $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
 
@@ -197,18 +203,56 @@ abstract class Manager
      * Create an Entity child from database data
      *
      * @param array $tableData
+     * @param string|null $className If null, the method will use the entity linked to the calling manager
      * @return mixed
      */
-    protected function createEntityFromTableData(array $tableData)
+    protected function createEntityFromTableData(array $tableData, ?string $className = null)
     {
-        $entityClass = self::getEntityClass();
         $entityData = [];
 
-        foreach ($this->fields as $key => $value) {
-            $entityData[$key] = $tableData[$value];
+        if ($className !== null) {
+            $entityClass = self::ENTITY_NAMESPACE . $className;
+            // Find the right manager
+            $managerClass = self::getManagerClass($className);
+            $entityManager = new $managerClass();
+
+            foreach ($entityManager->fields as $key => $value) {
+                $entityData[$key] = $tableData[$value];
+            }
+
+        } else {
+            $entityClass = self::getEntityClass();
+
+            foreach ($this->fields as $key => $value) {
+                $entityData[$key] = $tableData[$value];
+            }
         }
 
         return new $entityClass($entityData);
+    }
+
+    /**
+     * Prepare then execute a SQL query with parameters or execute a simple query
+     *
+     * @param string $query
+     * @param array $params
+     * @return bool|\PDOStatement
+     * @throws BlogException
+     */
+    protected function query(string $query, ?array $params = null)
+    {
+        if ($params !== null) {
+
+            $request = $this->database->prepare($query);
+
+            if (!$request->execute($params)) {
+                throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+            }
+        } else {
+            $request = $this->database->query($query);
+        }
+
+        return $request;
     }
 
 
@@ -223,28 +267,22 @@ abstract class Manager
     {
         $class = explode('\\', get_called_class());
         $class = end($class);
-        $class = 'Model\\Entity\\' . substr($class, 0, -(strlen('Manager')));
+        $class = self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
 
         return $class;
     }
 
     /**
-     * Prepare then execute a SQL query with parameters
+     * Get the manager class name of an Entity
      *
-     * @param string $query
-     * @param array $params
-     * @return bool|\PDOStatement
-     * @throws BlogException
+     * @param string $entityClassName without the namespace
+     * @return string
      */
-    private function prepareThenExecuteQuery(string $query, array $params)
+    private static function getManagerClass(string $entityClassName): string
     {
-        $request = $this->database->prepare($query);
+        $class = __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
 
-        if (!$request->execute($params)) {
-            throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
-        }
-
-        return $request;
+        return $class;
     }
 
     /**

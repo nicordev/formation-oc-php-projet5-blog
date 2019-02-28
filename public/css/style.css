@@ -15,6 +15,7 @@ a, p a, a:hover {
 
 .content {
     margin: 50px auto;
+    width: 90%;
     max-width: 1300px;
 }
 
@@ -28,19 +29,46 @@ a, p a, a:hover {
     border-radius: 100%;
 }
 
-.message {
-    background-color: #ddddff;
-    padding: 20px 0;
-    color: #0c5460;
+.sign-btn-small {
+    font-size: 1em;
+    padding: 0 7px 0px 7px;
+    border-radius: 100%;
 }
 
-.blogpost-navigation {
-    margin-top: 30px;
-    color: burlywood;
+.bad {
+    background-color: #dd4444 !important;
+    color: white !important;
+}
+
+.right-label {
+    padding-left: 5px;
+}
+
+.green {
+    color: #1c7430 !important;
+}
+
+/* message.twig */
+
+#message-wrapper {
+    background-color: #ddddff;
+}
+
+.message {
+    margin: 0;
+    padding: 10px 0;
+    color: #0c5460;
 }
 
 .message:hover {
     cursor: pointer;
+}
+
+.message-form {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+
 }
 
 /* home.twig */

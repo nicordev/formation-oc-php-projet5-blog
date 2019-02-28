@@ -104,31 +104,17 @@ class TagManager extends Manager
      *
      * @param string $tagName
      * @return mixed
+     * @throws \Application\Exception\BlogException
      */
     public function getId(string $tagName)
     {
         $query = 'SELECT tag_id FROM bl_tag WHERE tag_name = :tag';
-        $requestId = $this->database->prepare($query);
-        $requestId->execute([
+        $requestId = $this->query($query, [
             'tag' => $tagName
         ]);
 
         $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
 
         return $id;
-    }
-
-    /**
-     * @param array $data
-     * @return Tag
-     */
-    public static function createATagFromDatabaseData(array $data): Tag
-    {
-        $attributes = [
-            'id' => $data['tag_id'],
-            'name' => $data['tag_name']
-        ];
-
-        return new Tag($attributes);
     }
 }

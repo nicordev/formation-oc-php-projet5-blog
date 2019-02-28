@@ -101,13 +101,13 @@ class CategoryManager extends Manager
         $query = 'SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
             WHERE ct_tag_id_fk IN (
                 SELECT pt_tag_id_fk FROM bl_post_tag
-                WHERE pt_post_id_fk = 23
+                WHERE pt_post_id_fk = :id
             )';
 
-        $requestPostId = $this->database->prepare($query);
-        $requestPostId->execute([
-
+        $requestPostId = $this->query($query, [
+            'id' => $postId
         ]);
+
         $categoryIds = $requestPostId->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($categoryIds as $categoryId) {
@@ -133,12 +133,12 @@ class CategoryManager extends Manager
             INNER JOIN bl_category ON ct_category_id_fk = cat_id
             WHERE cat_id = :categoryId';
 
-        $requestTags = $this->database->prepare($query);
-        $requestTags->execute([
+        $requestTags = $this->query($query, [
             'categoryId' => $categoryId
         ]);
+
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
-            $tags[] = TagManager::createATagFromDatabaseData($tagData);
+            $tags[] = $this->createEntityFromTableData($tagData, 'Tag');
         }
 
         return $tags;
@@ -160,6 +160,20 @@ class CategoryManager extends Manager
 
         return $categories;
     }
+
+    /**
+     * @param array $data
+     * @return Category
+     */
+    public static function createACategoryFromDatabaseData(array $data): Category
+    {
+        $attributes = [
+            'id' => $data['cat_id'],
+            'name' => $data['cat_name']
+        ];
+
+        return new Category($attributes);
+    }
     
     // Private
 
@@ -168,13 +182,13 @@ class CategoryManager extends Manager
      *
      * @param Category $category
      * @param array $tags
+     * @throws \Application\Exception\BlogException
      */
     private function associateCategoryAndTags(Category $category, array $tags)
     {
         // Delete
         $query = 'DELETE FROM bl_category_tag WHERE ct_category_id_fk = :categoryId';
-        $requestDelete = $this->database->prepare($query);
-        $requestDelete->execute([
+        $requestDelete = $this->query($query, [
             'categoryId' => $category->getId()
         ]);
 
