@@ -19,7 +19,7 @@
         <div class="admin-box w100">
             <h2>Articles</h2>
 
-            {% if 'author' in roles %}
+            {% if 'author' in getUser().getRoles %}
                 <p>
                     <a class="btn" href="/admin/post-editor">Ajouter un article</a>
                 </p>
@@ -42,7 +42,7 @@
                 {% for post in posts %}
                     <tr>
                         <td scope="row">
-                            {% if 'author' in roles and post.getAuthorId is same as(connectedMember.getId) or 'editor' in roles %}
+                            {% if 'author' in getUser().getRoles and post.getAuthorId is same as(getUser().getId) or 'editor' in roles %}
                                 <form action="/admin/post-editor" method="post">
                                     <input type="hidden" name="post-id" value="{{ post.getId }}">
                                     <input class="admin-link" type="submit" value="{{ post.getTitle }}">

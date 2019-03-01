@@ -20,6 +20,7 @@ use Model\Manager\PostManager;
 use Model\Manager\RoleManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
+use Twig_Function;
 use Twig_Loader_Filesystem;
 
 class DIC
@@ -86,12 +87,19 @@ class DIC
     {
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
 
-
-
         $twig = new Twig_Environment($twigLoader, [
             'debug' => true, // TODO change to false for production
             'cache' => false // TODO change to true for production
         ]);
+
+        $getUserFunction = new Twig_Function('getUser', function () {
+            if (MemberController::memberConnected()) {
+                return $_SESSION['connected-member'];
+            }
+            return null;
+        });
+
+        $twig->addFunction($getUserFunction);
 
         return $twig;
     }

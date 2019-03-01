@@ -31,13 +31,13 @@ class Router
 
             case '/':
                 $controller = HomeController::class;
-                $method = 'showHome';;
+                $method = 'showHome';
                 $params = [];
                 break;
 
             case '/home':
                 $controller = HomeController::class;
-                $method = 'showHome';;
+                $method = 'showHome';
                 $params = [];
                 break;
 
@@ -76,13 +76,13 @@ class Router
             case '/member-profile':
                 $controller = MemberController::class;
                 $method = 'showMemberProfile';
-                $params = ['memberId' => isset($_GET['id']) ? $_GET['id'] : null];
+                $params = ['memberId' => $_GET['id'] ?? null];
                 break;
 
             case '/profile-editor':
                 $controller = MemberController::class;
                 $method = 'showMemberProfileEditor';
-                $params = ['memberId' => isset($_GET['id']) ? $_GET['id'] : null];
+                $params = ['memberId' => $_GET['id'] ?? null];
 
                 if (isset($_GET['action']) && !empty($_GET['action'])) {
                     switch ($_GET['action']) {
@@ -164,7 +164,7 @@ class Router
                 }
                 $controller = BlogController::class;
                 $method = 'showPostEditor';
-                $params = isset($postId) ? ['postId' => $postId] : [];
+                $params = ['postId' => $postId] ?? [];
                 break;
 
             case '/admin/category-editor':
@@ -174,7 +174,7 @@ class Router
                 }
                 $controller = BlogController::class;
                 $method = 'showCategoryEditor';
-                $params = isset($categoryId) ? ['categoryId' => $categoryId] : [];
+                $params = ['categoryId' => $categoryId] ?? [];
                 break;
 
             case '/admin/add-category':
@@ -205,7 +205,7 @@ class Router
                 $params = [
                     'tagIds' => $_POST['tag_ids'],
                     'tagNames' => $_POST['tag_names'],
-                    'action' => isset($_GET['action']) ? $_GET['action'] : null
+                    'action' => $_GET['action'] ?? null
                 ];
                 break;
 

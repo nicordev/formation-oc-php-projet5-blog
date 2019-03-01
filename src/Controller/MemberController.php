@@ -43,7 +43,7 @@ class MemberController extends Controller
      */
     public static function verifyAccess(): bool
     {
-        if (isset($_SESSION['connected-member'])) {
+        if (MemberController::memberConnected()) {
             foreach ($_SESSION['connected-member']->getRoles() as $role) {
                 if (in_array($role, self::AUTHORIZED_ROLES)) {
                     return true;
@@ -80,8 +80,7 @@ class MemberController extends Controller
     public function showConnectionPage(?string $message = null)
     {
         echo $this->twig->render(self::VIEW_CONNECTION, [
-            'message' => $message,
-            'connectedMember' => $_SESSION['connected-member'] ?? null
+            'message' => $message
         ]);
     }
 
@@ -94,7 +93,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => $_SESSION['connected-member'] ?? null]);
+        echo $this->twig->render(self::VIEW_WELCOME);
     }
 
     /**
@@ -114,8 +113,7 @@ class MemberController extends Controller
         }
 
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
-            'member' => $member,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'member' => $member
         ]);
     }
 
@@ -130,7 +128,7 @@ class MemberController extends Controller
      */
     public function showMemberProfileEditor($member = null)
     {
-        if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
+        if (MemberController::memberConnected()) {
 
             if ($member === null) {
                 $member = $_SESSION['connected-member'];
@@ -139,12 +137,24 @@ class MemberController extends Controller
             }
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
-                'member' => $member,
-                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+                'member' => $member
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
         }
+    }
+
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function memberConnected(): bool
+    {
+        if (isset($_SESSION['connected-member']) && !empty($_SESSION['connected-member'])) {
+            return true;
+        }
+        return false;
     }
 
     // Actions
