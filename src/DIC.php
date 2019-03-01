@@ -35,20 +35,13 @@ class DIC
      */
     public static function newBlogController(): BlogController
     {
-        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
-
-        $twig = new Twig_Environment($twigLoader, [
-            'debug' => true, // TODO change to false for production
-            'cache' => false // TODO change to true for production
-        ]);
-
         return new BlogController(
             new PostManager(),
             new TagManager(),
             new CategoryManager(),
             new CommentManager(),
             new MemberManager(),
-            $twig
+            self::generateTwigEnvironment()
         );
     }
 
@@ -57,17 +50,10 @@ class DIC
      */
     public static function newHomeController(): HomeController
     {
-        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
-
-        $twig = new Twig_Environment($twigLoader, [
-            'debug' => true, // TODO change to false for production
-            'cache' => false // TODO change to true for production
-        ]);
-
         return new HomeController(
             new PostManager(),
             new CategoryManager(),
-            $twig
+            self::generateTwigEnvironment()
         );
     }
 
@@ -76,14 +62,7 @@ class DIC
      */
     public static function newErrorController(): ErrorController
     {
-        $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
-
-        $twig = new Twig_Environment($twigLoader, [
-            'debug' => true, // TODO change to false for production
-            'cache' => false // TODO change to true for production
-        ]);
-
-        return new ErrorController($twig);
+        return new ErrorController(self::generateTwigEnvironment());
     }
 
     /**
@@ -91,17 +70,29 @@ class DIC
      */
     public static function newMemberController(): MemberController
     {
+        return new MemberController(
+            new MemberManager(),
+            new RoleManager(),
+            self::generateTwigEnvironment()
+        );
+    }
+
+    /**
+     * Generate a Twig_Environment and create useful functions
+     *
+     * @return Twig_Environment
+     */
+    private static function generateTwigEnvironment(): Twig_Environment
+    {
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
+
+
 
         $twig = new Twig_Environment($twigLoader, [
             'debug' => true, // TODO change to false for production
             'cache' => false // TODO change to true for production
         ]);
 
-        return new MemberController(
-            new MemberManager(),
-            new RoleManager(),
-            $twig
-        );
+        return $twig;
     }
 }

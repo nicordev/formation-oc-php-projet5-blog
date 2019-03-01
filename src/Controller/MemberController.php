@@ -81,7 +81,7 @@ class MemberController extends Controller
     {
         echo $this->twig->render(self::VIEW_CONNECTION, [
             'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'connectedMember' => $_SESSION['connected-member'] ?? null
         ]);
     }
 
@@ -94,7 +94,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null]);
+        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => $_SESSION['connected-member'] ?? null]);
     }
 
     /**
