@@ -46,14 +46,18 @@ class MemberManager extends Manager
      * Edit a member in the database
      *
      * @param Member $modifiedMember
-     * @throws Exception
+     * @param bool $updateRoles
+     * @throws \Application\Exception\BlogException
+     * @throws \ReflectionException
      */
-    public function edit($modifiedMember): void
+    public function edit($modifiedMember, bool $updateRoles = true): void
     {
         parent::edit($modifiedMember);
 
         // Roles
-        $this->associateMemberRoles($modifiedMember);
+        if ($updateRoles) {
+            $this->associateMemberRoles($modifiedMember);
+        }
     }
 
     /**
@@ -234,6 +238,36 @@ class MemberManager extends Manager
         return true;
     }
 
+    /**
+     * Get the roles of a member
+     *
+     * @param int $memberId
+     * @param bool $namesOnly
+     * @return array
+     * @throws \Application\Exception\BlogException
+     */
+    public function getAssociatedRoles(int $memberId, bool $namesOnly = true)
+    {
+        $query = 'SELECT * FROM bl_role
+            WHERE r_id IN (
+                SELECT rm_role_id_fk FROM bl_role_member
+                WHERE rm_member_id_fk = :id
+            )';
+
+        $requestRoles = $this->query($query, ['id' => $memberId]);
+
+        $roles = [];
+        while ($roleData = $requestRoles->fetch(PDO::FETCH_ASSOC)) {
+            if ($namesOnly) {
+                $roles[] = $roleData['r_name'];
+            } else {
+                $roles[] = $this->createEntityFromTableData($roleData, 'Role');
+            }
+        }
+
+        return $roles;
+    }
+
     // Private
 
     /**
@@ -266,35 +300,5 @@ class MemberManager extends Manager
                 }
             }
         }
-    }
-
-    /**
-     * Get the roles of a member
-     *
-     * @param int $memberId
-     * @param bool $namesOnly
-     * @return array
-     * @throws \Application\Exception\BlogException
-     */
-    private function getAssociatedRoles(int $memberId, bool $namesOnly = true)
-    {
-        $query = 'SELECT * FROM bl_role
-            WHERE r_id IN (
-                SELECT rm_role_id_fk FROM bl_role_member
-                WHERE rm_member_id_fk = :id
-            )';
-
-        $requestRoles = $this->query($query, ['id' => $memberId]);
-
-        $roles = [];
-        while ($roleData = $requestRoles->fetch(PDO::FETCH_ASSOC)) {
-            if ($namesOnly) {
-                $roles[] = $roleData['r_name'];
-            } else {
-                $roles[] = $this->createEntityFromTableData($roleData, 'Role');
-            }
-        }
-
-        return $roles;
     }
 }

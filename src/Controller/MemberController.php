@@ -237,11 +237,13 @@ class MemberController extends Controller
     /**
      * Update the profile of a member
      *
+     * @param bool $updateRoles
      * @throws AppException
+     * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
      */
     public function updateProfile()
     {
@@ -251,7 +253,11 @@ class MemberController extends Controller
             isset($_POST['description'])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
-            $this->memberManager->edit($modifiedMember);
+            if (isset($_POST['keep-roles'])) {
+                $this->memberManager->edit($modifiedMember, false);
+            } else {
+                $this->memberManager->edit($modifiedMember, true);
+            }
             if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
                 $_SESSION['connected-member'] = $modifiedMember;
             }
@@ -408,6 +414,8 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
+        } else {
+            $member->setId($_SESSION['connected-member']->getId());
         }
 
         if (isset($_POST['roles'])) {
