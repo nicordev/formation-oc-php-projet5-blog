@@ -28,7 +28,7 @@
                 </div>
             {% elseif getUser() and 'admin' in getUser().getRoles %}
                 <div>
-                    <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+                    <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
                 </div>
             {% endif %}
 

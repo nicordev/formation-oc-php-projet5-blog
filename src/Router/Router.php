@@ -121,8 +121,8 @@ class Router
                 $controller = MemberController::class;
                 $method = 'showMemberProfileEditor';
                 $params = [
-                    'member' => (int) $_GET['id'] ?? null,
-                    'key' => (int) $_GET['key'] ?? null
+                    'member' => isset($_GET['id']) ? (int) $_GET['id'] : null,
+                    'key' => isset($_GET['key']) ? (int) $_GET['key'] : null
                 ];
 
                 if (isset($_GET['action']) && !empty($_GET['action'])) {

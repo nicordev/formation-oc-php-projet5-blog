@@ -8,6 +8,7 @@ use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\MemberException;
 use Application\MailSender\MailSender;
+use Exception;
 use Model\Entity\Key;
 use Model\Entity\Member;
 use Model\Entity\Role;
@@ -130,7 +131,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
-     * @throws \Exception
+     * @throws Exception
      */
     public function showMemberProfile(?int $memberId = null)
     {
@@ -164,6 +165,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showMemberProfileEditor($member = null, ?int $keyValue = null)
     {
@@ -174,7 +176,7 @@ class MemberController extends Controller
             if ($member === null) {
                 $member = $_SESSION['connected-member'];
             } elseif (!($member instanceof Member) && in_array('admin', $_SESSION['connected-member']->getRoles())) {
-                $member = $this->memberManager->get($member);
+                $member = $this->memberManager->get((int) $member);
             }
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
@@ -189,8 +191,9 @@ class MemberController extends Controller
             } catch (BlogException $e) {
                 $this->showConnectionPage("La clé demandée n'existe plus. Relancez la procédure de récupération du mot de passe.");
             }
-            $member = $this->memberManager->get($member);
+            $member = $this->memberManager->get($member->getId());
             $_SESSION['connected-member'] = $member;
+
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
                 'connectedMember' => $member,
