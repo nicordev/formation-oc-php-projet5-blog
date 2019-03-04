@@ -8,7 +8,7 @@ class ErrorController extends Controller
 {
     const VIEW_404 = 'error/pageNotFound.twig';
     const VIEW_403 = 'error/accessDenied.twig';
-    const VIEW_500 = 'error/server';
+    const VIEW_500 = 'error/serverError.twig';
 
     public function __construct(Twig_Environment $twig)
     {
