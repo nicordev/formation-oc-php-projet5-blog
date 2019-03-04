@@ -103,6 +103,10 @@
 
         {# Delete account #}
         <form action="/profile-editor?action=delete" method="post">
+
+            {# CSRF protection #}
+            <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
             <input type="hidden" name="id" value="{{ member.getId }}">
             <input class="btn btn-primary" type="submit" value="Supprimer le compte">
         </form>

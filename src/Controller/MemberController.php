@@ -198,7 +198,6 @@ class MemberController extends Controller
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
-                'connectedMember' => $member,
                 'availableRoles' => $availableRoles
             ]);
         } else {
@@ -239,22 +238,15 @@ class MemberController extends Controller
     /**
      * Update the profile of a member
      *
-     * @param bool $updateRoles
      * @throws AppException
      * @throws BlogException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws SecurityException
      */
     public function updateProfile()
     {
-        // CSRF protection
-        if (!WebsiteCop::isCsrfSafe()) {
-            throw new SecurityException('CSRF attack reported!');
-        }
-
         if (
             isset($_POST['name']) &&
             isset($_POST['email']) &&

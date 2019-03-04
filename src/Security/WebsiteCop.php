@@ -2,6 +2,8 @@
 
 namespace Application\Security;
 
+use Application\Exception\SecurityException;
+
 class WebsiteCop
 {
     private static $counterCsrfToken;
@@ -20,6 +22,18 @@ class WebsiteCop
     public static function setCounterCsrfToken($counterCsrfToken): void
     {
         self::$counterCsrfToken = $counterCsrfToken;
+    }
+
+    /**
+     * Check if there is a CSRF attack
+     *
+     * @throws SecurityException
+     */
+    public static function checkCsrf()
+    {
+        if (!self::isCsrfSafe()) {
+            throw new SecurityException('CSRF attack reported!');
+        }
     }
 
     /**

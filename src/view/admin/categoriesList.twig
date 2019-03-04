@@ -19,6 +19,10 @@
                 <tr>
                     <td>
                         <form action="/admin/category-editor" method="post">
+
+                            {# CSRF protection #}
+                            <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                             <input type="hidden" name="category-id" value="{{ category.getId() }}">
                             <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
                         </form>

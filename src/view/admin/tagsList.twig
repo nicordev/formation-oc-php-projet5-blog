@@ -2,6 +2,10 @@
     <h2>#Etiquettes <span class="editor-info">{{ tags|length }}</span></h2>
 
     <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
+
+        {# CSRF protection #}
+        <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
         <p>
             {# Update list button #}
         <div>

@@ -6,7 +6,7 @@
         <dl>
             {% for comment in comments %}
                 {% if not comment.getParentId %}
-                    {{ macros.showAComment(comment, connectedMember) }}
+                    {{ macros.showAComment(comment, getUser()) }}
                 {% endif %}
             {% endfor %}
         </dl>

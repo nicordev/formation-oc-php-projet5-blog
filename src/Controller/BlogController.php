@@ -327,8 +327,7 @@ class BlogController extends Controller
         $comment = $this->commentManager->get($commentToEditId);
 
         self::render(self::VIEW_COMMENT_EDITOR, [
-            'commentToEdit' => $comment,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'commentToEdit' => $comment
         ]);
     }
 
