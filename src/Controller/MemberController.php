@@ -61,7 +61,7 @@ class MemberController extends Controller
      */
     public static function verifyAccess(?array $authorizedRoles = null): bool
     {
-        if (isset($_SESSION['connected-member'])) {
+        if (MemberController::memberConnected()) {
             if ($authorizedRoles) {
                 foreach ($_SESSION['connected-member']->getRoles() as $role) {
                     if (in_array($role, $authorizedRoles)) {
@@ -106,8 +106,7 @@ class MemberController extends Controller
     public function showConnectionPage(?string $message = null)
     {
         echo $this->twig->render(self::VIEW_CONNECTION, [
-            'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 
@@ -120,7 +119,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null]);
+        echo $this->twig->render(self::VIEW_WELCOME);
     }
 
     /**
@@ -150,7 +149,6 @@ class MemberController extends Controller
 
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
             'memberPosts' => $memberPosts,
             'memberComments' => $memberComments
         ]);
@@ -170,7 +168,8 @@ class MemberController extends Controller
     public function showMemberProfileEditor($member = null, ?int $keyValue = null)
     {
         $availableRoles = $this->roleManager->getRoleNames();
-        if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
+
+        if (MemberController::memberConnected()) {
 
             if ($member === null) {
                 $member = $_SESSION['connected-member'];
@@ -180,7 +179,6 @@ class MemberController extends Controller
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
-                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
                 'availableRoles' => $availableRoles
             ]);
 
@@ -201,6 +199,19 @@ class MemberController extends Controller
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
         }
+    }
+
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function memberConnected(): bool
+    {
+        if (isset($_SESSION['connected-member']) && !empty($_SESSION['connected-member'])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -351,9 +362,6 @@ class MemberController extends Controller
             $link = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/profile-editor?id=' . $memberId . '&key=' . $key->getValue();
             $subject = 'Blog de Nicolas Renvoisé - Mot de passe perdu';
             $content = 'Bonjour, pour réinitialiser votre mot de passe, suivez ce lien : ' . $link;
-
-            var_dump($link);
-            die;
 
             if (!MailSender::send($email, $subject, $content)) {
                 $key = $this->keyManager->get(null, $key);
