@@ -22,6 +22,14 @@ use ReflectionMethod;
 
 class Application
 {
+    /**
+     * Begin the show! Enjoy!
+     *
+     * @throws AppException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function run()
     {
         // Session
@@ -59,7 +67,7 @@ class Application
                 $method = new ReflectionMethod($route->controller, $route->method);
 
             } catch (ReflectionException $e) {
-                throw new AppException('The method ' . $route->method . ' was not found in ' . $route->controller);
+                throw new AppException('The method ' . $route->method . ' was not found in ' . $route->controller, 0, $e);
             }
 
             $method->invokeArgs($controller, $route->params);

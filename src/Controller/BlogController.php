@@ -707,7 +707,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to add the tag ' . $tagNames[$i]);
+                    throw new AppException('Impossible to add the tag ' . $tagNames[$i], 0, $e);
                 }
                 $numberOfNewTags++;
 
@@ -743,7 +743,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->edit($updatedTag);
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true));
+                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true), 0, $e);
                 }
                 return true;
 
