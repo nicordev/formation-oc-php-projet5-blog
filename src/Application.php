@@ -12,7 +12,9 @@ namespace Application;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\PageNotFoundException;
+use Application\Exception\SecurityException;
 use Application\Router\Router;
+use Application\Security\WebsiteCop;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -39,9 +41,11 @@ class Application
         // Time zone
         date_default_timezone_set("Europe/Paris");
 
-        // counterCSRF token
+        // Security
         try {
-            $counterCSRF = bin2hex(random_bytes(87));
+            // CSRF protection
+            WebsiteCop::setCounterCsrfToken(bin2hex(random_bytes(87)));
+            $_SESSION['csrf-token'] = WebsiteCop::getCounterCsrfToken();
         } catch (Exception $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError500();
@@ -87,6 +91,9 @@ class Application
         } catch (PageNotFoundException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError404();
+        } catch (SecurityException $e) {
+            $errorController = DIC::newErrorController();
+            $errorController->showCustomError('Une attaque CSRF a été détectée. Si vous êtes à l\'origine de cette attaque, c\'est pas gentil.');
         }
     }
 }

@@ -7,7 +7,9 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\MemberException;
+use Application\Exception\SecurityException;
 use Application\MailSender\MailSender;
+use Application\Security\WebsiteCop;
 use Exception;
 use Model\Entity\Key;
 use Model\Entity\Member;
@@ -244,9 +246,15 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws SecurityException
      */
     public function updateProfile()
     {
+        // CSRF protection
+        if (!WebsiteCop::isCsrfSafe()) {
+            throw new SecurityException('CSRF attack reported!');
+        }
+
         if (
             isset($_POST['name']) &&
             isset($_POST['email']) &&
