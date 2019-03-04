@@ -17,6 +17,7 @@ use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
 use Controller\MemberController;
+use Exception;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -37,6 +38,14 @@ class Application
 
         // Time zone
         date_default_timezone_set("Europe/Paris");
+
+        // counterCSRF token
+        try {
+            $counterCSRF = bin2hex(random_bytes(87));
+        } catch (Exception $e) {
+            $errorController = DIC::newErrorController();
+            $errorController->showError500();
+        }
 
         // Routing
         try {
