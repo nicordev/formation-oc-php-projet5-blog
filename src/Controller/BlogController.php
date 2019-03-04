@@ -260,7 +260,7 @@ class BlogController extends Controller
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
-        $markdown = true;
+        $markdown = false;
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);

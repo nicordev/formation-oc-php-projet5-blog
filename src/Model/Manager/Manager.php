@@ -38,7 +38,7 @@ abstract class Manager
      * @param string $password
      * @param string $charset
      */
-    public function __construct($host = '', $databaseName = '', $user = '', $password = '', $charset = 'utf8')
+    public function __construct($host = '', $databaseName = '', $user = '', $password = '', $charset = 'utf8mb4')
     {
         if (!empty($host)) {
             $this->host = $host;
@@ -67,7 +67,7 @@ abstract class Manager
      * @param string $charset
      * @return bool|PDO
      */
-    public static function getPdo($host = 'localhost', $databaseName = 'test', $user = 'root', $password = '', $charset = 'utf8')
+    public static function getPdo($host = 'localhost', $databaseName = 'test', $user = 'root', $password = '', $charset = 'utf8mb4')
     {
         try
         {
