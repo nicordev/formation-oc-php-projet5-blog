@@ -321,6 +321,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws \Application\Exception\BlogException
+     * @throws AppException
      */
     public function connect()
     {
@@ -331,8 +332,13 @@ class MemberController extends Controller
                 $member = $this->memberManager->getFromEmail($_POST['email']);
 
                 if ($member !== null) {
-                    if (password_verify($_POST['password'], $member->getPassword())) {
+                    // Brute force protection
+                    if (!WebsiteCop::canConnectAgain()) {
+                        $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.");
+
+                    } elseif (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
+                        WebsiteCop::resetTheUser();
                         header('Location: /home');
                     }
                 }

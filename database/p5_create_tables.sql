@@ -11,6 +11,18 @@ DROP TABLE IF EXISTS bl_category;
 DROP TABLE IF EXISTS bl_tag;
 
 DROP TABLE IF EXISTS bl_key;
+DROP TABLE IF EXISTS bl_connection_try;
+
+CREATE TABLE bl_connection_try(
+	cot_id INT UNSIGNED AUTO_INCREMENT,
+	cot_count INT UNSIGNED,
+    cot_last_try DATETIME,
+    cot_user VARCHAR(100),
+
+	CONSTRAINT  pk_connection_try_id
+    	PRIMARY KEY (cot_id)
+)
+ENGINE = InnoDB;
 
 CREATE TABLE bl_key(
     key_id INT UNSIGNED AUTO_INCREMENT,
