@@ -35,6 +35,8 @@ class Application
      */
     public function run()
     {
+        define('ROOT_PATH', dirname(__DIR__));
+
         // Session
         session_start();
 

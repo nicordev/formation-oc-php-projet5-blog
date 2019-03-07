@@ -53,4 +53,18 @@ class FileHandler
         }
         throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '');
     }
+
+    /**
+     * Convert a path either for windows or linux
+     *
+     * @param string $path
+     * @param bool $toWindows
+     * @return mixed
+     */
+    public static function convertPath(string $path, bool $toWindows = false) {
+            if ($toWindows) {
+                return str_replace('/', '\\', $path);
+            }
+            return str_replace('\\', '/', $path);
+    }
 }

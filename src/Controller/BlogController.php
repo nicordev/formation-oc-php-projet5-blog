@@ -13,7 +13,7 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
-use Application\FileHandler\FileHandler;
+use Application\FileHandler\ImageHandler;
 use Exception;
 use Michelf\Markdown;
 use Model\Entity\Category;
@@ -45,8 +45,6 @@ class BlogController extends Controller
     const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
     const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
     const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
-
-    const MEDIA_LIBRARY_FOLDER = 'img/library/';
 
     /**
      * BlogController constructor.
@@ -591,10 +589,13 @@ class BlogController extends Controller
      */
     public function addImage()
     {
-        $path = FileHandler::upload('new-image', self::MEDIA_LIBRARY_FOLDER, ['jpg', 'jpeg', 'gif', 'png'], '', 'zig_', '_zag');
-
-        var_dump($path);
-        die;
+        $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
+        ImageHandler::editImage($path, [
+            'width' => 500,
+            'height' => 150,
+            'x' => 20,
+            'y' => 30
+        ]);
     }
 
     /**
