@@ -341,7 +341,6 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function addPost()
     {
@@ -349,35 +348,10 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastEditorId($newPost->getAuthorId());
-        $message = '';
+        $messages = [];
 
         if ($newPost !== null) {
-            // Cut if title, excerpt or content are too big
-            $message = self::cutPost($newPost);
-
-            // Tags
-            $tags = $newPost->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newPost->setTags($this->addNewTags($tags));
-            }
-
-            // Categories
-            if (!empty($newPost->getCategories())) {
-                foreach ($newPost->getCategories() as $category) {
-                    $categories[] = $this->categoryManager->getFromName($category->getName());
-                }
-                $newPost->setCategories($categories);
-            }
-
-            // Add
-            $this->postManager->add($newPost);
-
-            // Come back to the admin panel
-            $message .= "Un article a été publié.";
-            $this->showAdminPanel($message);
-
+            $this->handleAPost($newPost, true);
         } else {
             // Try again...
             $this->showPostEditor(null, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
@@ -392,7 +366,6 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function editPost()
     {
@@ -401,28 +374,10 @@ class BlogController extends Controller
         $message = '';
 
         if ($modifiedPost !== null) {
-
-            $message = self::cutPost($modifiedPost);
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $modifiedPost->setTags($this->addNewTags($tags));
-            }
-
-            if (!empty($modifiedPost->getCategories())) {
-                foreach ($modifiedPost->getCategories() as $category) {
-                    $categories[] = $this->categoryManager->getFromName($category->getName());
-                }
-                $modifiedPost->setCategories($categories);
-            }
-
-            $this->postManager->edit($modifiedPost);
-            // Come back to the admin panel
-            $message .= "Un article a été modifié.";
-            $this->showAdminPanel($message);
+            $this->handleAPost($modifiedPost, false);
         } else {
             // Try again...
-            $this->showPostEditor(htmlspecialchars($_POST['edit-post']), "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+            $this->showPostEditor((int) $_POST['edit-post'], "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
         }
     }
 
@@ -968,11 +923,61 @@ class BlogController extends Controller
      * Convert markdown content
      *
      * @param string $content
-     * @param bool $defaultTransform
      * @return string
      */
     private static function convertMarkdown(string $content)
     {
         return Markdown::defaultTransform($content);
+    }
+
+    /**
+     * Add or edit a post and go back to the post editor with nice messages
+     *
+     * @param Post $postToHandle
+     * @param bool $isNew
+     * @throws BlogException
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    private function handleAPost(Post $postToHandle, bool $isNew = true)
+    {
+        // Cut if title, excerpt or content are too big
+        $message = self::cutPost($postToHandle);
+        if (!empty($message)) {
+            $messages[] = $message;
+        }
+
+        // Tags
+        $tags = $postToHandle->getTags();
+
+        if (!empty($tags)) {
+            // Add tags in the database and get their ids
+            $postToHandle->setTags($this->addNewTags($tags));
+            $messages[] = "L'article sera visible avec #" . implode(' #', $postToHandle->getTags(true));
+        }
+
+        // Categories
+        if (!empty($postToHandle->getCategories())) {
+            foreach ($postToHandle->getCategories() as $category) {
+                $categories[] = $this->categoryManager->getFromName($category->getName());
+            }
+            $postToHandle->setCategories($categories);
+            $messages[] = "L'article a été publié dans : " . implode(', ', $postToHandle->getCategories(true));
+        }
+
+        if (empty($tags) && empty($postToHandle->getCategories())) {
+            $messages[] = "L'article a été enregistré. Il sera visible lorsque vous aurez choisi au moins une catégorie ou une étiquette";
+        }
+
+        if ($isNew) {
+            $this->postManager->add($postToHandle);
+        } else {
+            $this->postManager->edit($postToHandle);
+        }
+
+        // Come back to the admin panel
+        $this->showPostEditor($this->postManager->getLastId(), implode('<br>', $messages));
     }
 }
