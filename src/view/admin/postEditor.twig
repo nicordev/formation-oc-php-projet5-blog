@@ -75,6 +75,9 @@
                     <label for="post-content">Contenu de l'article</label>
                     {# Choose editor #}
                     <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button>
+                    {# Images library #}
+                    <a class="btn" href="/admin/media-library?calling-page=/admin/post-editor">Images</a>
+                    {# Choose Markdown #}
                     <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>

@@ -13,6 +13,7 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
+use Application\FileHandler\FileHandler;
 use Exception;
 use Michelf\Markdown;
 use Model\Entity\Category;
@@ -34,6 +35,7 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
+    protected $fileHandler;
     protected $postsByPage = 10;
 
     const VIEW_BLOG = 'blog/blog.twig';
@@ -43,6 +45,9 @@ class BlogController extends Controller
     const VIEW_POST_EDITOR = 'admin/postEditor.twig';
     const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
     const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
+    const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
+
+    const MEDIA_LIBRARY_FOLDER = 'public/img/library/';
 
     /**
      * BlogController constructor.
@@ -52,6 +57,7 @@ class BlogController extends Controller
      * @param CategoryManager $categoryManager
      * @param CommentManager $commentManager
      * @param MemberManager $memberManager
+     * @param FileHandler $fileHandler
      * @param Twig_Environment $twig
      */
     public function __construct(
@@ -60,6 +66,7 @@ class BlogController extends Controller
                                 CategoryManager $categoryManager,
                                 CommentManager $commentManager,
                                 MemberManager $memberManager,
+                                FileHandler $fileHandler,
                                 Twig_Environment $twig
     )
     {
@@ -69,6 +76,7 @@ class BlogController extends Controller
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
         $this->memberManager = $memberManager;
+        $this->fileHandler = $fileHandler;
     }
 
     // Views
@@ -326,9 +334,17 @@ class BlogController extends Controller
 
         $comment = $this->commentManager->get($commentToEditId);
 
-        self::render(self::VIEW_COMMENT_EDITOR, [
+        $this->render(self::VIEW_COMMENT_EDITOR, [
             'commentToEdit' => $comment
         ]);
+    }
+
+    /**
+     * Show the media library
+     */
+    public function showMediaLibrary(?string $callingPage = null)
+    {
+        $this->render(self::VIEW_MEDIA_LIBRARY, ['callingPage' => $callingPage]);
     }
 
     // Actions
@@ -552,6 +568,15 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];
@@ -559,6 +584,14 @@ class BlogController extends Controller
 
         // Come back to the admin panel
         $this->showAdminPanel("Un commentaire a été supprimé.");
+    }
+
+    /**
+     * Add an image in the library
+     */
+    public function addImage()
+    {
+        $this->fileHandler->add('new-image', self::MEDIA_LIBRARY_FOLDER, ['jpg', 'jpeg', 'gif', 'png']);
     }
 
     /**

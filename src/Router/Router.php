@@ -282,6 +282,26 @@ class Router
                 ];
                 break;
 
+            case '/admin/media-library':
+                MemberController::verifyAccess(['author', 'editor']);
+                WebsiteCop::checkCsrf();
+                $controller = BlogController::class;
+                $method = 'showMediaLibrary';
+                $params = [
+                    'callingPage' => htmlspecialchars($_GET['calling-page'])
+                ];
+                break;
+
+            case '/admin/media-library/add':
+                MemberController::verifyAccess(['author', 'editor']);
+                WebsiteCop::checkCsrf();
+                $controller = BlogController::class;
+                $method = 'addImage';
+                $params = [
+                    'callingPage' => htmlspecialchars($_GET['calling-page'])
+                ];
+                break;
+
             default:
                 $controller = ErrorController::class;
                 $method = 'showError404';

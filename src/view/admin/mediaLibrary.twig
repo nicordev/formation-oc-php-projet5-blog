@@ -1,0 +1,42 @@
+{% extends 'admin/adminLayout.twig' %}
+
+{# head #}
+{% block title %}
+    Bibliothèque d'images
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <h1>Bibliothèque d'images</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        {% include "message.twig" %}
+        <div>
+            {# Cancel button #}
+            <a class="btn cancel-button" href="{{ callingPage }}">Retour</a>
+        </div>
+
+        <div>
+            <form action="/admin/image-library/add" method="post" enctype="multipart/form-data">
+
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
+                <input class="form-control-file" type="file" name="new-image">
+
+                <p>
+                    <input class="btn" type="submit" value="Ajouter l'image">
+                </p>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+{% endblock %}
+
+
+

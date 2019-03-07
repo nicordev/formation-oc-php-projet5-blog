@@ -9,6 +9,7 @@
 namespace Application;
 
 
+use Application\FileHandler\FileHandler;
 use Application\Security\WebsiteCop;
 use Controller\BlogController;
 use Controller\ErrorController;
@@ -44,6 +45,7 @@ class DIC
             new CategoryManager(),
             new CommentManager(),
             new MemberManager(),
+            new FileHandler(),
             self::generateTwigEnvironment()
         );
     }
