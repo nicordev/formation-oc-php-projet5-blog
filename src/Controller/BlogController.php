@@ -968,12 +968,14 @@ class BlogController extends Controller
         }
 
         if (empty($tags) && empty($postToHandle->getCategories())) {
-            $messages[] = "L'article a été enregistré. Il sera visible lorsque vous aurez choisi au moins une catégorie ou une étiquette";
+            $messages[] = "L'article sera visible lorsque vous aurez choisi au moins une catégorie ou une étiquette";
         }
 
         if ($isNew) {
+            array_unshift($messages, "L'article a été ajouté");
             $this->postManager->add($postToHandle);
         } else {
+            array_unshift($messages, "L'article a été modifié");
             $this->postManager->edit($postToHandle);
         }
 

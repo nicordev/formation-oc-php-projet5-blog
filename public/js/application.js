@@ -157,6 +157,20 @@ var myApp = {
     },
 
     /**
+     * Refresh the checked attribute
+     */
+    refreshChecked: function (event)
+    {
+        var elt = event.target;
+
+        if (elt.hasAttribute('checked')) {
+            elt.removeAttribute('checked');
+        } else {
+            elt.setAttribute('checked', 'checked');
+        }
+    },
+
+    /**
      * Methods to create DOM elements
      */
     elementBuilder: {

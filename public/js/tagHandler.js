@@ -55,7 +55,7 @@ var myTagHandler = {
 
         labelElt.setAttribute('class', 'available-tag right-label green');
 
-        checkboxElt.addEventListener('change', refreshChecked);
+        checkboxElt.addEventListener('change', myApp.refreshChecked);
 
         tagElt.appendChild(checkboxElt);
         tagElt.appendChild(labelElt);
