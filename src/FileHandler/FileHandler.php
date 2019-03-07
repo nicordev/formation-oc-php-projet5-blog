@@ -2,28 +2,55 @@
 
 namespace Application\FileHandler;
 
+use Application\Exception\FileException;
+
 class FileHandler
 {
-    public function add(string $fieldName, string $destinationFolder, array $authorizedExtensions = [], string $fileName = '', string $prefix = '', string $suffix = '')
+    private function __construct()
     {
-        if (isset($_FILES[$fieldName]) AND $_FILES[$fieldName]['error'] == 0)
+        // Disabled
+    }
+
+    /**
+     * Upload a file on the server
+     *
+     * @param string $fieldName
+     * @param string $destinationFolder
+     * @param array $authorizedExtensions
+     * @param string $fileName
+     * @param string $prefix
+     * @param string $suffix
+     * @return string the path to the file on the server
+     * @throws FileException
+     */
+    public static function upload(string $fieldName, string $destinationFolder, array $authorizedExtensions = [], string $fileName = '', string $prefix = '', string $suffix = '')
+    {
+        if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] == 0)
         {
             if ($_FILES[$fieldName]['size'] <= 8000000)
             {
                 $fileInfo = pathinfo($_FILES[$fieldName]['name']);
-                $extensionUpload = strtolower($fileInfo['extension']);
-
+                
                 if (empty($fileName)) {
-                    $destination = $destinationFolder . $prefix . basename($_FILES[$fieldName]['name']) . $suffix;
-                } else {
-                    $destination = $destinationFolder . $prefix . $fileName . $suffix;
+                    $fileName = $fileInfo['filename'];
                 }
+                $fileExtension = strtolower($fileInfo['extension']);
+                $destination = $destinationFolder . $prefix . $fileName . $suffix . '.' . $fileExtension;
 
-                if (!empty($authorizedExtensions) && in_array($extensionUpload, $authorizedExtensions))
+                if (!empty($authorizedExtensions) && in_array($fileExtension, $authorizedExtensions) || empty($authorizedExtensions))
                 {
-                    move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination);
+                    if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination)) {
+                        return $destination;
+                    } else {
+                        throw new FileException('An error occured when move_uploaded_file(' . $destination . ')');
+                    }
                 }
+                throw new FileException('The file extension ' . $fileExtension . ' is not allowed');
+
+            } else {
+                throw new FileException('The file is too big');
             }
         }
+        throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '');
     }
 }

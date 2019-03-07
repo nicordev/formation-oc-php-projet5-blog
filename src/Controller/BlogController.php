@@ -35,7 +35,6 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
-    protected $fileHandler;
     protected $postsByPage = 10;
 
     const VIEW_BLOG = 'blog/blog.twig';
@@ -47,7 +46,7 @@ class BlogController extends Controller
     const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
     const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
 
-    const MEDIA_LIBRARY_FOLDER = 'public/img/library/';
+    const MEDIA_LIBRARY_FOLDER = 'img/library/';
 
     /**
      * BlogController constructor.
@@ -57,7 +56,6 @@ class BlogController extends Controller
      * @param CategoryManager $categoryManager
      * @param CommentManager $commentManager
      * @param MemberManager $memberManager
-     * @param FileHandler $fileHandler
      * @param Twig_Environment $twig
      */
     public function __construct(
@@ -66,7 +64,6 @@ class BlogController extends Controller
                                 CategoryManager $categoryManager,
                                 CommentManager $commentManager,
                                 MemberManager $memberManager,
-                                FileHandler $fileHandler,
                                 Twig_Environment $twig
     )
     {
@@ -76,7 +73,6 @@ class BlogController extends Controller
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
         $this->memberManager = $memberManager;
-        $this->fileHandler = $fileHandler;
     }
 
     // Views
@@ -341,6 +337,10 @@ class BlogController extends Controller
 
     /**
      * Show the media library
+     * @param string|null $callingPage
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function showMediaLibrary(?string $callingPage = null)
     {
@@ -591,7 +591,10 @@ class BlogController extends Controller
      */
     public function addImage()
     {
-        $this->fileHandler->add('new-image', self::MEDIA_LIBRARY_FOLDER, ['jpg', 'jpeg', 'gif', 'png']);
+        $path = FileHandler::upload('new-image', self::MEDIA_LIBRARY_FOLDER, ['jpg', 'jpeg', 'gif', 'png'], '', 'zig_', '_zag');
+
+        var_dump($path);
+        die;
     }
 
     /**
