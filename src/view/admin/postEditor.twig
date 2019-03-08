@@ -1,5 +1,7 @@
 {% extends 'admin/adminLayout.twig' %}
 
+{% import 'macros.twig' as macros %}
+
 {# head #}
 {% block title %}
     {% if postToEdit %}
@@ -41,11 +43,11 @@
             {% if postToEdit %}
             <form id="publish-post-form" action="/admin/edit-post" method="post">
                 <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
-                <input type="hidden" name="post-editor-id" value="{{ connectedMember.getId }}">
+                <input type="hidden" name="post-editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
             {% else %}
-            <form id="publish-post-form" action="/admin/add-post" method="post">
-                <input type="hidden" name="post-author-id" value="{{ connectedMember.getId }}">
+            <form action="/admin/add-post" method="post">
+                <input type="hidden" name="post-author-id" value="{{ getUser().getId }}">
             {% endif %}
 
                 <!-- Visible fields-->
@@ -70,6 +72,21 @@
                     <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
+
+                <hr>
+                {# Categories #}
+                <div>
+                    <h3>Catégories</h3>
+
+                    <ul>
+                    {% for category in categories %}
+                        <li>
+                            <input type="checkbox" name="categories[]" id="cat-{{ category.getName }}" value="{{ category.getName }}" {{ macros.checkPostCategory(category, postToEdit.getCategories) }} onclick="refreshChecked(event);">
+                            <label for="cat-{{ category.getName }}">{{ category.getName }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
 
                 {# Tags #}
                 {% include "admin/tagHandler.twig" %}
@@ -126,8 +143,8 @@
         publishFormElt.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            if (!checkTagsBeforeSubmit()) {
-                areYouSure.show("L'article n'a pas d'étiquette. Il n'apparaîtra pas sur le site. Continuer ?", submitForm);
+            if (!checkCategoriesBeforeSubmit()) {
+                areYouSure.show("Aucune catégorie n'a été sélectionnée. L'article n'apparaîtra pas sur le site. Continuer ?", submitForm);
             }
 
             function submitForm() {
@@ -135,22 +152,20 @@
             }
 
             function isChecked(element) {
-                if (element.hasAttribute('checked')) {
-                    return true;
-                }
-                return false;
+                return element.hasAttribute('checked');
+
             }
 
             /**
-             * Submit the form if there is at least one tag selected
+             * Submit the form if there is at least one category selected
              *
              * @returns {boolean}
              */
-            function checkTagsBeforeSubmit() {
-                var tagElts = document.getElementsByName('tags[]');
+            function checkCategoriesBeforeSubmit() {
+                var categoriesElts = document.getElementsByName('categories[]');
 
-                for (tagElt of tagElts) {
-                    if (isChecked(tagElt)) {
+                for (elt of categoriesElts) {
+                    if (isChecked(elt)) {
                         submitForm();
                         return true;
                     }

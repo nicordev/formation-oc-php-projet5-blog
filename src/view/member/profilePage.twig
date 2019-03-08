@@ -18,39 +18,96 @@
 
 {% block content %}
     <section id="profile">
+        <div>
+            <h3>Profil</h3>
 
         {# Edit button #}
-        {% if connectedMember and connectedMember.getEmail is same as(member.getEmail) %}
+        {% if getUser() and getUser().getEmail is same as(member.getEmail) %}
             <div>
                 <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
             </div>
-        {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
+        {% elseif getUser() and 'admin' in getUser().getRoles %}
             <div>
-                <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+                <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
             </div>
         {% endif %}
 
-        {# Roles #}
-        <div>
-            <p>
-                {% if member.getRoles %}
-                    {% for role in member.getRoles %}
-                        {{ macros.translateRole(role) }}
-                    {% endfor %}
-                {% else %}
-                    {{ "Vos rôles ont été suspendus." }}
+            {# Roles #}
+            <div>
+                <dl>
+                    <dt>Roles</dt>
+                    <dd>
+                        {% if member.getRoles %}
+                            {% for role in member.getRoles %}
+                                {{ macros.translateRole(role) }}<br>
+                            {% endfor %}
+                        {% else %}
+                            {{ "Vos rôles ont été suspendus." }}
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+
+            {# Informations #}
+            <div>
+                <dl>
+                    <dt>Nom et email</dt>
+                    <dd>
+                        {{ member.getName }}<br>
+                        <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
+                    </dd>
+                </dl>
+                {% if member.getDescription %}
+                    <dl>
+                        <dt>Description</dt>
+                        <dd>
+                            {{ member.getDescription }}
+                        </dd>
+                    </dl>
                 {% endif %}
-            </p>
+            </div>
         </div>
 
-        {# Informations #}
-        <div>
-            <p>
-                {{ member.getName }} <a href="mailto:{{ member.getEmail }}">{{ member.getEmail }}</a>
-            </p>
-            <p>
-                {{ member.getDescription }}
-            </p>
-        </div>
+        {# Posts #}
+        {% if memberPosts %}
+            <div>
+                <h3>Articles</h3>
+
+                <p>
+                    Nombre d'articles publiés : {{ memberPosts|length }}
+                </p>
+
+                <ul>
+                {% for post in memberPosts %}
+                    <li>
+                        <a href="/blog-post?post-id={{ post.getId }}">{{ post.getTitle }}</a>
+                        {% for tag in post.getTags %}<a class="classification" href="/blog/tag?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {# Comments #}
+        {% if memberComments %}
+            <div>
+                <h3>Commentaires</h3>
+
+                <p>
+                    Nombre de commentaires publiés : {{ memberComments|length }}
+                </p>
+
+                <ul>
+                    {% for comment in memberComments %}
+                        <li>
+                            <dl>
+                                <dt>Le {{ comment.getCreationDate }} <a class="btn btn-small" href="/blog-post?post-id={{ comment.getPostId }}">Voir l'article</a></dt>
+                                <dd>{{ comment.getContent }}</dd>
+                            </dl>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </section>
 {% endblock %}

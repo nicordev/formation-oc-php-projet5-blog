@@ -80,6 +80,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showPostsOfACategory(int $categoryId)
     {
@@ -90,10 +91,9 @@ class BlogController extends Controller
             self::prepareAPost($post);
         }
 
-        self::render(self::VIEW_BLOG, [
+        $this->render(self::VIEW_BLOG, [
             'posts' => $posts,
-            'category' => $category,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'category' => $category
         ]);
     }
 
@@ -114,10 +114,9 @@ class BlogController extends Controller
         }
         $tag = $this->tagManager->get($tagId);
 
-        self::render(self::VIEW_BLOG_TAG, [
+        $this->render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
-            'tag' => $tag,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'tag' => $tag
         ]);
     }
 
@@ -131,13 +130,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showASinglePost(int $postId, ?string $message = null)
     {
         try {
             $post = $this->postManager->get($postId);
             self::prepareAPost($post);
-            $categories = $this->categoryManager->getCategoriesFromPostId($postId);
+
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
                 self::convertDatesOfComment($comment);
@@ -147,11 +147,9 @@ class BlogController extends Controller
             throw new PageNotFoundException('This post do not exists.');
         }
 
-        self::render(self::VIEW_BLOG_POST, [
+        $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories,
             'comments' => $comments,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
             'message' => $message
         ]);
     }
@@ -174,24 +172,22 @@ class BlogController extends Controller
         $categories = $this->categoryManager->getAll();
         $comments = $this->commentManager->getAll();
 
-        if (isset($_SESSION['connected-member'])) {
-            $connectedMember = $_SESSION['connected-member'];
-            if (in_array('admin', $connectedMember->getRoles())) {
+        if (MemberController::memberConnected()) {
+            if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
                 $members = $this->memberManager->getAll();
             }
         } else {
             throw new AccessException('No connected member found.');
         }
 
-        self::render(self::VIEW_BLOG_ADMIN, [
+        $this->render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
             'comments' => $comments,
-            'members' => isset($members) ? $members : null,
-            'connectedMember' => $connectedMember
+            'members' => $members ?? null
         ]);
     }
 
@@ -208,6 +204,7 @@ class BlogController extends Controller
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
+        $categories = $this->categoryManager->getAll();
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
@@ -219,14 +216,14 @@ class BlogController extends Controller
             $markdown = $postToEdit->isMarkdown();
         }
 
-        self::render(self::VIEW_POST_EDITOR, [
+        $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
+            'categories' => $categories,
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames,
-            'markdown' => $markdown,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'markdown' => $markdown
         ]);
     }
 
@@ -238,26 +235,20 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {
         $categoryToEdit = null;
-        $availableTags = $this->tagManager->getAll();
-        $availableTagNames = self::getTagNames($availableTags);
-        $selectedTagNames = [];
 
         if ($categoryToEditId !== null) {
             $categoryToEdit = $this->categoryManager->get($categoryToEditId);
-            $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
-        self::render(self::VIEW_CATEGORY_EDITOR, [
+        $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
-            'message' => $message,
-            'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 
@@ -321,6 +312,14 @@ class BlogController extends Controller
                 $newPost->setTags($this->addNewTags($tags));
             }
 
+            // Categories
+            if (!empty($newPost->getCategories())) {
+                foreach ($newPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $newPost->setCategories($categories);
+            }
+
             // Add
             $this->postManager->add($newPost);
 
@@ -357,6 +356,13 @@ class BlogController extends Controller
             if (!empty($tags)) {
                 // Add tags in the database and get their ids
                 $modifiedPost->setTags($this->addNewTags($tags));
+            }
+
+            if (!empty($modifiedPost->getCategories())) {
+                foreach ($modifiedPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $modifiedPost->setCategories($categories);
             }
 
             $this->postManager->edit($modifiedPost);
@@ -438,23 +444,13 @@ class BlogController extends Controller
     }
 
     /**
-     * Add a new category from $_POST and add associated tags (note: a category must have a name and at least 1 associated tag)
+     * Add a new category from $_POST
      */
     public function addCategory()
     {
         $newCategory = self::buildCategoryFromForm();
 
         if ($newCategory !== null) {
-            $tags = $newCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor(null, "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->add($newCategory);
 
             // Come back to the admin panel
@@ -481,16 +477,6 @@ class BlogController extends Controller
         $modifiedCategory = self::buildCategoryFromForm();
 
         if ($modifiedCategory !== null) {
-            $tags = $modifiedCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $modifiedCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor((int) $_POST['edit-category'], "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->edit($modifiedCategory);
 
             // Come back to the admin panel
@@ -560,6 +546,15 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];
@@ -580,6 +575,36 @@ class BlogController extends Controller
         self::convertDatesOfPost($post);
         if ($post->isMarkdown() && !empty($post->getContent())) {
             $post->setContent(self::convertMarkdown($post->getContent()));
+        }
+    }
+
+    /**
+     * Change the date format use in a post
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    public static function convertDatesOfPost(Post $post)
+    {
+        $post->setCreationDate(self::formatDate($post->getCreationDate()));
+
+        if ($post->getLastModificationDate() !== null) {
+            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
+    }
+
+    /**
+     * Change the date format use in a comment
+     *
+     * @param Comment $comment
+     * @throws Exception
+     */
+    public static function convertDatesOfComment(Comment $comment)
+    {
+        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
+
+        if ($comment->getLastModificationDate() !== null) {
+            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
         }
     }
 
@@ -722,6 +747,24 @@ class BlogController extends Controller
     }
 
     /**
+     * Return Category entities
+     *
+     * @return array|null
+     */
+    private static function getCategoriesFromForm(): ?array
+    {
+        $categories = null;
+
+        if (isset($_POST['categories'])) {
+            foreach ($_POST['categories'] as $category) {
+                $categories[] = new Category(['name' => $category]);
+            }
+        }
+
+        return $categories;
+    }
+
+    /**
      * Create a Post from a form (thanks to $_POST)
      * Work for addPost and editPost
      *
@@ -762,6 +805,12 @@ class BlogController extends Controller
                 $post->setTags($tags);
             }
 
+            // Categories
+            $categories = self::getCategoriesFromForm();
+            if ($categories) {
+                $post->setCategories($categories);
+            }
+
             // Markdown
             if (isset($_POST['markdown-content']) && !empty($_POST['markdown-content'])) {
                 $post->setMarkdown(true);
@@ -789,12 +838,6 @@ class BlogController extends Controller
             // Category to edit
             if (isset($_POST['edit-category'])) {
                 $category->setId((int) $_POST['edit-category']);
-            }
-
-            // Tags
-            $tags = self::getTagsFromForm();
-            if ($tags) {
-                $category->setTags($tags);
             }
 
             return $category;
@@ -846,36 +889,6 @@ class BlogController extends Controller
         }
 
         return $comment;
-    }
-
-    /**
-     * Change the date format use in a post
-     *
-     * @param Post $post
-     * @throws Exception
-     */
-    private static function convertDatesOfPost(Post $post)
-    {
-        $post->setCreationDate(self::formatDate($post->getCreationDate()));
-
-        if ($post->getLastModificationDate() !== null) {
-            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
-        }
-    }
-
-    /**
-     * Change the date format use in a comment
-     *
-     * @param Comment $comment
-     * @throws Exception
-     */
-    private static function convertDatesOfComment(Comment $comment)
-    {
-        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
-
-        if ($comment->getLastModificationDate() !== null) {
-            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
-        }
     }
 
     /**

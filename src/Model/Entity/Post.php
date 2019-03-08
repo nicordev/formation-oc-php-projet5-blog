@@ -197,7 +197,7 @@ class Post extends Entity
     /**
      * @param string $content
      */
-    public function setContent(string $content): void
+    public function setContent(?string $content): void
     {
         $this->content = $content;
     }

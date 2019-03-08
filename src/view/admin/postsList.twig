@@ -1,0 +1,74 @@
+<div class="admin-box w100">
+    <h2>Articles</h2>
+
+    {% if 'author' in roles %}
+        <p>
+            <a class="btn" href="/admin/post-editor">Ajouter un article</a>
+        </p>
+    {% endif %}
+
+    <div class="limit-height">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Titre</th>
+                <th scope="col">Auteur</th>
+                <th scope="col">Etiquettes</th>
+                <th scope="col">Catégories</th>
+                <th scope="col">Date de création</th>
+                <th scope="col">Dernière modification</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td scope="row">
+                        {% if 'author' in roles and post.getAuthorId is same as(connectedMember.getId) or 'editor' in roles %}
+                            <form action="/admin/post-editor" method="post">
+                                <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                <input class="admin-link" type="submit" value="{{ post.getTitle }}">
+                            </form>
+                        {% else %}
+                            <span>{{ post.getTitle }}</span>
+                        {% endif %}
+                    </td>
+                    <td scope="row">
+                        <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
+                    </td>
+                    <td scope="row">
+                        {% set postTags = post.getTags %}
+                        {% if postTags %}
+                            {% for tag in postTags %}
+                                <span class="table-tag">#{{ tag.getName }}</span>
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td scope="row">
+                        {% set postCategories = post.getCategories %}
+                        {% if postCategories %}
+                            {% for category in postCategories %}
+                                {{ category.getName }}
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td scope="row">
+                        <span class="table-date">{{ post.getCreationDate }}</span>
+                    </td>
+                    <td scope="row">
+                        {% if post.getLastModificationDate %}
+                            <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
