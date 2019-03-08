@@ -3,7 +3,6 @@
 namespace Controller;
 
 use Model\Manager\CategoryManager;
-use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Twig_Environment;
 
@@ -11,21 +10,18 @@ class HomeController extends Controller
 {
     protected $postManager;
     protected $categoryManager;
-    private $memberManager;
 
     const VIEW_HOME = 'home/home.twig';
 
     public function __construct(
                                 PostManager $postManager,
                                 CategoryManager $categoryManager,
-                                MemberManager $memberManager,
                                 Twig_Environment $twig
     )
     {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->categoryManager = $categoryManager;
-        $this->memberManager = $memberManager;
     }
 
     /**
@@ -44,23 +40,22 @@ class HomeController extends Controller
         $postsByCategory = [];
 
         foreach ($categories as $category) {
-            $catId = $category->getId();
-            $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1);
+            $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
             // Format creation dates
-            foreach ($postsByCategory[$catId] as $post) {
+            foreach ($postsByCategory[$category->getId()] as $post) {
                 $post->setCreationDate(self::formatDate($post->getCreationDate()));
+                BlogController::decodePostExcerpt($post);
                 if ($post->getLastModificationDate()) {
                     $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
                 }
             }
         }
 
-        self::render(self::VIEW_HOME, [
+        $this->render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory,
             'numberOfPosts' => $numberOfPostsByCategory,
-            'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 

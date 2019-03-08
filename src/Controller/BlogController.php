@@ -75,24 +75,31 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
+     * @param bool $decodeExcerpt
+     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfACategory(int $categoryId)
+    public function showPostsOfACategory(int $categoryId, bool $decodeExcerpt = true, bool $decodeContent = false)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
+            if ($decodeContent) {
+                self::decodePostContent($post);
+            }
+            if ($decodeExcerpt) {
+                self::decodePostExcerpt($post);
+            }
             self::convertDatesOfPost($post);
         }
 
-        self::render(self::VIEW_BLOG, [
+        $this->render(self::VIEW_BLOG, [
             'posts' => $posts,
-            'category' => $category,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'category' => $category
         ]);
     }
 
@@ -100,23 +107,30 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
+     * @param bool $decodeExcerpt
+     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfATag(int $tagId)
+    public function showPostsOfATag(int $tagId, bool $decodeExcerpt = true, bool $decodeContent = false)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
         foreach ($posts as $post) {
+            if ($decodeContent) {
+                self::decodePostContent($post);
+            }
+            if ($decodeExcerpt) {
+                self::decodePostExcerpt($post);
+            }
             self::convertDatesOfPost($post);
         }
         $tag = $this->tagManager->get($tagId);
 
-        self::render(self::VIEW_BLOG_TAG, [
+        $this->render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
-            'tag' => $tag,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'tag' => $tag
         ]);
     }
 
@@ -136,6 +150,8 @@ class BlogController extends Controller
         try {
             $post = $this->postManager->get($postId);
             self::convertDatesOfPost($post);
+            self::decodePostContent($post);
+            self::decodePostExcerpt($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
@@ -146,11 +162,10 @@ class BlogController extends Controller
             throw new PageNotFoundException('This post do not exists.');
         }
 
-        self::render(self::VIEW_BLOG_POST, [
+        $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'categories' => $categories,
             'comments' => $comments,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
             'message' => $message
         ]);
     }
@@ -173,24 +188,22 @@ class BlogController extends Controller
         $categories = $this->categoryManager->getAll();
         $comments = $this->commentManager->getAll();
 
-        if (isset($_SESSION['connected-member'])) {
-            $connectedMember = $_SESSION['connected-member'];
-            if (in_array('admin', $connectedMember->getRoles())) {
+        if (MemberController::memberConnected()) {
+            if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
                 $members = $this->memberManager->getAll();
             }
         } else {
             throw new AccessException('No connected member found.');
         }
 
-        self::render(self::VIEW_BLOG_ADMIN, [
+        $this->render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
             'comments' => $comments,
-            'members' => isset($members) ? $members : null,
-            'connectedMember' => $connectedMember
+            'members' => $members ?? null
         ]);
     }
 
@@ -213,16 +226,16 @@ class BlogController extends Controller
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
+            self::decodePostContent($postToEdit);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
-        self::render(self::VIEW_POST_EDITOR, [
+        $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'selectedTags' => $selectedTagNames
         ]);
     }
 
@@ -247,13 +260,12 @@ class BlogController extends Controller
             $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
-        self::render(self::VIEW_CATEGORY_EDITOR, [
+        $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'selectedTags' => $selectedTagNames
         ]);
     }
 
@@ -556,6 +568,15 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];
@@ -563,6 +584,28 @@ class BlogController extends Controller
 
         // Come back to the admin panel
         $this->showAdminPanel("Un commentaire a été supprimé.");
+    }
+
+    /**
+     * Unescape HTML tags in the content of the post
+     *
+     * @param Post $post
+     */
+    public static function decodePostContent(Post $post)
+    {
+        $post->setContent(htmlspecialchars_decode($post->getContent()));
+        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
+    }
+
+    /**
+     * Unescape HTML tags in the content of the post
+     *
+     * @param Post $post
+     */
+    public static function decodePostExcerpt(Post $post)
+    {
+        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt()));
+        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt())); // Do it another time to be sure
     }
 
     // Private
