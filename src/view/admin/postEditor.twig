@@ -18,7 +18,7 @@
     <section class="blog-admin">
         {% include "message.twig" %}
 
-        <div>
+        <div class="editor-commands">
             {# Cancel button #}
             <div>
                 <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
@@ -59,12 +59,16 @@
                 </p>
                 {# Post excerpt #}
                 <p>
-                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label><br>
+                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label>
+                    {# Choose editor #}
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-excerpt');">Ouvrir l'éditeur</button><br>
                     <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
                 </p>
                 {# Post content #}
                 <p>
-                    <label for="post-content">Contenu de l'article</label><br>
+                    <label for="post-content">Contenu de l'article</label>
+                    {# Choose editor #}
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
 
@@ -81,21 +85,9 @@
     <script>
         myTagHandler.setTagEventListeners();
     </script>
-    {% if editor is same as('CKEditor') %}
-        {# CKEditor #}
-        <script src="https://cdn.ckeditor.com/ckeditor5/11.2.0/classic/ckeditor.js"></script>
-        <script>
-            ClassicEditor
-                .create( document.querySelector( '#post-content' ) )
-                .catch( error => {
-                    console.error( error );
-                } );
-        </script>
-    {% elseif editor is same as('TinyMCE') %}
-        {# TinyMCE #}
-        <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
-        <script>tinymce.init({ selector:'#post-content' });</script>
-    {% endif %}
+    <script src="/js/chooseEditor.js"></script>
+    {# TinyMCE #}
+    <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
 {% endblock %}
 
 

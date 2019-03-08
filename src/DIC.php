@@ -54,6 +54,7 @@ class DIC
         return new HomeController(
             new PostManager(),
             new CategoryManager(),
+            new MemberManager(),
             self::generateTwigEnvironment()
         );
     }

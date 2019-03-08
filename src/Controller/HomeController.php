@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Model\Manager\CategoryManager;
+use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Twig_Environment;
 
@@ -10,18 +11,21 @@ class HomeController extends Controller
 {
     protected $postManager;
     protected $categoryManager;
+    private $memberManager;
 
     const VIEW_HOME = 'home/home.twig';
 
     public function __construct(
                                 PostManager $postManager,
                                 CategoryManager $categoryManager,
+                                MemberManager $memberManager,
                                 Twig_Environment $twig
     )
     {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->categoryManager = $categoryManager;
+        $this->memberManager = $memberManager;
     }
 
     /**
@@ -40,14 +44,11 @@ class HomeController extends Controller
         $postsByCategory = [];
 
         foreach ($categories as $category) {
-            $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
-            // Format creation dates
-            foreach ($postsByCategory[$category->getId()] as $post) {
-                $post->setCreationDate(self::formatDate($post->getCreationDate()));
-                BlogController::decodePostExcerpt($post);
-                if ($post->getLastModificationDate()) {
-                    $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
-                }
+            $catId = $category->getId();
+            $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1);
+            // Format creation dates and translate markdown
+            foreach ($postsByCategory[$catId] as $post) {
+                BlogController::prepareAPost($post);
             }
         }
 

@@ -14,6 +14,7 @@ use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
 use Exception;
+use Michelf\Markdown;
 use Model\Entity\Category;
 use Model\Entity\Comment;
 use Model\Entity\Entity;
@@ -75,26 +76,18 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
-     * @param bool $decodeExcerpt
-     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfACategory(int $categoryId, bool $decodeExcerpt = true, bool $decodeContent = false)
+    public function showPostsOfACategory(int $categoryId)
     {
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
-            if ($decodeContent) {
-                self::decodePostContent($post);
-            }
-            if ($decodeExcerpt) {
-                self::decodePostExcerpt($post);
-            }
-            self::convertDatesOfPost($post);
+            self::prepareAPost($post);
         }
 
         $this->render(self::VIEW_BLOG, [
@@ -107,24 +100,16 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
-     * @param bool $decodeExcerpt
-     * @param bool $decodeContent
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showPostsOfATag(int $tagId, bool $decodeExcerpt = true, bool $decodeContent = false)
+    public function showPostsOfATag(int $tagId)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
         foreach ($posts as $post) {
-            if ($decodeContent) {
-                self::decodePostContent($post);
-            }
-            if ($decodeExcerpt) {
-                self::decodePostExcerpt($post);
-            }
-            self::convertDatesOfPost($post);
+            self::prepareAPost($post);
         }
         $tag = $this->tagManager->get($tagId);
 
@@ -149,9 +134,7 @@ class BlogController extends Controller
     {
         try {
             $post = $this->postManager->get($postId);
-            self::convertDatesOfPost($post);
-            self::decodePostContent($post);
-            self::decodePostExcerpt($post);
+            self::prepareAPost($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
@@ -226,7 +209,6 @@ class BlogController extends Controller
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
-            self::decodePostContent($postToEdit);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
@@ -587,25 +569,18 @@ class BlogController extends Controller
     }
 
     /**
-     * Unescape HTML tags in the content of the post
+     * Prepare a post before showing it (convert dates and markdown contents)
      *
      * @param Post $post
+     * @throws Exception
      */
-    public static function decodePostContent(Post $post)
+    public static function prepareAPost(Post $post)
     {
-        $post->setContent(htmlspecialchars_decode($post->getContent()));
-        $post->setContent(htmlspecialchars_decode($post->getContent())); // Do it another time to be sure
-    }
-
-    /**
-     * Unescape HTML tags in the content of the post
-     *
-     * @param Post $post
-     */
-    public static function decodePostExcerpt(Post $post)
-    {
-        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt()));
-        $post->setExcerpt(htmlspecialchars_decode($post->getExcerpt())); // Do it another time to be sure
+        self::convertDatesOfPost($post);
+        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
+        if (!empty($post->getContent())) {
+            $post->setContent(self::convertMarkdown($post->getContent()));
+        }
     }
 
     // Private
@@ -923,5 +898,16 @@ class BlogController extends Controller
         }
 
         return $message;
+    }
+
+    /**
+     * Convert markdown content
+     *
+     * @param string $content
+     * @return string
+     */
+    private static function convertMarkdown(string $content)
+    {
+        return Markdown::defaultTransform($content);
     }
 }
