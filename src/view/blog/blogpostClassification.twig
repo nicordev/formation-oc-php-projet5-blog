@@ -1,10 +1,18 @@
 
 <div class="blogpost-classification">
-    {# Category #}
-    {% for category in categories %}
-        <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a><span> </span>
-    {% endfor %}
-    <span> | </span>
-    {# Tags #}
-    {% for tag in post.getTags %}<a href="/blog/tag?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
+    {% set categories = post.getCategories %}
+    {% set tags = post.getTags %}
+    {% if categories %}
+        {% for category in categories %}
+            {# Category #}
+            <a class="post-nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a><span> </span>
+        {% endfor %}
+    {% endif %}
+    {% if tags %}
+        {% if categories %}
+            <span> | </span>
+        {% endif %}
+        {# Tags #}
+        {% for tag in tags %}<a href="/blog/tag?tag-id={{ tag.getId }}">#{{ tag.getName }}</a> {% endfor %}
+    {% endif %}
 </div>

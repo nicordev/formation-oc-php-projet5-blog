@@ -60,6 +60,11 @@ blockquote p::after {
     width: 100%;
 }
 
+.limit-height {
+    max-height: 700px;
+    overflow: auto;
+}
+
 .sign-btn {
     font-size: 1.5em;
     padding: 0 14px 2px 15px;
@@ -87,6 +92,20 @@ blockquote p::after {
 
 .btn-primary {
     border-radius: 5px;
+}
+
+.small-link-wrap {
+    margin: 0 0 10px 10px;
+}
+
+.small-link-wrap a {
+    font-size: 0.75em;
+    color: #5a6268;
+}
+
+.small-link-wrap a:hover {
+    color: #0c5460;
+    text-decoration: underline;
 }
 
 #logo {
@@ -209,6 +228,11 @@ blockquote p::after {
 
 /* blogPost.twig */
 
+.blogpost-content h2, .blogpost-content h3 {
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
+
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
     color: burlywood;
@@ -216,8 +240,8 @@ blockquote p::after {
 
 .blogpost-excerpt {
     padding: 50px;
-    background-color: #5a6268;
-    color: whitesmoke;
+    background-color: #F5F7F6;
+    color: #666;
     margin: 0 0 50px 0;
 }
 

@@ -1,5 +1,7 @@
 {% extends 'admin/adminLayout.twig' %}
 
+{% import 'macros.twig' as macros %}
+
 {# head #}
 {% block title %}
     {% if postToEdit %}
@@ -27,7 +29,7 @@
             {% if postToEdit %}
                 {# Delete post button #}
                 <div>
-                    <form action="/admin/delete-post" method="post">
+                    <form id="delete-post-form" action="/admin/delete-post" method="post">
                         <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                         <p>
                             <input class="btn" type="submit" value="Supprimer l'article">
@@ -39,7 +41,7 @@
 
         <div>
             {% if postToEdit %}
-            <form action="/admin/edit-post" method="post">
+            <form id="publish-post-form" action="/admin/edit-post" method="post">
                 <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
                 <input type="hidden" name="post-editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
@@ -54,23 +56,37 @@
                 </p>
                 {# Post title #}
                 <p>
-                    <label for="post-title">Titre de l'article</label><br>
-                    <input class="admin-input w100" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}">
+                    <label for="post-title">Titre de l'article <span class="editor-info">(100 caractères maximum)</span></label><span class="badge" id="title-character-counter"></span><br>
+                    <input class="admin-input w100" type="text" name="post-title" id="post-title" value="{{ postToEdit.getTitle }}" onkeyup="countCharacters(event.target, 'title-character-counter', 100);">
                 </p>
                 {# Post excerpt #}
                 <p>
-                    <label for="post-excerpt">Extrait de l'article (ou chapo)</label>
-                    {# Choose editor #}
-                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-excerpt');">Ouvrir l'éditeur</button><br>
-                    <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5">{{ postToEdit.getExcerpt }}</textarea>
+                    <label for="post-excerpt">Extrait de l'article <span class="editor-info">(300 caractères maximum)</span></label><span class="badge" id="excerpt-character-counter"></span><br>
+                    <textarea class="admin-textarea w100" name="post-excerpt" id="post-excerpt" cols="30" rows="5" onkeyup="countCharacters(event.target, 'excerpt-character-counter', 300);">{{ postToEdit.getExcerpt }}</textarea>
                 </p>
                 {# Post content #}
                 <p>
                     <label for="post-content">Contenu de l'article</label>
                     {# Choose editor #}
-                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button><br>
+                    <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button>
+                    <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
+
+                <hr>
+                {# Categories #}
+                <div>
+                    <h3>Catégories</h3>
+
+                    <ul>
+                    {% for category in categories %}
+                        <li>
+                            <input type="checkbox" name="categories[]" id="cat-{{ category.getName }}" value="{{ category.getName }}" {{ macros.checkPostCategory(category, postToEdit.getCategories) }} onclick="refreshChecked(event);">
+                            <label for="cat-{{ category.getName }}">{{ category.getName }}</label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
 
                 {# Tags #}
                 {% include "admin/tagHandler.twig" %}
@@ -81,13 +97,116 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Tags #}
     <script src="/js/tagHandler.js"></script>
     <script>
         myTagHandler.setTagEventListeners();
     </script>
+    {# Editor #}
     <script src="/js/chooseEditor.js"></script>
     {# TinyMCE #}
     <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
+    {# Confirmation messages #}
+    <script src="/js/areYouSure.js"></script>
+    <script>
+        // Confirmation messages
+
+        /**
+         * Refresh the checked attribute
+         */
+        function refreshChecked(event)
+        {
+            var elt = event.target;
+
+            if (elt.hasAttribute('checked')) {
+                elt.removeAttribute('checked');
+            } else {
+                elt.setAttribute('checked', 'checked');
+            }
+        }
+
+        // Delete the post
+        var deleteFormElt = document.getElementById('delete-post-form');
+        if (deleteFormElt) {
+            deleteFormElt.addEventListener('submit', function (event) {
+                event.preventDefault();
+                areYouSure.show("L'article sera supprimé. Continuer ?", submitForm);
+
+                function submitForm() {
+                    event.target.submit();
+                }
+            });
+        }
+
+        // Publish the post
+        var publishFormElt = document.getElementById('publish-post-form');
+        publishFormElt.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            if (!checkCategoriesBeforeSubmit()) {
+                areYouSure.show("Aucune catégorie n'a été sélectionnée. L'article n'apparaîtra pas sur le site. Continuer ?", submitForm);
+            }
+
+            function submitForm() {
+                event.target.submit();
+            }
+
+            function isChecked(element) {
+                return element.hasAttribute('checked');
+
+            }
+
+            /**
+             * Submit the form if there is at least one category selected
+             *
+             * @returns {boolean}
+             */
+            function checkCategoriesBeforeSubmit() {
+                var categoriesElts = document.getElementsByName('categories[]');
+
+                for (elt of categoriesElts) {
+                    if (isChecked(elt)) {
+                        submitForm();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    </script>
+    {# Character counter #}
+    <script>
+        /**
+         * Fill an element with the number of characters of the target element
+         *
+         * @param targetElt
+         * @param counterId
+         * @param limit
+         */
+        function countCharacters(targetElt, counterId, limit = null) {
+
+            var characterCounterElt = document.getElementById(counterId),
+                count = 0;
+
+            count = targetElt.value.length;
+
+            if (count > 1) {
+                characterCounterElt.textContent = count + ' caractères';
+            } else if (count === 1) {
+                characterCounterElt.textContent = count + ' caractère';
+            } else {
+                characterCounterElt.textContent = '';
+            }
+
+            if (limit) {
+                if (count > limit) {
+                    characterCounterElt.style.color = '#dd4444';
+                } else {
+                    characterCounterElt.style.color = '#b9bbbe';
+                }
+            }
+        }
+    </script>
 {% endblock %}
 
 

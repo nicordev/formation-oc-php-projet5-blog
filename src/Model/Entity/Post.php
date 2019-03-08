@@ -15,6 +15,7 @@ class Post extends Entity
     protected $lastEditorId = null;
     protected $creationDate = null;
     protected $lastModificationDate = null;
+    protected $markdown = false;
     protected $title = null;
     protected $excerpt = null;
     protected $content = null;
@@ -138,6 +139,22 @@ class Post extends Entity
     }
 
     /**
+     * @return bool
+     */
+    public function isMarkdown(): bool
+    {
+        return $this->markdown;
+    }
+
+    /**
+     * @param bool $markdown
+     */
+    public function setMarkdown(bool $markdown): void
+    {
+        $this->markdown = $markdown;
+    }
+
+    /**
      * @return string
      */
     public function getTitle(): ?string
@@ -180,7 +197,7 @@ class Post extends Entity
     /**
      * @param string $content
      */
-    public function setContent(string $content): void
+    public function setContent(?string $content): void
     {
         $this->content = $content;
     }

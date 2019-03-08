@@ -3,6 +3,7 @@
 namespace Model\Manager;
 
 
+use Application\Exception\AppException;
 use Exception;
 use Model\Entity\Member;
 use PDO;
@@ -154,18 +155,29 @@ class MemberManager extends Manager
     }
 
     /**
-     * Get the id of a member from its name
+     * Get the id of a member from its name or its email
      *
      * @param string $memberName
+     * @param string|null $memberEmail
      * @return mixed
+     * @throws AppException
      * @throws \Application\Exception\BlogException
      */
-    public function getId(string $memberName)
+    public function getId(string $memberName = null, string $memberEmail = null)
     {
-        $query = 'SELECT m_id FROM bl_member WHERE m_name = :member';
-        $requestId = $this->query($query, [
-            'member' => $memberName
-        ]);
+        if ($memberName) {
+            $query = 'SELECT m_id FROM bl_member WHERE m_name = :member';
+            $requestId = $this->query($query, [
+                'member' => $memberName
+            ]);
+        } elseif ($memberEmail) {
+            $query = 'SELECT m_id FROM bl_member WHERE m_email = :email';
+            $requestId = $this->query($query, [
+                'email' => $memberEmail
+            ]);
+        } else {
+            throw new AppException('Wrong parameters for the method ' . __CLASS__ . '::getId(). Here are the parameters : ' . func_get_args());
+        }
 
         $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
 
@@ -199,6 +211,27 @@ class MemberManager extends Manager
         }
 
         return $members;
+    }
+
+    /**
+     * Check if an email is associated to a member
+     *
+     * @param string $email
+     * @return bool
+     * @throws \Application\Exception\BlogException
+     */
+    public function emailExists(string $email)
+    {
+        $query = 'SELECT COUNT(m_email) FROM bl_member WHERE m_email = :email';
+
+        $requestCount = $this->query($query, ['email' => $email]);
+
+        $count = $requestCount->fetch(PDO::FETCH_NUM);
+
+        if (empty($count[0])) {
+            return false;
+        }
+        return true;
     }
 
     // Private

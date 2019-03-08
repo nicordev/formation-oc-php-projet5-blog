@@ -80,6 +80,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showPostsOfACategory(int $categoryId)
     {
@@ -129,13 +130,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showASinglePost(int $postId, ?string $message = null)
     {
         try {
             $post = $this->postManager->get($postId);
             self::prepareAPost($post);
-            $categories = $this->categoryManager->getCategoriesFromPostId($postId);
+
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
                 self::convertDatesOfComment($comment);
@@ -147,7 +149,6 @@ class BlogController extends Controller
 
         $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories,
             'comments' => $comments,
             'message' => $message
         ]);
@@ -203,21 +204,26 @@ class BlogController extends Controller
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         $postToEdit = null;
+        $categories = $this->categoryManager->getAll();
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
+        $markdown = true;
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
+            $markdown = $postToEdit->isMarkdown();
         }
 
         $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
+            'categories' => $categories,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames
+            'selectedTags' => $selectedTagNames,
+            'markdown' => $markdown
         ]);
     }
 
@@ -229,25 +235,20 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {
         $categoryToEdit = null;
-        $availableTags = $this->tagManager->getAll();
-        $availableTagNames = self::getTagNames($availableTags);
-        $selectedTagNames = [];
 
         if ($categoryToEditId !== null) {
             $categoryToEdit = $this->categoryManager->get($categoryToEditId);
-            $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
         $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
-            'message' => $message,
-            'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames
+            'message' => $message
         ]);
     }
 
@@ -300,7 +301,7 @@ class BlogController extends Controller
         $message = '';
 
         if ($newPost !== null) {
-            // Cut if title and excerpt are too big
+            // Cut if title, excerpt or content are too big
             $message = self::cutPost($newPost);
 
             // Tags
@@ -309,6 +310,14 @@ class BlogController extends Controller
             if (!empty($tags)) {
                 // Add tags in the database and get their ids
                 $newPost->setTags($this->addNewTags($tags));
+            }
+
+            // Categories
+            if (!empty($newPost->getCategories())) {
+                foreach ($newPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $newPost->setCategories($categories);
             }
 
             // Add
@@ -347,6 +356,13 @@ class BlogController extends Controller
             if (!empty($tags)) {
                 // Add tags in the database and get their ids
                 $modifiedPost->setTags($this->addNewTags($tags));
+            }
+
+            if (!empty($modifiedPost->getCategories())) {
+                foreach ($modifiedPost->getCategories() as $category) {
+                    $categories[] = $this->categoryManager->getFromName($category->getName());
+                }
+                $modifiedPost->setCategories($categories);
             }
 
             $this->postManager->edit($modifiedPost);
@@ -428,23 +444,13 @@ class BlogController extends Controller
     }
 
     /**
-     * Add a new category from $_POST and add associated tags (note: a category must have a name and at least 1 associated tag)
+     * Add a new category from $_POST
      */
     public function addCategory()
     {
         $newCategory = self::buildCategoryFromForm();
 
         if ($newCategory !== null) {
-            $tags = $newCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor(null, "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->add($newCategory);
 
             // Come back to the admin panel
@@ -471,16 +477,6 @@ class BlogController extends Controller
         $modifiedCategory = self::buildCategoryFromForm();
 
         if ($modifiedCategory !== null) {
-            $tags = $modifiedCategory->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $modifiedCategory->setTags($this->addNewTags($tags));
-            } else {
-                $this->showCategoryEditor((int) $_POST['edit-category'], "Erreur : la catégorie doit être associée à au moins une étiquette.");
-                return false;
-            }
-
             $this->categoryManager->edit($modifiedCategory);
 
             // Come back to the admin panel
@@ -577,9 +573,38 @@ class BlogController extends Controller
     public static function prepareAPost(Post $post)
     {
         self::convertDatesOfPost($post);
-        $post->setExcerpt(self::convertMarkdown($post->getExcerpt()));
-        if (!empty($post->getContent())) {
+        if ($post->isMarkdown() && !empty($post->getContent())) {
             $post->setContent(self::convertMarkdown($post->getContent()));
+        }
+    }
+
+    /**
+     * Change the date format use in a post
+     *
+     * @param Post $post
+     * @throws Exception
+     */
+    public static function convertDatesOfPost(Post $post)
+    {
+        $post->setCreationDate(self::formatDate($post->getCreationDate()));
+
+        if ($post->getLastModificationDate() !== null) {
+            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
+    }
+
+    /**
+     * Change the date format use in a comment
+     *
+     * @param Comment $comment
+     * @throws Exception
+     */
+    public static function convertDatesOfComment(Comment $comment)
+    {
+        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
+
+        if ($comment->getLastModificationDate() !== null) {
+            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
         }
     }
 
@@ -722,6 +747,24 @@ class BlogController extends Controller
     }
 
     /**
+     * Return Category entities
+     *
+     * @return array|null
+     */
+    private static function getCategoriesFromForm(): ?array
+    {
+        $categories = null;
+
+        if (isset($_POST['categories'])) {
+            foreach ($_POST['categories'] as $category) {
+                $categories[] = new Category(['name' => $category]);
+            }
+        }
+
+        return $categories;
+    }
+
+    /**
      * Create a Post from a form (thanks to $_POST)
      * Work for addPost and editPost
      *
@@ -762,6 +805,17 @@ class BlogController extends Controller
                 $post->setTags($tags);
             }
 
+            // Categories
+            $categories = self::getCategoriesFromForm();
+            if ($categories) {
+                $post->setCategories($categories);
+            }
+
+            // Markdown
+            if (isset($_POST['markdown-content']) && !empty($_POST['markdown-content'])) {
+                $post->setMarkdown(true);
+            }
+
             return $post;
 
         } else {
@@ -784,12 +838,6 @@ class BlogController extends Controller
             // Category to edit
             if (isset($_POST['edit-category'])) {
                 $category->setId((int) $_POST['edit-category']);
-            }
-
-            // Tags
-            $tags = self::getTagsFromForm();
-            if ($tags) {
-                $category->setTags($tags);
             }
 
             return $category;
@@ -844,36 +892,6 @@ class BlogController extends Controller
     }
 
     /**
-     * Change the date format use in a post
-     *
-     * @param Post $post
-     * @throws Exception
-     */
-    private static function convertDatesOfPost(Post $post)
-    {
-        $post->setCreationDate(self::formatDate($post->getCreationDate()));
-
-        if ($post->getLastModificationDate() !== null) {
-            $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
-        }
-    }
-
-    /**
-     * Change the date format use in a comment
-     *
-     * @param Comment $comment
-     * @throws Exception
-     */
-    private static function convertDatesOfComment(Comment $comment)
-    {
-        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
-
-        if ($comment->getLastModificationDate() !== null) {
-            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
-        }
-    }
-
-    /**
      * Cut the title and the excerpt of a post if they are too big. Return a message explaining the modifications.
      *
      * @param Post $post
@@ -882,19 +900,23 @@ class BlogController extends Controller
      */
     private static function cutPost(Post $post, string $message = '')
     {
-        // Excerpt
-        if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
-            // We cut
-            $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
-            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
-
-        }
         // Title
         if (strlen($post->getTitle()) > PostManager::TITLE_LENGTH) {
             // We cut
             $post->setTitle(substr($post->getTitle(), 0, PostManager::TITLE_LENGTH));
             $message .= "Attention : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères. Il a été coupé.<br>";
-
+        }
+        // Excerpt
+        if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
+            // We cut
+            $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
+            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
+        }
+        // Content
+        if (strlen($post->getContent()) > PostManager::CONTENT_LENGTH) {
+            // We cut
+            $post->setContent(substr($post->getContent(), 0, PostManager::CONTENT_LENGTH));
+            $message .= "Attention : le contenu ne doit pas dépasser " . PostManager::CONTENT_LENGTH . " caractères. Il a été coupé.<br>";
         }
 
         return $message;
@@ -904,6 +926,7 @@ class BlogController extends Controller
      * Convert markdown content
      *
      * @param string $content
+     * @param bool $defaultTransform
      * @return string
      */
     private static function convertMarkdown(string $content)

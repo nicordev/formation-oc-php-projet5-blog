@@ -1,0 +1,33 @@
+<div class="admin-box">
+    <h2>#Etiquettes</h2>
+
+    <form id="admin-tag-list-form" action="/admin/update-tags" method="post">
+        <p>
+            {# Update list button #}
+        <div>
+            <input id="update-tag-list-btn" class="btn" type="submit" value="Mettre à jour la liste des étiquettes">
+        </div>
+        {# Cancel button #}
+        <div>
+            <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
+        </div>
+        </p>
+
+        <ul id="tag-list" class="limit-height">
+            {% for tag in tags %}
+                <li>
+                    <input type="hidden" name="tag_ids[]" value="{{ tag.getId() }}">
+                    <span>#</span>
+                    <input class="available-tag text-center admin-tag underline-input" type="text" name="tag_names[]" value="{{ tag.getName() }}" onkeyup="myApp.refreshValue(event); myBlogAdmin.highlightIncorrectTags();">
+                    <span class="btn sign-btn-small" onclick="myApp.eraseTool.eraseElementFromEvent(event)">🗑</span>
+                </li>
+            {% endfor %}
+
+            <li id="new-tag-input-li">
+                <span>#</span>
+                <input id="new-tag-input" class="underline-input" type="text" name="new-tag-input" placeholder="Nouvelle étiquette" onkeydown="myBlogAdmin.addTagOnEnter(event);">
+                <button type="button" id="new-tag-btn" class="btn sign-btn">+</button>
+            </li>
+        </ul>
+    </form>
+</div>

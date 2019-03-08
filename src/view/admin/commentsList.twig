@@ -1,0 +1,60 @@
+<div class="admin-box">
+    <h2>Commentaires</h2>
+
+    <div class="limit-height">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Statut</th>
+                <th>Commentaire</th>
+                <th>Auteur</th>
+                <th>Article</th>
+                <th>En réponse à</th>
+                <th>Date de création</th>
+                <th>Dernière modification</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for comment in comments %}
+                <tr>
+                    <td>
+                        {% if comment.isApproved %}
+                            Approuvé
+                        {% else %}
+                            En attente
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="admin-link font-weight-normal" href="/admin/comment-editor?id={{ comment.getId }}">{{ comment.getContent }}</a>
+                    </td>
+                    <td>
+                        <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a>
+                    </td>
+                    <td>
+                        <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
+                    </td>
+                    <td>
+                        {% if comment.getParentId %}
+                            <a class="comment-info" href="/member-profile?id={{ comment.getParent.getAuthorId }}">{{ comment.getParent.getAuthor }}</a><br>
+                            <span class="comment-info">{{ comment.getParent.getCreationDate }}</span><br>
+                            <a class="admin-link font-weight-normal comment-info" href="/admin/comment-editor?id={{ comment.getParent.getId }}">{{ comment.getParent.getContent }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="table-date">{{ comment.getCreationDate }}</span>
+                    </td>
+                    <td>
+                        {% if comment.getLastModificationDate %}
+                            <span class="table-date">{{ comment.getLastModificationDate }} par <a href="/member-profile?id={{ comment.getLastEditorId }}">{{ comment.getLastEditor }}</a></span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

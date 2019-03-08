@@ -71,11 +71,14 @@ class TagManager extends Manager
     /**
      * Get all tags from the database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
+     * @throws \Application\Exception\BlogException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
-        return parent::getAll();
+        return parent::getAll($numberOfLines, $start);
     }
 
     /**
@@ -83,6 +86,7 @@ class TagManager extends Manager
      *
      * @param Tag $newTag
      * @return bool
+     * @throws \Application\Exception\BlogException
      */
     public function isNewTag(Tag $newTag): bool
     {

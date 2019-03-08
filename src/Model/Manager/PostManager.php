@@ -19,6 +19,7 @@ class PostManager extends Manager
 {
     public const EXCERPT_LENGTH = 300;
     public const TITLE_LENGTH = 100;
+    const CONTENT_LENGTH = 300000;
 
     /**
      * PostManager constructor.
@@ -32,6 +33,7 @@ class PostManager extends Manager
             'lastEditorId' => 'p_last_editor_id_fk',
             'creationDate' => 'p_creation_date',
             'lastModificationDate' => 'p_last_modification_date',
+            'markdown' => 'p_markdown',
             'title' => 'p_title',
             'excerpt' => 'p_excerpt',
             'content' => 'p_content'
@@ -51,10 +53,18 @@ class PostManager extends Manager
     {
         parent::add($newPost);
 
+        $newPost->setId($this->getLastId());
+        
+        // Associate categories and post
+        $categories = $newPost->getCategories();
+
+        if (!empty($categories)) {
+            $this->associatePostAndCategories($newPost, $categories);
+        }
+        
         // Associate tags and post
         $tags = $newPost->getTags();
         if (!empty($tags)) {
-            $newPost->setId($this->getLastId());
             $this->associatePostAndTags($newPost, $tags);
         }
     }
@@ -70,11 +80,13 @@ class PostManager extends Manager
     {
         parent::edit($modifiedPost);
 
+        // Associate categories and post
+        $categories = $modifiedPost->getCategories();
+        $this->associatePostAndCategories($modifiedPost, $categories);
+
         // Associate tags and post
         $tags = $modifiedPost->getTags();
-        if (!empty($tags)) {
-            $this->associatePostAndTags($modifiedPost, $tags);
-        }
+        $this->associatePostAndTags($modifiedPost, $tags);
     }
 
     /**
@@ -102,6 +114,10 @@ class PostManager extends Manager
         // Tags
         $associatedTags = $this->getTagsOfAPost($post->getId());
         $post->setTags($associatedTags);
+
+        // Categories
+        $associatedCategories = $this->getCategoriesOfAPost($post->getId());
+        $post->setCategories($associatedCategories);
 
         // Author and editor
         $this->setMembersOfAPost($post);
@@ -150,14 +166,11 @@ class PostManager extends Manager
 
         $query = 'SELECT DISTINCT * FROM bl_category
             WHERE cat_id IN (
-                SELECT DISTINCT ct_category_id_fk FROM bl_category_tag
-                WHERE ct_tag_id_fk IN (
-                    SELECT DISTINCT pt_tag_id_fk FROM bl_post_tag
-                    WHERE pt_post_id_fk = :id
-                )
+                SELECT DISTINCT pc_category_id_fk FROM bl_post_category
+                WHERE pc_post_id_fk = :postId
             )';
 
-        $requestCategories = $this->query($query, ['id' => $postId]);
+        $requestCategories = $this->query($query, ['postId' => $postId]);
 
         while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
             $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
@@ -265,19 +278,15 @@ class PostManager extends Manager
         if ($withContent) {
             $columns = '*';
         } else {
-            $columns = 'p_id, p_excerpt, p_last_modification_date, p_last_editor_id_fk, p_author_id_fk, p_creation_date, p_title';
+            $columns = $this->fields;
+            unset($columns['content']);
+            $columns = implode(', ', $columns);
         }
 
         $query = 'SELECT ' . $columns . ' FROM bl_post
             WHERE p_id IN (
-                SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
-                WHERE pt_tag_id_fk IN (
-                    SELECT tag_id FROM bl_tag
-                        INNER JOIN bl_category_tag
-                            ON tag_id = ct_tag_id_fk
-                        INNER JOIN bl_category
-                            ON cat_id = ct_category_id_fk
-                    WHERE cat_id = :id) # Use the requested category id here
+                SELECT DISTINCT pc_post_id_fk FROM bl_post_category
+                WHERE pc_category_id_fk = :categoryId
             )
             ORDER BY p_last_modification_date DESC, p_creation_date DESC';
         if ($numberOfLines) {
@@ -285,7 +294,7 @@ class PostManager extends Manager
         }
 
         $requestPosts = $this->query($query, [
-            'id' => $categoryId
+            'categoryId' => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
@@ -329,7 +338,84 @@ class PostManager extends Manager
         return $posts;
     }
 
+    /**
+     * Get the posts written by a member
+     *
+     * @param int $memberId
+     * @param bool $getContent
+     * @param bool $filterWithTags
+     * @param int|null $numberOfPosts
+     * @param int|null $start
+     * @return array
+     * @throws BlogException
+     */
+    public function getPostsOfAMember(int $memberId, bool $getContent = false, bool $filterWithTags = true, ?int $numberOfPosts = null, ?int $start = null): array
+    {
+        $posts = [];
+        if ($getContent) {
+            $columns = '*';
+        } else {
+            $columns = $this->fields;
+            unset($columns['content']);
+            $columns = implode(', ', $columns);
+        }
+
+        $query = 'SELECT ' . $columns . ' FROM bl_post WHERE p_author_id_fk = :memberId';
+        if ($numberOfPosts) {
+            self::addLimitToQuery($query, $numberOfPosts, $start);
+        }
+        $requestPosts = $this->query($query, ['memberId' => $memberId]);
+
+        if ($filterWithTags) {
+            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+                $post = $this->createEntityFromTableData($postData, 'Post');
+                $post->setTags($this->getTagsOfAPost($post->getId()));
+                if ($post->getTags()) {
+                    $posts[] = $post;
+                }
+            }
+
+        } else {
+            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+                $post = $this->createEntityFromTableData($postData, 'Post');
+                $post->setTags($this->getTagsOfAPost($post->getId()));
+                $posts[] = $post;
+            }
+        }
+
+        return $posts;
+    }
+
     // Private
+
+    /**
+     * Fill the table bl_post_category
+     *
+     * @param Post $post
+     * @param array $categories
+     * @throws BlogException
+     */
+    private function associatePostAndCategories(Post $post, array $categories)
+    {
+        // Delete
+        $query = 'DELETE FROM bl_post_category WHERE pc_post_id_fk = :postId';
+        
+        $this->query($query, ['postId' => $post->getId()]);
+
+        if (!empty($categories)) {
+            // Add
+            $query = 'INSERT INTO bl_post_category(pc_post_id_fk, pc_category_id_fk)
+                VALUES (:postId, :categoryId)';
+            $requestAdd = $this->database->prepare($query);
+
+            foreach ($categories as $category) {
+                $requestAdd->execute([
+                    'postId' => $post->getId(),
+                    'categoryId' => $category->getId()
+                ]);
+            }
+        }
+    }
 
     /**
      * Fill the table bl_post_tag
@@ -345,16 +431,18 @@ class PostManager extends Manager
 
         $this->query($query, ['postId' => $post->getId()]);
 
-        // Add
-        $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
+        if (!empty($tags)) {
+            // Add
+            $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
                 VALUES (:postId, :tagId)';
-        $requestAdd = $this->database->prepare($query);
+            $requestAdd = $this->database->prepare($query);
 
-        foreach ($tags as $tag) {
-            $requestAdd->execute([
-                'postId' => $post->getId(),
-                'tagId' => $tag->getId()
-            ]);
+            foreach ($tags as $tag) {
+                $requestAdd->execute([
+                    'postId' => $post->getId(),
+                    'tagId' => $tag->getId()
+                ]);
+            }
         }
     }
 

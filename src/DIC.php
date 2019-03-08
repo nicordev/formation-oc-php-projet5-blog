@@ -15,6 +15,7 @@ use Controller\HomeController;
 use Controller\MemberController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
+use Model\Manager\KeyManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Model\Manager\RoleManager;
@@ -75,6 +76,9 @@ class DIC
         return new MemberController(
             new MemberManager(),
             new RoleManager(),
+            new PostManager(),
+            new CommentManager(),
+            new KeyManager(),
             self::generateTwigEnvironment()
         );
     }

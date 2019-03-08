@@ -154,12 +154,14 @@ abstract class Manager
 
         $request = $this->query($query, [$entityId]);
         $tableData = $request->fetch(PDO::FETCH_ASSOC);
-
-        return $this->createEntityFromTableData($tableData);
+        if ($tableData) {
+            return $this->createEntityFromTableData($tableData);
+        }
+        throw new BlogException('The id ' . $entityId . ' was not found in the database');
     }
 
     /**
-     * Get all Entities form database
+     * Get all Entities form database (or just some Entities)
      *
      * @param int|null $numberOfLines
      * @param int|null $start
