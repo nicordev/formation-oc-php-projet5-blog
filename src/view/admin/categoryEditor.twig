@@ -54,9 +54,6 @@
                     <label for="category-name">Nom de la catégorie</label><br>
                     <input class="admin-input" type="text" name="category-name" id="category-name" value="{{ categoryToEdit.getName }}">
                 </p>
-
-                {# Tags #}
-                {% include "admin/tagHandler.twig" %}
             </form>
         </div>
     </section>
@@ -64,10 +61,6 @@
 
 {% block scripts %}
     {{ parent() }}
-    <script src="/js/tagHandler.js"></script>
-    <script>
-        myTagHandler.setTagEventListeners();
-    </script>
 {% endblock %}
 
 

@@ -1,6 +1,6 @@
 
 DROP TABLE IF EXISTS bl_role_member;
-DROP TABLE IF EXISTS bl_category_tag;
+DROP TABLE IF EXISTS bl_post_category;
 DROP TABLE IF EXISTS bl_post_tag;
 
 DROP TABLE IF EXISTS bl_comment;
@@ -93,7 +93,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE bl_tag(
 	tag_id INT UNSIGNED AUTO_INCREMENT,
-	tag_name VARCHAR(100),
+	tag_name VARCHAR(100) UNIQUE,
 
 	CONSTRAINT pk_tag_id
 		PRIMARY KEY (tag_id)
@@ -123,29 +123,29 @@ ENGINE = InnoDB;
 
 CREATE TABLE bl_category(
 	cat_id INT UNSIGNED AUTO_INCREMENT,
-	cat_name VARCHAR(100),
+	cat_name VARCHAR(100) UNIQUE,
 
 	CONSTRAINT pk_cat_id
 		PRIMARY KEY (cat_id)
 )
 ENGINE = InnoDB;
 
-CREATE TABLE bl_category_tag(
-	ct_category_id_fk INT UNSIGNED,
-	ct_tag_id_fk INT UNSIGNED,
+CREATE TABLE bl_post_category(
+    pc_post_id_fk INT UNSIGNED,
+	pc_category_id_fk INT UNSIGNED,
 
-	CONSTRAINT pk_ct_category_id_ct_tag_id
-		PRIMARY KEY (ct_category_id_fk, ct_tag_id_fk),
+	CONSTRAINT pk_pc_post_id_pc_category_id
+		PRIMARY KEY (pc_post_id_fk, pc_category_id_fk),
 
-	CONSTRAINT fk_ct_category_cat_id
-		FOREIGN KEY (ct_category_id_fk)
-			REFERENCES bl_category(cat_id)
+	CONSTRAINT fk_pc_post_id_post_id
+		FOREIGN KEY (pc_post_id_fk)
+			REFERENCES bl_post(p_id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE,
 
-	CONSTRAINT fk_ct_tag_id_tag_id
-		FOREIGN KEY (ct_tag_id_fk)
-			REFERENCES bl_tag(tag_id)
+	CONSTRAINT fk_pc_category_cat_id
+		FOREIGN KEY (pc_category_id_fk)
+			REFERENCES bl_category(cat_id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE
 )

@@ -1,0 +1,31 @@
+<div class="admin-box">
+    <h2>Catégories</h2>
+
+    {# Add a category button #}
+    <p>
+        <a class="btn" href="/admin/category-editor">Ajouter une catégorie</a>
+    </p>
+
+    <div class="limit-height">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Catégorie</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>
+                        <form action="/admin/category-editor" method="post">
+                            <input type="hidden" name="category-id" value="{{ category.getId() }}">
+                            <input class="available-category admin-link" type="submit" value="{{ category.getName() }}">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
