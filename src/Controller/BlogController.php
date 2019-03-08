@@ -9,6 +9,7 @@
 namespace Controller;
 
 
+use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Exception;
@@ -18,6 +19,7 @@ use Model\Entity\Post;
 use Model\Entity\Tag;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
+use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Model\Manager\TagManager;
 use Twig_Environment;
@@ -28,6 +30,7 @@ class BlogController extends Controller
     protected $tagManager;
     protected $categoryManager;
     protected $commentManager;
+    protected $memberManager;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -39,17 +42,19 @@ class BlogController extends Controller
     /**
      * BlogController constructor.
      *
-     * @param Twig_Environment $twig
      * @param PostManager $postManager
      * @param TagManager $tagManager
      * @param CategoryManager $categoryManager
      * @param CommentManager $commentManager
+     * @param MemberManager $memberManager
+     * @param Twig_Environment $twig
      */
     public function __construct(
                                 PostManager $postManager,
                                 TagManager $tagManager,
                                 CategoryManager $categoryManager,
                                 CommentManager $commentManager,
+                                MemberManager $memberManager,
                                 Twig_Environment $twig
     )
     {
@@ -58,30 +63,10 @@ class BlogController extends Controller
         $this->tagManager = $tagManager;
         $this->categoryManager = $categoryManager;
         $this->commentManager = $commentManager;
+        $this->memberManager = $memberManager;
     }
 
     // Views
-
-    /**
-     * Show all posts of the blog
-     * @param bool $htmlDecode
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws BlogException
-     */
-    public function showAllPosts(bool $htmlDecode = false)
-    {
-        $posts = $this->postManager->getAll();
-
-        if ($htmlDecode) {
-            foreach ($posts as $post) {
-                self::decodePostContent($post);
-            }
-        }
-
-        self::render(self::VIEW_BLOG, ['posts' => $posts]);
-    }
 
     /**
      * Show all posts of a given category
@@ -98,13 +83,14 @@ class BlogController extends Controller
         $posts = $this->postManager->getPostsOfACategory($categoryId);
         $category = $this->categoryManager->get($categoryId);
 
-        if ($htmlDecode) {
-            foreach ($posts as $post) {
+        foreach ($posts as $post) {
+            if ($htmlDecode) {
                 self::decodePostContent($post);
             }
+            self::convertDatesOfPost($post);
         }
 
-        self::render(self::VIEW_BLOG, [
+        $this->render(self::VIEW_BLOG, [
             'posts' => $posts,
             'category' => $category
         ]);
@@ -117,13 +103,17 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws BlogException
      */
     public function showPostsOfATag(int $tagId)
     {
         $posts = $this->postManager->getPostsOfATag($tagId);
+        foreach ($posts as $post) {
+            self::convertDatesOfPost($post);
+        }
         $tag = $this->tagManager->get($tagId);
 
-        self::render(self::VIEW_BLOG_TAG, [
+        $this->render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
             'tag' => $tag
         ]);
@@ -150,7 +140,7 @@ class BlogController extends Controller
             $this->pageNotFound404(); // TODO throw an Exception instead
         }
 
-        self::render(self::VIEW_BLOG_POST, [
+        $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
             'categories' => $categories
         ]);
@@ -165,6 +155,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function showAdminPanel(string $message = '', array $yesNoForm = [])
     {
@@ -172,12 +163,21 @@ class BlogController extends Controller
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
 
-        self::render(self::VIEW_BLOG_ADMIN, [
+        if (MemberController::memberConnected()) {
+            if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
+                $members = $this->memberManager->getAll();
+            }
+        } else {
+            throw new AccessException('No connected member found.');
+        }
+
+        $this->render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
-            'categories' => $categories
+            'categories' => $categories,
+            'members' => $members ?? null
         ]);
     }
 
@@ -204,7 +204,7 @@ class BlogController extends Controller
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
-        self::render(self::VIEW_POST_EDITOR, [
+        $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
             'message' => $message,
@@ -234,7 +234,7 @@ class BlogController extends Controller
             $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
-        self::render(self::VIEW_CATEGORY_EDITOR, [
+        $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
             'message' => $message,
@@ -253,11 +253,14 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function addPost()
     {
         $newPost = self::buildPostFromForm();
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+        $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
+        $newPost->setLastEditorId($newPost->getAuthorId());
 
         if ($newPost !== null) {
             if (strlen($newPost->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
@@ -296,6 +299,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function editPost()
     {
@@ -325,6 +329,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function deletePost()
     {
@@ -346,6 +351,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function updateTagList(?array $tagIds, ?array $tagNames, ?string $action = null)
     {
@@ -421,6 +427,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
+     * @throws AccessException
      */
     public function editCategory()
     {
@@ -455,6 +462,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
+     * @throws AccessException
      */
     public function deleteCategory()
     {

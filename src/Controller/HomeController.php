@@ -33,6 +33,7 @@ class HomeController extends Controller
     /**
      * Show the home page
      *
+     * @throws \Application\Exception\BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -44,9 +45,16 @@ class HomeController extends Controller
 
         foreach ($categories as $category) {
             $postsByCategory[$category->getId()] = $this->postManager->getPostsOfACategory($category->getId());
+            // Format creation dates
+            foreach ($postsByCategory[$category->getId()] as $post) {
+                $post->setCreationDate(self::formatDate($post->getCreationDate()));
+                if ($post->getLastModificationDate()) {
+                    $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+                }
+            }
         }
 
-        self::render(self::VIEW_HOME, [
+        $this->render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory
         ]);

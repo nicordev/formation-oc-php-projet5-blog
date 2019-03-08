@@ -1,0 +1,102 @@
+{% extends "member/memberLayout.twig" %}
+
+{# head #}
+
+{% block title %}
+    Profil de {{ member.getName }}
+{% endblock %}
+
+{# body #}
+
+{% block headerTitle %}
+    <div class="site-heading">
+        <h1>Profil de {{ member.getName }}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section id="profile">
+
+        <form action="/profile-editor?action=update" method="post">
+
+            {# Update button #}
+            <div class="form-group col-12">
+                <input class="btn btn-primary" type="submit" value="Mettre à jour mes informations">
+            </div>
+
+            {# Cancel button #}
+            <div class="form-group col-12">
+                <a class="btn btn-primary" href="/member-profile">Annuler</a>
+            </div>
+
+            <h2>Informations</h2>
+            
+            {# Id #}
+            <input type="hidden" name="id" value="{{ member.getId }}">
+
+            {# Roles #}
+            <h3>Rôles</h3>
+
+            {% if 'admin' in getUser().getRoles %}
+
+                <div class="form-group form-check col-12">
+                    <input class="form-check-input" type="checkbox" id="role-author" name="roles[]" value="author" {% if 'author' in member.getRoles %}{{ 'checked' }}{% endif %}><label class="form-check-label" for="role-author">Auteur</label><br>
+                    <input class="form-check-input" type="checkbox" id="role-editor" name="roles[]" value="editor" {% if 'editor' in member.getRoles %}{{ 'checked' }}{% endif %}><label class="form-check-label" for="role-editor">Editeur</label><br>
+                    <input class="form-check-input" type="checkbox" id="role-moderator" name="roles[]" value="moderator" {% if 'moderator' in member.getRoles %}{{ 'checked' }}{% endif %}><label class="form-check-label" for="role-moderator">Modérateur</label><br>
+                    <input class="form-check-input" type="checkbox" id="role-admin" name="roles[]" value="admin" {% if 'admin' in member.getRoles %}{{ 'checked' }}{% endif %}><label class="form-check-label" for="role-admin">Administrateur</label><br>
+                </div>
+            {% else %}
+                <div>
+                    <p>
+                        {% for role in member.getRoles %}
+                            {{ role }}
+                        {% endfor %}
+                    </p>
+                </div>
+            {% endif %}
+
+            {# Name #}
+            <h3>Nom</h3>
+
+            <div class="form-group col-12">
+                <input class="form-control" type="text" id="name" name="name" value="{{ member.getName }}" placeholder="Votre nom">
+            </div>
+
+            {# Description #}
+            <h3>Description</h3>
+
+            <div class="form-group col-12">
+                <textarea class="form-control" name="description" id="description" cols="30" rows="10" placeholder="Votre description">{{ member.getDescription }}</textarea>
+            </div>
+
+            <hr>
+
+            <h2>Compte</h2>
+
+            {# Email #}
+            <h3>Email</h3>
+
+            <div class="form-group col-12">
+                <input class="form-control" type="email" id="email" name="email" value="{{ member.getEmail }}" placeholder="Votre email">
+            </div>
+
+            {# Password #}
+            <h3>Mot de passe</h3>
+
+            <div class="form-group col-12">
+                <input class="form-control" type="password" id="password" name="password" placeholder="Entrez votre nouveau mot de passe">
+            </div>
+        </form>
+
+        <hr>
+
+        <h2>Suppression du compte</h2>
+
+        {# Delete account #}
+        <form action="/profile-editor?action=delete" method="post">
+            <input type="hidden" name="id" value="{{ member.getId }}">
+            <input class="btn btn-primary" type="submit" value="Supprimer le compte">
+        </form>
+
+    </section>
+{% endblock %}

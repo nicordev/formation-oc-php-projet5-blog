@@ -3,7 +3,7 @@
 namespace Model\Entity;
 
 
-class Tag extends Entity
+class Role extends Entity
 {
     protected $name = null;
 

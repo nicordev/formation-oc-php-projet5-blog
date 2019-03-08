@@ -1,0 +1,55 @@
+{% extends "layout.twig" %}
+
+{# head #}
+{% block head %}
+    {{ parent() }}
+    <link href="/css/member-style.css" rel="stylesheet" />
+{% endblock %}
+
+{% block title %}
+    Inscription
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <div class="site-heading">
+        <h1>Inscription</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section id="registration">
+
+        {% include 'message.twig' %}
+
+        <div class="form-wrapper">
+            <form action="/registration?action=register" method="post">
+                <div class="form-row elements-wrapper">
+                    <div class="form-group col-12">
+                        <input class="form-control" type="text" id="name" name="name" placeholder="Votre nom, prénom ou pseudo">
+                    </div>
+                    <div class="form-group col-12">
+                        <input class="form-control" type="email" id="email" name="email" placeholder="Votre email">
+                    </div>
+                    <div class="form-group col-12">
+                        <input class="form-control" type="password" id="password" name="password" placeholder="Un mot de passe">
+                    </div>
+                    <div class="form-group col-12 text-center">
+                        <input class="btn btn-primary" type="submit" value="S'inscrire">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="form-row elements-wrapper">
+            <p class="col-12 text-center">
+                Vous êtes déjà inscrit ?
+            </p>
+            <div class="col-12 text-center">
+                <a class="btn btn-primary" href="/connection">Se connecter</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

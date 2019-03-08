@@ -1,4 +1,4 @@
-{% extends "admin/admin.twig" %}
+{% extends "admin/adminLayout.twig" %}
 
 {# head #}
 {% block title %}
@@ -19,9 +19,11 @@
         <div class="admin-box w100">
             <h2>Articles</h2>
 
-            <p>
-                <a class="btn" href="/admin/post-editor">Ajouter un article</a>
-            </p>
+            {% if 'author' in getUser().getRoles %}
+                <p>
+                    <a class="btn" href="/admin/post-editor">Ajouter un article</a>
+                </p>
+            {% endif %}
 
             <table class="table table-striped">
                 <thead>
@@ -40,13 +42,17 @@
                 {% for post in posts %}
                     <tr>
                         <td scope="row">
-                            <form action="/admin/post-editor" method="post">
-                                <input type="hidden" name="post-id" value="{{ post.getId }}">
-                                <input class="admin-link" type="submit" value="{{ post.getTitle }}">
-                            </form>
+                            {% if 'author' in getUser().getRoles and post.getAuthorId is same as(getUser().getId) or 'editor' in roles %}
+                                <form action="/admin/post-editor" method="post">
+                                    <input type="hidden" name="post-id" value="{{ post.getId }}">
+                                    <input class="admin-link" type="submit" value="{{ post.getTitle }}">
+                                </form>
+                            {% else %}
+                                <span>{{ post.getTitle }}</span>
+                            {% endif %}
                         </td>
                         <td scope="row">
-                            coming soon...
+                            {{ post.getAuthorName }}
                         </td>
                         <td scope="row">
                             {% set postTags = post.getTags %}
@@ -76,7 +82,7 @@
                         </td>
                         <td scope="row">
                             {% if post.getLastModificationDate %}
-                            <span class="table-date">Le {{ post.getLastModificationDate }} par TODO: insert the editor name here</span>
+                            <span class="table-date">Le {{ post.getLastModificationDate }} par {{ post.getEditorName }}</span>
                             {% else %}
                                 -
                             {% endif %}
@@ -101,6 +107,7 @@
 
         <hr>
 
+        {% if 'editor' in roles %}
         {# Categories #}
         <div class="admin-box">
             <h2>Catégories</h2>
@@ -179,6 +186,62 @@
                 </ul>
             </form>
         </div>
+        {% endif %}
+
+        <hr>
+
+        {% if 'admin' in roles %}
+        {# Member management #}
+        <div class="admin-box">
+            <h2>Membres du site</h2>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Nom
+                        </th>
+                        <th scope="col">
+                            Email
+                        </th>
+                        <th scope="col">
+                            Rôles
+                        </th>
+                        <th scope="col">
+                            Articles
+                        </th>
+                        <th scope="col">
+                            Commentaires
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for member in members %}
+                    <tr>
+                        <td scope="row">
+                            <a class="admin-link" href="/member-profile?id={{ member.getId }}">{{ member.getName }}</a>
+                        </td>
+                        <td scope="row">
+                            {{ member.getEmail }}
+                        </td>
+                        <td scope="row">
+                            {% for role in member.getRoles %}
+                                {{ role }}
+                            {% endfor %}
+                        </td>
+                        <td scope="row">
+                            coming soon...
+                        </td>
+                        <td scope="row">
+                            coming soon...
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
     </section>
 {% endblock %}
 

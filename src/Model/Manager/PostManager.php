@@ -99,8 +99,12 @@ class PostManager extends Manager
     {
         $post = parent::get($postId);
 
+        // Tags
         $associatedTags = $this->getTagsOfAPost($post->getId());
         $post->setTags($associatedTags);
+
+        // Author and editor
+        $this->setMembersOfAPost($post);
 
         return $post;
     }
@@ -163,6 +167,25 @@ class PostManager extends Manager
     }
 
     /**
+     * Set the author and editor names of a post
+     *
+     * @param Post $post
+     * @throws BlogException
+     */
+    public function setMembersOfAPost(Post $post)
+    {
+        // Author
+        $authorName = $this->getMemberName($post->getAuthorId());
+        $post->setAuthorName($authorName);
+
+        // Editor
+        if ($post->getLastEditorId() !== null) {
+            $editorName = $this->getMemberName($post->getLastEditorId());
+            $post->setEditorName($editorName);
+        }
+    }
+
+    /**
      * Get all posts from the database
      *
      * @return array
@@ -172,10 +195,11 @@ class PostManager extends Manager
     {
         $posts = parent::getAll();
 
-        // Set tags and categories
+        // Set tags, categories, author name and editor name
         foreach ($posts as $post) {
             $post->setTags($this->getTagsOfAPost($post->getId()));
             $post->setCategories($this->getCategoriesOfAPost($post->getId()));
+            $this->setMembersOfAPost($post);
         }
 
         return $posts;
@@ -250,19 +274,29 @@ class PostManager extends Manager
                         INNER JOIN bl_category
                             ON cat_id = ct_category_id_fk
                     WHERE cat_id = :id) # Use the requested category id here
-            )';
+            )
+            ORDER BY p_last_modification_date DESC, p_creation_date DESC';
         $requestPosts = $this->query($query, [
             'id' => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
             $postData['p_content'] = 'Excerpt only';
-            $posts[] = $this->createEntityFromTableData($postData);
+            $post = $this->createEntityFromTableData($postData);
+            $this->setMembersOfAPost($post);
+            $posts[] = $post;
         }
 
         return $posts;
     }
 
+    /**
+     * Get all the posts associated to a given tag
+     *
+     * @param int $tagId
+     * @return array
+     * @throws BlogException
+     */
     public function getPostsOfATag(int $tagId)
     {
         $posts = [];
@@ -271,14 +305,17 @@ class PostManager extends Manager
             WHERE p_id IN (
                 SELECT pt_post_id_fk FROM bl_post_tag
                 WHERE pt_tag_id_fk = :id
-            )';
+            )
+            ORDER BY p_last_modification_date DESC, p_creation_date DESC';
 
         $requestPosts = $this->query($query, [
             'id' => $tagId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
-            $posts[] = $this->createEntityFromTableData($postData);
+            $post = $this->createEntityFromTableData($postData);
+            $this->setMembersOfAPost($post);
+            $posts[] = $post;
         }
 
         return $posts;
@@ -291,15 +328,14 @@ class PostManager extends Manager
      *
      * @param Post $post
      * @param array $tags
+     * @throws BlogException
      */
     private function associatePostAndTags(Post $post, array $tags)
     {
         // Delete
         $query = 'DELETE FROM bl_post_tag WHERE pt_post_id_fk = :postId';
-        $requestDelete = $this->database->prepare($query);
-        $requestDelete->execute([
-            'postId' => $post->getId()
-        ]);
+
+        $this->query($query, ['postId' => $post->getId()]);
 
         // Add
         $query = 'INSERT INTO bl_post_tag(pt_post_id_fk, pt_tag_id_fk)
@@ -314,25 +350,20 @@ class PostManager extends Manager
         }
     }
 
-    // Old
-
     /**
-     * @param array $data
-     * @return Post
+     * Get the name of a member
+     *
+     * @param int $memberId
+     * @return mixed
+     * @throws BlogException
      */
-    private static function createAPostFromDatabaseData(array $data): Post
+    private function getMemberName(int $memberId)
     {
-        $attributes = [
-            'id' => $data['p_id'],
-            'authorId' => $data['p_author_id_fk'],
-            'lastEditorId' => $data['p_last_editor_id_fk'],
-            'creationDate' => $data['p_creation_date'],
-            'lastModificationDate' => $data['p_last_modification_date'],
-            'title' => $data['p_title'],
-            'excerpt' => $data['p_excerpt'],
-            'content' => $data['p_content']
-        ];
+        $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
 
-        return new Post($attributes);
+        $requestMemberName = $this->query($query, ['id' => $memberId]);
+        $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
+
+        return $memberNameData[0];
     }
 }

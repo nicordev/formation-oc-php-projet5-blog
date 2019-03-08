@@ -1,0 +1,50 @@
+{% extends "member/memberLayout.twig" %}
+
+{# head #}
+
+{% block title %}
+    Profil de {{ member.getName }}
+{% endblock %}
+
+{# body #}
+
+{% block headerTitle %}
+    <div class="site-heading">
+        <h1>Profil de {{ member.getName }}</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <section id="profile">
+
+        {# Edit button #}
+        {% if getUser() and getUser().getEmail is same as(member.getEmail) %}
+            <div>
+                <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
+            </div>
+        {% elseif getUser() and 'admin' in getUser().getRoles %}
+            <div>
+                <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+            </div>
+        {% endif %}
+
+        {# Roles #}
+        <div>
+            <p>
+                {% for role in member.getRoles %}
+                    {{ role }}
+                {% endfor %}
+            </p>
+        </div>
+
+        {# Name #}
+        <div>
+            <p>
+                {{ member.getName }}
+            </p>
+            <p>
+                {{ member.getDescription }}
+            </p>
+        </div>
+    </section>
+{% endblock %}
