@@ -52,12 +52,11 @@ class HomeController extends Controller
             }
         }
 
-        self::render(self::VIEW_HOME, [
+        $this->render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory,
             'numberOfPosts' => $numberOfPostsByCategory,
-            'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 

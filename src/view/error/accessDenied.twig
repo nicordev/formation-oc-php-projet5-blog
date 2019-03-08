@@ -7,7 +7,7 @@
 {% block content %}
     <h2>Accès interdit</h2>
 
-    {% if connectedMember %}
+    {% if getUser() %}
         <p>Vous n'avez pas accès à cette partie du site.</p>
     {% else %}
         <p>Vous devez être connecté pour accéder à cette partie du site.</p>
