@@ -9,7 +9,7 @@
 namespace Application;
 
 
-use Application\Security\WebsiteCop;
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -109,7 +109,7 @@ class DIC
 
         // Get the counter CSRF token
         $getCsrfToken = new Twig_Function('getCsrfToken', function () {
-            return WebsiteCop::getCounterCsrfToken();
+            return CsrfProtector::getCounterCsrfToken();
         });
         $twig->addFunction($getCsrfToken);
 

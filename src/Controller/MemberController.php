@@ -7,9 +7,10 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\MemberException;
-use Application\Exception\SecurityException;
+use Application\Exception\CsrfSecurityException;
 use Application\MailSender\MailSender;
-use Application\Security\WebsiteCop;
+use Application\Security\BruteForceProtector;
+use Application\Security\CsrfProtector;
 use Exception;
 use Model\Entity\Key;
 use Model\Entity\Member;
@@ -333,12 +334,13 @@ class MemberController extends Controller
 
                 if ($member !== null) {
                     // Brute force protection
-                    if (!WebsiteCop::canConnectAgain()) {
-                        $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.");
+                    $waitingTime = BruteForceProtector::canConnectAgainIn();
+                    if ($waitingTime > 0) {
+                        $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.<br>Temps restant : $waitingTime s");
 
                     } elseif (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
-                        WebsiteCop::resetTheUser();
+                        BruteForceProtector::resetTheUser();
                         header('Location: /home');
                     }
                 }

@@ -3,7 +3,7 @@
 namespace Application\Router;
 
 use Application\Exception\PageNotFoundException;
-use Application\Security\WebsiteCop;
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -23,7 +23,7 @@ class Router
      * @return Route
      * @throws PageNotFoundException
      * @throws \Application\Exception\AccessException
-     * @throws \Application\Exception\SecurityException
+     * @throws \Application\Exception\CsrfSecurityException
      */
     public static function run(): Route
     {
@@ -35,13 +35,13 @@ class Router
 
             case '/':
                 $controller = HomeController::class;
-                $method = 'showHome';;
+                $method = 'showHome';
                 $params = [];
                 break;
 
             case '/home':
                 $controller = HomeController::class;
-                $method = 'showHome';;
+                $method = 'showHome';
                 $params = [];
 
                 if (isset($_GET['categories'])) {
@@ -90,7 +90,7 @@ class Router
             // Comments
 
             case '/add-comment':
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'addComment';
                 $params = [];
@@ -129,7 +129,7 @@ class Router
                 ];
 
                 if (isset($_GET['action']) && !empty($_GET['action'])) {
-                    WebsiteCop::checkCsrf();
+                    CsrfProtector::checkCsrf();
                     switch ($_GET['action']) {
                         case 'update':
                             $method = 'updateProfile';
@@ -189,14 +189,14 @@ class Router
                 break;
 
             case '/admin/edit-comment':
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'editComment';
                 $params = [];
                 break;
 
             case '/admin/delete-comment':
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'deleteComment';
                 $params = [];
@@ -204,7 +204,7 @@ class Router
 
             case '/admin/add-post':
                 MemberController::verifyAccess(['author']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'addPost';
                 $params = [];
@@ -212,7 +212,7 @@ class Router
 
             case '/admin/edit-post':
                 MemberController::verifyAccess(['author', 'editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'editPost';
                 $params = [];
@@ -220,7 +220,7 @@ class Router
 
             case '/admin/delete-post':
                 MemberController::verifyAccess(['author', 'editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'deletePost';
                 $params = [];
@@ -248,7 +248,7 @@ class Router
 
             case '/admin/add-category':
                 MemberController::verifyAccess(['editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'addCategory';
                 $params = [];
@@ -256,7 +256,7 @@ class Router
 
             case '/admin/edit-category':
                 MemberController::verifyAccess(['editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'editCategory';
                 $params = [];
@@ -264,7 +264,7 @@ class Router
 
             case '/admin/delete-category':
                 MemberController::verifyAccess(['editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'deleteCategory';
                 $params = [];
@@ -272,7 +272,7 @@ class Router
 
             case '/admin/update-tags':
                 MemberController::verifyAccess(['editor']);
-                WebsiteCop::checkCsrf();
+                CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'updateTagList';
                 $params = [

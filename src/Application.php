@@ -12,9 +12,9 @@ namespace Application;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\PageNotFoundException;
-use Application\Exception\SecurityException;
+use Application\Exception\CsrfSecurityException;
 use Application\Router\Router;
-use Application\Security\WebsiteCop;
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -44,8 +44,8 @@ class Application
         // Security
         try {
             // CSRF protection
-            WebsiteCop::setCounterCsrfToken(bin2hex(random_bytes(87)));
-            $_SESSION['csrf-token'] = WebsiteCop::getCounterCsrfToken();
+            CsrfProtector::setCounterCsrfToken(bin2hex(random_bytes(87)));
+            $_SESSION['csrf-token'] = CsrfProtector::getCounterCsrfToken();
         } catch (Exception $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError500();
@@ -91,7 +91,7 @@ class Application
         } catch (PageNotFoundException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError404();
-        } catch (SecurityException $e) {
+        } catch (CsrfSecurityException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showCustomError('Une attaque CSRF a été détectée. Si vous êtes à l\'origine de cette attaque, c\'est pas gentil.');
         }
