@@ -39,6 +39,10 @@ class Router
                 $controller = HomeController::class;
                 $method = 'showHome';
                 $params = [];
+
+                if (isset($_GET['action']) && $_GET['action'] === 'contact') {
+                    $method = 'contact';
+                }
                 break;
 
             // Blog

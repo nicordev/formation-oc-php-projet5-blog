@@ -9,7 +9,6 @@
 {% block headerTitle %}
     <div class="post-heading">
         <h1>{{ post.getTitle }}</h1>
-        <h2 class="subheading">{{ post.getExcerpt }}</h2>
         <span class="meta">{% include 'blog/postMeta.twig' %}</span>
     </div>
 {% endblock %}
@@ -23,6 +22,10 @@
 
                     {# Classification #}
                     {% include 'blog/blogpostClassification.twig' %}
+
+                    <div class="blogpost-excerpt">
+                        {{ post.getExcerpt|raw }}
+                    </div>
 
                     <div class="blogpost-content">
                         {{ post.getContent|raw }}
