@@ -1,5 +1,5 @@
 <div class="admin-box w100">
-    <h2>Articles</h2>
+    <h2>Articles <span class="editor-info">{{ posts|length }}</span></h2>
 
     {% if 'author' in roles %}
         <p>
@@ -60,7 +60,7 @@
                         <span class="table-date">{{ post.getCreationDate }}</span>
                     </td>
                     <td scope="row">
-                        {% if post.getLastModificationDate %}
+                        {% if post.getLastModificationDate and post.getLastModificationDate is not same as(post.getCreationDate) %}
                             <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
                         {% else %}
                             -
