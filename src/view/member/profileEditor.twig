@@ -39,7 +39,7 @@
             {# Roles #}
             <h3>Rôles</h3>
 
-            {% if 'admin' in connectedMember.getRoles %}
+            {% if 'admin' in getUser().getRoles %}
 
                 <div class="form-group form-check col-12">
                     {% for role in availableRoles %}
