@@ -228,6 +228,11 @@ blockquote p::after {
 
 /* blogPost.twig */
 
+.blogpost-content h2, .blogpost-content h3 {
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
+
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
     color: burlywood;
