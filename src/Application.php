@@ -68,6 +68,5 @@ class Application
             $errorController = DIC::newErrorController();
             $errorController->showError403();
         }
-
     }
 }

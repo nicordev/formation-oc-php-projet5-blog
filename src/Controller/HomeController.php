@@ -3,7 +3,6 @@
 namespace Controller;
 
 use Model\Manager\CategoryManager;
-use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
 use Twig_Environment;
 
@@ -11,21 +10,18 @@ class HomeController extends Controller
 {
     protected $postManager;
     protected $categoryManager;
-    private $memberManager;
 
     const VIEW_HOME = 'home/home.twig';
 
     public function __construct(
                                 PostManager $postManager,
                                 CategoryManager $categoryManager,
-                                MemberManager $memberManager,
                                 Twig_Environment $twig
     )
     {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->categoryManager = $categoryManager;
-        $this->memberManager = $memberManager;
     }
 
     /**
@@ -54,12 +50,10 @@ class HomeController extends Controller
             }
         }
 
-        self::render(self::VIEW_HOME, [
+        $this->render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory,
-            'numberOfPosts' => 5,
-            'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 

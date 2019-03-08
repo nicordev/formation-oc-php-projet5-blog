@@ -20,13 +20,13 @@
     <section id="profile">
 
         {# Edit button #}
-        {% if connectedMember and connectedMember.getEmail is same as(member.getEmail) %}
+        {% if getUser() and getUser().getEmail is same as(member.getEmail) %}
             <div>
                 <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
             </div>
-        {% elseif connectedMember and 'admin' in connectedMember.getRoles %}
+        {% elseif getUser() and 'admin' in getUser().getRoles %}
             <div>
-                <a href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+                <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
             </div>
         {% endif %}
 

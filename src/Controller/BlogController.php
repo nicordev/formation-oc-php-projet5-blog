@@ -94,10 +94,9 @@ class BlogController extends Controller
             self::convertDatesOfPost($post);
         }
 
-        self::render(self::VIEW_BLOG, [
+        $this->render(self::VIEW_BLOG, [
             'posts' => $posts,
-            'category' => $category,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'category' => $category
         ]);
     }
 
@@ -126,10 +125,9 @@ class BlogController extends Controller
         }
         $tag = $this->tagManager->get($tagId);
 
-        self::render(self::VIEW_BLOG_TAG, [
+        $this->render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
-            'tag' => $tag,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'tag' => $tag
         ]);
     }
 
@@ -155,10 +153,9 @@ class BlogController extends Controller
             $this->pageNotFound404(); // TODO throw an Exception instead
         }
 
-        self::render(self::VIEW_BLOG_POST, [
+        $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'categories' => $categories
         ]);
     }
 
@@ -179,23 +176,21 @@ class BlogController extends Controller
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
 
-        if (isset($_SESSION['connected-member'])) {
-            $connectedMember = $_SESSION['connected-member'];
-            if (in_array('admin', $connectedMember->getRoles())) {
+        if (MemberController::memberConnected()) {
+            if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
                 $members = $this->memberManager->getAll();
             }
         } else {
             throw new AccessException('No connected member found.');
         }
 
-        self::render(self::VIEW_BLOG_ADMIN, [
+        $this->render(self::VIEW_BLOG_ADMIN, [
             'posts' => $posts,
             'message' => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
-            'members' => isset($members) ? $members : null,
-            'connectedMember' => $connectedMember
+            'members' => $members ?? null
         ]);
     }
 
@@ -222,13 +217,12 @@ class BlogController extends Controller
             $selectedTagNames = self::getTagNames($postToEdit->getTags());
         }
 
-        self::render(self::VIEW_POST_EDITOR, [
+        $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'selectedTags' => $selectedTagNames
         ]);
     }
 
@@ -253,13 +247,12 @@ class BlogController extends Controller
             $selectedTagNames = self::getTagNames($categoryToEdit->getTags());
         }
 
-        self::render(self::VIEW_CATEGORY_EDITOR, [
+        $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
             'message' => $message,
             'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'selectedTags' => $selectedTagNames
         ]);
     }
 

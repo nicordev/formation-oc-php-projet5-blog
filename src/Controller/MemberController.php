@@ -43,7 +43,7 @@ class MemberController extends Controller
      */
     public static function verifyAccess(): bool
     {
-        if (isset($_SESSION['connected-member'])) {
+        if (MemberController::memberConnected()) {
             foreach ($_SESSION['connected-member']->getRoles() as $role) {
                 if (in_array($role, self::AUTHORIZED_ROLES)) {
                     return true;
@@ -80,8 +80,7 @@ class MemberController extends Controller
     public function showConnectionPage(?string $message = null)
     {
         echo $this->twig->render(self::VIEW_CONNECTION, [
-            'message' => $message,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'message' => $message
         ]);
     }
 
@@ -94,7 +93,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME, ['connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null]);
+        echo $this->twig->render(self::VIEW_WELCOME);
     }
 
     /**
@@ -114,8 +113,7 @@ class MemberController extends Controller
         }
 
         echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
-            'member' => $member,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'member' => $member
         ]);
     }
 
@@ -127,11 +125,10 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
      */
     public function showMemberProfileEditor($member = null)
     {
-        if (isset($_SESSION['connected-member']) && $_SESSION['connected-member'] !== null) {
+        if (MemberController::memberConnected()) {
 
             if ($member === null) {
                 $member = $_SESSION['connected-member'];
@@ -139,16 +136,25 @@ class MemberController extends Controller
                 $member = $this->memberManager->get($member);
             }
 
-            $availableRoles = $this->roleManager->getRoleNames();
-
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
-                'member' => $member,
-                'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null,
-                'availableRoles' => $availableRoles
+                'member' => $member
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
         }
+    }
+
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function memberConnected(): bool
+    {
+        if (isset($_SESSION['connected-member']) && !empty($_SESSION['connected-member'])) {
+            return true;
+        }
+        return false;
     }
 
     // Actions
@@ -170,7 +176,7 @@ class MemberController extends Controller
             isset($_POST['description'])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
-            $this->memberManager->edit($modifiedMember);
+            $this->updateMember($modifiedMember);
             if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
                 $_SESSION['connected-member'] = $modifiedMember;
             }
@@ -242,7 +248,6 @@ class MemberController extends Controller
                 $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.");
             } else {
                 $member = $this->memberManager->getFromEmail($_POST['email']);
-
                 if ($member !== null) {
                     if (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
@@ -280,7 +285,7 @@ class MemberController extends Controller
         $member->setEmail(htmlspecialchars($_POST['email']));
 
         if (isset($_POST['password']) && !empty($_POST['password'])) {
-            $member->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
+            $member->setPassword(htmlspecialchars($_POST['password']));
         }
 
         $member->setName(htmlspecialchars($_POST['name']));
@@ -298,17 +303,12 @@ class MemberController extends Controller
         }
 
         if (isset($_POST['roles'])) {
-            $roles = [];
+            $roles = ['member'];
             foreach ($_POST['roles'] as $role) {
                 if ($this->roleManager->isValid($role)) {
                     $roles[] = $role;
                 }
             }
-
-            if (empty($roles)) {
-                $roles = ['member'];
-            }
-
             $member->setRoles($roles);
         }
 
@@ -325,6 +325,7 @@ class MemberController extends Controller
     private function addNewMember(Member $member): bool
     {
         if ($this->memberManager->isNewMember($member)) {
+            $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
             $member->setRoles(['member']);
             $this->memberManager->add($member);
 
@@ -332,5 +333,18 @@ class MemberController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Update a member in the database
+     *
+     * @param Member $updatedMember
+     * @return void
+     * @throws \Exception
+     */
+    private function updateMember(Member $updatedMember)
+    {
+        $updatedMember->setPassword(password_hash($updatedMember->getPassword(), PASSWORD_DEFAULT));
+        $this->memberManager->edit($updatedMember);
     }
 }
