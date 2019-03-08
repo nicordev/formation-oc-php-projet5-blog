@@ -1,24 +1,30 @@
 <h2 class="card-deck-title">{% block deckTitle %}{% endblock %}</h2>
 
-<div class="card-deck">
+<div class="card-deck-wrapper row">
     {% if posts is empty %}
         <p>
             Il n'y a aucun article pour l'instant.
         </p>
 
     {% else %}
-        {% set i = 0 %}
-        {% for post in posts if i < numberOfPosts %}
-        {% set i = loop.index %}
-        <div class="card">
-            <div class="card-body">
-                <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
-                    <h5 class="card-title">{{ post.getTitle }}</h5>
-                    <p class="card-text">{{ post.getExcerpt|raw }}</p>
-                </a>
-                <div class="card-info">{% include 'blog/postMeta.twig' %}</div>
+        <div class="card-deck{% if posts|length > numberOfPosts %}{{ ' col-11' }}{% endif %}">
+            {% set i = 0 %}
+            {% for post in posts if i < numberOfPosts %}
+            {% set i = loop.index %}
+            <div class="card">
+                <div class="card-body">
+                    <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
+                        <h5 class="card-title">{{ post.getTitle }}</h5>
+                        <p class="card-text">{{ post.getExcerpt|raw }}</p>
+                    </a>
+                    <div class="card-info">{% include 'blog/postMeta.twig' %}</div>
+                </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        {% if posts|length > numberOfPosts %}
+            <a class="post-deck-more col-1" href="/blog?category-id={{ categoryId }}">🠾</a>
+        {% endif %}
     {% endif %}
 </div>

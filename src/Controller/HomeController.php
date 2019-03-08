@@ -36,6 +36,7 @@ class HomeController extends Controller
     public function showHome(?string $message = null)
     {
         $categories = $this->categoryManager->getAll();
+        $numberOfPostsByCategory = 6;
         $postsByCategory = [];
 
         foreach ($categories as $category) {
@@ -53,6 +54,7 @@ class HomeController extends Controller
         $this->render(self::VIEW_HOME, [
             'categories' => $categories,
             'postsByCategory' => $postsByCategory,
+            'numberOfPosts' => $numberOfPostsByCategory,
             'message' => $message
         ]);
     }

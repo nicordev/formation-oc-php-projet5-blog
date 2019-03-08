@@ -1,0 +1,16 @@
+
+{% import 'macros.twig' as macros %}
+
+<div class="comments-wrapper row">
+    {% if comments %}
+        <dl>
+            {% for comment in comments %}
+                {% if not comment.getParentId %}
+                    {{ macros.showAComment(comment, connectedMember) }}
+                {% endif %}
+            {% endfor %}
+        </dl>
+    {% else %}
+        <p>Sans commentaire.</p>
+    {% endif %}
+</div>

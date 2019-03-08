@@ -161,20 +161,26 @@ abstract class Manager
     /**
      * Get all Entities form database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
      * @throws BlogException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
         $entities = [];
         $query = "SELECT * FROM " . $this->tableName;
+        if ($numberOfLines) {
+            self::addLimitToQuery($query, $numberOfLines, $start);
+        }
 
         $requestAllEntities = $this->query($query);
 
         $tableData = $requestAllEntities->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($tableData as $tableDatum) {
-            $entities[] = $this->createEntityFromTableData($tableDatum);
+            $entity = $this->createEntityFromTableData($tableDatum);
+            $entities[$entity->getId()] = $entity;
         }
 
         return $entities;
@@ -245,6 +251,16 @@ abstract class Manager
 
             $request = $this->database->prepare($query);
 
+            foreach ($params as &$param) {
+                if (is_bool($param)) {
+                    if ($param) {
+                        $param = 1;
+                    } else {
+                        $param = 0;
+                    }
+                }
+            }
+
             if (!$request->execute($params)) {
                 throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
             }
@@ -253,6 +269,21 @@ abstract class Manager
         }
 
         return $request;
+    }
+
+    /**
+     * Add a LIMIT and OFFSET statement to a query
+     *
+     * @param string $query
+     * @param int $numberOfLines
+     * @param int|null $start
+     */
+    protected static function addLimitToQuery(string &$query, int $numberOfLines, ?int $start = null)
+    {
+        $query .= ' LIMIT ' . $numberOfLines;
+        if ($start) {
+            $query .= ' OFFSET ' . $start;
+        }
     }
 
 
@@ -307,6 +338,7 @@ abstract class Manager
      *
      * @param Entity $entity
      * @return array
+     * @throws \ReflectionException
      */
     private function filterEmptyFields(Entity $entity)
     {
@@ -314,12 +346,34 @@ abstract class Manager
 
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
-            if ($entity->$getter() !== null) {
-                $fields[$key] = $this->fields[$key];
+            if (self::isAMethodOf($entity, $getter)) {
+                if ($entity->$getter() !== null) {
+                    $fields[$key] = $this->fields[$key];
+                }
+            } else {
+                $getter = 'is' . ucfirst($key);
+                if (self::isAMethodOf($entity, $getter) && $entity->$getter() !== null) {
+                    $fields[$key] = $this->fields[$key];
+                }
             }
         }
 
         return $fields;
+    }
+
+    /**
+     * Check if a method exists in an Entity
+     *
+     * @param Entity $entity
+     * @param string $method
+     * @return bool
+     * @throws \ReflectionException
+     */
+    private static function isAMethodOf(Entity $entity, string $method)
+    {
+        $refClass = new ReflectionClass($entity);
+
+        return $refClass->hasMethod($method);
     }
 
     /**
@@ -343,6 +397,14 @@ abstract class Manager
                     !is_array($value
                     )) {
                     $properties[lcfirst(substr($reflectionMethod->name, 3))] = $value;
+                }
+            } elseif (strpos($reflectionMethod, 'is')) {
+                $value = $reflectionMethod->invoke($entity);
+                if (
+                    $value !== null &&
+                    !is_array($value
+                    )) {
+                    $properties[lcfirst(substr($reflectionMethod->name, 2))] = $value;
                 }
             }
         }

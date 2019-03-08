@@ -1,0 +1,60 @@
+{% extends 'admin/adminLayout.twig' %}
+
+{# head #}
+{% block title %}
+    Edition d'un commentaire
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <h1>Editeur de commentaire</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        {% include "message.twig" %}
+
+        <div>
+            {# Cancel button #}
+            <div>
+                <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
+            </div>
+            
+            {# Delete post button #}
+            <div>
+                <form action="/admin/delete-comment" method="post">
+                    <input type="hidden" name="delete-comment" value="{{ commentToEdit.getId }}">
+                    <p>
+                        <input class="btn" type="submit" value="Supprimer le commentaire">
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <form action="/admin/edit-comment" method="post">
+                <input type="hidden" name="comment-id" value="{{ commentToEdit.getId }}">
+                <input type="hidden" name="editor-id" value="{{ connectedMember.getId }}">
+                <input type="hidden" name="post-id" value="{{ commentToEdit.getPostId }}">
+                <input type="hidden" name="author-id" value="{{ commentToEdit.getAuthorId }}">
+                <input type="hidden" name="creation-date" value="{{ commentToEdit.getCreationDate }}">
+
+                <p>
+                    <input class="btn" type="submit" value="Publier le commentaire">
+                </p>
+
+                <p>
+                    <input class="form-check-input" type="checkbox" name="comment-approved" id="comment-approved" value="approved" {% if commentToEdit.isApproved %}{{ ' checked' }}{% endif %}><label class="form-check-label" for="comment-approved">Commentaire approuvé</label>
+                </p>
+
+                {# Comment #}
+                <p>
+                    <label for="comment">Commentaire de <a href="/member-profile?id={{ commentToEdit.getAuthorId }}">{{ commentToEdit.getAuthor }}</a> du {{ commentToEdit.getCreationDate }}</label><br>
+                    <textarea class="admin-textarea w100" name="comment" id="comment" cols="30" rows="30">{{ commentToEdit.getContent }}</textarea>
+                </p>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+
+

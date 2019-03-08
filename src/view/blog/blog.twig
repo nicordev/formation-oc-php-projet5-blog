@@ -29,10 +29,11 @@
                             <h2 class="post-title">
                                 {{ post.getTitle }}
                             </h2>
-                            <h3 class="post-subtitle">
-                                {{ post.getExcerpt }}
-                            </h3>
                         </a>
+                        <p class="post-subtitle">
+                            {{ post.getExcerpt|raw }}
+                        </p>
+                        <a class="btn btn-small float-right" href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ category.getId }}">Lire l'article</a>
                         <p class="post-meta">
                         {% include 'blog/postMeta.twig' %}
                         </p>
@@ -40,11 +41,6 @@
                     <hr>
                 {% endfor %}
             {% endif %}
-
-                <!-- Pager -->
-                <div class="clearfix">
-                    <a class="btn btn-primary float-right" href="#">Articles précédents &rarr;</a>
-                </div>
             </div>
         </div>
     </div>

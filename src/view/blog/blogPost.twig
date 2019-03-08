@@ -14,11 +14,12 @@
 {% endblock %}
 
 {% block content %}
+    {% include 'message.twig' %}
     <!-- Post Content -->
     <article>
         <div class="container">
             <div class="row">
-                <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="col-12 mx-auto">
 
                     {# Classification #}
                     {% include 'blog/blogpostClassification.twig' %}
@@ -34,4 +35,19 @@
             </div>
         </div>
     </article>
+
+    <hr>
+    <div class="container-fluid">
+        {% if connectedMember %}
+            {% include 'blog/commentForm.twig' %}
+            <hr>
+        {% endif %}
+
+        {% include'blog/comments.twig' %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="/js/comment.js"></script>
 {% endblock %}

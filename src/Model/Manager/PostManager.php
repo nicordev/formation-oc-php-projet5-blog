@@ -188,12 +188,14 @@ class PostManager extends Manager
     /**
      * Get all posts from the database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
      * @throws BlogException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
-        $posts = parent::getAll();
+        $posts = parent::getAll($numberOfLines, $start);
 
         // Set tags, categories, author name and editor name
         foreach ($posts as $post) {
@@ -251,11 +253,13 @@ class PostManager extends Manager
      * Get the posts associated to a category via its tags
      *
      * @param int $categoryId
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @param bool $withContent
      * @return array
      * @throws BlogException
      */
-    public function getPostsOfACategory(int $categoryId, bool $withContent = false)
+    public function getPostsOfACategory(int $categoryId, ?int $numberOfLines = null, ?int $start = null, bool $withContent = false)
     {
         $posts = [];
         if ($withContent) {
@@ -276,6 +280,10 @@ class PostManager extends Manager
                     WHERE cat_id = :id) # Use the requested category id here
             )
             ORDER BY p_last_modification_date DESC, p_creation_date DESC';
+        if ($numberOfLines) {
+            self::addLimitToQuery($query, $numberOfLines, $start);
+        }
+
         $requestPosts = $this->query($query, [
             'id' => $categoryId
         ]);

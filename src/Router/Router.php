@@ -2,6 +2,7 @@
 
 namespace Application\Router;
 
+use Application\Exception\PageNotFoundException;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -20,6 +21,7 @@ class Router
      *
      * @return Route
      * @throws \Application\Exception\AccessException
+     * @throws PageNotFoundException
      */
     public static function run(): Route
     {
@@ -39,6 +41,10 @@ class Router
                 $controller = HomeController::class;
                 $method = 'showHome';
                 $params = [];
+
+                if (isset($_GET['categories'])) {
+                    $params = $_GET['categories'];
+                }
 
                 if (isset($_GET['action']) && $_GET['action'] === 'contact') {
                     $method = 'contact';
@@ -69,10 +75,17 @@ class Router
                         'postId' => $_GET['post-id']
                     ];
                 } else {
-                    $controller = BlogController::class;
-                    $method = 'pageNotFound404';
-                    $params = [];
+                    throw new PageNotFoundException("L'article demandé n'existe pas.");
                 }
+                break;
+
+            // Comments
+
+            case '/add-comment':
+                $controller = BlogController::class;
+                $method = 'addComment';
+                $params = [];
+
                 break;
 
             // Member
@@ -140,29 +153,48 @@ class Router
                 $params = [];
                 break;
 
+            case '/admin/comment-editor':
+                MemberController::verifyAccess(['moderator']);
+                $controller = BlogController::class;
+                $method = 'showCommentEditor';
+                $params = ['commentToEditId' => $_GET['id']];
+                break;
+
+            case '/admin/edit-comment':
+                $controller = BlogController::class;
+                $method = 'editComment';
+                $params = [];
+                break;
+
+            case '/admin/delete-comment':
+                $controller = BlogController::class;
+                $method = 'deleteComment';
+                $params = [];
+                break;
+
             case '/admin/add-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author']);
                 $controller = BlogController::class;
                 $method = 'addPost';
                 $params = [];
                 break;
 
             case '/admin/edit-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 $controller = BlogController::class;
                 $method = 'editPost';
                 $params = [];
                 break;
 
             case '/admin/delete-post':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 $controller = BlogController::class;
                 $method = 'deletePost';
                 $params = [];
                 break;
 
             case '/admin/post-editor':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['author', 'editor']);
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
                 }
@@ -172,7 +204,7 @@ class Router
                 break;
 
             case '/admin/category-editor':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 if (isset($_POST['category-id'])) {
                     $categoryId = (int) $_POST['category-id'];
                 }
@@ -182,28 +214,28 @@ class Router
                 break;
 
             case '/admin/add-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'addCategory';
                 $params = [];
                 break;
 
             case '/admin/edit-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'editCategory';
                 $params = [];
                 break;
 
             case '/admin/delete-category':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'deleteCategory';
                 $params = [];
                 break;
 
             case '/admin/update-tags':
-                MemberController::verifyAccess();
+                MemberController::verifyAccess(['editor']);
                 $controller = BlogController::class;
                 $method = 'updateTagList';
                 $params = [

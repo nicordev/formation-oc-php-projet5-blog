@@ -7,7 +7,10 @@
 {% block headerTitle %}
     <div class="site-heading">
         <h1>Nicolas Renvoisé</h1>
-        <span class="subheading">Développeur backend</span>
+        <div class="subheading">
+            <div>Développeur backend</div>
+            <div class="catch-phrase">Le développeur qu'il vous faut !</div>
+        </div>
     </div>
 {% endblock %}
 
@@ -20,7 +23,7 @@
             {% for categoryId, posts in postsByCategory %}
                 <section class="home-category">
                     {% embed "home/postDeck.twig" %}
-                        {% block deckTitle %}<a href="/blog?category-id={{ categoryId }}">{{ categories[loop.index0].getName }}</a>{% endblock %}
+                        {% block deckTitle %}<a href="/blog?category-id={{ categoryId }}">{{ categories[categoryId].getName }}</a>{% endblock %}
                     {% endembed %}
                 </section>
             {% endfor %}

@@ -5,6 +5,43 @@ a, p a, a:hover {
     text-decoration: none;
 }
 
+pre, code {
+    background-color: #5a6268;
+    color: whitesmoke;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 0.75em;
+}
+
+dt {
+    font-weight: normal;
+    margin: 10px 0;
+}
+
+dd {
+    margin-left: 50px;
+    padding-left: 10px;
+    border-left: #b9bbbe 2px solid;
+}
+
+blockquote {
+    margin-left: 75px;
+    border-left: #868e96 2px solid;
+    padding-left: 10px;
+}
+
+blockquote p {
+    text-align: justify;
+}
+
+blockquote p::before {
+    content: '\201C';
+}
+
+blockquote p::after {
+    content: '\201D';
+}
+
 .post-nav-link {
     color: burlywood;
 }
@@ -93,13 +130,21 @@ a, p a, a:hover {
     margin-bottom: 50px;
 }
 
+.catch-phrase {
+    position: relative;
+    top: 10px;
+    left: 160px;
+    font-family: 'Dancing Script', cursive;
+    transform: rotate(-10deg);
+}
+
 /* postDeck.twig */
 
-.card-deck {
+.card-deck-wrapper {
     padding: 10px;
-    background-color: rgb(247, 247, 247);
-    border-radius: 5px;
-    border: 10px solid rgb(247, 247, 247);
+}
+
+.card-deck {
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
@@ -111,8 +156,8 @@ a, p a, a:hover {
 }
 
 .card {
-    margin: 15px;
-    min-width: 200px;
+    margin: 10px !important;
+    min-width: 400px;
     transition-duration: 0.5s;
     transition-property: background-color, color;
 }
@@ -143,10 +188,49 @@ a, p a, a:hover {
     color: burlywood;
 }
 
+.post-deck-more {
+    text-align: center;
+    height: available;
+    font-size: 3em;
+    background-color: rgb(247, 247, 247);
+    border-radius: 5px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-duration: 0.5s;
+    transition-property: background-color;
+}
+
+.post-deck-more:hover {
+    background-color: lightskyblue;
+    color: white;
+}
+
 /* blogPost.twig */
 
 .blogpost-classification, .blogpost-classification a {
     margin-bottom: 30px;
+    color: burlywood;
+}
+
+.blogpost-excerpt {
+    padding: 50px;
+    background-color: #5a6268;
+    color: whitesmoke;
+    margin: 0 0 50px 0;
+}
+
+.comment-info-wrapper {
+    display: flex;
+}
+
+.comment-response-wrapper {
+    margin: 50px;
+}
+
+.comment-info {
+    font-size: 0.75em;
     color: burlywood;
 }
 
@@ -161,4 +245,9 @@ a, p a, a:hover {
         border: 2px solid rgb(247, 247, 247);
     }
 
+    .catch-phrase {
+        position: relative;
+        top: 30px;
+        left: 0;
+    }
 }

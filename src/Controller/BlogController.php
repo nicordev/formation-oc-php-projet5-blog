@@ -12,8 +12,10 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
+use Application\Exception\PageNotFoundException;
 use Exception;
 use Model\Entity\Category;
+use Model\Entity\Comment;
 use Model\Entity\Entity;
 use Model\Entity\Post;
 use Model\Entity\Tag;
@@ -38,6 +40,7 @@ class BlogController extends Controller
     const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
     const VIEW_POST_EDITOR = 'admin/postEditor.twig';
     const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
+    const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
 
     /**
      * BlogController constructor.
@@ -135,12 +138,14 @@ class BlogController extends Controller
      * Show an entire blog post
      *
      * @param int $postId
+     * @param string|null $message
      * @return void
+     * @throws PageNotFoundException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showASinglePost(int $postId)
+    public function showASinglePost(int $postId, ?string $message = null)
     {
         try {
             $post = $this->postManager->get($postId);
@@ -148,14 +153,20 @@ class BlogController extends Controller
             self::decodePostContent($post);
             self::decodePostExcerpt($post);
             $categories = $this->categoryManager->getCategoriesFromPostId($postId);
+            $comments = $this->commentManager->getFromPost($postId);
+            foreach ($comments as $comment) {
+                self::convertDatesOfComment($comment);
+            }
 
         } catch (BlogException $e) {
-            $this->pageNotFound404(); // TODO throw an Exception instead
+            throw new PageNotFoundException('This post do not exists.');
         }
 
         $this->render(self::VIEW_BLOG_POST, [
             'post' => $post,
-            'categories' => $categories
+            'categories' => $categories,
+            'comments' => $comments,
+            'message' => $message
         ]);
     }
 
@@ -175,6 +186,7 @@ class BlogController extends Controller
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
+        $comments = $this->commentManager->getAll();
 
         if (MemberController::memberConnected()) {
             if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
@@ -190,6 +202,7 @@ class BlogController extends Controller
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
             'categories' => $categories,
+            'comments' => $comments,
             'members' => $members ?? null
         ]);
     }
@@ -253,6 +266,34 @@ class BlogController extends Controller
             'message' => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames
+        ]);
+    }
+
+    /**
+     * Show the comment editor page
+     *
+     * @param int|null $commentToEditId
+     * @param string $message
+     * @throws PageNotFoundException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showCommentEditor(?int $commentToEditId = null, string $message = '')
+    {
+        if (!$commentToEditId) {
+            if (isset($_POST['comment-id']) && !empty($_POST['comment-id'])) {
+                $commentToEditId = (int) $_POST['comment-id'];
+            } else {
+                throw new PageNotFoundException('It lacks the comment to edit id.');
+            }
+        }
+
+        $comment = $this->commentManager->get($commentToEditId);
+
+        self::render(self::VIEW_COMMENT_EDITOR, [
+            'commentToEdit' => $comment,
+            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
         ]);
     }
 
@@ -487,6 +528,65 @@ class BlogController extends Controller
     }
 
     /**
+     * Add a comment to the database
+     *
+     * @throws PageNotFoundException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function addComment()
+    {
+        $comment = $this->buildCommentFromForm();
+
+        if (empty($comment->getContent())) {
+            $this->showASinglePost($comment->getPostId(), 'Votre commentaire ne doit pas être vide.');
+
+        } else {
+            $comment->setCreationDate(date(self::MYSQL_DATE_FORMAT));
+            $this->commentManager->add($comment);
+            $this->showASinglePost($comment->getPostId(), 'Votre commentaire a été envoyé. Il sera vérifié dans les prochains jours.');
+        }
+    }
+
+    /**
+     * Edit a comment in the database
+     */
+    public function editComment()
+    {
+        $modifiedComment = $this->buildCommentFromForm();
+        $modifiedComment->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
+
+        $this->commentManager->edit($modifiedComment);
+
+        if ($modifiedComment->isApproved()) {
+            // Come back to the admin panel
+            $this->showAdminPanel("Un commentaire a été approuvé.");
+        } else {
+            // Come back to the admin panel
+            $this->showAdminPanel("Un commentaire non approuvé a été modifié.");
+        }
+    }
+
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws BlogException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function deleteComment()
+    {
+        $commentId = (int) $_POST['delete-comment'];
+        $this->commentManager->delete($commentId);
+
+        // Come back to the admin panel
+        $this->showAdminPanel("Un commentaire a été supprimé.");
+    }
+
+    /**
      * Unescape HTML tags in the content of the post
      *
      * @param Post $post
@@ -663,10 +763,10 @@ class BlogController extends Controller
             isset($_POST['post-author-id'])
         ) {
             // Common
-            $post->setTitle(htmlspecialchars($_POST['post-title']));
-            $post->setExcerpt(htmlspecialchars($_POST['post-excerpt']));
-            $post->setContent(htmlspecialchars($_POST['post-content']));
-            $post->setAuthorId(htmlspecialchars($_POST['post-author-id']));
+            $post->setTitle($_POST['post-title']);
+            $post->setExcerpt($_POST['post-excerpt']);
+            $post->setContent($_POST['post-content']);
+            $post->setAuthorId($_POST['post-author-id']);
 
             if (isset($_POST['add-post'])) {
                 $post->setCreationDate(date(self::MYSQL_DATE_FORMAT));
@@ -674,11 +774,11 @@ class BlogController extends Controller
 
             // Edit a post
             if (isset($_POST['edit-post'])) {
-                $post->setId(htmlspecialchars($_POST['edit-post']));
+                $post->setId($_POST['edit-post']);
                 $post->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
             }
             if (isset($_POST['post-editor-id'])) {
-                $post->setLastEditorId(htmlspecialchars($_POST['post-editor-id']));
+                $post->setLastEditorId($_POST['post-editor-id']);
             }
 
             // Tags
@@ -725,6 +825,50 @@ class BlogController extends Controller
     }
 
     /**
+     * Create a Comment from $_POST
+     *
+     * @return Comment|null
+     */
+    private function buildCommentFromForm(): ?Comment
+    {
+        $comment = new Comment();
+
+        if (isset($_POST['comment-id'])) {
+            $comment->setId((int) $_POST['comment-id']);
+        }
+
+        if (isset($_POST['editor-id'])) {
+            $comment->setLastEditorId((int) $_POST['editor-id']);
+        }
+
+        if (isset($_POST['creation-date'])) {
+            $comment->setCreationDate($_POST['creation-date']);
+        }
+
+        if (isset($_POST['comment-approved'])) {
+            $comment->setApproved(true);
+        }
+
+        if (isset($_POST['author-id'])) {
+            $comment->setAuthorId((int) $_POST['author-id']);
+        }
+
+        if (isset($_POST['post-id'])) {
+            $comment->setPostId((int) $_POST['post-id']);
+        }
+
+        if (isset($_POST['comment'])) {
+            $comment->setContent($_POST['comment']);
+        }
+
+        if (isset($_POST['parent-id'])) {
+            $comment->setParentId((int) $_POST['parent-id']);
+        }
+
+        return $comment;
+    }
+
+    /**
      * Change the date format use in a post
      *
      * @param Post $post
@@ -736,6 +880,21 @@ class BlogController extends Controller
 
         if ($post->getLastModificationDate() !== null) {
             $post->setLastModificationDate(self::formatDate($post->getLastModificationDate()));
+        }
+    }
+
+    /**
+     * Change the date format use in a comment
+     *
+     * @param Comment $comment
+     * @throws Exception
+     */
+    private static function convertDatesOfComment(Comment $comment)
+    {
+        $comment->setCreationDate(self::formatDate($comment->getCreationDate()));
+
+        if ($comment->getLastModificationDate() !== null) {
+            $comment->setLastModificationDate(self::formatDate($comment->getLastModificationDate()));
         }
     }
 

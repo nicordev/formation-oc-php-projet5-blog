@@ -38,15 +38,24 @@ class MemberController extends Controller
     /**
      * Check if the connected member can have access to the admin section
      *
+     * @param array|null $authorizedRoles
      * @return bool
      * @throws AccessException
      */
-    public static function verifyAccess(): bool
+    public static function verifyAccess(?array $authorizedRoles = null): bool
     {
         if (MemberController::memberConnected()) {
-            foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                if (in_array($role, self::AUTHORIZED_ROLES)) {
-                    return true;
+            if ($authorizedRoles) {
+                foreach ($_SESSION['connected-member']->getRoles() as $role) {
+                    if (in_array($role, $authorizedRoles)) {
+                        return true;
+                    }
+                }
+            } else {
+                foreach ($_SESSION['connected-member']->getRoles() as $role) {
+                    if (in_array($role, self::AUTHORIZED_ROLES)) {
+                        return true;
+                    }
                 }
             }
             throw new AccessException('Access denied. You lack the proper role.');

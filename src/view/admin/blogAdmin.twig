@@ -15,6 +15,68 @@
 
         {% include "message.twig" %}
 
+        {# Comments #}
+        {% if 'moderator' in roles %}
+            <div class="admin-box">
+                <h2>Commentaires</h2>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Statut</th>
+                        <th>Commentaire</th>
+                        <th>Auteur</th>
+                        <th>Article</th>
+                        <th>En réponse à</th>
+                        <th>Date de création</th>
+                        <th>Dernière modification</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in comments %}
+                        <tr>
+                            <td>
+                                {% if comment.isApproved %}
+                                    Approuvé
+                                {% else %}
+                                    En attente
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="admin-link font-weight-normal" href="/admin/comment-editor?id={{ comment.getId }}">{{ comment.getContent }}</a>
+                            </td>
+                            <td>
+                                <a href="/member-profile?id={{ comment.getAuthorId }}">{{ comment.getAuthor }}</a>
+                            </td>
+                            <td>
+                                <a href="/blog-post?post-id={{ comment.getPostId }}">{{ comment.getPostTitle }}</a>
+                            </td>
+                            <td>
+                                {% if comment.getParentId %}
+                                    <a class="comment-info" href="/member-profile?id={{ comment.getParent.getAuthorId }}">{{ comment.getParent.getAuthor }}</a><br>
+                                    <span class="comment-info">{{ comment.getParent.getCreationDate }}</span><br>
+                                    <a class="admin-link font-weight-normal comment-info" href="/admin/comment-editor?id={{ comment.getParent.getId }}">{{ comment.getParent.getContent }}</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="table-date">{{ comment.getCreationDate }}</span>
+                            </td>
+                            <td>
+                                {% if comment.getLastModificationDate %}
+                                    <span class="table-date">{{ comment.getLastModificationDate }} par <a href="/member-profile?id={{ comment.getLastEditorId }}">{{ comment.getLastEditor }}</a></span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
         {# Posts#}
         <div class="admin-box w100">
             <h2>Articles</h2>
@@ -32,7 +94,6 @@
                         <th scope="col">Auteur</th>
                         <th scope="col">Etiquettes</th>
                         <th scope="col">Catégories</th>
-                        <th scope="col">Commentaires</th>
                         <th scope="col">Date de création</th>
                         <th scope="col">Dernière modification</th>
                     </tr>
@@ -52,7 +113,7 @@
                             {% endif %}
                         </td>
                         <td scope="row">
-                            {{ post.getAuthorName }}
+                            <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
                         </td>
                         <td scope="row">
                             {% set postTags = post.getTags %}
@@ -75,14 +136,11 @@
                             {% endif %}
                         </td>
                         <td scope="row">
-                            coming soon...
-                        </td>
-                        <td scope="row">
                             <span class="table-date">{{ post.getCreationDate }}</span>
                         </td>
                         <td scope="row">
                             {% if post.getLastModificationDate %}
-                            <span class="table-date">Le {{ post.getLastModificationDate }} par {{ post.getEditorName }}</span>
+                                <span class="table-date">{{ post.getLastModificationDate }} par <a href="/member-profile?id={{ post.getLastEditorId }}">{{ post.getEditorName }}</a></span>
                             {% else %}
                                 -
                             {% endif %}
@@ -97,7 +155,6 @@
                         <th scope="col">Auteur</th>
                         <th scope="col">Etiquettes</th>
                         <th scope="col">Catégories</th>
-                        <th scope="col">Commentaires</th>
                         <th scope="col">Date de création</th>
                         <th scope="col">Dernière modification</th>
                     </tr>
@@ -207,12 +264,6 @@
                         <th scope="col">
                             Rôles
                         </th>
-                        <th scope="col">
-                            Articles
-                        </th>
-                        <th scope="col">
-                            Commentaires
-                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -228,12 +279,6 @@
                             {% for role in member.getRoles %}
                                 {{ role }}
                             {% endfor %}
-                        </td>
-                        <td scope="row">
-                            coming soon...
-                        </td>
-                        <td scope="row">
-                            coming soon...
                         </td>
                     </tr>
                 {% endfor %}
