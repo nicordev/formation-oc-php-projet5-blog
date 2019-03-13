@@ -344,7 +344,7 @@ class BlogController extends Controller
      */
     public function showMediaLibrary(?string $callingPage = null)
     {
-        $images = ImageHandler::getAllPath('learn', 1, 2);
+        $images = ImageHandler::getAllPath();
 
         $this->render(self::VIEW_MEDIA_LIBRARY, [
             'images' => $images,
@@ -598,6 +598,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Application\Exception\ImageException
      */
     public function addImage(?string $callingPage = null)
     {

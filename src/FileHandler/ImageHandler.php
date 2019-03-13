@@ -26,7 +26,7 @@ class ImageHandler extends FileHandler
      */
     public static function getAllPath(string $hint = null, int $start = 0, int $quantity = null)
     {
-        $allImages = parent::readFolder(ROOT_PATH . self::UPLOAD_FOLDER);
+        $allImages = self::readImageFolder($hint);
 
         if (empty($allImages)) {
             return [];
@@ -37,34 +37,12 @@ class ImageHandler extends FileHandler
         $counter = 0;
 
         if ($start >= $size) {
-            throw new ImageException('$start > number of files or no images found');
-        }
-
-        if ($hint) {
-            $images = [];
-            if ($quantity) {
-                for (; $i < $size; $i++) {
-                    if (strpos($allImages[$i], $hint) !== false) {
-                        $images[] = self::UPLOAD_FOLDER . $allImages[$i];
-                        $counter++;
-                        if ($counter >= $quantity) {
-                            return $images;
-                        }
-                    }
-                }
-            } else {
-                for (; $i < $size; $i++) {
-                    if (strpos($allImages[$i], $hint) !== false) {
-                        $images[] = self::UPLOAD_FOLDER . $allImages[$i];
-                    }
-                }
-            }
-            return $images;
+            throw new ImageException('$start > number of files in' . self::UPLOAD_FOLDER);
         }
 
         if ($quantity) {
             $images = [];
-            while ($counter < $quantity) {
+            while ($counter < $quantity && $i < $size) {
                 $images[] = self::UPLOAD_FOLDER . $allImages[$i];
                 $i++;
                 $counter++;
@@ -125,19 +103,25 @@ class ImageHandler extends FileHandler
 
     // Private
 
+    /**
+     * Get images file names
+     *
+     * @param string|null $hint
+     * @return array|bool
+     */
     private static function readImageFolder(?string $hint)
     {
         $allImages = parent::readFolder(ROOT_PATH . self::UPLOAD_FOLDER);
-        $images = [];
 
         if ($hint) {
+            $images = [];
             for ($i = 0, $size = count($allImages); $i < $size; $i++) {
                 if (strpos($allImages[$i], $hint) !== false) {
-                    $images[] = self::UPLOAD_FOLDER . $allImages[$i];
+                    $images[] = $allImages[$i];
                 }
             }
+            return $images;
         }
-
-        return $images;
+        return $allImages;
     }
 }
