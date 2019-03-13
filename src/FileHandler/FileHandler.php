@@ -12,6 +12,43 @@ class FileHandler
     }
 
     /**
+     * Get a file
+     *
+     * @param string $path
+     * @param string $mode
+     * @return bool|resource
+     */
+    public static function getFile(string $path, string $mode = 'r')
+    {
+        return fopen($path, $mode);
+    }
+
+    /**
+     * Get the file names of a folder
+     *
+     * @param string $path
+     * @return array|bool
+     */
+    public static function readFolder(string $path)
+    {
+        $files = [];
+        $i = 0;
+        if ($dir = opendir($path)) {
+            while (($file = readdir($dir)) !== false) {
+                if ($file != '.' && $file != '..') { // Avoid parent and current folder
+                    if (!is_dir($file)) { // Avoid folders
+                        $files[] = $file;
+                        $i++;
+                    }
+                }
+            }
+            closedir($dir);
+            return $files;
+        }
+        return false;
+    }
+
+    /**
      * Upload a file on the server
      *
      * @param string $fieldName

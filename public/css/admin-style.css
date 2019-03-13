@@ -101,6 +101,30 @@ footer ul li a, footer ul li a:hover {
     color: #b9bbbe;
 }
 
+.media-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.media-card {
+    height: 200px;
+    width: 200px;
+    padding: 10px;
+    border: 1px solid slategrey;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.media-card figure img {
+    width: 180px;
+    height: auto;
+    max-height: 180px;
+    max-width: 180px;
+}
+
 #new-tag-input {
     font-size: 0.75em;
 }

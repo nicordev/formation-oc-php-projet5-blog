@@ -335,14 +335,21 @@ class BlogController extends Controller
 
     /**
      * Show the media library
+     *
      * @param string|null $callingPage
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws \Application\Exception\ImageException
      */
     public function showMediaLibrary(?string $callingPage = null)
     {
-        $this->render(self::VIEW_MEDIA_LIBRARY, ['callingPage' => $callingPage]);
+        $images = ImageHandler::getAllPath('learn', 1, 2);
+
+        $this->render(self::VIEW_MEDIA_LIBRARY, [
+            'images' => $images,
+            'callingPage' => $callingPage
+        ]);
     }
 
     // Actions
@@ -586,8 +593,13 @@ class BlogController extends Controller
 
     /**
      * Add an image in the library
+     * @param string|null $callingPage
+     * @throws \Application\Exception\FileException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function addImage()
+    public function addImage(?string $callingPage = null)
     {
         $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
         ImageHandler::editImage($path, [
@@ -596,6 +608,8 @@ class BlogController extends Controller
             'x' => 20,
             'y' => 30
         ]);
+
+        $this->showMediaLibrary($callingPage);
     }
 
     /**

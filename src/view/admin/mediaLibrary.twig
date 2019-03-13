@@ -31,6 +31,16 @@
                 </p>
             </form>
         </div>
+
+        <div class="media-deck">
+            {% for image in images %}
+                <div class="media-card">
+                    <figure>
+                        <img src="{{ image }}" alt="Une image">
+                    </figure>
+                </div>
+            {% endfor %}
+        </div>
     </section>
 {% endblock %}
 
