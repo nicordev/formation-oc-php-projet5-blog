@@ -1,0 +1,69 @@
+{% extends 'admin/adminLayout.twig' %}
+
+{# head #}
+{% block title %}
+    Editeur d'image
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <h1>Editeur d'image</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        {% include "message.twig" %}
+        <div>
+            {# Cancel button #}
+            <a class="btn cancel-button" href="{{ callingPage }}">Retour</a>
+        </div>
+
+        <div>
+            <form action="/admin/media-library/delete" method="post">
+
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
+                <input type="hidden" name="path" value="{{ image }}">
+
+                <p>
+                    <input class="btn" type="submit" value="Supprimer">
+                </p>
+            </form>
+
+            <form action="/admin/media-library/edit" method="post">
+                <h6>Redimensionner</h6>
+                <p>
+                    <input type="number" name="resize-width" placeholder="Largeur">
+                    <input type="number" name="resize-height" placeholder="Hauteur">
+                </p>
+
+                <h6>Rogner</h6>
+                <p>
+                    <input type="number" name="crop-x" placeholder="Départ x">
+                    <input type="number" name="crop-y" placeholder="Départ y">
+                </p>
+                <p>
+                    <input type="number" name="crop-width" placeholder="Largeur">
+                    <input type="number" name="crop-height" placeholder="Hauteur">
+                </p>
+
+                <button class="btn btn-primary" type="button">Prévisualiser</button>
+                <input class="btn btn-primary" type="submit" value="Enregistrer">
+            </form>
+        </div>
+
+        <div>
+            <figure>
+                <img src="{{ image }}" alt="L'image à modifier">
+            </figure>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+{% endblock %}
+
+
+

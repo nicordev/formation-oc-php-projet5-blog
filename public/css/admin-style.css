@@ -112,10 +112,13 @@ footer ul li a, footer ul li a:hover {
     width: 200px;
     padding: 10px;
     border: 1px solid slategrey;
+    border-radius: 3px;
     margin: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition-property: background-color;
+    transition-duration: 0.3s;
 }
 
 .media-card figure img {
@@ -123,6 +126,10 @@ footer ul li a, footer ul li a:hover {
     height: auto;
     max-height: 180px;
     max-width: 180px;
+}
+
+.media-card:hover {
+    background-color: #0c5460;
 }
 
 #new-tag-input {

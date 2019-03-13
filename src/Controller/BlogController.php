@@ -45,6 +45,7 @@ class BlogController extends Controller
     const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
     const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
     const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
+    const VIEW_IMAGE_EDITOR = 'admin/imageEditor.twig';
 
     /**
      * BlogController constructor.
@@ -348,6 +349,14 @@ class BlogController extends Controller
 
         $this->render(self::VIEW_MEDIA_LIBRARY, [
             'images' => $images,
+            'callingPage' => $callingPage
+        ]);
+    }
+
+    public function showImageEditor(?string $callingPage = null, string $image = null)
+    {
+        $this->render(self::VIEW_IMAGE_EDITOR, [
+            'image' => $image,
             'callingPage' => $callingPage
         ]);
     }

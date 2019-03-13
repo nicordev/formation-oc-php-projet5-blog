@@ -302,6 +302,17 @@ class Router
                 ];
                 break;
 
+            case '/admin/image-editor':
+                MemberController::verifyAccess(['author', 'editor']);
+                WebsiteCop::checkCsrf();
+                $controller = BlogController::class;
+                $method = 'showImageEditor';
+                $params = [
+                    'callingPage' => htmlspecialchars($_GET['calling-page']),
+                    'image' => htmlspecialchars($_GET['image'])
+                ];
+                break;
+
             default:
                 $controller = ErrorController::class;
                 $method = 'showError404';
