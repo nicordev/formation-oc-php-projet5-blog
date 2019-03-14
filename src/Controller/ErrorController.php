@@ -8,6 +8,7 @@ class ErrorController extends Controller
 {
     const VIEW_404 = 'error/pageNotFound.twig';
     const VIEW_403 = 'error/accessDenied.twig';
+    const VIEW_500 = 'error/serverError.twig';
 
     public function __construct(Twig_Environment $twig)
     {
@@ -36,5 +37,17 @@ class ErrorController extends Controller
     public function showError403()
     {
         echo $this->twig->render(self::VIEW_403);
+    }
+
+    /**
+     * Show a page for errors 500
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showError500()
+    {
+        echo $this->twig->render(self::VIEW_500);
     }
 }

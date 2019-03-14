@@ -11,6 +11,7 @@ namespace Application;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
+use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Application\Router\Router;
 use Controller\BlogController;
@@ -67,7 +68,7 @@ class Application
                 $method = new ReflectionMethod($route->controller, $route->method);
 
             } catch (ReflectionException $e) {
-                throw new AppException('The method ' . $route->method . ' was not found in ' . $route->controller, 0, $e);
+                throw new HttpException('The method ' . $route->method . ' was not found in ' . $route->controller, 404, $e);
             }
 
             $method->invokeArgs($controller, $route->params);
@@ -78,6 +79,16 @@ class Application
         } catch (PageNotFoundException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError404();
+        } catch (HttpException $e) {
+            $errorController = DIC::newErrorController();
+            switch ($e->getCode()) {
+                case 404:
+                    $errorController->showError404();
+                    break;
+                case 500:
+                    $errorController->showError500();
+                    break;
+            }
         }
     }
 }
