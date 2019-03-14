@@ -343,21 +343,19 @@ class BlogController extends Controller
      * @throws \Twig_Error_Syntax
      * @throws \Application\Exception\ImageException
      */
-    public function showMediaLibrary(?string $callingPage = null)
+    public function showMediaLibrary()
     {
         $images = ImageHandler::getAllPath();
 
         $this->render(self::VIEW_MEDIA_LIBRARY, [
-            'images' => $images,
-            'callingPage' => $callingPage
+            'images' => $images
         ]);
     }
 
-    public function showImageEditor(?string $callingPage = null, string $image = null)
+    public function showImageEditor(string $image = null)
     {
         $this->render(self::VIEW_IMAGE_EDITOR, [
-            'image' => $image,
-            'callingPage' => $callingPage
+            'image' => $image
         ]);
     }
 
@@ -501,12 +499,12 @@ class BlogController extends Controller
     /**
      * Edit a category in the database
      *
-     * @return bool
+     * @return void
+     * @throws AccessException
+     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
-     * @throws AccessException
      */
     public function editCategory()
     {

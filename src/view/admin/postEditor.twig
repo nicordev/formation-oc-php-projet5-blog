@@ -109,10 +109,17 @@
     {# Post draft #}
     <script src="/public/js/postDraft.js"></script>
     <script>
-        window.addEventListener("load", function(event) {
+        window.addEventListener("load", function() {
             myPostDraft.load({{ postToEdit.getId ?? -1 }});
         });
         window.addEventListener('unload', myPostDraft.save);
+    </script>
+    {# Navigation #}
+    <script src="/public/js/navigationHelper.js"></script>
+    <script>
+        window.addEventListener('unload', function () {
+            myNavigationHelper.saveUrl("{{  getCurrentUrl() }}")
+        });
     </script>
     {# Tags #}
     <script src="/public/js/tagHandler.js"></script>

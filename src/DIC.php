@@ -113,6 +113,12 @@ class DIC
         });
         $twig->addFunction($getCsrfToken);
 
+        // Get the current url
+        $getCurrentUrl = new Twig_Function('getCurrentUrl', function () {
+            return $_SERVER['REQUEST_URI'];
+        });
+        $twig->addFunction($getCurrentUrl);
+
         return $twig;
     }
 }
