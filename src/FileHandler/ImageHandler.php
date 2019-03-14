@@ -68,7 +68,7 @@ class ImageHandler extends FileHandler
      */
     public static function uploadImage(string $fieldName, string $fileName = '', string $prefix = '', string $suffix = '')
     {
-        return parent::upload($fieldName, ROOT_PATH . self::UPLOAD_FOLDER, ['jpg', 'jpeg', 'gif', 'png'], $fileName, $prefix, $suffix);
+        return self::upload($fieldName, ROOT_PATH . self::UPLOAD_FOLDER, ['jpg', 'jpeg', 'gif', 'png'], $fileName, $prefix, $suffix);
     }
 
     /**
@@ -84,10 +84,10 @@ class ImageHandler extends FileHandler
         $img = Image::make($path);
 
         if (
-            isset($cropParams['width']) &&
-            isset($cropParams['height'])
+            isset($cropParams['width']) && !empty($cropParams['width']) ||
+            isset($cropParams['height']) &&  !empty($cropParams['height'])
         ) {
-            $img->crop($cropParams['width'], $cropParams['height'], $cropParams['x'] ?? null, $cropParams['y'] ?? null);
+            $img->crop($cropParams['width'] ?? null, $cropParams['height'] ?? null, $cropParams['x'] ?? null, $cropParams['y'] ?? null);
         }
 
         if (!$newHeight && $newWidth || !$newWidth && $newHeight) {
@@ -99,6 +99,16 @@ class ImageHandler extends FileHandler
         }
 
         $img->save();
+    }
+
+    /**
+     * Delete an image from the folder
+     *
+     * @param string $imagePath
+     */
+    public static function deleteImage(string $imagePath)
+    {
+        self::deleteFile(ROOT_PATH . $imagePath);
     }
 
     // Private

@@ -49,6 +49,17 @@ class FileHandler
     }
 
     /**
+     * Delete a file
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function deleteFile(string $path)
+    {
+        return unlink($path);
+    }
+
+    /**
      * Upload a file on the server
      *
      * @param string $fieldName

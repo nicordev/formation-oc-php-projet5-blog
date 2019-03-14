@@ -11,51 +11,58 @@
 {% endblock %}
 
 {% block content %}
-    <section class="blog-admin">
+    <section class="blog-admin row">
         {% include "message.twig" %}
-        <div>
-            {# Cancel button #}
-            <a class="btn cancel-button" href="/admin/media-library">Retour</a>
+        <div class="col-12 col-lg-6">
+            <div>
+                {# Cancel button #}
+                <a class="btn cancel-button" href="/admin/media-library">Retour</a>
+            </div>
+
+            <div>
+                {# Delete #}
+                <form action="/admin/image-editor/delete" method="post">
+
+                    {# CSRF protection #}
+                    <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
+                    <input type="hidden" name="path" value="{{ imagePath }}">
+
+                    <p>
+                        <input class="btn" type="submit" value="Supprimer">
+                    </p>
+                </form>
+
+                {# Edit #}
+                <form action="/admin/media-library/edit" method="post">
+                    <h5>Redimensionner</h5>
+                    <p>
+                        Largeur <input type="number" name="resize-width" placeholder="Largeur">
+                        Hauteur <input type="number" name="resize-height" placeholder="Hauteur">
+                    </p>
+
+                    <h5>Rogner</h5>
+                    <h6>Point de départ</h6>
+                    <p>
+                        x <input type="number" name="crop-x" placeholder="Départ x">
+                        y <input type="number" name="crop-y" placeholder="Départ y">
+                    </p>
+                    <h6>Dimensions</h6>
+                    <p>
+                        Largeur <input type="number" name="crop-width" placeholder="Largeur">
+                        Hauteur <input type="number" name="crop-height" placeholder="Hauteur">
+                    </p>
+
+                    <button class="btn btn-primary" type="button">Prévisualiser</button>
+                    <input class="btn btn-primary" type="submit" value="Enregistrer">
+                </form>
+            </div>
         </div>
 
-        <div>
-            <form action="/admin/media-library/delete" method="post">
-
-                {# CSRF protection #}
-                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
-
-                <input type="hidden" name="path" value="{{ image }}">
-
-                <p>
-                    <input class="btn" type="submit" value="Supprimer">
-                </p>
-            </form>
-
-            <form action="/admin/media-library/edit" method="post">
-                <h6>Redimensionner</h6>
-                <p>
-                    <input type="number" name="resize-width" placeholder="Largeur">
-                    <input type="number" name="resize-height" placeholder="Hauteur">
-                </p>
-
-                <h6>Rogner</h6>
-                <p>
-                    <input type="number" name="crop-x" placeholder="Départ x">
-                    <input type="number" name="crop-y" placeholder="Départ y">
-                </p>
-                <p>
-                    <input type="number" name="crop-width" placeholder="Largeur">
-                    <input type="number" name="crop-height" placeholder="Hauteur">
-                </p>
-
-                <button class="btn btn-primary" type="button">Prévisualiser</button>
-                <input class="btn btn-primary" type="submit" value="Enregistrer">
-            </form>
-        </div>
-
-        <div>
+        {# Sample #}
+        <div class="col-12 col-lg-6">
             <figure>
-                <img src="{{ image }}" alt="L'image à modifier">
+                <img src="{{ imagePath }}" alt="L'image à modifier">
             </figure>
         </div>
     </section>

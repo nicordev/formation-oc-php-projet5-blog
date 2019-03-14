@@ -15,6 +15,7 @@ use Application\Exception\BlogException;
 use Application\Exception\PageNotFoundException;
 use Application\FileHandler\ImageHandler;
 use Exception;
+use Intervention\Image\Image;
 use Michelf\Markdown;
 use Model\Entity\Category;
 use Model\Entity\Comment;
@@ -352,10 +353,10 @@ class BlogController extends Controller
         ]);
     }
 
-    public function showImageEditor(string $image = null)
+    public function showImageEditor(string $imagePath = null)
     {
         $this->render(self::VIEW_IMAGE_EDITOR, [
-            'image' => $image
+            'imagePath' => $imagePath
         ]);
     }
 
@@ -600,6 +601,7 @@ class BlogController extends Controller
 
     /**
      * Add an image in the library
+     *
      * @throws \Application\Exception\FileException
      * @throws \Application\Exception\ImageException
      * @throws \Twig_Error_Loader
@@ -609,12 +611,37 @@ class BlogController extends Controller
     public function addImage()
     {
         $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
-        ImageHandler::editImage($path, [
-            'width' => 500,
-            'height' => 150,
-            'x' => 20,
-            'y' => 30
-        ]);
+
+        $this->showMediaLibrary();
+    }
+
+    /**
+     * Edit an image in the library
+     *
+     * @param string $imagePath
+     * @param int $newHeight
+     * @param int $newWidth
+     * @param array $cropParameters
+     */
+    public function editImage(string $imagePath, array $cropParameters = [], int $newHeight = null, int $newWidth = null)
+    {
+        ImageHandler::editImage($imagePath, $cropParameters, $newHeight, $newWidth);
+
+        $this->showImageEditor($imagePath);
+    }
+
+    /**
+     * Delete an image from the folder
+     *
+     * @param string $imagePath
+     * @throws \Application\Exception\ImageException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function deleteImage(string $imagePath)
+    {
+        ImageHandler::deleteImage($imagePath);
 
         $this->showMediaLibrary();
     }

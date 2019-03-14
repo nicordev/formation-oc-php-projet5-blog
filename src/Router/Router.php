@@ -306,7 +306,35 @@ class Router
                 $controller = BlogController::class;
                 $method = 'showImageEditor';
                 $params = [
-                    'image' => htmlspecialchars($_GET['image'])
+                    'imagePath' => htmlspecialchars($_GET['image'])
+                ];
+                break;
+
+            case '/admin/image-editor/edit':
+                MemberController::verifyAccess(['author', 'editor']);
+                WebsiteCop::checkCsrf();
+                $controller = BlogController::class;
+                $method = 'editImage';
+                $params = [
+                    'imagePath' => htmlspecialchars($_POST['path']),
+                    'cropParameters' => [
+                        'width' => (int) $_POST['crop-width'] ?? null,
+                        'height' => (int) $_POST['crop-height'] ?? null,
+                        'x' => (int) $_POST['crop-x'] ?? null,
+                        'y' => (int) $_POST['crop-y'] ?? null
+                    ],
+                    'newHeight' => (int) $_POST['resize-height'] ?? null,
+                    'newWidth' => (int) $_POST['resize-width'] ?? null
+                ];
+                break;
+
+            case '/admin/image-editor/delete':
+                MemberController::verifyAccess(['author', 'editor']);
+                WebsiteCop::checkCsrf();
+                $controller = BlogController::class;
+                $method = 'deleteImage';
+                $params = [
+                    'imagePath' => htmlspecialchars($_POST['path'])
                 ];
                 break;
 
