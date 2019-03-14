@@ -11,10 +11,11 @@ namespace Application;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
+use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
-use Application\Exception\SecurityException;
+use Application\Exception\CsrfSecurityException;
 use Application\Router\Router;
-use Application\Security\WebsiteCop;
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -46,8 +47,8 @@ class Application
         // Security
         try {
             // CSRF protection
-            WebsiteCop::setCounterCsrfToken(bin2hex(random_bytes(87)));
-            $_SESSION['csrf-token'] = WebsiteCop::getCounterCsrfToken();
+            CsrfProtector::setCounterCsrfToken(bin2hex(random_bytes(87)));
+            $_SESSION['csrf-token'] = CsrfProtector::getCounterCsrfToken();
         } catch (Exception $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError500();
@@ -82,7 +83,7 @@ class Application
                 $method = new ReflectionMethod($route->controller, $route->method);
 
             } catch (ReflectionException $e) {
-                throw new AppException('The method ' . $route->method . ' was not found in ' . $route->controller, 0, $e);
+                throw new HttpException('The method ' . $route->method . ' was not found in ' . $route->controller, 404, $e);
             }
 
             $method->invokeArgs($controller, $route->params);
@@ -93,9 +94,19 @@ class Application
         } catch (PageNotFoundException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError404();
-        } catch (SecurityException $e) {
+        } catch (CsrfSecurityException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showCustomError('Une attaque CSRF a été détectée. Si vous êtes à l\'origine de cette attaque, c\'est pas gentil.');
+        } catch (HttpException $e) {
+            $errorController = DIC::newErrorController();
+            switch ($e->getCode()) {
+                case 404:
+                    $errorController->showError404();
+                    break;
+                case 500:
+                    $errorController->showError500();
+                    break;
+            }
         }
     }
 }
