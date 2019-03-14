@@ -289,9 +289,7 @@ class Router
                 WebsiteCop::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'showMediaLibrary';
-                $params = [
-                    'callingPage' => htmlspecialchars($_GET['calling-page'])
-                ];
+                $params = [];
                 break;
 
             case '/admin/media-library/add':
@@ -299,9 +297,7 @@ class Router
                 WebsiteCop::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'addImage';
-                $params = [
-                    'callingPage' => htmlspecialchars($_GET['calling-page'])
-                ];
+                $params = [];
                 break;
 
             case '/admin/image-editor':
@@ -310,7 +306,6 @@ class Router
                 $controller = BlogController::class;
                 $method = 'showImageEditor';
                 $params = [
-                    'callingPage' => htmlspecialchars($_GET['calling-page']),
                     'image' => htmlspecialchars($_GET['image'])
                 ];
                 break;

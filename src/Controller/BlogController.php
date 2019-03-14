@@ -600,14 +600,13 @@ class BlogController extends Controller
 
     /**
      * Add an image in the library
-     * @param string|null $callingPage
      * @throws \Application\Exception\FileException
+     * @throws \Application\Exception\ImageException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\ImageException
      */
-    public function addImage(?string $callingPage = null)
+    public function addImage()
     {
         $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
         ImageHandler::editImage($path, [
@@ -617,7 +616,7 @@ class BlogController extends Controller
             'y' => 30
         ]);
 
-        $this->showMediaLibrary($callingPage);
+        $this->showMediaLibrary();
     }
 
     /**

@@ -34,11 +34,13 @@
 
         <div class="media-deck">
             {% for image in images %}
-                <div class="media-card">
-                    <figure>
-                        <a href="/admin/image-editor?image={{ image }}"><img src="{{ image }}" alt="Une image"></a>
-                    </figure>
-                </div>
+                <a href="/admin/image-editor?image={{ image }}">
+                    <div class="media-card">
+                        <figure>
+                            <img src="{{ image }}" alt="Une image">
+                        </figure>
+                    </div>
+                </a>
             {% endfor %}
         </div>
     </section>
