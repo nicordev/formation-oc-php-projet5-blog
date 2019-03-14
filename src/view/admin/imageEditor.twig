@@ -69,11 +69,14 @@
         </div>
 
         {# Sample #}
-        <div>
+        <div class="image-to-edit-wrapper">
             <div id="image-info"></div>
             <figure class="position-absolute">
                 <div id="crop-frame"></div>
                 <img id="image-to-edit" src="{{ imagePath }}" alt="L'image à modifier">
+                {# Another way with one div:
+                <div id="crop-frame" style="background-image: url({{ imagePath }})"></div>
+                #}
             </figure>
         </div>
     </section>
