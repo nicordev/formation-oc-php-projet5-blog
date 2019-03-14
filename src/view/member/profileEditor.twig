@@ -21,6 +21,9 @@
 
         <form action="/profile-editor?action=update" method="post">
 
+            {# CSRF protection #}
+            <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
             {# Update button #}
             <div class="form-group col-12">
                 <input class="btn btn-primary" type="submit" value="Mettre à jour les informations">
@@ -100,6 +103,10 @@
 
         {# Delete account #}
         <form action="/profile-editor?action=delete" method="post">
+
+            {# CSRF protection #}
+            <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
             <input type="hidden" name="id" value="{{ member.getId }}">
             <input class="btn btn-primary" type="submit" value="Supprimer le compte">
         </form>

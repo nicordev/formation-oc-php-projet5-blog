@@ -23,6 +23,10 @@
             {# Delete post button #}
             <div>
                 <form action="/admin/delete-comment" method="post">
+
+                    {# CSRF protection #}
+                    <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                     <input type="hidden" name="delete-comment" value="{{ commentToEdit.getId }}">
                     <p>
                         <input class="btn" type="submit" value="Supprimer le commentaire">
@@ -33,8 +37,12 @@
 
         <div>
             <form action="/admin/edit-comment" method="post">
+
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                 <input type="hidden" name="comment-id" value="{{ commentToEdit.getId }}">
-                <input type="hidden" name="editor-id" value="{{ connectedMember.getId }}">
+                <input type="hidden" name="editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-id" value="{{ commentToEdit.getPostId }}">
                 <input type="hidden" name="author-id" value="{{ commentToEdit.getAuthorId }}">
                 <input type="hidden" name="creation-date" value="{{ commentToEdit.getCreationDate }}">

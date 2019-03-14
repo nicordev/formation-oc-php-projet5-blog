@@ -13,11 +13,14 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
+use Application\Exception\CsrfSecurityException;
 use Application\Router\Router;
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
 use Controller\MemberController;
+use Exception;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -38,6 +41,16 @@ class Application
 
         // Time zone
         date_default_timezone_set("Europe/Paris");
+
+        // Security
+        try {
+            // CSRF protection
+            CsrfProtector::setCounterCsrfToken(bin2hex(random_bytes(87)));
+            $_SESSION['csrf-token'] = CsrfProtector::getCounterCsrfToken();
+        } catch (Exception $e) {
+            $errorController = DIC::newErrorController();
+            $errorController->showError500();
+        }
 
         // Routing
         try {
@@ -79,6 +92,9 @@ class Application
         } catch (PageNotFoundException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError404();
+        } catch (CsrfSecurityException $e) {
+            $errorController = DIC::newErrorController();
+            $errorController->showCustomError('Une attaque CSRF a été détectée. Si vous êtes à l\'origine de cette attaque, c\'est pas gentil.');
         } catch (HttpException $e) {
             $errorController = DIC::newErrorController();
             switch ($e->getCode()) {

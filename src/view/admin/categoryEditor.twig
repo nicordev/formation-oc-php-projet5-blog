@@ -27,6 +27,10 @@
             {% if categoryToEdit %}
                 <div>
                     <form action="/admin/delete-category" method="post">
+
+                        {# CSRF protection #}
+                        <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                         <input type="hidden" name="delete-category" value="{{ categoryToEdit.getId }}">
                         <p>
                             <input class="btn" type="submit" value="Supprimer la catégorie">
@@ -44,7 +48,9 @@
             <form action="/admin/add-category" method="post">
             {% endif %}
 
-                <!-- Visible fields-->
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                 <p>
                     <input class="btn" type="submit" value="Enregistrer">
                 </p>

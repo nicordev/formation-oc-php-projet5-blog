@@ -11,16 +11,18 @@ DROP TABLE IF EXISTS bl_category;
 DROP TABLE IF EXISTS bl_tag;
 
 DROP TABLE IF EXISTS bl_key;
+DROP TABLE IF EXISTS bl_connection_try;
 
+CREATE TABLE bl_connection_try(
+                                  cot_id INT UNSIGNED AUTO_INCREMENT,
+                                  cot_count INT UNSIGNED,
+                                  cot_last_try DATETIME,
+                                  cot_user VARCHAR(100),
 
-DROP DATABASE IF EXISTS oc_projet5_blog;
-
-CREATE DATABASE oc_projet5_blog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-USE oc_projet5_blog;
-
-
-
+                                  CONSTRAINT  pk_connection_try_id
+                                      PRIMARY KEY (cot_id)
+)
+    ENGINE = InnoDB;
 
 CREATE TABLE bl_key(
                        key_id INT UNSIGNED AUTO_INCREMENT,
@@ -204,6 +206,8 @@ CREATE TABLE bl_comment(
 
 
 
+
+
 -- Données
 
 INSERT INTO bl_tag (tag_id, tag_name) VALUES
@@ -239,13 +243,13 @@ VALUES
 
 INSERT INTO bl_member (m_id, m_email, m_password, m_name, m_description)
 VALUES
-(null, 'mentor.validateur@benice.plz', '$2y$10$MUyFQplVCEYj44iA7jnUu.iZoMHYvKUycm6NR2WDBCMNalKJEc.Wu', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
-(null, 'jean.tenbien@yahoo.fr', '$2y$10$L0qq2VnymYIphczV0c1nveww8rTKPEAkmn3tX/uHtgFrptfdXWMd2', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
-(null, 'sarah.croche@gmail.com', '$2y$10$N27TlsyNeOxbtFmYrzKF0OJJIsU1nBN1v4VDSjl5LcTAhQwHW/0qS', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
-(null, 'jim.nastique@gmail.com', '$2y$10$KR6s/Cn.hoA4uvc9XtVlCuOiomlAsgarPzogv69nBysaMPM.gNwee', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
-(null, 'larry.viere@gmail.com', '$2y$10$g8IjxXoDKXf6bhXqGPypOOG3ICZ.3qlr7n/d.cbHeXh2bEJUH.VTy', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
-(null, 'paul.emploi@gmail.com', '$2y$10$qfkWgJGDaLSKEiGI4seGMuAR0R4Xdm8RTKpu6hdofjH1R5W07Bzia', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
-(null, 'lenny.bards@gmail.com', '$2y$10$UyLhlo3DGXZniMGcbAEXqec183r3vxyPZOKqVxHrYoUAtj2X89xU2', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
+(null, 'mentor.validateur@benice.plz', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
+(null, 'jean.tenbien@yahoo.fr', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
+(null, 'sarah.croche@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
+(null, 'jim.nastique@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
+(null, 'larry.viere@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
+(null, 'paul.emploi@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
+(null, 'lenny.bards@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
 
 INSERT INTO bl_role_member (rm_member_id_fk, rm_role_id_fk)
 VALUES

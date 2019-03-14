@@ -30,6 +30,10 @@
                 {# Delete post button #}
                 <div>
                     <form id="delete-post-form" action="/admin/delete-post" method="post">
+
+                        {# CSRF protection #}
+                        <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
                         <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                         <p>
                             <input class="btn" type="submit" value="Supprimer l'article">
@@ -49,6 +53,9 @@
             <form id="publish-post-form" action="/admin/add-post" method="post">
                 <input type="hidden" name="post-author-id" value="{{ getUser().getId }}">
             {% endif %}
+
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
 
                 <p>
                     <input class="btn" type="submit" value="Publier l'article">
@@ -97,16 +104,16 @@
 {% block scripts %}
     {{ parent() }}
     {# Tags #}
-    <script src="/js/tagHandler.js"></script>
+    <script src="/public/js/tagHandler.js"></script>
     <script>
         myTagHandler.setTagEventListeners();
     </script>
     {# Editor #}
-    <script src="/js/chooseEditor.js"></script>
+    <script src="/public/js/chooseEditor.js"></script>
     {# TinyMCE #}
     <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
     {# Confirmation messages #}
-    <script src="/js/areYouSure.js"></script>
+    <script src="/public/js/areYouSure.js"></script>
     <script>
         // Confirmation messages
 

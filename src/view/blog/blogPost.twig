@@ -38,7 +38,7 @@
 
     <hr>
     <div class="container-fluid">
-        {% if connectedMember %}
+        {% if getUser() %}
             {% include 'blog/commentForm.twig' %}
             <hr>
         {% endif %}
@@ -49,5 +49,5 @@
 
 {% block scripts %}
     {{ parent() }}
-    <script src="/js/comment.js"></script>
+    <script src="/public/js/comment.js"></script>
 {% endblock %}

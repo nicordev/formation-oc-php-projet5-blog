@@ -1,14 +1,14 @@
 {% extends "layout.twig" %}
 
 {% block title %}
-    Erreur serveur
+    Problème serveur
 {% endblock %}
 
 {% block content %}
     <h2>Le serveur a eu un soucis</h2>
 
     <p>
-        Mais rien de grave. Vous pouvez retenter votre chance.
+        {{ message }}
     </p>
 
     <p><a href="/home">Revenir à l'accueil</a></p>

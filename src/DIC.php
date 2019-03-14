@@ -9,6 +9,7 @@
 namespace Application;
 
 
+use Application\Security\CsrfProtector;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -97,14 +98,20 @@ class DIC
             'cache' => false // TODO change to true for production
         ]);
 
+        // Get the connected member
         $getUserFunction = new Twig_Function('getUser', function () {
             if (MemberController::memberConnected()) {
                 return $_SESSION['connected-member'];
             }
             return null;
         });
-
         $twig->addFunction($getUserFunction);
+
+        // Get the counter CSRF token
+        $getCsrfToken = new Twig_Function('getCsrfToken', function () {
+            return CsrfProtector::getCounterCsrfToken();
+        });
+        $twig->addFunction($getCsrfToken);
 
         return $twig;
     }

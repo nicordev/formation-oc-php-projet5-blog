@@ -328,8 +328,7 @@ class BlogController extends Controller
         $comment = $this->commentManager->get($commentToEditId);
 
         self::render(self::VIEW_COMMENT_EDITOR, [
-            'commentToEdit' => $comment,
-            'connectedMember' => isset($_SESSION['connected-member']) ? $_SESSION['connected-member'] : null
+            'commentToEdit' => $comment
         ]);
     }
 
@@ -599,15 +598,6 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Delete a comment in the database
-     *
-     * @throws AccessException
-     * @throws BlogException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];

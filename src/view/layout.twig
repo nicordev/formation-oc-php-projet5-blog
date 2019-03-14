@@ -6,25 +6,25 @@
         <meta name="description" content="Blog">
         <meta name="author" content="Nicolas Renvoisé">
 
-        <link rel="icon" href="/img/favicon.png" />
+        <link rel="icon" href="/public/img/favicon.png" />
 
         {% block head %}
         <title>{% block title %}Bienvenue{% endblock %} - Nicolas R Blog</title>
 
         <!-- Bootstrap core CSS -->
-        <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/public/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom fonts for this template -->
-        <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link href="/public/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
         <!-- Custom styles for this template -->
-        <link href="/css/clean-blog.min.css" rel="stylesheet">
+        <link href="/public/css/clean-blog.min.css" rel="stylesheet">
 
         <!-- My own css -->
         <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
-        <link href="/css/style.css" rel="stylesheet" />
+        <link href="/public/css/style.css" rel="stylesheet" />
         {% endblock %}
     </head>
     
@@ -33,7 +33,7 @@
         {% block navigation %}
         <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
             <div class="container">
-                <a class="navbar-brand" href="/home"><img id="logo" src="/img/logo.png" alt="logo"></a>
+                <a class="navbar-brand" href="/home"><img id="logo" src="/public/img/logo.png" alt="logo"></a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
@@ -41,11 +41,11 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         {% block navigationItems %}
-                        {% for category in categories %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a>
-                            </li>
-                        {% endfor %}
+                            {% for category in categories %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a>
+                                </li>
+                            {% endfor %}
                         {% endblock %}
                         {% include 'member/connection.twig' %}
                     </ul>
@@ -56,7 +56,7 @@
 
         <!-- Page Header -->
         {% block header %}
-        <header class="masthead" style="background-image: url({% block backgroundImageUrl %}'/img/home-bg.jpg'{% endblock %})">
+        <header class="masthead" style="background-image: url({% block backgroundImageUrl %}'/public/img/home-bg.jpg'{% endblock %})">
             <div class="overlay"></div>
             <div class="container">
                 <div class="row">
@@ -134,14 +134,14 @@
 
         {% block scripts %}
         <!-- My own scripts -->
-        <script src="/js/application.js"></script>
+        <script src="/public/js/application.js"></script>
 
         <!-- Bootstrap core JavaScript -->
-        <script src="/vendor/jquery/jquery.min.js"></script>
-        <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/public/vendor/jquery/jquery.min.js"></script>
+        <script src="/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
         <!-- Custom scripts for the bootstrap template -->
-        <script src="/js/clean-blog.min.js"></script>
+        <script src="/public/js/clean-blog.min.js"></script>
         {% endblock %}
     </body>
 </html>

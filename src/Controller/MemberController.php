@@ -7,7 +7,10 @@ use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\MemberException;
+use Application\Exception\CsrfSecurityException;
 use Application\MailSender\MailSender;
+use Application\Security\BruteForceProtector;
+use Application\Security\CsrfProtector;
 use Exception;
 use Model\Entity\Key;
 use Model\Entity\Member;
@@ -196,7 +199,6 @@ class MemberController extends Controller
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
-                'connectedMember' => $member,
                 'availableRoles' => $availableRoles
             ]);
         } else {
@@ -237,7 +239,6 @@ class MemberController extends Controller
     /**
      * Update the profile of a member
      *
-     * @param bool $updateRoles
      * @throws AppException
      * @throws BlogException
      * @throws \ReflectionException
@@ -321,6 +322,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws \Application\Exception\BlogException
+     * @throws AppException
      */
     public function connect()
     {
@@ -331,8 +333,14 @@ class MemberController extends Controller
                 $member = $this->memberManager->getFromEmail($_POST['email']);
 
                 if ($member !== null) {
-                    if (password_verify($_POST['password'], $member->getPassword())) {
+                    // Brute force protection
+                    $waitingTime = BruteForceProtector::canConnectAgainIn();
+                    if ($waitingTime > 0) {
+                        $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.<br>Temps restant : $waitingTime s");
+
+                    } elseif (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
+                        BruteForceProtector::resetTheUser();
                         header('Location: /home');
                     }
                 }
