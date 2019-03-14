@@ -139,3 +139,12 @@ footer ul li a, footer ul li a:hover {
 #new-tag-input {
     font-size: 0.75em;
 }
+
+#crop-frame {
+    position: relative;
+    border: 5px solid limegreen;
+}
+
+#image-to-edit {
+    position: relative;
+}

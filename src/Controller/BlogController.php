@@ -622,13 +622,13 @@ class BlogController extends Controller
                     $message = 'Erreur : est-ce que vous avez bien choisi un fichier ?';
                     break;
                 case 1:
-                    $message = "Erreur : l'extension du fichier n'est pas autorisée.";
+                    $message = "Erreur : l'extension du fichier n'est pas autorisée";
                     break;
                 case 2:
-                    $message = 'Erreur : le fichier est trop gros !';
+                    $message = 'Erreur : le fichier est trop gros';
                     break;
                 case 3:
-                    $message = "Erreur : le fichier n'existe pas.";
+                    $message = "Erreur : le fichier n'existe pas";
                     break;
             }
         }
@@ -648,7 +648,7 @@ class BlogController extends Controller
     {
         ImageHandler::editImage($imagePath, $cropParameters, $newHeight, $newWidth);
 
-        $this->showImageEditor($imagePath, "L'image a été modifiée.");
+        $this->showImageEditor($imagePath, "L'image a été modifiée");
     }
 
     /**

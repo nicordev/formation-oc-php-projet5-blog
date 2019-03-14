@@ -53,13 +53,13 @@
                     <h5>Rogner</h5>
                     <h6>Point de départ</h6>
                     <div class="row">
-                        <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12" type="number" name="crop-x" placeholder="Départ x" value="0">
-                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12" type="number" name="crop-y" placeholder="Départ y" value="0">
+                        <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12 crop" type="number" id="crop-x" name="crop-x" placeholder="Départ x" value="0">
+                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12 crop" type="number" id="crop-y" name="crop-y" placeholder="Départ y" value="0">
                     </div>
                     <h6>Dimensions</h6>
                     <div class="row">
-                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" name="crop-width" placeholder="Largeur">
-                            <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" name="crop-height" placeholder="Hauteur">
+                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-width" name="crop-width" placeholder="Largeur">
+                            <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-height" name="crop-height" placeholder="Hauteur">
                     </div>
 
                     <button class="btn btn-primary" type="button">Prévisualiser</button>
@@ -71,7 +71,8 @@
         {# Sample #}
         <div>
             <div id="image-info"></div>
-            <figure>
+            <figure class="position-absolute">
+                <div id="crop-frame"></div>
                 <img id="image-to-edit" src="{{ imagePath }}" alt="L'image à modifier">
             </figure>
         </div>
@@ -80,11 +81,20 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Image info #}
     <script src="/public/js/elementInfo.js"></script>
     <script>
         myElementInfo.show("image-info", "image-to-edit");
         document.getElementById('resize-width').value = myElementInfo.width('image-to-edit');
         document.getElementById('resize-height').value = myElementInfo.height('image-to-edit');
+    </script>
+    {# Crop frame #}
+    <script src="/public/js/cropFrame.js"></script>
+    <script>
+        var cropElts = document.getElementsByClassName('crop');
+        for (var i = 0; i < cropElts.length; i++) {
+            cropElts[i].addEventListener('change', myCropFrame.update);
+        }
     </script>
 {% endblock %}
 
