@@ -33,25 +33,32 @@
                     </p>
                 </form>
 
+                <div>
+                    <h5>Adresse de l'image</h5>
+                    <p>
+                        {{ imagePath }}
+                    </p>
+                </div>
+
                 {# Edit #}
                 <form action="/admin/media-library/edit" method="post">
                     <h5>Redimensionner</h5>
-                    <p>
-                        Largeur <input type="number" name="resize-width" placeholder="Largeur">
-                        Hauteur <input type="number" name="resize-height" placeholder="Hauteur">
-                    </p>
+                    <div class="row">
+                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" name="resize-width" placeholder="Largeur">
+                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" name="resize-height" placeholder="Hauteur">
+                    </div>
 
                     <h5>Rogner</h5>
                     <h6>Point de départ</h6>
-                    <p>
-                        x <input type="number" name="crop-x" placeholder="Départ x">
-                        y <input type="number" name="crop-y" placeholder="Départ y">
-                    </p>
+                    <div class="row">
+                        <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12" type="number" name="crop-x" placeholder="Départ x">
+                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12" type="number" name="crop-y" placeholder="Départ y">
+                    </div>
                     <h6>Dimensions</h6>
-                    <p>
-                        Largeur <input type="number" name="crop-width" placeholder="Largeur">
-                        Hauteur <input type="number" name="crop-height" placeholder="Hauteur">
-                    </p>
+                    <div class="row">
+                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" name="crop-width" placeholder="Largeur">
+                            <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" name="crop-height" placeholder="Hauteur">
+                    </div>
 
                     <button class="btn btn-primary" type="button">Prévisualiser</button>
                     <input class="btn btn-primary" type="submit" value="Enregistrer">

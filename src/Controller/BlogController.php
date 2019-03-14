@@ -12,6 +12,7 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
+use Application\Exception\FileException;
 use Application\Exception\PageNotFoundException;
 use Application\FileHandler\ImageHandler;
 use Exception;
@@ -338,18 +339,19 @@ class BlogController extends Controller
     /**
      * Show the media library
      *
-     * @param string|null $callingPage
+     * @param string|null $message
+     * @throws \Application\Exception\ImageException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\ImageException
      */
-    public function showMediaLibrary()
+    public function showMediaLibrary(string $message = null)
     {
         $images = ImageHandler::getAllPath();
 
         $this->render(self::VIEW_MEDIA_LIBRARY, [
-            'images' => $images
+            'images' => $images,
+            'message' => $message
         ]);
     }
 
@@ -602,7 +604,6 @@ class BlogController extends Controller
     /**
      * Add an image in the library
      *
-     * @throws \Application\Exception\FileException
      * @throws \Application\Exception\ImageException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -610,9 +611,28 @@ class BlogController extends Controller
      */
     public function addImage()
     {
-        $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
+        $message = null;
+        try {
+            $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
+            $message = 'Le fichier a bien été ajouté dans ' . $path;
+        } catch (FileException $e) {
+            switch ($e->getCode()) {
+                case 0:
+                    $message = 'Erreur : est-ce que vous avez bien choisi un fichier ?';
+                    break;
+                case 1:
+                    $message = "Erreur : l'extension du fichier n'est pas autorisée.";
+                    break;
+                case 2:
+                    $message = 'Erreur : le fichier est trop gros !';
+                    break;
+                case 3:
+                    $message = "Erreur : le fichier n'existe pas.";
+                    break;
+            }
+        }
 
-        $this->showMediaLibrary();
+        $this->showMediaLibrary($message);
     }
 
     /**

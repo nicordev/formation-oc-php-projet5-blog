@@ -19,12 +19,12 @@
         </div>
 
         <div>
-            <form action="/admin/media-library/add" method="post" enctype="multipart/form-data">
+            <form id="add-image-form" action="/admin/media-library/add" method="post" enctype="multipart/form-data">
 
                 {# CSRF protection #}
                 <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
 
-                <input class="form-control-file" type="file" name="new-image">
+                <input id="new-image" class="form-control-file" type="file" name="new-image">
 
                 <p>
                     <input class="btn" type="submit" value="Ajouter l'image">
@@ -48,11 +48,18 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Navigation #}
     <script src="/public/js/navigationHelper.js"></script>
     <script>
         window.addEventListener('load', function () {
             document.getElementById('cancel-btn').href = myNavigationHelper.getUrl();
         })
+    </script>
+    {# Add image #}
+    <script>
+        document.getElementById('new-image').addEventListener('change', function () {
+            document.getElementById('add-image-form').submit();
+        });
     </script>
 {% endblock %}
 

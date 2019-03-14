@@ -90,16 +90,16 @@ class FileHandler
                     if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination)) {
                         return $destination;
                     } else {
-                        throw new FileException('An error occured when move_uploaded_file(' . $destination . ')');
+                        throw new FileException('An error occured when move_uploaded_file(' . $destination . ')', 0);
                     }
                 }
-                throw new FileException('The file extension ' . $fileExtension . ' is not allowed');
+                throw new FileException('The file extension ' . $fileExtension . ' is not allowed', 1);
 
             } else {
-                throw new FileException('The file is too big');
+                throw new FileException('The file is too big', 2);
             }
         }
-        throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '');
+        throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '', 3);
     }
 
     /**
