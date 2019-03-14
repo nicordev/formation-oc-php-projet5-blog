@@ -355,10 +355,11 @@ class BlogController extends Controller
         ]);
     }
 
-    public function showImageEditor(string $imagePath = null)
+    public function showImageEditor(string $imagePath = null, string $message = null)
     {
         $this->render(self::VIEW_IMAGE_EDITOR, [
-            'imagePath' => $imagePath
+            'imagePath' => $imagePath,
+            'message' => $message
         ]);
     }
 
@@ -647,7 +648,7 @@ class BlogController extends Controller
     {
         ImageHandler::editImage($imagePath, $cropParameters, $newHeight, $newWidth);
 
-        $this->showImageEditor($imagePath);
+        $this->showImageEditor($imagePath, "L'image a été modifiée.");
     }
 
     /**

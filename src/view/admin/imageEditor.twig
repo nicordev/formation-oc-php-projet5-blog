@@ -41,18 +41,20 @@
                 </div>
 
                 {# Edit #}
-                <form action="/admin/media-library/edit" method="post">
+                <form action="/admin/image-editor/edit" method="post">
+                    <input type="hidden" name="path" value="{{ imagePath }}">
+
                     <h5>Redimensionner</h5>
                     <div class="row">
-                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" name="resize-width" placeholder="Largeur">
-                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" name="resize-height" placeholder="Hauteur">
+                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" id="resize-width" name="resize-width" placeholder="Largeur">
+                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" id="resize-height" name="resize-height" placeholder="Hauteur">
                     </div>
 
                     <h5>Rogner</h5>
                     <h6>Point de départ</h6>
                     <div class="row">
-                        <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12" type="number" name="crop-x" placeholder="Départ x">
-                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12" type="number" name="crop-y" placeholder="Départ y">
+                        <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12" type="number" name="crop-x" placeholder="Départ x" value="0">
+                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12" type="number" name="crop-y" placeholder="Départ y" value="0">
                     </div>
                     <h6>Dimensions</h6>
                     <div class="row">
@@ -67,9 +69,10 @@
         </div>
 
         {# Sample #}
-        <div class="col-12 col-lg-6">
+        <div>
+            <div id="image-info"></div>
             <figure>
-                <img src="{{ imagePath }}" alt="L'image à modifier">
+                <img id="image-to-edit" src="{{ imagePath }}" alt="L'image à modifier">
             </figure>
         </div>
     </section>
@@ -77,6 +80,12 @@
 
 {% block scripts %}
     {{ parent() }}
+    <script src="/public/js/elementInfo.js"></script>
+    <script>
+        myElementInfo.show("image-info", "image-to-edit");
+        document.getElementById('resize-width').value = myElementInfo.width('image-to-edit');
+        document.getElementById('resize-height').value = myElementInfo.height('image-to-edit');
+    </script>
 {% endblock %}
 
 

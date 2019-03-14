@@ -81,20 +81,24 @@ class ImageHandler extends FileHandler
      */
     public static function editImage(string $path, array $cropParams = [], ?int $newHeight = null, ?int $newWidth = null)
     {
-        $img = Image::make($path);
+        $img = Image::make(ROOT_PATH . $path);
 
         if (
             isset($cropParams['width']) && !empty($cropParams['width']) ||
             isset($cropParams['height']) &&  !empty($cropParams['height'])
         ) {
-            $img->crop($cropParams['width'] ?? null, $cropParams['height'] ?? null, $cropParams['x'] ?? null, $cropParams['y'] ?? null);
+            $img->crop($cropParams['width'], $cropParams['height'], $cropParams['x'] ?? null, $cropParams['y'] ?? null);
         }
 
-        if (!$newHeight && $newWidth || !$newWidth && $newHeight) {
-            $img->resize($newWidth, $newHeight, function ($constraint) {
+        if (empty($newHeight) && $newWidth > 0) {
+            $img->resize($newWidth, null, function ($constraint) {
                 $constraint->aspectRatio();
             });
-        } elseif ($newWidth && $newHeight) {
+        } elseif (empty($newWidth) && $newHeight > 0) {
+            $img->resize(null, $newHeight, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+        } elseif ($newWidth > 0 && $newHeight > 0) {
             $img->resize($newWidth, $newHeight);
         }
 
