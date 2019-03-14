@@ -118,7 +118,7 @@
     <script src="/public/js/navigationHelper.js"></script>
     <script>
         window.addEventListener('unload', function () {
-            myNavigationHelper.saveUrl("{{  getCurrentUrl() }}")
+            myNavigationHelper.saveUrl("{{  macros.getPostEditorUrl(postToEdit.getId)|trim }}")
         });
     </script>
     {# Tags #}

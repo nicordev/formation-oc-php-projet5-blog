@@ -230,6 +230,8 @@ class Router
                 MemberController::verifyAccess(['author', 'editor']);
                 if (isset($_POST['post-id'])) {
                     $postId = (int) $_POST['post-id'];
+                } elseif (isset($_GET['post-id'])) {
+                    $postId = (int) $_GET['post-id']; // TODO: check if the author can access this post
                 }
                 $controller = BlogController::class;
                 $method = 'showPostEditor';
