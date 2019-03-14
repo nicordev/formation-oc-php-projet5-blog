@@ -12,6 +12,7 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Exception;
 use Michelf\Markdown;
@@ -695,7 +696,7 @@ class BlogController extends Controller
      * @param array $tagIds
      * @param array $tagNames
      * @return int
-     * @throws AppException
+     * @throws HttpException
      */
     private function addNewTagsFromTagList(array $tagIds, array $tagNames)
     {
@@ -706,7 +707,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to add the tag ' . $tagNames[$i], 0, $e);
+                    throw new HttpException('Impossible to add the tag ' . $tagNames[$i], 500, $e);
                 }
                 $numberOfNewTags++;
 
@@ -742,7 +743,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->edit($updatedTag);
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true), 0, $e);
+                    throw new HttpException('Impossible to edit the tag ' . print_r($tagData, true), 500, $e);
                 }
                 return true;
 
