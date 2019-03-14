@@ -5,7 +5,7 @@ namespace Application\Exception;
 
 use Exception;
 
-class SecurityException extends Exception
+class HttpException extends Exception
 {
 
 }

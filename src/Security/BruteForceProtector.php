@@ -4,15 +4,11 @@ namespace Application\Security;
 
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
-use Application\Exception\SecurityException;
 use Model\Entity\ConnectionTry;
 use Model\Manager\ConnectionTryManager;
 
-class WebsiteCop
+class BruteForceProtector
 {
-    private static $counterCsrfToken;
-    private $connectionTryManager;
-
     private const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
     private const NUMBER_OF_TRIES = 3;
     private const DELAY_BEFORE_RESET = 20; // In seconds
@@ -21,53 +17,12 @@ class WebsiteCop
     {}
 
     /**
-     * @return mixed
-     */
-    public static function getCounterCsrfToken()
-    {
-        return self::$counterCsrfToken;
-    }
-
-    /**
-     * @param mixed $counterCsrfToken
-     */
-    public static function setCounterCsrfToken($counterCsrfToken): void
-    {
-        self::$counterCsrfToken = $counterCsrfToken;
-    }
-
-    /**
-     * Check if there is a CSRF attack
-     *
-     * @throws SecurityException
-     */
-    public static function checkCsrf()
-    {
-        if (!self::isCsrfSafe()) {
-            throw new SecurityException('CSRF attack reported!');
-        }
-    }
-
-    /**
-     * Check if the token stored in $_SESSION is the good one
-     *
-     * @return bool
-     */
-    public static function isCsrfSafe(): bool
-    {
-        if (isset($_SESSION['csrf-token']) && $_SESSION['csrf-token'] === self::$counterCsrfToken) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Check the number of tries and the delay
      *
-     * @return bool
+     * @return int
      * @throws AppException
      */
-    public static function canConnectAgain(): bool
+    public static function canConnectAgainIn(): int
     {
         $connectionTryManager = new ConnectionTryManager();
         $userKey = self::getUserKey();
@@ -76,11 +31,12 @@ class WebsiteCop
             $connectionTry = $connectionTryManager->get(null, $userKey);
 
             if ($connectionTry->getCount() >= self::NUMBER_OF_TRIES) {
-                if (self::isAfterDelay($connectionTry->getLastTry())) {
+                $waitingTime = self::calculateWaitingTime($connectionTry->getLastTry());
+                if ($waitingTime === 0) {
                     $connectionTryManager->delete($connectionTry->getId());
-                    return true;
+                    return 0;
                 }
-                return false;
+                return $waitingTime;
             }
             $connectionTry->setCount($connectionTry->getCount() + 1);
             $connectionTry->setLastTry(date(self::MYSQL_DATE_FORMAT));
@@ -94,7 +50,7 @@ class WebsiteCop
             ]);
             $connectionTryManager->add($connectionTry);
         }
-        return true;
+        return 0;
     }
 
     /**
@@ -117,20 +73,32 @@ class WebsiteCop
     // Private
 
     /**
-     * Check if the last try is after the delay before reset the tries counter
+     * Calculate the remaining waiting time
      *
      * @param string $lastTry
-     * @return bool
+     * @return false|int
      */
-    private static function isAfterDelay(string $lastTry)
+    private static function calculateWaitingTime(string $lastTry)
+    {
+        $waitingTime = self::DELAY_BEFORE_RESET - self::calculateTimeSpent($lastTry);
+
+        if ($waitingTime > 0) {
+            return $waitingTime;
+        }
+        return 0;
+    }
+
+    /**
+     * Calculate time spent from the last try
+     *
+     * @param string $lastTry
+     * @return false|int
+     */
+    private static function calculateTimeSpent(string $lastTry)
     {
         $now = time();
         $lastTry = strtotime($lastTry);
-
-        if ($now - $lastTry >= self::DELAY_BEFORE_RESET) {
-            return true;
-        }
-        return false;
+        return $now - $lastTry;
     }
 
     /**
