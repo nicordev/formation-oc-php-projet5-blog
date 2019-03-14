@@ -12,6 +12,7 @@ namespace Controller;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Exception;
 use Michelf\Markdown;
@@ -34,6 +35,7 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
+    protected $postsByPage = 10;
 
     const VIEW_BLOG = 'blog/blog.twig';
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -76,15 +78,38 @@ class BlogController extends Controller
      * Show all posts of a given category
      *
      * @param int $categoryId
+     * @param int|null $page
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws Exception
      */
-    public function showPostsOfACategory(int $categoryId)
+    public function showPostsOfACategory(int $categoryId, ?int $page = null)
     {
-        $posts = $this->postManager->getPostsOfACategory($categoryId);
+        $numberOfPosts = $this->postManager->countPostsOfACategory($categoryId);
+        $numberOfPages = ceil($numberOfPosts / $this->postsByPage);
+
+        if ($page >= $numberOfPages) {
+            $page = $numberOfPages;
+        } elseif ($page <= 0) {
+            $page = 1;
+        }
+
+        if ($page > 1) {
+            $start = ($page - 1) * $this->postsByPage;
+            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, $start, false);
+            if ($page < $numberOfPages) {
+                $nextPage = $page + 1;
+            }
+            $previousPage = $page - 1;
+        } else {
+            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
+        }
+
         $category = $this->categoryManager->get($categoryId);
 
         foreach ($posts as $post) {
@@ -93,7 +118,9 @@ class BlogController extends Controller
 
         $this->render(self::VIEW_BLOG, [
             'posts' => $posts,
-            'category' => $category
+            'category' => $category,
+            'nextPage' => isset($nextPage) ? $nextPage : null,
+            'previousPage' => isset($previousPage) ? $previousPage : null
         ]);
     }
 
@@ -101,14 +128,38 @@ class BlogController extends Controller
      * Show all the posts associated to a tag
      *
      * @param int $tagId
+     * @param int|null $page
      * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
-    public function showPostsOfATag(int $tagId)
+    public function showPostsOfATag(int $tagId, ?int $page = null)
     {
-        $posts = $this->postManager->getPostsOfATag($tagId);
+        $numberOfPosts = $this->postManager->countPostsOfATag($tagId);
+        $numberOfPages = ceil($numberOfPosts / $this->postsByPage);
+
+        if ($page >= $numberOfPages) {
+            $page = $numberOfPages;
+        } elseif ($page <= 0) {
+            $page = 1;
+        }
+
+        if ($page > 1) {
+            $start = ($page - 1) * $this->postsByPage;
+            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, $start, false);
+            if ($page < $numberOfPages) {
+                $nextPage = $page + 1;
+            }
+            $previousPage = $page - 1;
+        } else {
+            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsByPage, null, false);
+            if ($numberOfPages > 1) {
+                $nextPage = 2;
+            }
+        }
+
         foreach ($posts as $post) {
             self::prepareAPost($post);
         }
@@ -116,7 +167,9 @@ class BlogController extends Controller
 
         $this->render(self::VIEW_BLOG_TAG, [
             'posts' => $posts,
-            'tag' => $tag
+            'tag' => $tag,
+            'nextPage' => isset($nextPage) ? $nextPage : null,
+            'previousPage' => isset($previousPage) ? $previousPage : null
         ]);
     }
 
@@ -208,7 +261,7 @@ class BlogController extends Controller
         $availableTags = $this->tagManager->getAll();
         $availableTagNames = self::getTagNames($availableTags);
         $selectedTagNames = [];
-        $markdown = true;
+        $markdown = false;
 
         if ($postToEditId !== null) {
             $postToEdit = $this->postManager->get($postToEditId);
@@ -653,7 +706,7 @@ class BlogController extends Controller
      * @param array $tagIds
      * @param array $tagNames
      * @return int
-     * @throws AppException
+     * @throws HttpException
      */
     private function addNewTagsFromTagList(array $tagIds, array $tagNames)
     {
@@ -664,7 +717,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->add(new Tag(['name' => $tagNames[$i]]));
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to add the tag ' . $tagNames[$i]);
+                    throw new HttpException('Impossible to add the tag ' . $tagNames[$i], 500, $e);
                 }
                 $numberOfNewTags++;
 
@@ -700,7 +753,7 @@ class BlogController extends Controller
                 try {
                     $this->tagManager->edit($updatedTag);
                 } catch (Exception $e) {
-                    throw new AppException('Impossible to edit the tag ' . print_r($tagData, true));
+                    throw new HttpException('Impossible to edit the tag ' . print_r($tagData, true), 500, $e);
                 }
                 return true;
 

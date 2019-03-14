@@ -23,7 +23,7 @@
 
             {# Update button #}
             <div class="form-group col-12">
-                <input class="btn btn-primary" type="submit" value="Mettre à jour mes informations">
+                <input class="btn btn-primary" type="submit" value="Mettre à jour les informations">
             </div>
 
             {# Cancel button #}
@@ -34,7 +34,9 @@
             <h2>Informations</h2>
             
             {# Id #}
-            <input type="hidden" name="id" value="{{ member.getId }}">
+            {% if 'admin' in getUser().getRoles %}
+                <input type="hidden" name="id" value="{{ member.getId }}">
+            {% endif %}
 
             {# Roles #}
             <h3>Rôles</h3>
@@ -46,7 +48,10 @@
                         <input class="form-check-input" type="checkbox" id="role-{{ role }}" name="roles[]" value="{{ role }}" {% if role in member.getRoles %}{{ 'checked' }}{% endif %}><label class="form-check-label" for="role-{{ role }}">{{ macros.translateRole(role) }}</label><br>
                     {% endfor %}
                 </div>
+
             {% else %}
+                <input type="hidden" name="keep-roles" value="1">
+
                 <div>
                     <p>
                         {% for role in member.getRoles %}

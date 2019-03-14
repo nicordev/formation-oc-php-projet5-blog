@@ -13,7 +13,7 @@
             {% set i = loop.index %}
             <div class="card">
                 <div class="card-body">
-                    <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}">
+                    <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}&amp;page=1">
                         <h5 class="card-title">{{ post.getTitle }}</h5>
                         <p class="card-text">{{ post.getExcerpt }}</p>
                     </a>
@@ -24,7 +24,7 @@
         </div>
 
         {% if posts|length > numberOfPosts %}
-            <a class="post-deck-more col-1" href="/blog?category-id={{ categoryId }}">🠾</a>
+            <a class="post-deck-more col-1" href="/blog?category-id={{ categoryId }}&amp;page=1">🠾</a>
         {% endif %}
     {% endif %}
 </div>

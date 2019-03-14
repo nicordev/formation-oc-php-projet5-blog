@@ -8,6 +8,7 @@ use Application\Exception\AppException;
 use Application\Exception\BlogException;
 use Application\Exception\MemberException;
 use Application\MailSender\MailSender;
+use Exception;
 use Model\Entity\Key;
 use Model\Entity\Member;
 use Model\Entity\Role;
@@ -130,7 +131,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws BlogException
-     * @throws \Exception
+     * @throws Exception
      */
     public function showMemberProfile(?int $memberId = null)
     {
@@ -164,19 +165,23 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws Exception
      */
     public function showMemberProfileEditor($member = null, ?int $keyValue = null)
     {
+        $availableRoles = $this->roleManager->getRoleNames();
+
         if (MemberController::memberConnected()) {
 
             if ($member === null) {
                 $member = $_SESSION['connected-member'];
             } elseif (!($member instanceof Member) && in_array('admin', $_SESSION['connected-member']->getRoles())) {
-                $member = $this->memberManager->get($member);
+                $member = $this->memberManager->get((int) $member);
             }
 
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
-                'member' => $member
+                'member' => $member,
+                'availableRoles' => $availableRoles
             ]);
 
         } elseif ($keyValue) {
@@ -186,10 +191,13 @@ class MemberController extends Controller
             } catch (BlogException $e) {
                 $this->showConnectionPage("La clé demandée n'existe plus. Relancez la procédure de récupération du mot de passe.");
             }
-            $member = $this->memberManager->get($member);
+            $member = $this->memberManager->get($member->getId());
             $_SESSION['connected-member'] = $member;
+
             echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
-                'member' => $member
+                'member' => $member,
+                'connectedMember' => $member,
+                'availableRoles' => $availableRoles
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
@@ -229,11 +237,13 @@ class MemberController extends Controller
     /**
      * Update the profile of a member
      *
+     * @param bool $updateRoles
      * @throws AppException
+     * @throws BlogException
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
      */
     public function updateProfile()
     {
@@ -243,7 +253,11 @@ class MemberController extends Controller
             isset($_POST['description'])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
-            $this->updateMember($modifiedMember);
+            if (isset($_POST['keep-roles'])) {
+                $this->memberManager->edit($modifiedMember, false);
+            } else {
+                $this->memberManager->edit($modifiedMember, true);
+            }
             if ($modifiedMember->getId() === $_SESSION['connected-member']->getId()) {
                 $_SESSION['connected-member'] = $modifiedMember;
             }
@@ -315,6 +329,7 @@ class MemberController extends Controller
                 $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.");
             } else {
                 $member = $this->memberManager->getFromEmail($_POST['email']);
+
                 if ($member !== null) {
                     if (password_verify($_POST['password'], $member->getPassword())) {
                         $_SESSION['connected-member'] = $member;
@@ -357,9 +372,6 @@ class MemberController extends Controller
             $subject = 'Blog de Nicolas Renvoisé - Mot de passe perdu';
             $content = 'Bonjour, pour réinitialiser votre mot de passe, suivez ce lien : ' . $link;
 
-            var_dump($link);
-            die;
-
             if (!MailSender::send($email, $subject, $content)) {
                 $key = $this->keyManager->get(null, $key);
                 $this->keyManager->delete($key->getId());
@@ -387,7 +399,7 @@ class MemberController extends Controller
         $member->setEmail(htmlspecialchars($_POST['email']));
 
         if (isset($_POST['password']) && !empty($_POST['password'])) {
-            $member->setPassword(htmlspecialchars($_POST['password']));
+            $member->setPassword(password_hash($_POST['password'], PASSWORD_DEFAULT));
         }
 
         $member->setName(htmlspecialchars($_POST['name']));
@@ -402,15 +414,22 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
+        } else {
+            $member->setId($_SESSION['connected-member']->getId());
         }
 
         if (isset($_POST['roles'])) {
-            $roles = ['member'];
+            $roles = [];
             foreach ($_POST['roles'] as $role) {
                 if ($this->roleManager->isValid($role)) {
                     $roles[] = $role;
                 }
             }
+
+            if (empty($roles)) {
+                $roles = ['member'];
+            }
+
             $member->setRoles($roles);
         }
 
@@ -427,7 +446,6 @@ class MemberController extends Controller
     private function addNewMember(Member $member): bool
     {
         if ($this->memberManager->isNewMember($member)) {
-            $member->setPassword(password_hash($member->getPassword(), PASSWORD_DEFAULT));
             $member->setRoles(['member']);
             $this->memberManager->add($member);
 
@@ -435,18 +453,5 @@ class MemberController extends Controller
         }
 
         return false;
-    }
-
-    /**
-     * Update a member in the database
-     *
-     * @param Member $updatedMember
-     * @return void
-     * @throws \Exception
-     */
-    private function updateMember(Member $updatedMember)
-    {
-        $updatedMember->setPassword(password_hash($updatedMember->getPassword(), PASSWORD_DEFAULT));
-        $this->memberManager->edit($updatedMember);
     }
 }

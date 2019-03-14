@@ -38,7 +38,7 @@ abstract class Manager
      * @param string $password
      * @param string $charset
      */
-    public function __construct($host = '', $databaseName = '', $user = '', $password = '', $charset = 'utf8')
+    public function __construct($host = '', $databaseName = '', $user = '', $password = '', $charset = 'utf8mb4')
     {
         if (!empty($host)) {
             $this->host = $host;
@@ -67,7 +67,7 @@ abstract class Manager
      * @param string $charset
      * @return bool|PDO
      */
-    public static function getPdo($host = 'localhost', $databaseName = 'test', $user = 'root', $password = '', $charset = 'utf8')
+    public static function getPdo($host = 'localhost', $databaseName = 'test', $user = 'root', $password = '', $charset = 'utf8mb4')
     {
         try
         {
@@ -202,6 +202,22 @@ abstract class Manager
         $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
 
         return $lastId;
+    }
+
+    /**
+     * Count the number of lines
+     *
+     * @return int
+     * @throws BlogException
+     */
+    public function countLines(): int
+    {
+        $query = 'SELECT COUNT(' . $this->fields['id'] . ') FROM ' . $this->tableName;
+        $requestCount = $this->query($query);
+
+        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
+
+        return $count;
     }
 
 

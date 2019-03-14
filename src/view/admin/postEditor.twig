@@ -46,11 +46,10 @@
                 <input type="hidden" name="post-editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
             {% else %}
-            <form action="/admin/add-post" method="post">
+            <form id="publish-post-form" action="/admin/add-post" method="post">
                 <input type="hidden" name="post-author-id" value="{{ getUser().getId }}">
             {% endif %}
 
-                <!-- Visible fields-->
                 <p>
                     <input class="btn" type="submit" value="Publier l'article">
                 </p>

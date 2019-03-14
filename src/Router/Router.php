@@ -33,13 +33,13 @@ class Router
 
             case '/':
                 $controller = HomeController::class;
-                $method = 'showHome';
+                $method = 'showHome';;
                 $params = [];
                 break;
 
             case '/home':
                 $controller = HomeController::class;
-                $method = 'showHome';
+                $method = 'showHome';;
                 $params = [];
 
                 if (isset($_GET['categories'])) {
@@ -56,13 +56,19 @@ class Router
             case '/blog':
                 $controller = BlogController::class;
                 $method = 'showPostsOfACategory';
-                $params = ['categoryId' => (int) $_GET['category-id']];
+                $params = [
+                    'categoryId' => (int) $_GET['category-id'],
+                    'page' => (int) $_GET['page']
+                ];
                 break;
 
             case '/blog/tag':
                 $controller = BlogController::class;
                 $method = 'showPostsOfATag';
-                $params = ['tagId' => (int) $_GET['tag-id']];
+                $params = [
+                    'tagId' => (int) $_GET['tag-id'],
+                    'page' => (int) $_GET['page']
+                ];
                 break;
 
             case '/blog-post':

@@ -21,16 +21,16 @@
         <div>
             <h3>Profil</h3>
 
-        {# Edit button #}
-        {% if getUser() and getUser().getEmail is same as(member.getEmail) %}
-            <div>
-                <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
-            </div>
-        {% elseif getUser() and 'admin' in getUser().getRoles %}
-            <div>
-                <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
-            </div>
-        {% endif %}
+            {# Edit button #}
+            {% if getUser() and getUser().getEmail is same as(member.getEmail) %}
+                <div>
+                    <a class="btn btn-primary" href="/profile-editor">Modifier mon profil</a>
+                </div>
+            {% elseif getUser() and 'admin' in getUser().getRoles %}
+                <div>
+                    <a class="btn btn-primary" href="/profile-editor?id={{ member.getId }}">Modifier le profil</a>
+                </div>
+            {% endif %}
 
             {# Roles #}
             <div>

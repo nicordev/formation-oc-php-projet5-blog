@@ -15,7 +15,7 @@
 
         {% include "message.twig" %}
 
-        {% if 'moderator' in roles %}
+        {% if 'moderator' in getUser().getRoles %}
             {# Comments #}
             {% include 'admin/commentsList.twig' %}
             <hr>
