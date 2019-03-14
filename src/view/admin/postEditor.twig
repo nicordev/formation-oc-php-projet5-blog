@@ -46,7 +46,7 @@
         <div>
             {% if postToEdit %}
             <form id="publish-post-form" action="/admin/edit-post" method="post">
-                <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
+                <input type="hidden" id="edit-post" name="edit-post" value="{{ postToEdit.getId }}">
                 <input type="hidden" name="post-editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
             {% else %}
@@ -106,6 +106,14 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Post draft #}
+    <script src="/public/js/postDraft.js"></script>
+    <script>
+        window.addEventListener("load", function(event) {
+            myPostDraft.load({{ postToEdit.getId ?? -1 }});
+        });
+        window.addEventListener('unload', myPostDraft.save);
+    </script>
     {# Tags #}
     <script src="/public/js/tagHandler.js"></script>
     <script>
@@ -132,42 +140,6 @@
                 }
             });
         }
-
-        // Publish the post
-        // var publishFormElt = document.getElementById('publish-post-form');
-        // publishFormElt.addEventListener('submit', function (event) {
-        //     event.preventDefault();
-        //
-        //     if (!checkCategoriesBeforeSubmit()) {
-        //         areYouSure.show("Aucune catégorie n'a été sélectionnée. L'article n'apparaîtra pas sur le site. Continuer ?", submitForm);
-        //     }
-        //
-        //     function submitForm() {
-        //         event.target.submit();
-        //     }
-        //
-        //     function isChecked(element) {
-        //         return element.hasAttribute('checked');
-        //
-        //     }
-        //
-        //     /**
-        //      * Submit the form if there is at least one category selected
-        //      *
-        //      * @returns {boolean}
-        //      */
-        //     function checkCategoriesBeforeSubmit() {
-        //         var categoriesElts = document.getElementsByName('categories[]');
-        //
-        //         for (elt of categoriesElts) {
-        //             if (isChecked(elt)) {
-        //                 submitForm();
-        //                 return true;
-        //             }
-        //         }
-        //         return false;
-        //     }
-        // });
     </script>
     {# Character counter #}
     <script>
