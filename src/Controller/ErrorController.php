@@ -25,7 +25,7 @@ class ErrorController extends Controller
      */
     public function showError404()
     {
-        echo $this->twig->render(self::VIEW_404);
+        $this->render(self::VIEW_404);
     }
 
     /**
@@ -37,7 +37,7 @@ class ErrorController extends Controller
      */
     public function showError403()
     {
-        echo $this->twig->render(self::VIEW_403);
+        $this->render(self::VIEW_403);
     }
 
     /**
@@ -49,7 +49,7 @@ class ErrorController extends Controller
      */
     public function showError500()
     {
-        echo $this->twig->render(self::VIEW_500);
+        $this->render(self::VIEW_500);
     }
 
     /**
@@ -62,6 +62,6 @@ class ErrorController extends Controller
      */
     public function showCustomError(string $message = '<strong>Erreur !</strong>')
     {
-        echo $this->twig->render(self::VIEW_CUSTOM, ['message' => $message]);
+        $this->render(self::VIEW_CUSTOM, ['message' => $message]);
     }
 }

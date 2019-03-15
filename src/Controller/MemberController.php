@@ -36,6 +36,7 @@ class MemberController extends Controller
     public const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
     public const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
     public const VIEW_PASSWORD_RECOVERY = 'member/passwordRecovery.twig';
+    public const VIEW_QUIT_PAGE = 'member/quitPage.twig';
 
     public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
@@ -84,6 +85,19 @@ class MemberController extends Controller
         throw new AccessException('Access denied. You are not connected.');
     }
 
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function isConnected(): bool
+    {
+        if (isset($_SESSION['connected-member']) && !empty($_SESSION['connected-member'])) {
+            return true;
+        }
+        return false;
+    }
+
     // Views
 
     /**
@@ -96,7 +110,7 @@ class MemberController extends Controller
      */
     public function showRegistrationPage(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_REGISTRATION, ['message' => $message]);
+        $this->render(self::VIEW_REGISTRATION, ['message' => $message]);
     }
 
     /**
@@ -109,7 +123,7 @@ class MemberController extends Controller
      */
     public function showConnectionPage(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_CONNECTION, [
+        $this->render(self::VIEW_CONNECTION, [
             'message' => $message
         ]);
     }
@@ -123,7 +137,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME);
+        $this->render(self::VIEW_WELCOME);
     }
 
     /**
@@ -151,7 +165,7 @@ class MemberController extends Controller
             BlogController::convertDatesOfComment($memberComment);
         }
 
-        echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
+        $this->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
             'memberPosts' => $memberPosts,
             'memberComments' => $memberComments
@@ -182,7 +196,7 @@ class MemberController extends Controller
                 $member = $this->memberManager->get((int) $member);
             }
 
-            echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
+            $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
                 'availableRoles' => $availableRoles
             ]);
@@ -197,7 +211,7 @@ class MemberController extends Controller
             $member = $this->memberManager->get($member->getId());
             $_SESSION['connected-member'] = $member;
 
-            echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
+            $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
                 'availableRoles' => $availableRoles
             ]);
@@ -229,9 +243,21 @@ class MemberController extends Controller
      */
     public function showPasswordRecovery(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_PASSWORD_RECOVERY, [
+        $this->render(self::VIEW_PASSWORD_RECOVERY, [
             'message' => $message
         ]);
+    }
+
+    /**
+     * Page shown when a member delete his account
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showQuitPage()
+    {
+        $this->render(self::VIEW_QUIT_PAGE);
     }
 
     // Actions
@@ -269,13 +295,23 @@ class MemberController extends Controller
         }
     }
 
+    /**
+     * Delete a member
+     *
+     * @param int $memberId
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteMember(int $memberId)
     {
         $this->memberManager->delete($memberId);
         if ($_SESSION['connected-member']->getId() === $memberId) {
             unset($_SESSION['connected-member']);
+            $this->render(self::VIEW_QUIT_PAGE);
+        } else {
+            header('Location: /admin#admin-member-list');
         }
-        header('Location: /home'); // TODO: make a dedicated page
     }
 
     /**
@@ -422,7 +458,7 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
-        } else {
+        } elseif (self::isConnected()) {
             $member->setId($_SESSION['connected-member']->getId());
         }
 
