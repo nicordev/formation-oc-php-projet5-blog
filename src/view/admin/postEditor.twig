@@ -116,7 +116,6 @@
     <script src="/public/js/areYouSure.js"></script>
     <script>
         // Confirmation messages
-
         // Delete the post
         var deleteFormElt = document.getElementById('delete-post-form');
         if (deleteFormElt) {
@@ -129,42 +128,6 @@
                 }
             });
         }
-
-        // Publish the post
-        // var publishFormElt = document.getElementById('publish-post-form');
-        // publishFormElt.addEventListener('submit', function (event) {
-        //     event.preventDefault();
-        //
-        //     if (!checkCategoriesBeforeSubmit()) {
-        //         areYouSure.show("Aucune catégorie n'a été sélectionnée. L'article n'apparaîtra pas sur le site. Continuer ?", submitForm);
-        //     }
-        //
-        //     function submitForm() {
-        //         event.target.submit();
-        //     }
-        //
-        //     function isChecked(element) {
-        //         return element.hasAttribute('checked');
-        //
-        //     }
-        //
-        //     /**
-        //      * Submit the form if there is at least one category selected
-        //      *
-        //      * @returns {boolean}
-        //      */
-        //     function checkCategoriesBeforeSubmit() {
-        //         var categoriesElts = document.getElementsByName('categories[]');
-        //
-        //         for (elt of categoriesElts) {
-        //             if (isChecked(elt)) {
-        //                 submitForm();
-        //                 return true;
-        //             }
-        //         }
-        //         return false;
-        //     }
-        // });
     </script>
     {# Character counter #}
     <script>

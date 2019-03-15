@@ -349,7 +349,6 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastEditorId($newPost->getAuthorId());
-        $messages = [];
 
         if ($newPost !== null) {
             $this->handleAPost($newPost, true);
