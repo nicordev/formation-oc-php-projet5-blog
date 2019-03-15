@@ -370,8 +370,6 @@ class BlogController extends Controller
     public function editPost()
     {
         $modifiedPost = self::buildPostFromForm();
-        $tags = $modifiedPost->getTags();
-        $message = '';
 
         if ($modifiedPost !== null) {
             $this->handleAPost($modifiedPost, false);
