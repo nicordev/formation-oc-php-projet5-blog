@@ -2,7 +2,7 @@
 
 namespace Model\Manager;
 
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Exception;
 use Model\Entity\Entity;
 use \PDO;
@@ -85,7 +85,7 @@ abstract class Manager
      * Add an Entity in the database
      *
      * @param Entity $entity
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function add(Entity $entity): void
@@ -103,7 +103,7 @@ abstract class Manager
      * Edit an Entity in the database
      *
      * @param Entity $modifiedEntity
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function edit(Entity $modifiedEntity): void
@@ -122,7 +122,7 @@ abstract class Manager
      * Delete a line in the table
      *
      * @param int $entityId
-     * @throws BlogException
+     * @throws HttpException
      */
     public function delete(int $entityId)
     {
@@ -146,7 +146,7 @@ abstract class Manager
      *
      * @param int $entityId
      * @return mixed
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $entityId)
     {
@@ -157,7 +157,7 @@ abstract class Manager
         if ($tableData) {
             return $this->createEntityFromTableData($tableData);
         }
-        throw new BlogException('The id ' . $entityId . ' was not found in the database');
+        throw new HttpException('The id ' . $entityId . ' was not found in the database', 500);
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class Manager
      * @param int|null $numberOfLines
      * @param int|null $start
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
@@ -192,7 +192,7 @@ abstract class Manager
      * Get the last id.
      *
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getLastId(): int
     {
@@ -208,7 +208,7 @@ abstract class Manager
      * Count the number of lines
      *
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function countLines(): int
     {
@@ -261,7 +261,7 @@ abstract class Manager
      * @param string $query
      * @param array $params
      * @return bool|\PDOStatement
-     * @throws BlogException
+     * @throws HttpException
      */
     protected function query(string $query, ?array $params = null)
     {
@@ -280,7 +280,7 @@ abstract class Manager
             }
 
             if (!$request->execute($params)) {
-                throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
             }
         } else {
             $request = $this->database->query($query);

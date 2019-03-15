@@ -76,7 +76,7 @@ class CategoryManager extends Manager
      *
      * @param string $categoryName
      * @return Category|null
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getFromName(string $categoryName): ?Category
     {
@@ -92,7 +92,7 @@ class CategoryManager extends Manager
      *
      * @param int $postId
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getCategoriesFromPostId(int $postId): array
     {
@@ -118,7 +118,7 @@ class CategoryManager extends Manager
      * Get all categories from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {

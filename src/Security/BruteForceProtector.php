@@ -3,7 +3,7 @@
 namespace Application\Security;
 
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Model\Entity\ConnectionTry;
 use Model\Manager\ConnectionTryManager;
 
@@ -42,7 +42,7 @@ class BruteForceProtector
             $connectionTry->setLastTry(date(self::MYSQL_DATE_FORMAT));
             $connectionTryManager->edit($connectionTry);
 
-        } catch (BlogException $e) {
+        } catch (HttpException $e) {
             $connectionTry = new ConnectionTry([
                 'user' => $userKey,
                 'lastTry' => date(self::MYSQL_DATE_FORMAT),
@@ -65,7 +65,7 @@ class BruteForceProtector
         try {
             $connectionTry = $connectionTryManager->get(null, $userKey);
             $connectionTryManager->delete($connectionTry->getId());
-        } catch (BlogException $e) {
+        } catch (HttpException $e) {
             // Nothing to do, the user is not registered
         }
     }
