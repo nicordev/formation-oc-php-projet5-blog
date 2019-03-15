@@ -4,7 +4,7 @@ namespace Model\Manager;
 
 
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Exception;
 use Model\Entity\ConnectionTry;
 use PDO;
@@ -67,7 +67,7 @@ class ConnectionTryManager extends Manager
      * @param string|null $user
      * @return ConnectionTry
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $connectionTryId = null, ?string $user = null): ConnectionTry
     {
@@ -80,7 +80,7 @@ class ConnectionTryManager extends Manager
             if ($connectionTryData) {
                 return $this->createEntityFromTableData($connectionTryData, 'ConnectionTry');
             }
-            throw new BlogException('The ConnectionTry of ' . $user . ' was not found in the database');
+            throw new HttpException('The ConnectionTry of ' . $user . ' was not found in the database', 500);
 
         } else {
             throw new AppException('Lacks connectionTryId or user');
@@ -91,7 +91,7 @@ class ConnectionTryManager extends Manager
      * Get all ConnectionTries from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {
@@ -103,7 +103,7 @@ class ConnectionTryManager extends Manager
      *
      * @param ConnectionTry $newConnectionTry
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewConnectionTry(ConnectionTry $newConnectionTry): bool
     {
@@ -124,7 +124,7 @@ class ConnectionTryManager extends Manager
      *
      * @param int $user
      * @return mixed
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getId(int $user)
     {

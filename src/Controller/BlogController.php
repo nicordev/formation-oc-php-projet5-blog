@@ -84,7 +84,7 @@ class BlogController extends Controller
      *
      * @param int $categoryId
      * @param int|null $page
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -134,7 +134,7 @@ class BlogController extends Controller
      *
      * @param int $tagId
      * @param int|null $page
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -201,7 +201,7 @@ class BlogController extends Controller
                 self::convertDatesOfComment($comment);
             }
 
-        } catch (BlogException $e) {
+        } catch (HttpException $e) {
             throw new PageNotFoundException('This post do not exists.');
         }
 
@@ -217,7 +217,7 @@ class BlogController extends Controller
      *
      * @param string $message
      * @param array $yesNoForm
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -254,7 +254,7 @@ class BlogController extends Controller
      *
      * @param int $postToEditId
      * @param string $message
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -293,7 +293,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      */
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {
@@ -369,7 +369,7 @@ class BlogController extends Controller
     /**
      * Add a new post from $_POST and add associated tags
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -381,7 +381,6 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastEditorId($newPost->getAuthorId());
-        $messages = [];
 
         if ($newPost !== null) {
             $this->handleAPost($newPost, true);
@@ -394,7 +393,7 @@ class BlogController extends Controller
     /**
      * Edit an existing post from $_POST
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -403,8 +402,6 @@ class BlogController extends Controller
     public function editPost()
     {
         $modifiedPost = self::buildPostFromForm();
-        $tags = $modifiedPost->getTags();
-        $message = '';
 
         if ($modifiedPost !== null) {
             $this->handleAPost($modifiedPost, false);
@@ -417,7 +414,7 @@ class BlogController extends Controller
     /**
      * Delete a post from $_POST
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -439,7 +436,7 @@ class BlogController extends Controller
      * @param string|null $action
      * @return bool
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -506,10 +503,11 @@ class BlogController extends Controller
      *
      * @return void
      * @throws AccessException
-     * @throws BlogException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws HttpException
+     * @throws AccessException
      */
     public function editCategory()
     {
@@ -533,7 +531,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      * @throws AccessException
      */
     public function deleteCategory()
@@ -1042,7 +1040,7 @@ class BlogController extends Controller
      *
      * @param Post $postToHandle
      * @param bool $isNew
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime

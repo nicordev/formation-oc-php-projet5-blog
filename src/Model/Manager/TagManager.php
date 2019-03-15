@@ -74,7 +74,7 @@ class TagManager extends Manager
      * @param int|null $numberOfLines
      * @param int|null $start
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
@@ -86,7 +86,7 @@ class TagManager extends Manager
      *
      * @param Tag $newTag
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewTag(Tag $newTag): bool
     {
@@ -108,7 +108,7 @@ class TagManager extends Manager
      *
      * @param string $tagName
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getId(string $tagName)
     {

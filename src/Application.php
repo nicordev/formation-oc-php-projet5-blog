@@ -106,6 +106,8 @@ class Application
                 case 500:
                     $errorController->showError500();
                     break;
+                default:
+                    $errorController->showCustomError("Un bug ! Quelle horreur !");
             }
         }
     }

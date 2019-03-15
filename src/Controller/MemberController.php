@@ -5,7 +5,7 @@ namespace Controller;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Application\Exception\MemberException;
 use Application\Exception\CsrfSecurityException;
 use Application\MailSender\MailSender;
@@ -133,7 +133,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      * @throws Exception
      */
     public function showMemberProfile(?int $memberId = null)
@@ -164,7 +164,7 @@ class MemberController extends Controller
      * @param Member|null $member
      * @param int|null $keyValue
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -191,7 +191,7 @@ class MemberController extends Controller
             try {
                 $key = $this->keyManager->get(null, $keyValue);
                 $this->keyManager->delete($key->getId());
-            } catch (BlogException $e) {
+            } catch (HttpException $e) {
                 $this->showConnectionPage("La clé demandée n'existe plus. Relancez la procédure de récupération du mot de passe.");
             }
             $member = $this->memberManager->get($member->getId());
@@ -240,7 +240,7 @@ class MemberController extends Controller
      * Update the profile of a member
      *
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -285,7 +285,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function register()
     {
@@ -321,7 +321,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws AppException
      */
     public function connect()
@@ -364,7 +364,7 @@ class MemberController extends Controller
      * Send an email with a link to reset a password
      *
      * @param string $email
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -398,7 +398,7 @@ class MemberController extends Controller
      * Create a Member from a form with $_POST
      *
      * @return Member
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     private function buildMemberFromForm(): Member
     {
@@ -449,7 +449,7 @@ class MemberController extends Controller
      *
      * @param Member $member
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     private function addNewMember(Member $member): bool
     {

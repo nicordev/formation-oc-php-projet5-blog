@@ -90,7 +90,7 @@ class CommentManager extends Manager
      * Get all comments from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {
@@ -118,7 +118,7 @@ class CommentManager extends Manager
      *
      * @param int $postId
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getFromPost(int $postId): array
     {
@@ -149,7 +149,7 @@ class CommentManager extends Manager
      *
      * @param int $memberId
      * @return string|null
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getCommentMember(int $memberId): ?string
     {
@@ -170,7 +170,7 @@ class CommentManager extends Manager
      *
      * @param int $postId
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getPostTitle(int $postId)
     {
@@ -194,7 +194,7 @@ class CommentManager extends Manager
      * @param int|null $numberOfComments
      * @param int|null $start
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getCommentsOfAMember(int $memberId, bool $filterApproved = true, ?int $numberOfComments = null, ?int $start = null)
     {

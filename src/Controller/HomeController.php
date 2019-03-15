@@ -33,7 +33,7 @@ class HomeController extends Controller
      * Show the home page
      *
      * @param string|null $message
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -65,7 +65,7 @@ class HomeController extends Controller
     /**
      * Send a message to the admin
      *
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax

@@ -72,7 +72,7 @@ class RoleManager extends Manager
      * Get all roles from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {
@@ -84,7 +84,7 @@ class RoleManager extends Manager
      *
      * @param Role $newRole
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewRole(Role $newRole): bool
     {
@@ -106,7 +106,7 @@ class RoleManager extends Manager
      *
      * @param string $roleName
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getId(string $roleName)
     {
@@ -125,7 +125,7 @@ class RoleManager extends Manager
      *
      * @param string $role
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isValid(string $role): bool
     {
@@ -141,7 +141,7 @@ class RoleManager extends Manager
      * Get the names of the roles
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getRoleNames()
     {

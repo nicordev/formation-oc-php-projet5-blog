@@ -47,7 +47,7 @@ class MemberManager extends Manager
      *
      * @param Member $modifiedMember
      * @param bool $updateRoles
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws \ReflectionException
      */
     public function edit($modifiedMember, bool $updateRoles = true): void
@@ -76,7 +76,7 @@ class MemberManager extends Manager
      *
      * @param string $email
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getFromEmail(string $email): ?Member
     {
@@ -121,7 +121,7 @@ class MemberManager extends Manager
      * Get all members from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {
@@ -141,7 +141,7 @@ class MemberManager extends Manager
      *
      * @param Member $newMember
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewMember(Member $newMember): bool
     {
@@ -165,7 +165,7 @@ class MemberManager extends Manager
      * @param string|null $memberEmail
      * @return mixed
      * @throws AppException
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getId(string $memberName = null, string $memberEmail = null)
     {
@@ -193,7 +193,7 @@ class MemberManager extends Manager
      *
      * @param string $role
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getMembersByRole(string $role = 'member')
     {
@@ -222,7 +222,7 @@ class MemberManager extends Manager
      *
      * @param string $email
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function emailExists(string $email)
     {
@@ -244,7 +244,7 @@ class MemberManager extends Manager
      * @param int $memberId
      * @param bool $namesOnly
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAssociatedRoles(int $memberId, bool $namesOnly = true)
     {
@@ -274,7 +274,7 @@ class MemberManager extends Manager
      * Fill the table bl_role_member
      *
      * @param Member $member
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     private function associateMemberRoles(Member $member)
     {
