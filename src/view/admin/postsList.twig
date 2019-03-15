@@ -38,7 +38,11 @@
                         {% endif %}
                     </td>
                     <td scope="row">
-                        <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
+                        {% if post.getAuthorId %}
+                            <a href="/member-profile?id={{ post.getAuthorId }}">{{ post.getAuthorName }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
                     </td>
                     <td scope="row">
                         {% set postTags = post.getTags %}

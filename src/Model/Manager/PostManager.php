@@ -506,13 +506,16 @@ class PostManager extends Manager
      * @return mixed
      * @throws HttpException
      */
-    private function getMemberName(int $memberId)
+    private function getMemberName(?int $memberId)
     {
-        $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
+        if ($memberId) {
+            $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
 
-        $requestMemberName = $this->query($query, ['id' => $memberId]);
-        $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
+            $requestMemberName = $this->query($query, ['id' => $memberId]);
+            $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
 
-        return $memberNameData[0];
+            return $memberNameData[0];
+        }
+        return "Un ancien membre qui n'est plus des nôtres";
     }
 }

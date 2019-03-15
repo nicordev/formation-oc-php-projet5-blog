@@ -326,7 +326,7 @@ class BlogController extends Controller
 
         $comment = $this->commentManager->get($commentToEditId);
 
-        self::render(self::VIEW_COMMENT_EDITOR, [
+        $this->render(self::VIEW_COMMENT_EDITOR, [
             'commentToEdit' => $comment
         ]);
     }
@@ -413,7 +413,7 @@ class BlogController extends Controller
     {
         if ($tagIds === null || $tagNames === null) {
             if ($action === 'delete-all') {
-                $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
+                $this->tagManager->deleteAll();
                 // Head back to the admin panel
                 $this->showAdminPanel('Toutes les etiquettes ont été supprimées.');
             } else {
@@ -549,6 +549,15 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws HttpException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];
@@ -678,6 +687,7 @@ class BlogController extends Controller
      * @param array $tagNames
      * @return bool
      * @throws AppException
+     * @throws HttpException
      */
     private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)
     {
