@@ -151,18 +151,21 @@ class CommentManager extends Manager
      * @return string|null
      * @throws \Application\Exception\HttpException
      */
-    public function getCommentMember(int $memberId): ?string
+    public function getCommentMember(?int $memberId): ?string
     {
-        $member = null;
+        if ($memberId) {
+            $member = null;
 
-        $query = 'SELECT m_name FROM bl_member
+            $query = 'SELECT m_name FROM bl_member
             WHERE m_id = :id';
 
-        $requestAuthor = $this->query($query, ['id' => $memberId]);
+            $requestAuthor = $this->query($query, ['id' => $memberId]);
 
-        $member = $requestAuthor->fetch(PDO::FETCH_ASSOC);
+            $member = $requestAuthor->fetch(PDO::FETCH_ASSOC);
 
-        return $member['m_name'];
+            return $member['m_name'];
+        }
+        return "Un ancien membre qui n'est plus des nôtres";
     }
 
     /**

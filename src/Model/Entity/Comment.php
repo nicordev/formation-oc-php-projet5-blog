@@ -159,7 +159,7 @@ class Comment extends Entity
     /**
      * @param int $authorId
      */
-    public function setAuthorId(int $authorId): void
+    public function setAuthorId(?int $authorId): void
     {
         $this->authorId = $authorId;
     }
