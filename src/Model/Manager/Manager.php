@@ -91,9 +91,9 @@ abstract class Manager
     public function add(Entity $entity): void
     {
         $properties = self::getEntityProperties($entity);
-        $fields = $this->filterEmptyFields($entity);
+        $fullFields = $this->filterEmptyFields($entity);
 
-        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
+        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fullFields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
         $this->query($query, $properties);
@@ -109,11 +109,11 @@ abstract class Manager
     public function edit(Entity $modifiedEntity): void
     {
         $properties = self::getEntityProperties($modifiedEntity);
-        $fields = $this->filterEmptyFields($modifiedEntity);
+        $fullFields = $this->filterEmptyFields($modifiedEntity);
 
         $query = 'UPDATE ' . $this->tableName . '
-            SET ' . self::buildSqlSet($fields) . '
-            WHERE ' . $fields['id'] . ' = :id';
+            SET ' . self::buildSqlSet($fullFields) . '
+            WHERE ' . $fullFields['id'] . ' = :id';
 
         $this->query($query, $properties);
     }
@@ -199,9 +199,7 @@ abstract class Manager
         $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestLastId = $this->query($query);
 
-        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
-
-        return $lastId;
+        return (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**
@@ -215,9 +213,7 @@ abstract class Manager
         $query = 'SELECT COUNT(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestCount = $this->query($query);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
 
@@ -316,9 +312,7 @@ abstract class Manager
     {
         $class = explode('\\', get_called_class());
         $class = end($class);
-        $class = self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
-
-        return $class;
+        return self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
     }
 
     /**
@@ -329,9 +323,7 @@ abstract class Manager
      */
     private static function getManagerClass(string $entityClassName): string
     {
-        $class = __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
-
-        return $class;
+        return __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
     }
 
     /**
@@ -360,23 +352,23 @@ abstract class Manager
      */
     private function filterEmptyFields(Entity $entity)
     {
-        $fields = [];
+        $entityFields = [];
 
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
             if (self::isAMethodOf($entity, $getter)) {
                 if ($entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             } else {
                 $getter = 'is' . ucfirst($key);
                 if (self::isAMethodOf($entity, $getter) && $entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             }
         }
 
-        return $fields;
+        return $entityFields;
     }
 
     /**

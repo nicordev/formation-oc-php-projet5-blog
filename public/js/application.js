@@ -182,11 +182,10 @@ var myApp = {
          */
         createDeleteBtnElt: function (smallBtn = false)
         {
-            if (smallBtn) {
-                var deleteBtnClass = 'btn sign-btn-small';
+            var deleteBtnClass = 'btn sign-btn';
 
-            } else {
-                var deleteBtnClass = 'btn sign-btn';
+            if (smallBtn) {
+                deleteBtnClass = 'btn sign-btn-small';
             }
 
             let deleteBtnElt = document.createElement('span');

@@ -167,7 +167,7 @@ CREATE TABLE bl_comment(
                            com_id INT UNSIGNED AUTO_INCREMENT,
                            com_parent_id_fk INT UNSIGNED,
                            com_post_id_fk INT UNSIGNED NOT NULL,
-                           com_author_id_fk INT UNSIGNED NOT NULL,
+                           com_author_id_fk INT UNSIGNED,
                            com_last_editor_id_fk INT UNSIGNED,
                            com_creation_date DATETIME NOT NULL,
                            com_last_modification_date DATETIME,
@@ -187,7 +187,7 @@ CREATE TABLE bl_comment(
                                FOREIGN KEY (com_author_id_fk)
                                    REFERENCES bl_member(m_id)
                                    ON UPDATE CASCADE
-                                   ON DELETE CASCADE,
+                                   ON DELETE SET NULL,
 
                            CONSTRAINT fk_com_post_id_p_id
                                FOREIGN KEY (com_post_id_fk)
@@ -199,9 +199,13 @@ CREATE TABLE bl_comment(
                                FOREIGN KEY (com_last_editor_id_fk)
                                    REFERENCES bl_member(m_id)
                                    ON UPDATE CASCADE
-                                   ON DELETE CASCADE
+                                   ON DELETE SET NULL
 )
     ENGINE = InnoDB;
+
+
+
+
 
 
 

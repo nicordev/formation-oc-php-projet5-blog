@@ -130,14 +130,11 @@ class Router
 
                 if (isset($_GET['action']) && !empty($_GET['action'])) {
                     CsrfProtector::checkCsrf();
-                    switch ($_GET['action']) {
-                        case 'update':
-                            $method = 'updateProfile';
-                            break;
-                        case 'delete':
-                            $method = 'deleteMember';
-                            $params = ['id' => $_POST['id']];
-                            break;
+                    if ($_GET['action'] === 'update') {
+                        $method = 'updateProfile';
+                    } elseif ($_GET['action'] === 'delete') {
+                        $method = 'deleteMember';
+                        $params = ['id' => $_POST['id']];
                     }
                 }
                 break;

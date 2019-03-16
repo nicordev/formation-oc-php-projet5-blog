@@ -26,39 +26,6 @@ class KeyManager extends Manager
     }
 
     /**
-     * Add a new key in the database
-     *
-     * @param Key $newKey
-     * @throws Exception
-     */
-    public function add($newKey): void
-    {
-        parent::add($newKey);
-    }
-
-    /**
-     * Edit a key in the database
-     *
-     * @param Key $modifiedKey
-     * @throws Exception
-     */
-    public function edit($modifiedKey): void
-    {
-        parent::edit($modifiedKey);
-    }
-
-    /**
-     * Delete a key in the database
-     *
-     * @param int $keyId
-     * @throws Exception
-     */
-    public function delete(int $keyId): void
-    {
-        parent::delete($keyId);
-    }
-
-    /**
      * Get a key from the database
      *
      * @param int $keyId
@@ -83,17 +50,6 @@ class KeyManager extends Manager
         } else {
             throw new AppException('Lacks keyId or keyValue');
         }
-    }
-
-    /**
-     * Get all keys from the database
-     *
-     * @return array
-     * @throws \Application\Exception\HttpException
-     */
-    public function getAll(): array
-    {
-        return parent::getAll();
     }
 
     /**
@@ -132,8 +88,6 @@ class KeyManager extends Manager
             'key' => $keyValue
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

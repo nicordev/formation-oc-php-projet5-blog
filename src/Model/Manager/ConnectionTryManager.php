@@ -28,39 +28,6 @@ class ConnectionTryManager extends Manager
     }
 
     /**
-     * Add a new ConnectionTry in the database
-     *
-     * @param ConnectionTry $newConnectionTry
-     * @throws Exception
-     */
-    public function add($newConnectionTry): void
-    {
-        parent::add($newConnectionTry);
-    }
-
-    /**
-     * Edit a ConnectionTry in the database
-     *
-     * @param ConnectionTry $modifiedConnectionTry
-     * @throws Exception
-     */
-    public function edit($modifiedConnectionTry): void
-    {
-        parent::edit($modifiedConnectionTry);
-    }
-
-    /**
-     * Delete a ConnectionTry in the database
-     *
-     * @param int $connectionTryId
-     * @throws Exception
-     */
-    public function delete(int $connectionTryId): void
-    {
-        parent::delete($connectionTryId);
-    }
-
-    /**
      * Get a ConnectionTry from the database
      *
      * @param int $connectionTryId
@@ -85,17 +52,6 @@ class ConnectionTryManager extends Manager
         } else {
             throw new AppException('Lacks connectionTryId or user');
         }
-    }
-
-    /**
-     * Get all ConnectionTries from the database
-     *
-     * @return array
-     * @throws \Application\Exception\HttpException
-     */
-    public function getAll(): array
-    {
-        return parent::getAll();
     }
 
     /**
@@ -133,8 +89,6 @@ class ConnectionTryManager extends Manager
             'connectionTryUser' => $user
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

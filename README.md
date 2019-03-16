@@ -6,9 +6,9 @@ Contains UML diagrams and the files of the website.
 
 ## Diagrams
 
-You'll find them in the *uml_diagrams* folder.
+You'll find them in the **uml_diagrams** folder.
 
-The *.pdf* file contains the diagrams:
+The `.pdf` file contains the diagrams:
 * class diagram
 * use case diagram
 * sequence diagram
@@ -17,12 +17,15 @@ The *.pdf* file contains the diagrams:
     * add an article
     * update member profile
 
-The *.xml* file is for *draw.io*.
+The `.xml` file is for `draw.io`.
+
+You'll find a file `p5_mpd.png` in the **database** folder which shows a diagram of the database.
 
 ## Setup
 
 1. Clone the project
 2. Create the database using the file **database/p5_create_db.sql**
-3. *Optional: you can insert the set of demo data in the database with **database/insert_data.sql***
-4. Run `composer install`
-5. Enjoy
+3. Create the tables using the file **database/p5_tables.sql**
+4. *Optional: you can insert a set of demo data in the database with **database/p5_sample_data.sql***
+5. Run `composer install`
+6. Enjoy
