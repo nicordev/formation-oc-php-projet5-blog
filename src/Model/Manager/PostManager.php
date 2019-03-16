@@ -403,9 +403,7 @@ class PostManager extends Manager
 
         $requestCount = $this->query($query, ['categoryId' => $categoryId]);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**
@@ -423,9 +421,7 @@ class PostManager extends Manager
 
         $requestCount = $this->query($query, ['tagId' => $tagId]);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
     // Private

@@ -88,8 +88,6 @@ class KeyManager extends Manager
             'key' => $keyValue
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

@@ -199,9 +199,7 @@ abstract class Manager
         $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestLastId = $this->query($query);
 
-        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
-
-        return $lastId;
+        return (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**
@@ -215,9 +213,7 @@ abstract class Manager
         $query = 'SELECT COUNT(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestCount = $this->query($query);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
 
@@ -316,9 +312,7 @@ abstract class Manager
     {
         $class = explode('\\', get_called_class());
         $class = end($class);
-        $class = self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
-
-        return $class;
+        return self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
     }
 
     /**
@@ -329,9 +323,7 @@ abstract class Manager
      */
     private static function getManagerClass(string $entityClassName): string
     {
-        $class = __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
-
-        return $class;
+        return __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
     }
 
     /**

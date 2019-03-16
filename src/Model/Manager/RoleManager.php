@@ -59,9 +59,7 @@ class RoleManager extends Manager
             'role' => $roleName
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**

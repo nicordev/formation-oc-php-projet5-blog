@@ -25,20 +25,6 @@ class CategoryManager extends Manager
     }
 
     /**
-     * Get a category from the database
-     *
-     * @param int $categoryId
-     * @return Category
-     * @throws Exception
-     */
-    public function get(int $categoryId): Category
-    {
-        $category = parent::get($categoryId);
-
-        return $category;
-    }
-
-    /**
      * Get a category from its name
      *
      * @param string $categoryName
@@ -77,19 +63,6 @@ class CategoryManager extends Manager
         foreach ($categoryIds as $categoryId) {
             $categories[] = $this->get($categoryId['ct_category_id_fk']);
         }
-
-        return $categories;
-    }
-
-    /**
-     * Get all categories from the database
-     *
-     * @return array
-     * @throws \Application\Exception\HttpException
-     */
-    public function getAll(): array
-    {
-        $categories = parent::getAll();
 
         return $categories;
     }
