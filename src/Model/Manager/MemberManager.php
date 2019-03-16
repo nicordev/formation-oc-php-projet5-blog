@@ -61,17 +61,6 @@ class MemberManager extends Manager
     }
 
     /**
-     * Delete a member in the database
-     *
-     * @param int $memberId
-     * @throws Exception
-     */
-    public function delete(int $memberId): void
-    {
-        parent::delete($memberId);
-    }
-
-    /**
      * Get a member from its email
      *
      * @param string $email

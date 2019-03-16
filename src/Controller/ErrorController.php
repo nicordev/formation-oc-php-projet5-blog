@@ -11,11 +11,6 @@ class ErrorController extends Controller
     const VIEW_500 = 'error/serverError.twig';
     const VIEW_CUSTOM = 'error/customError.twig';
 
-    public function __construct(Twig_Environment $twig)
-    {
-        parent::__construct($twig);
-    }
-
     /**
      * Show a page for errors 404 (Not Found)
      *

@@ -34,39 +34,6 @@ class CommentManager extends Manager
     }
 
     /**
-     * Add a new comment in the database
-     *
-     * @param Comment $newComment
-     * @throws Exception
-     */
-    public function add($newComment): void
-    {
-        parent::add($newComment);
-    }
-
-    /**
-     * Edit a comment in the database
-     *
-     * @param Comment $modifiedComment
-     * @throws Exception
-     */
-    public function edit($modifiedComment): void
-    {
-        parent::edit($modifiedComment);
-    }
-
-    /**
-     * Delete a comment in the database
-     *
-     * @param int $commentId
-     * @throws Exception
-     */
-    public function delete(int $commentId): void
-    {
-        parent::delete($commentId);
-    }
-
-    /**
      * Get a comment from the database
      *
      * @param int $commentId

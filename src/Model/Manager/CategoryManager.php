@@ -25,39 +25,6 @@ class CategoryManager extends Manager
     }
 
     /**
-     * Add a new category in the database
-     *
-     * @param Category $newCategory
-     * @throws Exception
-     */
-    public function add($newCategory): void
-    {
-        parent::add($newCategory);
-    }
-
-    /**
-     * Edit a category in the database
-     *
-     * @param Category $modifiedCategory
-     * @throws Exception
-     */
-    public function edit($modifiedCategory): void
-    {
-        parent::edit($modifiedCategory);
-    }
-
-    /**
-     * Delete a category in the database
-     *
-     * @param int $categoryId
-     * @throws Exception
-     */
-    public function delete(int $categoryId): void
-    {
-        parent::delete($categoryId);
-    }
-
-    /**
      * Get a category from the database
      *
      * @param int $categoryId
@@ -140,8 +107,4 @@ class CategoryManager extends Manager
 
         return new Category($attributes);
     }
-    
-    // Private
-
-
 }

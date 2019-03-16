@@ -90,17 +90,6 @@ class PostManager extends Manager
     }
 
     /**
-     * Delete a post in the database
-     *
-     * @param int $postId
-     * @throws HttpException
-     */
-    public function delete(int $postId): void
-    {
-        parent::delete($postId);
-    }
-
-    /**
      * Get a post from the database
      *
      * @param int $postId

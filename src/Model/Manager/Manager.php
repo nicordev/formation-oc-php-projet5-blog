@@ -91,9 +91,9 @@ abstract class Manager
     public function add(Entity $entity): void
     {
         $properties = self::getEntityProperties($entity);
-        $fields = $this->filterEmptyFields($entity);
+        $fullFields = $this->filterEmptyFields($entity);
 
-        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
+        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fullFields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
         $this->query($query, $properties);
@@ -109,11 +109,11 @@ abstract class Manager
     public function edit(Entity $modifiedEntity): void
     {
         $properties = self::getEntityProperties($modifiedEntity);
-        $fields = $this->filterEmptyFields($modifiedEntity);
+        $fullFields = $this->filterEmptyFields($modifiedEntity);
 
         $query = 'UPDATE ' . $this->tableName . '
-            SET ' . self::buildSqlSet($fields) . '
-            WHERE ' . $fields['id'] . ' = :id';
+            SET ' . self::buildSqlSet($fullFields) . '
+            WHERE ' . $fullFields['id'] . ' = :id';
 
         $this->query($query, $properties);
     }
@@ -360,23 +360,23 @@ abstract class Manager
      */
     private function filterEmptyFields(Entity $entity)
     {
-        $fields = [];
+        $entityFields = [];
 
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
             if (self::isAMethodOf($entity, $getter)) {
                 if ($entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             } else {
                 $getter = 'is' . ucfirst($key);
                 if (self::isAMethodOf($entity, $getter) && $entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             }
         }
 
-        return $fields;
+        return $entityFields;
     }
 
     /**

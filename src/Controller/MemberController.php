@@ -67,35 +67,12 @@ class MemberController extends Controller
     public static function verifyAccess(?array $authorizedRoles = null): bool
     {
         if (MemberController::memberConnected()) {
-            if ($authorizedRoles) {
-                foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                    if (in_array($role, $authorizedRoles)) {
-                        return true;
-                    }
-                }
-            } else {
-                foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                    if (in_array($role, self::AUTHORIZED_ROLES)) {
-                        return true;
-                    }
-                }
+            if (self::hasAuthorizedRole($authorizedRoles ?? self::AUTHORIZED_ROLES, $_SESSION['connected-member']->getRoles())) {
+                return true;
             }
             throw new AccessException('Access denied. You lack the proper role.');
         }
         throw new AccessException('Access denied. You are not connected.');
-    }
-
-    /**
-     * Check if the user is connected
-     *
-     * @return bool
-     */
-    public static function isConnected(): bool
-    {
-        if (isset($_SESSION['connected-member']) && !empty($_SESSION['connected-member'])) {
-            return true;
-        }
-        return false;
     }
 
     // Views
@@ -458,7 +435,7 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
-        } elseif (self::isConnected()) {
+        } elseif (self::memberConnected()) {
             $member->setId($_SESSION['connected-member']->getId());
         }
 
@@ -497,5 +474,21 @@ class MemberController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Check if a role is in the authorized roles
+     *
+     * @param array $rolesToCheck
+     * @param array $authorizedRoles
+     * @return bool
+     */
+    private static function hasAuthorizedRole(array $rolesToCheck, array $authorizedRoles)
+    {
+        foreach ($rolesToCheck as $roleToCheck) {
+            if (in_array($roleToCheck, $authorizedRoles)) {
+                return true;
+            }
+        }
     }
 }

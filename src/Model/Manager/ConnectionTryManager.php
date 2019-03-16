@@ -88,17 +88,6 @@ class ConnectionTryManager extends Manager
     }
 
     /**
-     * Get all ConnectionTries from the database
-     *
-     * @return array
-     * @throws \Application\Exception\HttpException
-     */
-    public function getAll(): array
-    {
-        return parent::getAll();
-    }
-
-    /**
      * Check if a ConnectionTry is new
      *
      * @param ConnectionTry $newConnectionTry
