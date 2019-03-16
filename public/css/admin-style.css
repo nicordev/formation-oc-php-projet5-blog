@@ -137,20 +137,13 @@ footer ul li a, footer ul li a:hover {
 }
 
 .image-to-edit-wrapper {
-    margin: 50px;
+
 }
 
 #new-tag-input {
     font-size: 0.75em;
 }
 
-#crop-frame {
-    position: relative;
-    border: 5px solid limegreen;
-    z-index: 1000;
-}
-
-#image-to-edit {
-    position: relative;
-    z-index: 1;
+#image-preview {
+    background-repeat: no-repeat;
 }

@@ -119,6 +119,17 @@ class DIC
         });
         $twig->addFunction($getCurrentUrl);
 
+        // Get the size of an image
+        $getImageSize = new Twig_Function('getImageSize', function (string $imageUrl) {
+            if ($imageData = getimagesize(ROOT_PATH . $imageUrl)) {
+                return [
+                    'width' => $imageData[0],
+                    'height' =>$imageData[1]
+                ];
+            }
+        });
+        $twig->addFunction($getImageSize);
+
         return $twig;
     }
 }

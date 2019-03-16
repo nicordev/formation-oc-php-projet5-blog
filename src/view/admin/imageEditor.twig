@@ -1,5 +1,7 @@
 {% extends 'admin/adminLayout.twig' %}
 
+{% set imageSize = getImageSize(imagePath) %}
+
 {# head #}
 {% block title %}
     Editeur d'image
@@ -13,6 +15,7 @@
 {% block content %}
     <section class="blog-admin row">
         {% include "message.twig" %}
+        {# Commands #}
         <div class="col-12 col-lg-6">
             <div>
                 {# Cancel button #}
@@ -46,8 +49,8 @@
 
                     <h5>Redimensionner</h5>
                     <div class="row">
-                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" id="resize-width" name="resize-width" placeholder="Largeur">
-                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" id="resize-height" name="resize-height" placeholder="Hauteur">
+                        <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" id="resize-width" name="resize-width" value="{{ imageSize.width }}" placeholder="Largeur">
+                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" id="resize-height" name="resize-height" value="{{ imageSize.height }}" placeholder="Hauteur">
                     </div>
 
                     <h5>Rogner</h5>
@@ -69,15 +72,9 @@
         </div>
 
         {# Sample #}
-        <div class="image-to-edit-wrapper">
+        <div class="image-to-edit-wrapper col-12 col-lg-6">
             <div id="image-info"></div>
-            <figure class="position-absolute">
-                <div id="crop-frame"></div>
-                <img id="image-to-edit" src="{{ imagePath }}" alt="L'image à modifier">
-                {# Another way with one div:
-                <div id="crop-frame" style="background-image: url({{ imagePath }})"></div>
-                #}
-            </figure>
+            <div id="image-preview" style="background-image: url({{ imagePath }}); width: {{ imageSize.width }}px; height: {{ imageSize.height }}px"></div>
         </div>
     </section>
 {% endblock %}
@@ -87,9 +84,7 @@
     {# Image info #}
     <script src="/public/js/elementInfo.js"></script>
     <script>
-        myElementInfo.show("image-info", "image-to-edit");
-        document.getElementById('resize-width').value = myElementInfo.width('image-to-edit');
-        document.getElementById('resize-height').value = myElementInfo.height('image-to-edit');
+        myElementInfo.show("image-info", "image-preview");
     </script>
     {# Crop frame #}
     <script src="/public/js/cropFrame.js"></script>
