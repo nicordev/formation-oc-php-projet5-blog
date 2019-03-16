@@ -52,6 +52,11 @@
                         <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" id="resize-width" name="resize-width" value="{{ imageSize.width }}" placeholder="Largeur">
                         <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" id="resize-height" name="resize-height" value="{{ imageSize.height }}" placeholder="Hauteur">
                     </div>
+                    <input class="btn btn-primary" type="submit" value="Redimensionner">
+                </form>
+
+                <form action="/admin/image-editor/edit" method="post">
+                    <input type="hidden" name="path" value="{{ imagePath }}">
 
                     <h5>Rogner</h5>
                     <h6>Point de départ</h6>
@@ -64,9 +69,7 @@
                         <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-width" name="crop-width" placeholder="Largeur">
                             <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-height" name="crop-height" placeholder="Hauteur">
                     </div>
-
-                    <button class="btn btn-primary" type="button">Prévisualiser</button>
-                    <input class="btn btn-primary" type="submit" value="Enregistrer">
+                    <input class="btn btn-primary" type="submit" value="Rogner">
                 </form>
             </div>
         </div>
