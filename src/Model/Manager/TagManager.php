@@ -24,69 +24,11 @@ class TagManager extends Manager
     }
 
     /**
-     * Add a new tag in the database
-     *
-     * @param Tag $newTag
-     * @throws Exception
-     */
-    public function add($newTag): void
-    {
-        parent::add($newTag);
-    }
-
-    /**
-     * Edit a tag in the database
-     *
-     * @param Tag $modifiedTag
-     * @throws Exception
-     */
-    public function edit($modifiedTag): void
-    {
-        parent::edit($modifiedTag);
-    }
-
-    /**
-     * Delete a tag in the database
-     *
-     * @param int $tagId
-     * @throws Exception
-     */
-    public function delete(int $tagId): void
-    {
-        parent::delete($tagId);
-    }
-
-    /**
-     * Get a tag from the database
-     *
-     * @param int $tagId
-     * @return Tag
-     * @throws Exception
-     */
-    public function get(int $tagId): Tag
-    {
-        return parent::get($tagId);
-    }
-
-    /**
-     * Get all tags from the database
-     *
-     * @param int|null $numberOfLines
-     * @param int|null $start
-     * @return array
-     * @throws \Application\Exception\BlogException
-     */
-    public function getAll(?int $numberOfLines = null, ?int $start = null): array
-    {
-        return parent::getAll($numberOfLines, $start);
-    }
-
-    /**
      * Check if a tag is new
      *
      * @param Tag $newTag
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewTag(Tag $newTag): bool
     {
@@ -108,7 +50,7 @@ class TagManager extends Manager
      *
      * @param string $tagName
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getId(string $tagName)
     {
@@ -117,8 +59,6 @@ class TagManager extends Manager
             'tag' => $tagName
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

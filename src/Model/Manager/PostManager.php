@@ -13,7 +13,7 @@ use Model\Entity\Category;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use \PDO;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 
 class PostManager extends Manager
 {
@@ -46,7 +46,7 @@ class PostManager extends Manager
      * Add a new blog post in the database
      *
      * @param Post $newPost
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function add($newPost): void
@@ -73,7 +73,7 @@ class PostManager extends Manager
      * Edit a blog post in the database
      *
      * @param Post $modifiedPost
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function edit($modifiedPost): void
@@ -90,22 +90,11 @@ class PostManager extends Manager
     }
 
     /**
-     * Delete a post in the database
-     *
-     * @param int $postId
-     * @throws BlogException
-     */
-    public function delete(int $postId): void
-    {
-        parent::delete($postId);
-    }
-
-    /**
      * Get a post from the database
      *
      * @param int $postId
      * @return Post
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $postId): Post
     {
@@ -130,7 +119,7 @@ class PostManager extends Manager
      *
      * @param int $postId
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getTagsOfAPost(int $postId): array
     {
@@ -158,7 +147,7 @@ class PostManager extends Manager
      *
      * @param int $postId
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getCategoriesOfAPost(int $postId): array
     {
@@ -183,7 +172,7 @@ class PostManager extends Manager
      * Set the author and editor names of a post
      *
      * @param Post $post
-     * @throws BlogException
+     * @throws HttpException
      */
     public function setMembersOfAPost(Post $post)
     {
@@ -204,7 +193,7 @@ class PostManager extends Manager
      * @param int|null $numberOfLines
      * @param int|null $start
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
@@ -225,7 +214,7 @@ class PostManager extends Manager
      *
      * @param int|null $categoryId
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getAllIds(?int $categoryId = null): array
     {
@@ -270,7 +259,7 @@ class PostManager extends Manager
      * @param int|null $start
      * @param bool $withContent
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getPostsOfACategory(int $categoryId, ?int $numberOfLines = null, ?int $start = null, bool $withContent = false)
     {
@@ -315,7 +304,7 @@ class PostManager extends Manager
      * @param int|null $start
      * @param bool $withContent
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getPostsOfATag(int $tagId, ?int $numberOfLines = null, ?int $start = null, bool $withContent = false)
     {
@@ -360,7 +349,7 @@ class PostManager extends Manager
      * @param int|null $numberOfPosts
      * @param int|null $start
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getPostsOfAMember(int $memberId, bool $getContent = false, bool $filterWithTags = true, ?int $numberOfPosts = null, ?int $start = null): array
     {
@@ -404,7 +393,7 @@ class PostManager extends Manager
      *
      * @param int $categoryId
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function countPostsOfACategory(int $categoryId): int
     {
@@ -414,9 +403,7 @@ class PostManager extends Manager
 
         $requestCount = $this->query($query, ['categoryId' => $categoryId]);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**
@@ -424,7 +411,7 @@ class PostManager extends Manager
      *
      * @param int $tagId
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function countPostsOfATag(int $tagId): int
     {
@@ -434,9 +421,7 @@ class PostManager extends Manager
 
         $requestCount = $this->query($query, ['tagId' => $tagId]);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
     // Private
@@ -446,7 +431,7 @@ class PostManager extends Manager
      *
      * @param Post $post
      * @param array $categories
-     * @throws BlogException
+     * @throws HttpException
      */
     private function associatePostAndCategories(Post $post, array $categories)
     {
@@ -475,7 +460,7 @@ class PostManager extends Manager
      *
      * @param Post $post
      * @param array $tags
-     * @throws BlogException
+     * @throws HttpException
      */
     private function associatePostAndTags(Post $post, array $tags)
     {
@@ -504,15 +489,18 @@ class PostManager extends Manager
      *
      * @param int $memberId
      * @return mixed
-     * @throws BlogException
+     * @throws HttpException
      */
-    private function getMemberName(int $memberId)
+    private function getMemberName(?int $memberId)
     {
-        $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
+        if ($memberId) {
+            $query = 'SELECT m_name FROM bl_member WHERE m_id = :id';
 
-        $requestMemberName = $this->query($query, ['id' => $memberId]);
-        $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
+            $requestMemberName = $this->query($query, ['id' => $memberId]);
+            $memberNameData = $requestMemberName->fetch(PDO::FETCH_NUM);
 
-        return $memberNameData[0];
+            return $memberNameData[0];
+        }
+        return "Un ancien membre qui n'est plus des nôtres";
     }
 }

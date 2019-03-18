@@ -59,10 +59,18 @@ class Post extends Entity
     }
 
     /**
+     * @param bool|null $namesOnly
      * @return array
      */
-    public function getCategories(): array
+    public function getCategories(?bool $namesOnly = false): array
     {
+        if ($namesOnly) {
+            $names = [];
+            foreach ($this->categories as $category) {
+                $names[] = $category->getName();
+            }
+            return $names;
+        }
         return $this->categories;
     }
 
@@ -85,7 +93,7 @@ class Post extends Entity
     /**
      * @param int $authorId
      */
-    public function setAuthorId(int $authorId): void
+    public function setAuthorId(?int $authorId): void
     {
         $this->authorId = $authorId;
     }
@@ -203,10 +211,18 @@ class Post extends Entity
     }
 
     /**
+     * @param bool|null $namesOnly
      * @return array
      */
-    public function getTags(): array
+    public function getTags(?bool $namesOnly = false): array
     {
+        if ($namesOnly) {
+            $names = [];
+            foreach ($this->tags as $tag) {
+                $names[] = $tag->getName();
+            }
+            return $names;
+        }
         return $this->tags;
     }
 

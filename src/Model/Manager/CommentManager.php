@@ -34,39 +34,6 @@ class CommentManager extends Manager
     }
 
     /**
-     * Add a new comment in the database
-     *
-     * @param Comment $newComment
-     * @throws Exception
-     */
-    public function add($newComment): void
-    {
-        parent::add($newComment);
-    }
-
-    /**
-     * Edit a comment in the database
-     *
-     * @param Comment $modifiedComment
-     * @throws Exception
-     */
-    public function edit($modifiedComment): void
-    {
-        parent::edit($modifiedComment);
-    }
-
-    /**
-     * Delete a comment in the database
-     *
-     * @param int $commentId
-     * @throws Exception
-     */
-    public function delete(int $commentId): void
-    {
-        parent::delete($commentId);
-    }
-
-    /**
      * Get a comment from the database
      *
      * @param int $commentId
@@ -90,7 +57,7 @@ class CommentManager extends Manager
      * Get all comments from the database
      *
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getAll(): array
     {
@@ -118,7 +85,7 @@ class CommentManager extends Manager
      *
      * @param int $postId
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getFromPost(int $postId): array
     {
@@ -149,20 +116,23 @@ class CommentManager extends Manager
      *
      * @param int $memberId
      * @return string|null
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
-    public function getCommentMember(int $memberId): ?string
+    public function getCommentMember(?int $memberId): ?string
     {
-        $member = null;
+        if ($memberId) {
+            $member = null;
 
-        $query = 'SELECT m_name FROM bl_member
+            $query = 'SELECT m_name FROM bl_member
             WHERE m_id = :id';
 
-        $requestAuthor = $this->query($query, ['id' => $memberId]);
+            $requestAuthor = $this->query($query, ['id' => $memberId]);
 
-        $member = $requestAuthor->fetch(PDO::FETCH_ASSOC);
+            $member = $requestAuthor->fetch(PDO::FETCH_ASSOC);
 
-        return $member['m_name'];
+            return $member['m_name'];
+        }
+        return "Un ancien membre qui n'est plus des nôtres";
     }
 
     /**
@@ -170,7 +140,7 @@ class CommentManager extends Manager
      *
      * @param int $postId
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getPostTitle(int $postId)
     {
@@ -194,7 +164,7 @@ class CommentManager extends Manager
      * @param int|null $numberOfComments
      * @param int|null $start
      * @return array
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getCommentsOfAMember(int $memberId, bool $filterApproved = true, ?int $numberOfComments = null, ?int $start = null)
     {

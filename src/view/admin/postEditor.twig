@@ -23,7 +23,7 @@
         <div class="editor-commands">
             {# Cancel button #}
             <div>
-                <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Annuler</button>
+                <button class="btn cancel-button" type="button" onclick="window.location = '/admin';">Retour</button>
             </div>
 
             {% if postToEdit %}
@@ -58,7 +58,7 @@
                 <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
 
                 <p>
-                    <input class="btn" type="submit" value="Publier l'article">
+                    <input class="btn" type="submit" value="Enregistrer l'article">
                 </p>
                 {# Post title #}
                 <p>
@@ -116,21 +116,6 @@
     <script src="/public/js/areYouSure.js"></script>
     <script>
         // Confirmation messages
-
-        /**
-         * Refresh the checked attribute
-         */
-        function refreshChecked(event)
-        {
-            var elt = event.target;
-
-            if (elt.hasAttribute('checked')) {
-                elt.removeAttribute('checked');
-            } else {
-                elt.setAttribute('checked', 'checked');
-            }
-        }
-
         // Delete the post
         var deleteFormElt = document.getElementById('delete-post-form');
         if (deleteFormElt) {
@@ -143,42 +128,6 @@
                 }
             });
         }
-
-        // Publish the post
-        var publishFormElt = document.getElementById('publish-post-form');
-        publishFormElt.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            if (!checkCategoriesBeforeSubmit()) {
-                areYouSure.show("Aucune catégorie n'a été sélectionnée. L'article n'apparaîtra pas sur le site. Continuer ?", submitForm);
-            }
-
-            function submitForm() {
-                event.target.submit();
-            }
-
-            function isChecked(element) {
-                return element.hasAttribute('checked');
-
-            }
-
-            /**
-             * Submit the form if there is at least one category selected
-             *
-             * @returns {boolean}
-             */
-            function checkCategoriesBeforeSubmit() {
-                var categoriesElts = document.getElementsByName('categories[]');
-
-                for (elt of categoriesElts) {
-                    if (isChecked(elt)) {
-                        submitForm();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
     </script>
     {# Character counter #}
     <script>

@@ -4,7 +4,7 @@ namespace Model\Manager;
 
 
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Exception;
 use Model\Entity\ConnectionTry;
 use PDO;
@@ -28,46 +28,13 @@ class ConnectionTryManager extends Manager
     }
 
     /**
-     * Add a new ConnectionTry in the database
-     *
-     * @param ConnectionTry $newConnectionTry
-     * @throws Exception
-     */
-    public function add($newConnectionTry): void
-    {
-        parent::add($newConnectionTry);
-    }
-
-    /**
-     * Edit a ConnectionTry in the database
-     *
-     * @param ConnectionTry $modifiedConnectionTry
-     * @throws Exception
-     */
-    public function edit($modifiedConnectionTry): void
-    {
-        parent::edit($modifiedConnectionTry);
-    }
-
-    /**
-     * Delete a ConnectionTry in the database
-     *
-     * @param int $connectionTryId
-     * @throws Exception
-     */
-    public function delete(int $connectionTryId): void
-    {
-        parent::delete($connectionTryId);
-    }
-
-    /**
      * Get a ConnectionTry from the database
      *
      * @param int $connectionTryId
      * @param string|null $user
      * @return ConnectionTry
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $connectionTryId = null, ?string $user = null): ConnectionTry
     {
@@ -80,7 +47,7 @@ class ConnectionTryManager extends Manager
             if ($connectionTryData) {
                 return $this->createEntityFromTableData($connectionTryData, 'ConnectionTry');
             }
-            throw new BlogException('The ConnectionTry of ' . $user . ' was not found in the database');
+            throw new HttpException('The ConnectionTry of ' . $user . ' was not found in the database', 500);
 
         } else {
             throw new AppException('Lacks connectionTryId or user');
@@ -88,22 +55,11 @@ class ConnectionTryManager extends Manager
     }
 
     /**
-     * Get all ConnectionTries from the database
-     *
-     * @return array
-     * @throws \Application\Exception\BlogException
-     */
-    public function getAll(): array
-    {
-        return parent::getAll();
-    }
-
-    /**
      * Check if a ConnectionTry is new
      *
      * @param ConnectionTry $newConnectionTry
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewConnectionTry(ConnectionTry $newConnectionTry): bool
     {
@@ -124,7 +80,7 @@ class ConnectionTryManager extends Manager
      *
      * @param int $user
      * @return mixed
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getId(int $user)
     {
@@ -133,8 +89,6 @@ class ConnectionTryManager extends Manager
             'connectionTryUser' => $user
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

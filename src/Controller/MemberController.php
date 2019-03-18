@@ -5,7 +5,7 @@ namespace Controller;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Application\Exception\MemberException;
 use Application\Exception\CsrfSecurityException;
 use Application\MailSender\MailSender;
@@ -36,6 +36,7 @@ class MemberController extends Controller
     public const VIEW_MEMBER_PROFILE = 'member/profilePage.twig';
     public const VIEW_MEMBER_PROFILE_EDITOR = 'member/profileEditor.twig';
     public const VIEW_PASSWORD_RECOVERY = 'member/passwordRecovery.twig';
+    public const VIEW_QUIT_PAGE = 'member/quitPage.twig';
 
     public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
@@ -66,18 +67,8 @@ class MemberController extends Controller
     public static function verifyAccess(?array $authorizedRoles = null): bool
     {
         if (MemberController::memberConnected()) {
-            if ($authorizedRoles) {
-                foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                    if (in_array($role, $authorizedRoles)) {
-                        return true;
-                    }
-                }
-            } else {
-                foreach ($_SESSION['connected-member']->getRoles() as $role) {
-                    if (in_array($role, self::AUTHORIZED_ROLES)) {
-                        return true;
-                    }
-                }
+            if (self::hasAuthorizedRole($authorizedRoles ?? self::AUTHORIZED_ROLES, $_SESSION['connected-member']->getRoles())) {
+                return true;
             }
             throw new AccessException('Access denied. You lack the proper role.');
         }
@@ -96,7 +87,7 @@ class MemberController extends Controller
      */
     public function showRegistrationPage(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_REGISTRATION, ['message' => $message]);
+        $this->render(self::VIEW_REGISTRATION, ['message' => $message]);
     }
 
     /**
@@ -109,7 +100,7 @@ class MemberController extends Controller
      */
     public function showConnectionPage(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_CONNECTION, [
+        $this->render(self::VIEW_CONNECTION, [
             'message' => $message
         ]);
     }
@@ -123,7 +114,7 @@ class MemberController extends Controller
      */
     public function showWelcomePage()
     {
-        echo $this->twig->render(self::VIEW_WELCOME);
+        $this->render(self::VIEW_WELCOME);
     }
 
     /**
@@ -133,7 +124,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      * @throws Exception
      */
     public function showMemberProfile(?int $memberId = null)
@@ -151,7 +142,7 @@ class MemberController extends Controller
             BlogController::convertDatesOfComment($memberComment);
         }
 
-        echo $this->twig->render(self::VIEW_MEMBER_PROFILE, [
+        $this->render(self::VIEW_MEMBER_PROFILE, [
             'member' => $member,
             'memberPosts' => $memberPosts,
             'memberComments' => $memberComments
@@ -164,7 +155,7 @@ class MemberController extends Controller
      * @param Member|null $member
      * @param int|null $keyValue
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -182,7 +173,7 @@ class MemberController extends Controller
                 $member = $this->memberManager->get((int) $member);
             }
 
-            echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
+            $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
                 'availableRoles' => $availableRoles
             ]);
@@ -191,13 +182,13 @@ class MemberController extends Controller
             try {
                 $key = $this->keyManager->get(null, $keyValue);
                 $this->keyManager->delete($key->getId());
-            } catch (BlogException $e) {
+            } catch (HttpException $e) {
                 $this->showConnectionPage("La clé demandée n'existe plus. Relancez la procédure de récupération du mot de passe.");
             }
             $member = $this->memberManager->get($member->getId());
             $_SESSION['connected-member'] = $member;
 
-            echo $this->twig->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
+            $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 'member' => $member,
                 'availableRoles' => $availableRoles
             ]);
@@ -229,9 +220,21 @@ class MemberController extends Controller
      */
     public function showPasswordRecovery(?string $message = null)
     {
-        echo $this->twig->render(self::VIEW_PASSWORD_RECOVERY, [
+        $this->render(self::VIEW_PASSWORD_RECOVERY, [
             'message' => $message
         ]);
+    }
+
+    /**
+     * Page shown when a member delete his account
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function showQuitPage()
+    {
+        $this->render(self::VIEW_QUIT_PAGE);
     }
 
     // Actions
@@ -240,7 +243,7 @@ class MemberController extends Controller
      * Update the profile of a member
      *
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -269,13 +272,23 @@ class MemberController extends Controller
         }
     }
 
+    /**
+     * Delete a member
+     *
+     * @param int $memberId
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteMember(int $memberId)
     {
         $this->memberManager->delete($memberId);
         if ($_SESSION['connected-member']->getId() === $memberId) {
             unset($_SESSION['connected-member']);
+            $this->render(self::VIEW_QUIT_PAGE);
+        } else {
+            header('Location: /admin#admin-member-list');
         }
-        header('Location: /home'); // TODO: make a dedicated page
     }
 
     /**
@@ -285,7 +298,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function register()
     {
@@ -321,7 +334,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws AppException
      */
     public function connect()
@@ -364,7 +377,7 @@ class MemberController extends Controller
      * Send an email with a link to reset a password
      *
      * @param string $email
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -398,7 +411,7 @@ class MemberController extends Controller
      * Create a Member from a form with $_POST
      *
      * @return Member
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     private function buildMemberFromForm(): Member
     {
@@ -422,7 +435,7 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
-        } else {
+        } elseif (self::memberConnected()) {
             $member->setId($_SESSION['connected-member']->getId());
         }
 
@@ -449,7 +462,7 @@ class MemberController extends Controller
      *
      * @param Member $member
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     private function addNewMember(Member $member): bool
     {
@@ -461,5 +474,21 @@ class MemberController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * Check if a role is in the authorized roles
+     *
+     * @param array $rolesToCheck
+     * @param array $authorizedRoles
+     * @return bool
+     */
+    private static function hasAuthorizedRole(array $rolesToCheck, array $authorizedRoles)
+    {
+        foreach ($rolesToCheck as $roleToCheck) {
+            if (in_array($roleToCheck, $authorizedRoles)) {
+                return true;
+            }
+        }
     }
 }

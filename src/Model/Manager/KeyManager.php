@@ -4,7 +4,7 @@ namespace Model\Manager;
 
 
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Exception;
 use Model\Entity\Key;
 use PDO;
@@ -26,46 +26,13 @@ class KeyManager extends Manager
     }
 
     /**
-     * Add a new key in the database
-     *
-     * @param Key $newKey
-     * @throws Exception
-     */
-    public function add($newKey): void
-    {
-        parent::add($newKey);
-    }
-
-    /**
-     * Edit a key in the database
-     *
-     * @param Key $modifiedKey
-     * @throws Exception
-     */
-    public function edit($modifiedKey): void
-    {
-        parent::edit($modifiedKey);
-    }
-
-    /**
-     * Delete a key in the database
-     *
-     * @param int $keyId
-     * @throws Exception
-     */
-    public function delete(int $keyId): void
-    {
-        parent::delete($keyId);
-    }
-
-    /**
      * Get a key from the database
      *
      * @param int $keyId
      * @param int|null $keyValue
      * @return Key
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $keyId = null, ?int $keyValue = null): Key
     {
@@ -78,7 +45,7 @@ class KeyManager extends Manager
             if ($keyData) {
                 return $this->createEntityFromTableData($keyData, 'Key');
             }
-            throw new BlogException('The key value ' . $keyValue . ' was not found in the database');
+            throw new HttpException('The key value ' . $keyValue . ' was not found in the database', 404);
 
         } else {
             throw new AppException('Lacks keyId or keyValue');
@@ -86,22 +53,11 @@ class KeyManager extends Manager
     }
 
     /**
-     * Get all keys from the database
-     *
-     * @return array
-     * @throws \Application\Exception\BlogException
-     */
-    public function getAll(): array
-    {
-        return parent::getAll();
-    }
-
-    /**
      * Check if a key is new
      *
      * @param Key $newKey
      * @return bool
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function isNewKey(Key $newKey): bool
     {
@@ -123,7 +79,7 @@ class KeyManager extends Manager
      *
      * @param int $keyValue
      * @return mixed
-     * @throws \Application\Exception\BlogException
+     * @throws \Application\Exception\HttpException
      */
     public function getId(int $keyValue)
     {
@@ -132,8 +88,6 @@ class KeyManager extends Manager
             'key' => $keyValue
         ]);
 
-        $id = (int) $requestId->fetch(PDO::FETCH_NUM)[0];
-
-        return $id;
+        return (int) $requestId->fetch(PDO::FETCH_NUM)[0];
     }
 }

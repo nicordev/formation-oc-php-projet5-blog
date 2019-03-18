@@ -157,6 +157,20 @@ var myApp = {
     },
 
     /**
+     * Refresh the checked attribute
+     */
+    refreshChecked: function (event)
+    {
+        var elt = event.target;
+
+        if (elt.hasAttribute('checked')) {
+            elt.removeAttribute('checked');
+        } else {
+            elt.setAttribute('checked', 'checked');
+        }
+    },
+
+    /**
      * Methods to create DOM elements
      */
     elementBuilder: {
@@ -168,11 +182,10 @@ var myApp = {
          */
         createDeleteBtnElt: function (smallBtn = false)
         {
-            if (smallBtn) {
-                var deleteBtnClass = 'btn sign-btn-small';
+            var deleteBtnClass = 'btn sign-btn';
 
-            } else {
-                var deleteBtnClass = 'btn sign-btn';
+            if (smallBtn) {
+                deleteBtnClass = 'btn sign-btn-small';
             }
 
             let deleteBtnElt = document.createElement('span');

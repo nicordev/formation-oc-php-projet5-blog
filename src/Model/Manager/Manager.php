@@ -2,7 +2,7 @@
 
 namespace Model\Manager;
 
-use Application\Exception\BlogException;
+use Application\Exception\HttpException;
 use Exception;
 use Model\Entity\Entity;
 use \PDO;
@@ -85,15 +85,15 @@ abstract class Manager
      * Add an Entity in the database
      *
      * @param Entity $entity
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function add(Entity $entity): void
     {
         $properties = self::getEntityProperties($entity);
-        $fields = $this->filterEmptyFields($entity);
+        $fullFields = $this->filterEmptyFields($entity);
 
-        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fields) . ')
+        $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fullFields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
         $this->query($query, $properties);
@@ -103,17 +103,17 @@ abstract class Manager
      * Edit an Entity in the database
      *
      * @param Entity $modifiedEntity
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      */
     public function edit(Entity $modifiedEntity): void
     {
         $properties = self::getEntityProperties($modifiedEntity);
-        $fields = $this->filterEmptyFields($modifiedEntity);
+        $fullFields = $this->filterEmptyFields($modifiedEntity);
 
         $query = 'UPDATE ' . $this->tableName . '
-            SET ' . self::buildSqlSet($fields) . '
-            WHERE ' . $fields['id'] . ' = :id';
+            SET ' . self::buildSqlSet($fullFields) . '
+            WHERE ' . $fullFields['id'] . ' = :id';
 
         $this->query($query, $properties);
     }
@@ -122,7 +122,7 @@ abstract class Manager
      * Delete a line in the table
      *
      * @param int $entityId
-     * @throws BlogException
+     * @throws HttpException
      */
     public function delete(int $entityId)
     {
@@ -146,7 +146,7 @@ abstract class Manager
      *
      * @param int $entityId
      * @return mixed
-     * @throws BlogException
+     * @throws HttpException
      */
     public function get(int $entityId)
     {
@@ -157,7 +157,7 @@ abstract class Manager
         if ($tableData) {
             return $this->createEntityFromTableData($tableData);
         }
-        throw new BlogException('The id ' . $entityId . ' was not found in the database');
+        throw new HttpException('The id ' . $entityId . ' was not found in the database', 500);
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class Manager
      * @param int|null $numberOfLines
      * @param int|null $start
      * @return array
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
@@ -192,32 +192,28 @@ abstract class Manager
      * Get the last id.
      *
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function getLastId(): int
     {
         $query = 'SELECT MAX(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestLastId = $this->query($query);
 
-        $lastId = (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
-
-        return $lastId;
+        return (int) $requestLastId->fetch(PDO::FETCH_NUM)[0];
     }
 
     /**
      * Count the number of lines
      *
      * @return int
-     * @throws BlogException
+     * @throws HttpException
      */
     public function countLines(): int
     {
         $query = 'SELECT COUNT(' . $this->fields['id'] . ') FROM ' . $this->tableName;
         $requestCount = $this->query($query);
 
-        $count = (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
-
-        return $count;
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
 
 
@@ -261,7 +257,7 @@ abstract class Manager
      * @param string $query
      * @param array $params
      * @return bool|\PDOStatement
-     * @throws BlogException
+     * @throws HttpException
      */
     protected function query(string $query, ?array $params = null)
     {
@@ -280,7 +276,7 @@ abstract class Manager
             }
 
             if (!$request->execute($params)) {
-                throw new BlogException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true));
+                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
             }
         } else {
             $request = $this->database->query($query);
@@ -316,9 +312,7 @@ abstract class Manager
     {
         $class = explode('\\', get_called_class());
         $class = end($class);
-        $class = self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
-
-        return $class;
+        return self::ENTITY_NAMESPACE . substr($class, 0, -(strlen('Manager')));
     }
 
     /**
@@ -329,9 +323,7 @@ abstract class Manager
      */
     private static function getManagerClass(string $entityClassName): string
     {
-        $class = __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
-
-        return $class;
+        return __NAMESPACE__ . '\\' . $entityClassName . 'Manager';
     }
 
     /**
@@ -360,23 +352,23 @@ abstract class Manager
      */
     private function filterEmptyFields(Entity $entity)
     {
-        $fields = [];
+        $entityFields = [];
 
         foreach ($this->fields as $key => $value) {
             $getter = 'get' . ucfirst($key);
             if (self::isAMethodOf($entity, $getter)) {
                 if ($entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             } else {
                 $getter = 'is' . ucfirst($key);
                 if (self::isAMethodOf($entity, $getter) && $entity->$getter() !== null) {
-                    $fields[$key] = $this->fields[$key];
+                    $entityFields[$key] = $this->fields[$key];
                 }
             }
         }
 
-        return $fields;
+        return $entityFields;
     }
 
     /**

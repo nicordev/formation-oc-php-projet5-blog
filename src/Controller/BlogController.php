@@ -11,7 +11,6 @@ namespace Controller;
 
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
-use Application\Exception\BlogException;
 use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Exception;
@@ -79,7 +78,7 @@ class BlogController extends Controller
      *
      * @param int $categoryId
      * @param int|null $page
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -129,7 +128,7 @@ class BlogController extends Controller
      *
      * @param int $tagId
      * @param int|null $page
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -196,7 +195,7 @@ class BlogController extends Controller
                 self::convertDatesOfComment($comment);
             }
 
-        } catch (BlogException $e) {
+        } catch (HttpException $e) {
             throw new PageNotFoundException('This post do not exists.');
         }
 
@@ -212,7 +211,7 @@ class BlogController extends Controller
      *
      * @param string $message
      * @param array $yesNoForm
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -249,7 +248,7 @@ class BlogController extends Controller
      *
      * @param int $postToEditId
      * @param string $message
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -288,7 +287,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      */
     public function showCategoryEditor(?int $categoryToEditId = null, string $message = '')
     {
@@ -327,7 +326,7 @@ class BlogController extends Controller
 
         $comment = $this->commentManager->get($commentToEditId);
 
-        self::render(self::VIEW_COMMENT_EDITOR, [
+        $this->render(self::VIEW_COMMENT_EDITOR, [
             'commentToEdit' => $comment
         ]);
     }
@@ -337,12 +336,11 @@ class BlogController extends Controller
     /**
      * Add a new post from $_POST and add associated tags
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function addPost()
     {
@@ -350,35 +348,9 @@ class BlogController extends Controller
         $newPost->setCreationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastModificationDate(date(self::MYSQL_DATE_FORMAT));
         $newPost->setLastEditorId($newPost->getAuthorId());
-        $message = '';
 
         if ($newPost !== null) {
-            // Cut if title, excerpt or content are too big
-            $message = self::cutPost($newPost);
-
-            // Tags
-            $tags = $newPost->getTags();
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $newPost->setTags($this->addNewTags($tags));
-            }
-
-            // Categories
-            if (!empty($newPost->getCategories())) {
-                foreach ($newPost->getCategories() as $category) {
-                    $categories[] = $this->categoryManager->getFromName($category->getName());
-                }
-                $newPost->setCategories($categories);
-            }
-
-            // Add
-            $this->postManager->add($newPost);
-
-            // Come back to the admin panel
-            $message .= "Un article a été publié.";
-            $this->showAdminPanel($message);
-
+            $this->handleAPost($newPost, true);
         } else {
             // Try again...
             $this->showPostEditor(null, "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
@@ -388,49 +360,28 @@ class BlogController extends Controller
     /**
      * Edit an existing post from $_POST
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function editPost()
     {
         $modifiedPost = self::buildPostFromForm();
-        $tags = $modifiedPost->getTags();
-        $message = '';
 
         if ($modifiedPost !== null) {
-
-            $message = self::cutPost($modifiedPost);
-
-            if (!empty($tags)) {
-                // Add tags in the database and get their ids
-                $modifiedPost->setTags($this->addNewTags($tags));
-            }
-
-            if (!empty($modifiedPost->getCategories())) {
-                foreach ($modifiedPost->getCategories() as $category) {
-                    $categories[] = $this->categoryManager->getFromName($category->getName());
-                }
-                $modifiedPost->setCategories($categories);
-            }
-
-            $this->postManager->edit($modifiedPost);
-            // Come back to the admin panel
-            $message .= "Un article a été modifié.";
-            $this->showAdminPanel($message);
+            $this->handleAPost($modifiedPost, false);
         } else {
             // Try again...
-            $this->showPostEditor(htmlspecialchars($_POST['edit-post']), "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
+            $this->showPostEditor((int) $_POST['edit-post'], "Erreur : le titre, l'extrait et le contenu de l'article ne doivent pas être vides.");
         }
     }
 
     /**
      * Delete a post from $_POST
      *
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -452,7 +403,7 @@ class BlogController extends Controller
      * @param string|null $action
      * @return bool
      * @throws AppException
-     * @throws BlogException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -462,7 +413,7 @@ class BlogController extends Controller
     {
         if ($tagIds === null || $tagNames === null) {
             if ($action === 'delete-all') {
-                $this->tagManager->deleteAll(); // TODO: add a confirmation before delete all
+                $this->tagManager->deleteAll();
                 // Head back to the admin panel
                 $this->showAdminPanel('Toutes les etiquettes ont été supprimées.');
             } else {
@@ -521,7 +472,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      * @throws AccessException
      */
     public function editCategory()
@@ -546,7 +497,7 @@ class BlogController extends Controller
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws BlogException
+     * @throws HttpException
      * @throws AccessException
      */
     public function deleteCategory()
@@ -598,6 +549,15 @@ class BlogController extends Controller
         }
     }
 
+    /**
+     * Delete a comment in the database
+     *
+     * @throws AccessException
+     * @throws HttpException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function deleteComment()
     {
         $commentId = (int) $_POST['delete-comment'];
@@ -727,6 +687,7 @@ class BlogController extends Controller
      * @param array $tagNames
      * @return bool
      * @throws AppException
+     * @throws HttpException
      */
     private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)
     {
@@ -969,11 +930,63 @@ class BlogController extends Controller
      * Convert markdown content
      *
      * @param string $content
-     * @param bool $defaultTransform
      * @return string
      */
     private static function convertMarkdown(string $content)
     {
         return Markdown::defaultTransform($content);
+    }
+
+    /**
+     * Add or edit a post and go back to the post editor with nice messages
+     *
+     * @param Post $postToHandle
+     * @param bool $isNew
+     * @throws HttpException
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    private function handleAPost(Post $postToHandle, bool $isNew = true)
+    {
+        // Cut if title, excerpt or content are too big
+        $message = self::cutPost($postToHandle);
+        if (!empty($message)) {
+            $messages[] = $message;
+        }
+
+        // Tags
+        $tags = $postToHandle->getTags();
+
+        if (!empty($tags)) {
+            // Add tags in the database and get their ids
+            $postToHandle->setTags($this->addNewTags($tags));
+            $messages[] = "L'article sera visible avec #" . implode(' #', $postToHandle->getTags(true));
+        }
+
+        // Categories
+        if (!empty($postToHandle->getCategories())) {
+            foreach ($postToHandle->getCategories() as $category) {
+                $categories[] = $this->categoryManager->getFromName($category->getName());
+            }
+            $postToHandle->setCategories($categories);
+            $messages[] = "L'article a été publié dans : " . implode(', ', $postToHandle->getCategories(true));
+        }
+
+        if (empty($tags) && empty($postToHandle->getCategories())) {
+            $messages[] = "L'article sera visible lorsque vous aurez choisi au moins une catégorie ou une étiquette";
+        }
+
+        if ($isNew) {
+            array_unshift($messages, "L'article a été ajouté");
+            $this->postManager->add($postToHandle);
+        } else {
+            array_unshift($messages, "L'article a été modifié");
+            $this->postManager->edit($postToHandle);
+        }
+
+        // Come back to the admin panel
+        $this->showPostEditor($this->postManager->getLastId(), implode('<br>', $messages));
     }
 }
