@@ -36,7 +36,7 @@
 
                         <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                         <p>
-                            <input class="btn" type="submit" value="Supprimer l'article">
+                            <input class="btn btn-danger" type="submit" value="Supprimer l'article">
                         </p>
                     </form>
                 </div>
@@ -53,6 +53,9 @@
             <form id="publish-post-form" action="/admin/add-post" method="post">
                 <input type="hidden" name="post-author-id" value="{{ getUser().getId }}">
             {% endif %}
+
+                {# Erase fields #}
+                <button type="button" id="erase-btn" class="btn btn-danger" onclick="areYouSure.show('Tout ce que vous avez écrit sera effacé de cette page (mais pas de la base de données).', myPostDraft.eraseFields, ['post-title', 'post-excerpt', 'post-content'])">Effacer les champs</button>
 
                 {# CSRF protection #}
                 <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">

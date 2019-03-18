@@ -36,5 +36,13 @@ var myPostDraft = {
             elt.value = value;
             elt.textContent = value;
         }
+    },
+
+    eraseFields: function (fieldIds) {
+
+        for (var i = 0; i < fieldIds.length; i++) {
+            document.getElementById(fieldIds[i]).value = '';
+            document.getElementById(fieldIds[i]).textContent = '';
+        }
     }
 };
