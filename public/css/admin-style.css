@@ -142,6 +142,10 @@ footer ul li a, footer ul li a:hover {
     border-color: #dc3545;
 }
 
+#image-tag-builder {
+    width: 100%;
+}
+
 #new-tag-input {
     font-size: 0.75em;
 }

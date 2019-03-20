@@ -32,42 +32,49 @@
                     <input type="hidden" name="path" value="{{ imagePath }}">
 
                     <p>
-                        <input class="btn" type="submit" value="Supprimer">
+                        <input class="btn btn-danger" type="submit" value="Supprimer">
                     </p>
                 </form>
+            </div>
 
-                <div>
-                    <h5>Adresse de l'image</h5>
-                    <p>
-                        {{ imagePath }}
-                    </p>
-                </div>
+            {# Image path #}
+            <div>
+                <h5 class="text-center">Balise de l'image</h5>
+                <p>
+                    <textarea id="image-tag-builder" cols="30" rows="4"></textarea>
+                </p>
+            </div>
 
+            <div class="my-5">
                 {# Edit #}
                 <form action="/admin/image-editor/edit" method="post">
                     <input type="hidden" name="path" value="{{ imagePath }}">
 
-                    <h5>Redimensionner</h5>
+                    <h5 class="text-center mb-4">Redimensionner</h5>
                     <div class="row">
                         <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12" type="number" id="resize-width" name="resize-width" value="{{ imageSize.width }}" placeholder="Largeur">
                         <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12" type="number" id="resize-height" name="resize-height" value="{{ imageSize.height }}" placeholder="Hauteur">
                     </div>
                     <input class="btn btn-primary" type="submit" value="Redimensionner">
                 </form>
+            </div>
 
+            <div>
                 <form action="/admin/image-editor/edit" method="post">
                     <input type="hidden" name="path" value="{{ imagePath }}">
 
-                    <h5>Rogner</h5>
+                    <h5 class="text-center mb-4">Rogner</h5>
+
                     <h6>Point de départ</h6>
                     <div class="row">
                         <label class="col-sm-3 col-12 text-sm-right">x</label><input class="col-sm-3 col-12 crop" type="number" id="crop-x" name="crop-x" placeholder="Départ x" value="0">
-                            <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12 crop" type="number" id="crop-y" name="crop-y" placeholder="Départ y" value="0">
+                        <label class="col-sm-3 col-12 text-sm-right">y</label><input class="col-sm-3 col-12 crop" type="number" id="crop-y" name="crop-y" placeholder="Départ y" value="0">
                     </div>
+
                     <h6>Dimensions</h6>
                     <div class="row">
                         <label class="col-sm-3 col-12 text-sm-right">Largeur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-width" name="crop-width" placeholder="Largeur">
-                            <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-height" name="crop-height" placeholder="Hauteur">
+                        <label class="col-sm-3 col-12 text-sm-right">Hauteur</label><input class="col-sm-3 col-12 crop" type="number" id="crop-height" name="crop-height" placeholder="Hauteur">
                     </div>
                     <input class="btn btn-primary" type="submit" value="Rogner">
                 </form>
@@ -96,5 +103,10 @@
         for (var i = 0; i < cropElts.length; i++) {
             cropElts[i].addEventListener('change', myCropFrame.update);
         }
+    </script>
+    {# Image tag #}
+    <script src="/public/js/imageTagBuilder.js"></script>
+    <script>
+        myImageTagBuilder.build("{{ imagePath }}");
     </script>
 {% endblock %}
