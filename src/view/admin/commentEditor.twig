@@ -58,7 +58,7 @@
                 {# Comment #}
                 <p>
                     <label for="comment">Commentaire de <a href="/member-profile?id={{ commentToEdit.getAuthorId }}">{{ commentToEdit.getAuthor }}</a> du {{ commentToEdit.getCreationDate }}</label><br>
-                    <textarea class="admin-textarea w100" name="comment" id="comment" cols="30" rows="30">{{ commentToEdit.getContent }}</textarea>
+                    <textarea class="admin-textarea w100" name="comment" id="comment" cols="30" rows="10">{{ commentToEdit.getContent }}</textarea>
                 </p>
             </form>
         </div>

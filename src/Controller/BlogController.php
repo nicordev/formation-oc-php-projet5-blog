@@ -33,6 +33,15 @@ class BlogController extends Controller
     const VIEW_BLOG_TAG = 'blog/tagPage.twig';
     const VIEW_BLOG_POST = 'blog/blogPost.twig';
 
+    const KEY_MESSAGE = "message";
+    const KEY_POST = "post";
+    const KEY_POSTS = "posts";
+    const KEY_POST_ID = "post-id";
+    const KEY_COMMENT_ID = "comment-id";
+    const KEY_COMMENTS = "comments";
+    const KEY_CATEGORY = "category";
+    const KEY_CATEGORIES = "categories";
+
     /**
      * BlogController constructor.
      *
@@ -105,8 +114,8 @@ class BlogController extends Controller
         }
 
         $this->render(self::VIEW_BLOG, [
-            'posts' => $posts,
-            'category' => $category,
+            self::KEY_POSTS => $posts,
+            self::KEY_CATEGORY => $category,
             'nextPage' => isset($nextPage) ? $nextPage : null,
             'previousPage' => isset($previousPage) ? $previousPage : null
         ]);
@@ -154,7 +163,7 @@ class BlogController extends Controller
         $tag = $this->tagManager->get($tagId);
 
         $this->render(self::VIEW_BLOG_TAG, [
-            'posts' => $posts,
+            self::KEY_POSTS => $posts,
             'tag' => $tag,
             'nextPage' => isset($nextPage) ? $nextPage : null,
             'previousPage' => isset($previousPage) ? $previousPage : null
@@ -181,7 +190,7 @@ class BlogController extends Controller
 
             $comments = $this->commentManager->getFromPost($postId);
             foreach ($comments as $comment) {
-                self::convertDatesOfComment($comment);
+                BlogHelper::convertDatesOfComment($comment);
             }
 
         } catch (HttpException $e) {
@@ -189,9 +198,9 @@ class BlogController extends Controller
         }
 
         $this->render(self::VIEW_BLOG_POST, [
-            'post' => $post,
-            'comments' => $comments,
-            'message' => $message
+            self::KEY_POST => $post,
+            self::KEY_COMMENTS => $comments,
+            self::KEY_MESSAGE => $message
         ]);
     }
 }

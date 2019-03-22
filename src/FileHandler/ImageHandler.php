@@ -10,6 +10,9 @@ class ImageHandler extends FileHandler
 {
     const UPLOAD_FOLDER = '/upload/';
 
+    const KEY_WIDTH = "width";
+    const KEY_HEIGHT = "height";
+
     private function __construct()
     {
         // Disabled
@@ -84,10 +87,10 @@ class ImageHandler extends FileHandler
         $img = Image::make(ROOT_PATH . $path);
 
         if (
-            isset($cropParams['width']) && !empty($cropParams['width']) ||
-            isset($cropParams['height']) &&  !empty($cropParams['height'])
+            isset($cropParams[self::KEY_WIDTH]) && !empty($cropParams[self::KEY_WIDTH]) ||
+            isset($cropParams[self::KEY_HEIGHT]) &&  !empty($cropParams[self::KEY_HEIGHT])
         ) {
-            $img->crop($cropParams['width'], $cropParams['height'], $cropParams['x'] ?? null, $cropParams['y'] ?? null);
+            $img->crop($cropParams[self::KEY_WIDTH], $cropParams[self::KEY_HEIGHT], $cropParams['x'] ?? null, $cropParams['y'] ?? null);
         }
 
         if (empty($newHeight) && $newWidth > 0) {

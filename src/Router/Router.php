@@ -13,6 +13,14 @@ use Controller\MemberController;
 
 class Router
 {
+    public const KEY_NAME = "name";
+    public const KEY_URLS = "urls";
+    public const KEY_CONTROLLER = "controller";
+    public const KEY_METHOD = "method";
+    public const KEY_PARAMS = "params";
+    public const KEY_CHECK_ACCESS = "checkAccess";
+    public const KEY_CHECK_CSRF = "checkCsrf";
+
     /**
      * Disable the constructor to simulate a static class
      */
@@ -23,333 +31,14 @@ class Router
      * Analyze the url and return the controller name, the method to call and the parameters
      *
      * @return Route
-     * @throws PageNotFoundException
      * @throws \Application\Exception\AccessException
      * @throws \Application\Exception\CsrfSecurityException
      */
     public static function run(): Route
     {
-        $url = self::getUrl();
+        $requestedUrl = self::getUrl();
 
-        switch ($url) {
-
-            // Home
-
-            case '/':
-                $controller = HomeController::class;
-                $method = 'showHome';
-                $params = [];
-                break;
-
-            case '/home':
-                $controller = HomeController::class;
-                $method = 'showHome';
-                $params = [];
-
-                if (isset($_GET['categories'])) {
-                    $params = $_GET['categories'];
-                }
-
-                if (isset($_GET['action']) && $_GET['action'] === 'contact') {
-                    $method = 'contact';
-                }
-                break;
-
-            // Blog
-
-            case '/blog':
-                $controller = BlogController::class;
-                $method = 'showPostsOfACategory';
-                $params = [
-                    'categoryId' => (int) $_GET['category-id'],
-                    'page' => (int) $_GET['page']
-                ];
-                break;
-
-            case '/blog/tag':
-                $controller = BlogController::class;
-                $method = 'showPostsOfATag';
-                $params = [
-                    'tagId' => (int) $_GET['tag-id'],
-                    'page' => (int) $_GET['page']
-                ];
-                break;
-
-            case '/blog-post':
-                if (
-                    isset($_GET['post-id']) && is_numeric($_GET['post-id'])
-                ) {
-                    $controller = BlogController::class;
-                    $method = 'showASinglePost';
-                    $params = [
-                        'postId' => $_GET['post-id']
-                    ];
-                } else {
-                    throw new PageNotFoundException("L'article demandé n'existe pas.");
-                }
-                break;
-
-            // Comments
-
-            case '/add-comment':
-                MemberController::verifyAccess(['member']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'addComment';
-                $params = [];
-
-                break;
-
-            // Member
-
-            case '/password-lost':
-                $controller = MemberController::class;
-
-                if (isset($_GET['action']) && $_GET['action'] = 'send') {
-                    $method = 'sendPasswordRecoveryMail';
-                    $params = [
-                        'email' => htmlspecialchars($_POST['email'])
-                    ];
-                } else {
-                    $method = 'showPasswordRecovery';
-                    $message = 'Un mail contenant la marche à suivre va vous être envoyé en remplissant ce formulaire';
-                    $params = ['message' => $message];
-                }
-                break;
-
-            case '/member-profile':
-                $controller = MemberController::class;
-                $method = 'showMemberProfile';
-                $params = ['memberId' => $_GET['id'] ?? null];
-                break;
-
-            case '/profile-editor':
-                $controller = MemberController::class;
-                $method = 'showMemberProfileEditor';
-                $params = [
-                    'member' => isset($_GET['id']) ? (int) $_GET['id'] : null,
-                    'key' => isset($_GET['key']) ? (int) $_GET['key'] : null
-                ];
-
-                if (isset($_GET['action']) && !empty($_GET['action'])) {
-                    CsrfProtector::checkCsrf();
-                    if ($_GET['action'] === 'update') {
-                        $method = 'updateProfile';
-                    } elseif ($_GET['action'] === 'delete') {
-                        $method = 'deleteMember';
-                        $params = ['id' => $_POST['id']];
-                    }
-                }
-                break;
-
-            case '/registration':
-                $controller = MemberController::class;
-
-                if (isset($_GET['action']) && $_GET['action'] === 'register') {
-                    $method = 'register';
-                } else {
-                    $method = 'showRegistrationPage';
-                }
-
-                $params = [];
-                break;
-
-            case '/connection':
-                $controller = MemberController::class;
-
-                if (isset($_GET['action']) && $_GET['action'] === 'connect') {
-                    $method = 'connect';
-                } else {
-                    $method = 'showConnectionPage';
-                }
-
-                $params = [];
-                break;
-
-            case '/disconnection':
-                $controller = MemberController::class;
-                $method = 'disconnect';
-                $params = [];
-                break;
-
-            // Admin
-
-            case '/admin':
-                MemberController::verifyAccess();
-                $controller = AdminController::class;
-                $method = 'showAdminPanel';
-                $params = [];
-                break;
-
-            case '/admin/comment-editor':
-                MemberController::verifyAccess(['moderator']);
-                $controller = AdminController::class;
-                $method = 'showCommentEditor';
-                $params = ['commentToEditId' => $_GET['id']];
-                break;
-
-            case '/admin/edit-comment':
-                MemberController::verifyAccess(['moderator']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'editComment';
-                $params = [];
-                break;
-
-            case '/admin/delete-comment':
-                MemberController::verifyAccess(['moderator']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'deleteComment';
-                $params = [];
-                break;
-
-            case '/admin/add-post':
-                MemberController::verifyAccess(['author']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'addPost';
-                $params = [];
-                break;
-
-            case '/admin/edit-post':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'editPost';
-                $params = [];
-                break;
-
-            case '/admin/delete-post':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'deletePost';
-                $params = [];
-                break;
-
-            case '/admin/post-editor':
-                MemberController::verifyAccess(['author', 'editor']);
-                if (isset($_POST['post-id'])) {
-                    $postId = (int) $_POST['post-id'];
-                } elseif (isset($_GET['post-id'])) {
-                    $postId = (int) $_GET['post-id']; // TODO: check if the author can access this post
-                }
-                $controller = AdminController::class;
-                $method = 'showPostEditor';
-                $params = ['postId' => $postId] ?? [];
-                break;
-
-            case '/admin/category-editor':
-                MemberController::verifyAccess(['editor']);
-                if (isset($_POST['category-id'])) {
-                    $categoryId = (int) $_POST['category-id'];
-                }
-                $controller = AdminController::class;
-                $method = 'showCategoryEditor';
-                $params = ['categoryId' => $categoryId] ?? [];
-                break;
-
-            case '/admin/add-category':
-                MemberController::verifyAccess(['editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'addCategory';
-                $params = [];
-                break;
-
-            case '/admin/edit-category':
-                MemberController::verifyAccess(['editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'editCategory';
-                $params = [];
-                break;
-
-            case '/admin/delete-category':
-                MemberController::verifyAccess(['editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'deleteCategory';
-                $params = [];
-                break;
-
-            case '/admin/update-tags':
-                MemberController::verifyAccess(['editor']);
-                CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
-                $method = 'updateTagList';
-                $params = [
-                    'tagIds' => $_POST['tag_ids'],
-                    'tagNames' => $_POST['tag_names'],
-                    'action' => $_GET['action'] ?? null
-                ];
-                break;
-
-            // Media library
-
-            case '/admin/media-library':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = MediaController::class;
-                $method = 'showMediaLibrary';
-                $params = [];
-                break;
-
-            case '/admin/media-library/add':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = MediaController::class;
-                $method = 'addImage';
-                $params = [];
-                break;
-
-            case '/admin/image-editor':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = MediaController::class;
-                $method = 'showImageEditor';
-                $params = [
-                    'imagePath' => htmlspecialchars($_GET['image'])
-                ];
-                break;
-
-            case '/admin/image-editor/edit':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = MediaController::class;
-                $method = 'editImage';
-                $params = [
-                    'imagePath' => htmlspecialchars($_POST['path']),
-                    'cropParameters' => [
-                        'width' => (int) $_POST['crop-width'] ?? null,
-                        'height' => (int) $_POST['crop-height'] ?? null,
-                        'x' => (int) $_POST['crop-x'] ?? null,
-                        'y' => (int) $_POST['crop-y'] ?? null
-                    ],
-                    'newHeight' => (int) $_POST['resize-height'] ?? null,
-                    'newWidth' => (int) $_POST['resize-width'] ?? null
-                ];
-                break;
-
-            case '/admin/image-editor/delete':
-                MemberController::verifyAccess(['author', 'editor']);
-                CsrfProtector::checkCsrf();
-                $controller = MediaController::class;
-                $method = 'deleteImage';
-                $params = [
-                    'imagePath' => htmlspecialchars($_POST['path'])
-                ];
-                break;
-
-            default:
-                $controller = ErrorController::class;
-                $method = 'showError404';
-                $params = [];
-                break;
-        }
-
-        return new Route($controller, $method, $params);
+        return self::getMatchingRoute($requestedUrl);
     }
 
     // Private
@@ -364,5 +53,354 @@ class Router
         $urlParts = explode('?', $_SERVER['REQUEST_URI']);
 
         return $urlParts[0];
+    }
+
+    /**
+     * Get the matching route of an url
+     *
+     * @param string $requestedUrl
+     * @return Route|null
+     * @throws \Application\Exception\AccessException
+     * @throws \Application\Exception\CsrfSecurityException
+     */
+    private static function getMatchingRoute(string $requestedUrl)
+    {
+        $routes = [
+            // Home
+            [
+                self::KEY_URLS => [
+                    '/',
+                    '/home'
+                ],
+                self::KEY_NAME => "show_home",
+                self::KEY_CONTROLLER => HomeController::class,
+                self::KEY_METHOD => 'showHome'
+            ],
+            // Blog
+            [
+                self::KEY_URLS => [
+                    '/blog'
+                ],
+                self::KEY_NAME => "show_category",
+                self::KEY_CONTROLLER => BlogController::class,
+                self::KEY_METHOD => 'showPostsOfACategory',
+                self::KEY_PARAMS => [
+                    'categoryId' => (int) $_GET['category-id'],
+                    'page' => (int) $_GET['page']
+                ]
+            ],
+            [
+                self::KEY_URLS => [
+                    '/blog/tag'
+                ],
+                self::KEY_NAME => "show_tag_page",
+                self::KEY_CONTROLLER => BlogController::class,
+                self::KEY_METHOD => 'showPostsOfATag',
+                self::KEY_PARAMS => [
+                    'tagId' => (int) $_GET['tag-id'],
+                    'page' => (int) $_GET['page']
+                ]
+            ],
+            [
+                self::KEY_URLS => [
+                    '/blog-post'
+                ],
+                self::KEY_NAME => "show_blog_post",
+                self::KEY_CONTROLLER => BlogController::class,
+                self::KEY_METHOD => 'showASinglePost',
+                self::KEY_PARAMS => [
+                    'postId' => (int) $_GET['post-id']
+                ]
+            ],
+            // Comments
+            [
+                self::KEY_URLS => [
+                    '/add-comment'
+                ],
+                self::KEY_NAME => "add_comment",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'addComment',
+                self::KEY_CHECK_ACCESS => ['member'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            // Member
+            [
+                self::KEY_URLS => [
+                    '/password-lost'
+                ],
+                self::KEY_NAME => "password_recovery",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'passwordLost'
+            ],
+            [
+                self::KEY_URLS => [
+                    '/member-profile'
+                ],
+                self::KEY_NAME => "member_profile",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'showMemberProfile',
+                self::KEY_PARAMS => ['memberId' => (int) $_GET['id'] ?? null]
+            ],
+            [
+                self::KEY_URLS => [
+                    '/profile-editor'
+                ],
+                self::KEY_NAME => "profile_editor",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'profileEditor',
+                self::KEY_PARAMS => [
+                    'member' => isset($_GET['id']) ? (int) $_GET['id'] : null,
+                    'key' => isset($_GET['key']) ? (int) $_GET['key'] : null
+                ]
+            ],
+            [
+                self::KEY_URLS => [
+                    '/registration'
+                ],
+                self::KEY_NAME => "registration",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'register'
+            ],
+            [
+                self::KEY_URLS => [
+                    '/connection'
+                ],
+                self::KEY_NAME => "connection",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'connect'
+            ],
+            [
+                self::KEY_URLS => [
+                    '/disconnection'
+                ],
+                self::KEY_NAME => "disconnection",
+                self::KEY_CONTROLLER => MemberController::class,
+                self::KEY_METHOD => 'disconnect'
+            ],
+            // Admin
+            [
+                self::KEY_URLS => [
+                    '/admin'
+                ],
+                self::KEY_NAME => "admin_panel",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'showAdminPanel'
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/comment-editor'
+                ],
+                self::KEY_NAME => "comment_editor",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'showCommentEditor',
+                self::KEY_CHECK_ACCESS => ['moderator'],
+                self::KEY_PARAMS => ['commentToEditId' => (int) $_GET['id']]
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/edit-comment'
+                ],
+                self::KEY_NAME => "edit_comment",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'editComment',
+                self::KEY_CHECK_ACCESS => ['moderator'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/delete-comment'
+                ],
+                self::KEY_NAME => "delete_comment",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'deleteComment',
+                self::KEY_CHECK_ACCESS => ['moderator'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/add-post'
+                ],
+                self::KEY_NAME => "add_post",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'addPost',
+                self::KEY_CHECK_ACCESS => ['author'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/edit-post'
+                ],
+                self::KEY_NAME => "edit_post",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'editPost',
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/delete-post'
+                ],
+                self::KEY_NAME => "delete_post",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'deletePost',
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/post-editor'
+                ],
+                self::KEY_NAME => "post_editor",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'showPostEditor',
+                self::KEY_CHECK_ACCESS => ['author', 'editor']
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/category-editor'
+                ],
+                self::KEY_NAME => "category_editor",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'showCategoryEditor',
+                self::KEY_PARAMS => ['categoryId' => (int) $_POST['category-id'] ?? null],
+                self::KEY_CHECK_ACCESS => ['editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/edit-category'
+                ],
+                self::KEY_NAME => "edit_category",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'editCategory',
+                self::KEY_CHECK_ACCESS => ['editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/delete-category'
+                ],
+                self::KEY_NAME => "delete_category",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'deleteCategory',
+                self::KEY_CHECK_ACCESS => ['editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/update-tags'
+                ],
+                self::KEY_NAME => "update_tags",
+                self::KEY_CONTROLLER => AdminController::class,
+                self::KEY_METHOD => 'updateTagList',
+                self::KEY_PARAMS => [
+                    'tagIds' => $_POST['tag_ids'],
+                    'tagNames' => $_POST['tag_names'],
+                    'action' => $_GET['action'] ?? null
+                ],
+                self::KEY_CHECK_ACCESS => ['editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            // Media library
+            [
+                self::KEY_URLS => [
+                    '/admin/media-library'
+                ],
+                self::KEY_NAME => "media_library",
+                self::KEY_CONTROLLER => MediaController::class,
+                self::KEY_METHOD => 'showMediaLibrary',
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/media-library/add'
+                ],
+                self::KEY_NAME => "add_image",
+                self::KEY_CONTROLLER => MediaController::class,
+                self::KEY_METHOD => 'addImage',
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/image-editor'
+                ],
+                self::KEY_NAME => "image_editor",
+                self::KEY_CONTROLLER => MediaController::class,
+                self::KEY_METHOD => 'showImageEditor',
+                self::KEY_PARAMS => [
+                    'imagePath' => htmlspecialchars($_GET['image'])
+                ],
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/image-editor/edit'
+                ],
+                self::KEY_NAME => "edit_image",
+                self::KEY_CONTROLLER => MediaController::class,
+                self::KEY_METHOD => 'editImage',
+                self::KEY_PARAMS => [
+                    'imagePath' => htmlspecialchars($_POST['path']),
+                    'cropParameters' => [
+                        'width' => (int) $_POST['crop-width'] ?? null,
+                        'height' => (int) $_POST['crop-height'] ?? null,
+                        'x' => (int) $_POST['crop-x'] ?? null,
+                        'y' => (int) $_POST['crop-y'] ?? null
+                    ],
+                    'newHeight' => (int) $_POST['resize-height'] ?? null,
+                    'newWidth' => (int) $_POST['resize-width'] ?? null
+                ],
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ],
+            [
+                self::KEY_URLS => [
+                    '/admin/image-editor/delete'
+                ],
+                self::KEY_NAME => "delete_image",
+                self::KEY_CONTROLLER => MediaController::class,
+                self::KEY_METHOD => 'deleteImage',
+                self::KEY_PARAMS => [
+                    'imagePath' => htmlspecialchars($_POST['path'])
+                ],
+                self::KEY_CHECK_ACCESS => ['author', 'editor'],
+                self::KEY_CHECK_CSRF => true
+            ]
+        ];
+
+        foreach ($routes as $route) {
+            if (self::isAKnownUrl($route['urls'], $requestedUrl)) {
+                foreach ($route as $key => $value) {
+                    if ($key === "checkAccess") {
+                        MemberController::verifyAccess($value);
+                    }
+                    if ($key === "checkCsrf") {
+                        CsrfProtector::checkCsrf();
+                    }
+                }
+                return new Route($route['controller'], $route['method'], $route['params'] ?? []);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check if an url exists in the router
+     *
+     * @param array $knownUrls
+     * @param string $requestedUrl
+     * @return bool
+     */
+    private static function isAKnownUrl(array $knownUrls, string $requestedUrl)
+    {
+        foreach ($knownUrls as $url) {
+            if ($url === $requestedUrl) {
+                return true;
+            }
+        }
+        return false;
     }
 }

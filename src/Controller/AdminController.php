@@ -22,7 +22,6 @@ class AdminController extends BlogController
     const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
     const VIEW_IMAGE_EDITOR = 'admin/imageEditor.twig';
 
-
     /**
      * Show the panel do manage blog posts
      *
@@ -36,6 +35,8 @@ class AdminController extends BlogController
      */
     public function showAdminPanel(string $message = '', array $yesNoForm = [])
     {
+        MemberController::verifyAccess();
+
         $posts = $this->postManager->getAll();
         $tags = $this->tagManager->getAll();
         $categories = $this->categoryManager->getAll();
@@ -50,12 +51,12 @@ class AdminController extends BlogController
         }
 
         $this->render(self::VIEW_BLOG_ADMIN, [
-            'posts' => $posts,
-            'message' => $message,
+            self::KEY_POSTS => $posts,
+            self::KEY_MESSAGE => $message,
             'yesNoForm' => $yesNoForm,
             'tags' => $tags,
-            'categories' => $categories,
-            'comments' => $comments,
+            self::KEY_CATEGORIES => $categories,
+            self::KEY_COMMENTS => $comments,
             'members' => $members ?? null
         ]);
     }
@@ -72,6 +73,12 @@ class AdminController extends BlogController
      */
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
+        if (!$postToEditId && isset($_POST[self::KEY_POST_ID])) {
+            $postToEditId = (int) $_POST[self::KEY_POST_ID];
+        } elseif (!$postToEditId && isset($_GET[self::KEY_POST_ID])) {
+            $postToEditId = (int) $_GET[self::KEY_POST_ID]; // TODO: check if the author can access this post
+        }
+
         $postToEdit = null;
         $categories = $this->categoryManager->getAll();
         $availableTags = $this->tagManager->getAll();
@@ -88,8 +95,8 @@ class AdminController extends BlogController
         $this->render(self::VIEW_POST_EDITOR, [
             'postToEdit' => $postToEdit,
             'postToEditId' => $postToEditId,
-            'categories' => $categories,
-            'message' => $message,
+            self::KEY_CATEGORIES => $categories,
+            self::KEY_MESSAGE => $message,
             'availableTags' => $availableTagNames,
             'selectedTags' => $selectedTagNames,
             'markdown' => $markdown
@@ -117,7 +124,7 @@ class AdminController extends BlogController
         $this->render(self::VIEW_CATEGORY_EDITOR, [
             'categoryToEdit' => $categoryToEdit,
             'categoryToEditId' => $categoryToEditId,
-            'message' => $message
+            self::KEY_MESSAGE => $message
         ]);
     }
 
@@ -135,8 +142,8 @@ class AdminController extends BlogController
     public function showCommentEditor(?int $commentToEditId = null, string $message = '')
     {
         if (!$commentToEditId) {
-            if (isset($_POST['comment-id']) && !empty($_POST['comment-id'])) {
-                $commentToEditId = (int) $_POST['comment-id'];
+            if (isset($_POST[self::KEY_COMMENT_ID]) && !empty($_POST[self::KEY_COMMENT_ID])) {
+                $commentToEditId = (int) $_POST[self::KEY_COMMENT_ID];
             } else {
                 throw new PageNotFoundException('It lacks the comment to edit id.');
             }
@@ -146,42 +153,6 @@ class AdminController extends BlogController
 
         $this->render(self::VIEW_COMMENT_EDITOR, [
             'commentToEdit' => $comment
-        ]);
-    }
-
-    /**
-     * Show the media library
-     *
-     * @param string|null $message
-     * @throws \Application\Exception\ImageException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function showMediaLibrary(string $message = null)
-    {
-        $images = ImageHandler::getAllPath();
-
-        $this->render(self::VIEW_MEDIA_LIBRARY, [
-            'images' => $images,
-            'message' => $message
-        ]);
-    }
-
-    /**
-     * Show image editor
-     *
-     * @param string|null $imagePath
-     * @param string|null $message
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function showImageEditor(string $imagePath = null, string $message = null)
-    {
-        $this->render(self::VIEW_IMAGE_EDITOR, [
-            'imagePath' => $imagePath,
-            'message' => $message
         ]);
     }
 
@@ -429,77 +400,6 @@ class AdminController extends BlogController
         $this->showAdminPanel("Un commentaire a été supprimé.");
     }
 
-    /**
-     * Add an image in the library
-     *
-     * @throws \Application\Exception\ImageException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws AppException
-     */
-    public function addImage()
-    {
-        $message = null;
-        try {
-            $path = ImageHandler::uploadImage('new-image', '', 'blog_', '_post');
-            $message = 'Le fichier a bien été ajouté dans ' . $path;
-        } catch (FileException $e) {
-            switch ($e->getCode()) {
-                case 0:
-                    $message = 'Erreur : est-ce que vous avez bien choisi un fichier ?';
-                    break;
-                case 1:
-                    $message = "Erreur : l'extension du fichier n'est pas autorisée";
-                    break;
-                case 2:
-                    $message = 'Erreur : le fichier est trop gros';
-                    break;
-                case 3:
-                    $message = "Erreur : le fichier n'existe pas";
-                    break;
-                default:
-                    throw new AppException("Erreur inconnue. Le code d'erreur n'existe pas.");
-            }
-        }
-
-        $this->showMediaLibrary($message);
-    }
-
-    /**
-     * Edit an image in the library
-     *
-     * @param string $imagePath
-     * @param array $cropParameters
-     * @param int $newHeight
-     * @param int $newWidth
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function editImage(string $imagePath, array $cropParameters = [], int $newHeight = null, int $newWidth = null)
-    {
-        ImageHandler::editImage($imagePath, $cropParameters, $newHeight, $newWidth);
-
-        $this->showImageEditor($imagePath, "L'image a été modifiée");
-    }
-
-    /**
-     * Delete an image from the folder
-     *
-     * @param string $imagePath
-     * @throws \Application\Exception\ImageException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function deleteImage(string $imagePath)
-    {
-        ImageHandler::deleteImage($imagePath);
-
-        $this->showMediaLibrary();
-    }
-
     // Private
 
     /**
@@ -560,7 +460,6 @@ class AdminController extends BlogController
      * @param array $tagIds
      * @param array $tagNames
      * @return bool
-     * @throws AppException
      * @throws HttpException
      */
     private function updateTag(Tag $tagToUpdate, array $tagIds, array $tagNames)

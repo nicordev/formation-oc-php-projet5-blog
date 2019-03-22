@@ -11,6 +11,8 @@ abstract class Controller
     const MYSQL_DATE_FORMAT = "Y-m-d H:i:s";
     const WEBSITE_DATE_FORMAT = "d/m/Y à H:i";
 
+    const KEY_ACTION = "action";
+
     /**
      * @var Twig_Environment
      */
