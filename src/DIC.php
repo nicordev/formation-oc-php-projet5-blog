@@ -14,6 +14,7 @@ use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MediaController;
 use Controller\MemberController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
@@ -60,6 +61,16 @@ class DIC
             new CategoryManager(),
             new CommentManager(),
             new MemberManager(),
+            self::generateTwigEnvironment()
+        );
+    }
+
+    /**
+     * @return MediaController
+     */
+    public static function newMediaController(): MediaController
+    {
+        return new MediaController(
             self::generateTwigEnvironment()
         );
     }
@@ -143,6 +154,7 @@ class DIC
                     'height' =>$imageData[1]
                 ];
             }
+            return null;
         });
         $twig->addFunction($getImageSize);
 

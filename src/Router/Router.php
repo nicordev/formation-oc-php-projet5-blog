@@ -8,6 +8,7 @@ use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MediaController;
 use Controller\MemberController;
 
 class Router
@@ -285,10 +286,12 @@ class Router
                 ];
                 break;
 
+            // Media library
+
             case '/admin/media-library':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
+                $controller = MediaController::class;
                 $method = 'showMediaLibrary';
                 $params = [];
                 break;
@@ -296,7 +299,7 @@ class Router
             case '/admin/media-library/add':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
+                $controller = MediaController::class;
                 $method = 'addImage';
                 $params = [];
                 break;
@@ -304,7 +307,7 @@ class Router
             case '/admin/image-editor':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
+                $controller = MediaController::class;
                 $method = 'showImageEditor';
                 $params = [
                     'imagePath' => htmlspecialchars($_GET['image'])
@@ -314,7 +317,7 @@ class Router
             case '/admin/image-editor/edit':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
+                $controller = MediaController::class;
                 $method = 'editImage';
                 $params = [
                     'imagePath' => htmlspecialchars($_POST['path']),
@@ -332,7 +335,7 @@ class Router
             case '/admin/image-editor/delete':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = AdminController::class;
+                $controller = MediaController::class;
                 $method = 'deleteImage';
                 $params = [
                     'imagePath' => htmlspecialchars($_POST['path'])

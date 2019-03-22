@@ -21,6 +21,7 @@ use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MediaController;
 use Controller\MemberController;
 use Exception;
 use ReflectionException;
@@ -31,7 +32,6 @@ class Application
     /**
      * Begin the show! Enjoy!
      *
-     * @throws AppException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -81,8 +81,12 @@ class Application
                     $controller = DIC::newMemberController();
                     break;
 
+                case MediaController::class:
+                    $controller = DIC::newMediaController();
+                    break;
+
                 default:
-                    throw new AppException('The DIC does not know the controller ' . $route->controller);
+                    throw new AppException('The controller ' . $route->controller . ' is missing from the Application::run() routing switch');
             }
 
             try {
