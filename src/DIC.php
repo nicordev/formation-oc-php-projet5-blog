@@ -10,6 +10,7 @@ namespace Application;
 
 
 use Application\Security\CsrfProtector;
+use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -39,6 +40,21 @@ class DIC
     public static function newBlogController(): BlogController
     {
         return new BlogController(
+            new PostManager(),
+            new TagManager(),
+            new CategoryManager(),
+            new CommentManager(),
+            new MemberManager(),
+            self::generateTwigEnvironment()
+        );
+    }
+
+    /**
+     * @return AdminController
+     */
+    public static function newAdminController(): AdminController
+    {
+        return new AdminController(
             new PostManager(),
             new TagManager(),
             new CategoryManager(),

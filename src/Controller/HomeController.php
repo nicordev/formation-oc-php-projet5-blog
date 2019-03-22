@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Application\MailSender\MailSender;
+use Helper\BlogHelper;
 use Model\Manager\CategoryManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
@@ -50,7 +51,7 @@ class HomeController extends Controller
             $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1, null, false);
             // Format creation dates and translate markdown
             foreach ($postsByCategory[$catId] as $post) {
-                BlogController::prepareAPost($post);
+                BlogHelper::prepareAPost($post);
             }
         }
 

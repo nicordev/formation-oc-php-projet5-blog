@@ -14,8 +14,10 @@ use Application\Exception\AppException;
 use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Application\Exception\CsrfSecurityException;
+use Application\Logger\Logger;
 use Application\Router\Router;
 use Application\Security\CsrfProtector;
+use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -61,6 +63,10 @@ class Application
             switch ($route->controller) {
                 case BlogController::class:
                     $controller = DIC::newBlogController();
+                    break;
+
+                case AdminController::class:
+                    $controller = DIC::newAdminController();
                     break;
 
                 case HomeController::class:
@@ -109,6 +115,10 @@ class Application
                 default:
                     $errorController->showCustomError("Un bug ! Quelle horreur !");
             }
+        } catch (AppException $e) {
+            $errorController = DIC::newErrorController();
+            Logger::addLog("Unknown error occured: " . $e->getMessage());
+            $errorController->showCustomError("Mais qu'est-ce qui s'est passé ??? Une erreur inconnue a été détectée !");
         }
     }
 }

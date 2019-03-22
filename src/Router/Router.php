@@ -4,6 +4,7 @@ namespace Application\Router;
 
 use Application\Exception\PageNotFoundException;
 use Application\Security\CsrfProtector;
+use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
@@ -92,7 +93,7 @@ class Router
             case '/add-comment':
                 MemberController::verifyAccess(['member']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'addComment';
                 $params = [];
 
@@ -174,14 +175,14 @@ class Router
 
             case '/admin':
                 MemberController::verifyAccess();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showAdminPanel';
                 $params = [];
                 break;
 
             case '/admin/comment-editor':
                 MemberController::verifyAccess(['moderator']);
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showCommentEditor';
                 $params = ['commentToEditId' => $_GET['id']];
                 break;
@@ -189,7 +190,7 @@ class Router
             case '/admin/edit-comment':
                 MemberController::verifyAccess(['moderator']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'editComment';
                 $params = [];
                 break;
@@ -197,7 +198,7 @@ class Router
             case '/admin/delete-comment':
                 MemberController::verifyAccess(['moderator']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'deleteComment';
                 $params = [];
                 break;
@@ -205,7 +206,7 @@ class Router
             case '/admin/add-post':
                 MemberController::verifyAccess(['author']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'addPost';
                 $params = [];
                 break;
@@ -213,7 +214,7 @@ class Router
             case '/admin/edit-post':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'editPost';
                 $params = [];
                 break;
@@ -221,7 +222,7 @@ class Router
             case '/admin/delete-post':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'deletePost';
                 $params = [];
                 break;
@@ -233,7 +234,7 @@ class Router
                 } elseif (isset($_GET['post-id'])) {
                     $postId = (int) $_GET['post-id']; // TODO: check if the author can access this post
                 }
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showPostEditor';
                 $params = ['postId' => $postId] ?? [];
                 break;
@@ -243,7 +244,7 @@ class Router
                 if (isset($_POST['category-id'])) {
                     $categoryId = (int) $_POST['category-id'];
                 }
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showCategoryEditor';
                 $params = ['categoryId' => $categoryId] ?? [];
                 break;
@@ -251,7 +252,7 @@ class Router
             case '/admin/add-category':
                 MemberController::verifyAccess(['editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'addCategory';
                 $params = [];
                 break;
@@ -259,7 +260,7 @@ class Router
             case '/admin/edit-category':
                 MemberController::verifyAccess(['editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'editCategory';
                 $params = [];
                 break;
@@ -267,7 +268,7 @@ class Router
             case '/admin/delete-category':
                 MemberController::verifyAccess(['editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'deleteCategory';
                 $params = [];
                 break;
@@ -275,7 +276,7 @@ class Router
             case '/admin/update-tags':
                 MemberController::verifyAccess(['editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'updateTagList';
                 $params = [
                     'tagIds' => $_POST['tag_ids'],
@@ -287,7 +288,7 @@ class Router
             case '/admin/media-library':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showMediaLibrary';
                 $params = [];
                 break;
@@ -295,7 +296,7 @@ class Router
             case '/admin/media-library/add':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'addImage';
                 $params = [];
                 break;
@@ -303,7 +304,7 @@ class Router
             case '/admin/image-editor':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'showImageEditor';
                 $params = [
                     'imagePath' => htmlspecialchars($_GET['image'])
@@ -313,7 +314,7 @@ class Router
             case '/admin/image-editor/edit':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'editImage';
                 $params = [
                     'imagePath' => htmlspecialchars($_POST['path']),
@@ -331,7 +332,7 @@ class Router
             case '/admin/image-editor/delete':
                 MemberController::verifyAccess(['author', 'editor']);
                 CsrfProtector::checkCsrf();
-                $controller = BlogController::class;
+                $controller = AdminController::class;
                 $method = 'deleteImage';
                 $params = [
                     'imagePath' => htmlspecialchars($_POST['path'])
