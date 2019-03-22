@@ -90,6 +90,7 @@ class Router
             // Comments
 
             case '/add-comment':
+                MemberController::verifyAccess(['member']);
                 CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'addComment';
@@ -186,6 +187,7 @@ class Router
                 break;
 
             case '/admin/edit-comment':
+                MemberController::verifyAccess(['moderator']);
                 CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'editComment';
@@ -193,6 +195,7 @@ class Router
                 break;
 
             case '/admin/delete-comment':
+                MemberController::verifyAccess(['moderator']);
                 CsrfProtector::checkCsrf();
                 $controller = BlogController::class;
                 $method = 'deleteComment';
