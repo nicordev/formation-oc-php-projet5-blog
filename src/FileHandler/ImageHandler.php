@@ -13,6 +13,8 @@ class ImageHandler extends FileHandler
     const KEY_WIDTH = "width";
     const KEY_HEIGHT = "height";
 
+    public const KEY_IMAGE_PATH = "imagePath";
+
     private function __construct()
     {
         // Disabled

@@ -14,6 +14,12 @@ use Model\Manager\PostManager;
 
 class BlogHelper
 {
+    const KEY_POST_TITLE = "post-title";
+    const KEY_POST_EXCERPT = "post-excerpt";
+    const KEY_POST_CONTENT = "post-content";
+    const KEY_CATEGORY_NAME = "category-name";
+
+
     private function __construct()
     {
         // Disabled
@@ -98,15 +104,15 @@ class BlogHelper
         $post = new Post();
 
         if (
-            isset($_POST['post-title']) && !empty($_POST['post-title']) &&
-            isset($_POST['post-excerpt']) && !empty($_POST['post-excerpt']) &&
-            isset($_POST['post-content']) && !empty($_POST['post-content']) &&
+            isset($_POST[self::KEY_POST_TITLE]) && !empty($_POST[self::KEY_POST_TITLE]) &&
+            isset($_POST[self::KEY_POST_EXCERPT]) && !empty($_POST[self::KEY_POST_EXCERPT]) &&
+            isset($_POST[self::KEY_POST_CONTENT]) && !empty($_POST[self::KEY_POST_CONTENT]) &&
             isset($_POST['post-author-id'])
         ) {
             // Common
-            $post->setTitle($_POST['post-title']);
-            $post->setExcerpt($_POST['post-excerpt']);
-            $post->setContent($_POST['post-content']);
+            $post->setTitle($_POST[self::KEY_POST_TITLE]);
+            $post->setExcerpt($_POST[self::KEY_POST_EXCERPT]);
+            $post->setContent($_POST[self::KEY_POST_CONTENT]);
             $post->setAuthorId($_POST['post-author-id']);
 
             if (isset($_POST['add-post'])) {
@@ -155,8 +161,8 @@ class BlogHelper
     {
         $category = new Category();
 
-        if (isset($_POST['category-name']) && !empty($_POST['category-name'])) {
-            $category->setName(htmlspecialchars($_POST['category-name']));
+        if (isset($_POST[self::KEY_CATEGORY_NAME]) && !empty($_POST[self::KEY_CATEGORY_NAME])) {
+            $category->setName(htmlspecialchars($_POST[self::KEY_CATEGORY_NAME]));
 
             // Category to edit
             if (isset($_POST['edit-category'])) {

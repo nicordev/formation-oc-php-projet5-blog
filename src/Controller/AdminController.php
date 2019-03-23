@@ -117,7 +117,7 @@ class AdminController extends BlogController
     {
         $categoryToEdit = null;
 
-        if ($categoryToEditId !== null) {
+        if ($categoryToEditId !== null && $categoryToEditId > 0) {
             $categoryToEdit = $this->categoryManager->get($categoryToEditId);
         }
 

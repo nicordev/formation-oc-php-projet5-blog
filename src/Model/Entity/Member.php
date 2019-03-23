@@ -11,6 +11,12 @@ class Member extends Entity
     protected $description = null;
     protected $roles = [];
 
+    public const MEMBER = "member";
+    public const AUTHOR = "author";
+    public const EDITOR = "editor";
+    public const MODERATOR = "moderator";
+    public const ADMIN = "admin";
+
     /**
      * @return array
      */

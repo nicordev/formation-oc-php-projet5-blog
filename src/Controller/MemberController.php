@@ -12,6 +12,7 @@ use Application\MailSender\MailSender;
 use Application\Security\BruteForceProtector;
 use Application\Security\CsrfProtector;
 use Exception;
+use Helper\BlogHelper;
 use Model\Entity\Key;
 use Model\Entity\Member;
 use Model\Entity\Role;
@@ -120,7 +121,7 @@ class MemberController extends Controller
      */
     public function showMemberProfile(?int $memberId = null)
     {
-        if ($memberId !== null) {
+        if ($memberId !== null && $memberId > 0) {
             $member = $this->memberManager->get($memberId);
         } else {
             $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
@@ -130,7 +131,7 @@ class MemberController extends Controller
         $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true);
 
         foreach ($memberComments as $memberComment) {
-            BlogController::convertDatesOfComment($memberComment);
+            BlogHelper::convertDatesOfComment($memberComment);
         }
 
         $this->render(self::VIEW_MEMBER_PROFILE, [
@@ -155,8 +156,8 @@ class MemberController extends Controller
      */
     public function profileEditor($member = null, ?int $keyValue = null)
     {
+        CsrfProtector::checkCsrf();
         if (isset($_GET[self::KEY_ACTION]) && !empty($_GET[self::KEY_ACTION])) {
-            CsrfProtector::checkCsrf();
             if ($_GET[self::KEY_ACTION] === 'update') {
                 $this->updateProfile();
             } elseif ($_GET[self::KEY_ACTION] === 'delete') {
@@ -415,7 +416,7 @@ class MemberController extends Controller
 
         if (MemberController::memberConnected()) {
 
-            if ($member === null) {
+            if ($member === null || $member === 0) {
                 $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
             } elseif (!($member instanceof Member) && in_array('admin', $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
                 $member = $this->memberManager->get((int) $member);
@@ -525,5 +526,6 @@ class MemberController extends Controller
                 return true;
             }
         }
+        return false;
     }
 }
