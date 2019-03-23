@@ -35,11 +35,10 @@ class FileHandler
         $i = 0;
         if ($dir = opendir($path)) {
             while (($file = readdir($dir)) !== false) {
-                if ($file != '.' && $file != '..') { // Avoid parent and current folder
-                    if (!is_dir($file)) { // Avoid folders
+                if ($file != '.' && $file != '..' && // Avoid parent and current folder
+                    !is_dir($file)) { // Avoid folders
                         $files[] = $file;
                         $i++;
-                    }
                 }
             }
             closedir($dir);
@@ -73,33 +72,25 @@ class FileHandler
      */
     public static function upload(string $fieldName, string $destinationFolder, array $authorizedExtensions = [], string $fileName = '', string $prefix = '', string $suffix = '')
     {
-        if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] == 0)
-        {
-            if ($_FILES[$fieldName]['size'] <= 8000000)
-            {
-                $fileInfo = pathinfo($_FILES[$fieldName]['name']);
-                
-                if (empty($fileName)) {
-                    $fileName = $fileInfo['filename'];
-                }
-                $fileExtension = strtolower($fileInfo['extension']);
-                $destination = $destinationFolder . $prefix . $fileName . $suffix . '.' . $fileExtension;
+        if (self::isClearedToUpload($fieldName)) {
+            $fileInfo = pathinfo($_FILES[$fieldName]['name']);
 
-                if (!empty($authorizedExtensions) && in_array($fileExtension, $authorizedExtensions) || empty($authorizedExtensions))
-                {
-                    if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination)) {
-                        return $destination;
-                    } else {
-                        throw new FileException('An error occured when move_uploaded_file(' . $destination . ')', 0);
-                    }
-                }
-                throw new FileException('The file extension ' . $fileExtension . ' is not allowed', 1);
-
-            } else {
-                throw new FileException('The file is too big', 2);
+            if (empty($fileName)) {
+                $fileName = $fileInfo['filename'];
             }
+            $fileExtension = strtolower($fileInfo['extension']);
+            $destination = $destinationFolder . $prefix . $fileName . $suffix . '.' . $fileExtension;
+
+            if (!empty($authorizedExtensions) && in_array($fileExtension, $authorizedExtensions) || empty($authorizedExtensions))
+            {
+                if (move_uploaded_file($_FILES[$fieldName]['tmp_name'], $destination)) {
+                    return $destination;
+                } else {
+                    throw new FileException('An error occured when move_uploaded_file(' . $destination . ')', 0);
+                }
+            }
+            throw new FileException('The file extension ' . $fileExtension . ' is not allowed', 1);
         }
-        throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '', 3);
     }
 
     /**
@@ -114,5 +105,26 @@ class FileHandler
                 return str_replace('/', '\\', $path);
             }
             return str_replace('\\', '/', $path);
+    }
+
+    /**
+     * Check the file size and potential errors with $_FILES
+     *
+     * @param string $fieldName
+     * @return bool
+     * @throws FileException
+     */
+    private static function isClearedToUpload(string $fieldName)
+    {
+        if (isset($_FILES[$fieldName]) && $_FILES[$fieldName]['error'] == 0)
+        {
+            if ($_FILES[$fieldName]['size'] <= 8000000)
+            {
+                return true;
+            } else {
+                throw new FileException('The file is too big', 2);
+            }
+        }
+        throw new FileException('The file does not exists or an error occured ' . $_FILES[$fieldName]['error'] ?? '', 3);
     }
 }

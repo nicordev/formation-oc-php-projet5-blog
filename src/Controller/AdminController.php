@@ -2,12 +2,11 @@
 
 namespace Controller;
 
+use Model\Entity\Member;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
-use Application\Exception\FileException;
-use Application\FileHandler\ImageHandler;
 use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Helper\BlogHelper;
@@ -70,13 +69,16 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
         if (!$postToEditId && isset($_POST[self::KEY_POST_ID])) {
             $postToEditId = (int) $_POST[self::KEY_POST_ID];
         } elseif (!$postToEditId && isset($_GET[self::KEY_POST_ID])) {
-            $postToEditId = (int) $_GET[self::KEY_POST_ID]; // TODO: check if the author can access this post
+            if ($this->isAllowedToEditThePost((int) $_GET[self::KEY_POST_ID], $_SESSION['connected-member'])) {
+                $postToEditId = (int) $_GET[self::KEY_POST_ID];
+            }
         }
 
         $postToEdit = null;
@@ -166,6 +168,7 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function addPost()
     {
@@ -190,6 +193,7 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function editPost()
     {
@@ -227,7 +231,6 @@ class AdminController extends BlogController
      * @param array $tagNames
      * @param string|null $action
      * @return bool
-     * @throws AppException
      * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -542,4 +545,25 @@ class AdminController extends BlogController
         $this->showPostEditor($this->postManager->getLastId(), implode('<br>', $messages));
     }
 
+    /**
+     * Check if a member is allowed to edit a post (either an editor or the author)
+     *
+     * @param int $postId
+     * @param Member $member
+     * @return bool
+     * @throws HttpException
+     * @throws AccessException
+     */
+    public function isAllowedToEditThePost(int $postId, Member $member)
+    {
+        if (in_array(Member::EDITOR, $member->getRoles())) {
+            return true;
+        } elseif (in_array(Member::AUTHOR, $member->getRoles())) {
+            $post = $this->postManager->get($postId);
+            if ($post->getAuthorId() === $member->getId()) {
+                return true;
+            }
+        }
+        throw new HttpException("Access forbidden.", 403);
+    }
 }

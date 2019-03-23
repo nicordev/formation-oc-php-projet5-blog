@@ -43,9 +43,6 @@ class MemberController extends Controller
 
     const KEY_CONNECTED_MEMBER = "connected-member";
     const KEY_MEMBER = "member";
-    const KEY_EMAIL = "email";
-    const KEY_DESCRIPTION = "description";
-    const KEY_PASSWORD = "password";
 
     public function __construct(
         MemberManager $memberManager,
@@ -224,8 +221,8 @@ class MemberController extends Controller
     {
         if (
             isset($_POST['name']) &&
-            isset($_POST[self::KEY_EMAIL]) &&
-            isset($_POST[self::KEY_DESCRIPTION])
+            isset($_POST[Member::KEY_EMAIL]) &&
+            isset($_POST[Member::KEY_DESCRIPTION])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
             if (isset($_POST['keep-roles'])) {
@@ -275,12 +272,12 @@ class MemberController extends Controller
     {
         if (
             isset($_POST['name']) &&
-            isset($_POST[self::KEY_EMAIL]) &&
-            isset($_POST[self::KEY_PASSWORD])
+            isset($_POST[Member::KEY_EMAIL]) &&
+            isset($_POST[Member::KEY_PASSWORD])
         ) {
             if (
-                empty($_POST[self::KEY_EMAIL]) ||
-                empty($_POST[self::KEY_PASSWORD]) ||
+                empty($_POST[Member::KEY_EMAIL]) ||
+                empty($_POST[Member::KEY_PASSWORD]) ||
                 empty($_POST['name'])
             ) {
                 $this->showRegistrationPage("Le nom, l'email et le mot de passe doivent être renseignés.");
@@ -309,11 +306,11 @@ class MemberController extends Controller
      */
     public function connect()
     {
-        if (isset($_POST[self::KEY_EMAIL]) && isset($_POST[self::KEY_PASSWORD])) {
-            if (empty($_POST[self::KEY_EMAIL]) || empty($_POST[self::KEY_PASSWORD])) {
+        if (isset($_POST[Member::KEY_EMAIL]) && isset($_POST[Member::KEY_PASSWORD])) {
+            if (empty($_POST[Member::KEY_EMAIL]) || empty($_POST[Member::KEY_PASSWORD])) {
                 $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.");
             } else {
-                $member = $this->memberManager->getFromEmail($_POST[self::KEY_EMAIL]);
+                $member = $this->memberManager->getFromEmail($_POST[Member::KEY_EMAIL]);
 
                 if ($member !== null) {
                     // Brute force protection
@@ -321,7 +318,7 @@ class MemberController extends Controller
                     if ($waitingTime > 0) {
                         $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.<br>Temps restant : $waitingTime s");
 
-                    } elseif (password_verify($_POST[self::KEY_PASSWORD], $member->getPassword())) {
+                    } elseif (password_verify($_POST[Member::KEY_PASSWORD], $member->getPassword())) {
                         $_SESSION[self::KEY_CONNECTED_MEMBER] = $member;
                         BruteForceProtector::resetTheUser();
                         header('Location: /home');
@@ -357,7 +354,7 @@ class MemberController extends Controller
     public function passwordLost()
     {
         if (isset($_GET[self::KEY_ACTION]) && $_GET[self::KEY_ACTION] = 'send') {
-            $email = htmlspecialchars($_POST[self::KEY_EMAIL]);
+            $email = htmlspecialchars($_POST[Member::KEY_EMAIL]);
             if (!empty($email) && $this->memberManager->emailExists($email)) {
                 $memberId = $this->memberManager->getId(null, $email);
                 $key = new Key(['value' => random_int(0, 123456789)]);
@@ -456,16 +453,16 @@ class MemberController extends Controller
     {
         $member = new Member();
 
-        $member->setEmail(htmlspecialchars($_POST[self::KEY_EMAIL]));
+        $member->setEmail(htmlspecialchars($_POST[Member::KEY_EMAIL]));
 
-        if (isset($_POST[self::KEY_PASSWORD]) && !empty($_POST[self::KEY_PASSWORD])) {
-            $member->setPassword(password_hash($_POST[self::KEY_PASSWORD], PASSWORD_DEFAULT));
+        if (isset($_POST[Member::KEY_PASSWORD]) && !empty($_POST[Member::KEY_PASSWORD])) {
+            $member->setPassword(password_hash($_POST[Member::KEY_PASSWORD], PASSWORD_DEFAULT));
         }
 
         $member->setName(htmlspecialchars($_POST['name']));
 
-        if (isset($_POST[self::KEY_DESCRIPTION])) {
-            $member->setDescription(htmlspecialchars($_POST[self::KEY_DESCRIPTION]));
+        if (isset($_POST[Member::KEY_DESCRIPTION])) {
+            $member->setDescription(htmlspecialchars($_POST[Member::KEY_DESCRIPTION]));
         }
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {

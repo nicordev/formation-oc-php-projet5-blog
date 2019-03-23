@@ -145,7 +145,7 @@ return [
         ROUTE_KEY_NAME => "comment_editor",
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'showCommentEditor',
-        ROUTE_KEY_CHECK_ACCESS => ['moderator'],
+        ROUTE_KEY_CHECK_ACCESS => [Member::MODERATOR],
         ROUTE_KEY_PARAMS => ['commentToEditId' => (int) $_GET['id']]
     ],
     [
@@ -155,7 +155,7 @@ return [
         ROUTE_KEY_NAME => "edit_comment",
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'editComment',
-        ROUTE_KEY_CHECK_ACCESS => ['moderator'],
+        ROUTE_KEY_CHECK_ACCESS => [Member::MODERATOR],
         ROUTE_KEY_CHECK_CSRF => true
     ],
     [
@@ -165,7 +165,7 @@ return [
         ROUTE_KEY_NAME => "delete_comment",
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'deleteComment',
-        ROUTE_KEY_CHECK_ACCESS => ['moderator'],
+        ROUTE_KEY_CHECK_ACCESS => [Member::MODERATOR],
         ROUTE_KEY_CHECK_CSRF => true
     ],
     [

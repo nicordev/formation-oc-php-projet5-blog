@@ -115,6 +115,7 @@ class BlogHelper
             $post->setContent($_POST[self::KEY_POST_CONTENT]);
             $post->setAuthorId($_POST['post-author-id']);
 
+            // Add a new post
             if (isset($_POST['add-post'])) {
                 $post->setCreationDate(date(Controller::MYSQL_DATE_FORMAT));
             }
@@ -128,22 +129,7 @@ class BlogHelper
                 $post->setLastEditorId($_POST['post-editor-id']);
             }
 
-            // Tags
-            $tags = self::getTagsFromForm();
-            if ($tags) {
-                $post->setTags($tags);
-            }
-
-            // Categories
-            $categories = self::getCategoriesFromForm();
-            if ($categories) {
-                $post->setCategories($categories);
-            }
-
-            // Markdown
-            if (isset($_POST['markdown-content']) && !empty($_POST['markdown-content'])) {
-                $post->setMarkdown(true);
-            }
+            self::setPostSettingsFromForm($post);
 
             return $post;
 
@@ -229,23 +215,24 @@ class BlogHelper
      */
     public static function cutPost(Post $post, string $message = '')
     {
+        $endOfSentence = " caractères. Il a été coupé.<br>";
         // Title
         if (strlen($post->getTitle()) > PostManager::TITLE_LENGTH) {
             // We cut
             $post->setTitle(substr($post->getTitle(), 0, PostManager::TITLE_LENGTH));
-            $message .= "Attention : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . " caractères. Il a été coupé.<br>";
+            $message .= "Attention : le titre ne doit pas dépasser " . PostManager::TITLE_LENGTH . $endOfSentence;
         }
         // Excerpt
         if (strlen($post->getExcerpt()) > PostManager::EXCERPT_LENGTH) {
             // We cut
             $post->setExcerpt(substr($post->getExcerpt(), 0, PostManager::EXCERPT_LENGTH));
-            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . " caractères. Il a été coupé.<br>";
+            $message .= "Attention : l'extrait ne doit pas dépasser " . PostManager::EXCERPT_LENGTH . $endOfSentence;
         }
         // Content
         if (strlen($post->getContent()) > PostManager::CONTENT_LENGTH) {
             // We cut
             $post->setContent(substr($post->getContent(), 0, PostManager::CONTENT_LENGTH));
-            $message .= "Attention : le contenu ne doit pas dépasser " . PostManager::CONTENT_LENGTH . " caractères. Il a été coupé.<br>";
+            $message .= "Attention : le contenu ne doit pas dépasser " . PostManager::CONTENT_LENGTH . $endOfSentence;
         }
 
         return $message;
@@ -303,6 +290,33 @@ class BlogHelper
 
         if ($comment->getLastModificationDate() !== null) {
             $comment->setLastModificationDate(Controller::formatDate($comment->getLastModificationDate()));
+        }
+    }
+
+    // Private
+
+    /**
+     * Set tags, categories and markdown settings to a post
+     *
+     * @param Post $post
+     */
+    private static function setPostSettingsFromForm(Post $post)
+    {
+        // Tags
+        $tags = self::getTagsFromForm();
+        if ($tags) {
+            $post->setTags($tags);
+        }
+
+        // Categories
+        $categories = self::getCategoriesFromForm();
+        if ($categories) {
+            $post->setCategories($categories);
+        }
+
+        // Markdown
+        if (isset($_POST['markdown-content']) && !empty($_POST['markdown-content'])) {
+            $post->setMarkdown(true);
         }
     }
 }

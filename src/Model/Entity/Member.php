@@ -17,6 +17,11 @@ class Member extends Entity
     public const MODERATOR = "moderator";
     public const ADMIN = "admin";
 
+    public const KEY_NAME = "name";
+    public const KEY_EMAIL = "email";
+    public const KEY_DESCRIPTION = "description";
+    public const KEY_PASSWORD = "password";
+
     /**
      * @return array
      */

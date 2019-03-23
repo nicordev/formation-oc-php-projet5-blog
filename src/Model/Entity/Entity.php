@@ -8,7 +8,6 @@
 
 namespace Model\Entity;
 
-
 /**
  * Class Entity
  * @package Model\Entity
@@ -19,6 +18,8 @@ abstract class Entity
      * @var int
      */
     protected $id = null;
+
+    public const KEY_ID = 'id';
 
     /**
      * Entity constructor.

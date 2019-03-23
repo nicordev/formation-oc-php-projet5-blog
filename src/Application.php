@@ -110,6 +110,9 @@ class Application
         } catch (HttpException $e) {
             $errorController = DIC::newErrorController();
             switch ($e->getCode()) {
+                case 403:
+                    $errorController->showError403();
+                    break;
                 case 404:
                     $errorController->showError404();
                     break;

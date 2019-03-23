@@ -121,8 +121,8 @@ class DIC
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
 
         $twig = new Twig_Environment($twigLoader, [
-            'debug' => true, // TODO change to false for production
-            'cache' => false // TODO change to true for production
+            'debug' => true, // Change to false for production
+            'cache' => false // Change to true for production
         ]);
 
         // Get the connected member

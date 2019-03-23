@@ -96,7 +96,7 @@ class CommentManager extends Manager
         $requestComments = $this->query($query, ['postId' => $postId]);
 
         while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-            $comment = $this->createEntityFromTableData($commentData, 'Comment');
+            $comment = $this->createEntityFromTableData($commentData);
             $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
             $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
             if ($comment->getLastEditorId()) {
@@ -178,7 +178,7 @@ class CommentManager extends Manager
 
         if ($filterApproved) {
             while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-                $comment = $this->createEntityFromTableData($commentData, 'Comment');
+                $comment = $this->createEntityFromTableData($commentData);
                 if ($comment->isApproved()) {
                     $comments[] = $comment;
                 }
@@ -186,7 +186,7 @@ class CommentManager extends Manager
 
         } else {
             while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-                $comment = $this->createEntityFromTableData($commentData, 'Comment');
+                $comment = $this->createEntityFromTableData($commentData);
                 $comments[] = $comment;
             }
         }
