@@ -21,6 +21,8 @@ class BruteForceProtector
      *
      * @return int
      * @throws AppException
+     * @throws HttpException
+     * @throws \ReflectionException
      */
     public static function canConnectAgainIn(): int
     {

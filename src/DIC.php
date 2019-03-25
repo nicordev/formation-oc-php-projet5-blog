@@ -37,6 +37,7 @@ class DIC
 
     /**
      * @return BlogController
+     * @throws Exception\HttpException
      */
     public static function newBlogController(): BlogController
     {
@@ -52,6 +53,7 @@ class DIC
 
     /**
      * @return AdminController
+     * @throws Exception\HttpException
      */
     public static function newAdminController(): AdminController
     {
@@ -98,6 +100,7 @@ class DIC
 
     /**
      * @return MemberController
+     * @throws Exception\HttpException
      */
     public static function newMemberController(): MemberController
     {

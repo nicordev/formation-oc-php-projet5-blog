@@ -53,8 +53,7 @@ class MemberController extends Controller
         CommentManager $commentManager,
         KeyManager $keyManager,
         Twig_Environment $twig
-    )
-    {
+    ) {
         parent::__construct($twig);
         $this->memberManager = $memberManager;
         $this->roleManager = $roleManager;

@@ -53,14 +53,13 @@ class BlogController extends Controller
      * @param Twig_Environment $twig
      */
     public function __construct(
-                                PostManager $postManager,
-                                TagManager $tagManager,
-                                CategoryManager $categoryManager,
-                                CommentManager $commentManager,
-                                MemberManager $memberManager,
-                                Twig_Environment $twig
-    )
-    {
+        PostManager $postManager,
+        TagManager $tagManager,
+        CategoryManager $categoryManager,
+        CommentManager $commentManager,
+        MemberManager $memberManager,
+        Twig_Environment $twig
+    ) {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->tagManager = $tagManager;
