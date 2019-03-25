@@ -18,7 +18,9 @@ define('ROUTE_KEY_CHECK_CSRF', "checkCsrf");
 
 
 return [
+
     // Home
+
     [
         ROUTE_KEY_URLS => [
             '/',
@@ -28,7 +30,9 @@ return [
         ROUTE_KEY_CONTROLLER => HomeController::class,
         ROUTE_KEY_METHOD => 'showHome'
     ],
+
     // Blog
+
     [
         ROUTE_KEY_URLS => [
             '/blog'
@@ -64,7 +68,9 @@ return [
             'postId' => (int) $_GET['post-id']
         ]
     ],
+
     // Comments
+
     [
         ROUTE_KEY_URLS => [
             '/add-comment'
@@ -75,7 +81,9 @@ return [
         ROUTE_KEY_CHECK_ACCESS => [Member::MEMBER],
         ROUTE_KEY_CHECK_CSRF => true
     ],
+
     // Member
+
     [
         ROUTE_KEY_URLS => [
             '/password-lost'
@@ -129,7 +137,9 @@ return [
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'disconnect'
     ],
+
     // Admin
+
     [
         ROUTE_KEY_URLS => [
             '/admin'
@@ -138,6 +148,9 @@ return [
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'showAdminPanel'
     ],
+
+    // Comment editor
+
     [
         ROUTE_KEY_URLS => [
             '/admin/comment-editor'
@@ -167,6 +180,18 @@ return [
         ROUTE_KEY_METHOD => 'deleteComment',
         ROUTE_KEY_CHECK_ACCESS => [Member::MODERATOR],
         ROUTE_KEY_CHECK_CSRF => true
+    ],
+
+    // Post editor
+
+    [
+        ROUTE_KEY_URLS => [
+            '/admin/post-editor'
+        ],
+        ROUTE_KEY_NAME => "post_editor",
+        ROUTE_KEY_CONTROLLER => AdminController::class,
+        ROUTE_KEY_METHOD => 'showPostEditor',
+        ROUTE_KEY_CHECK_ACCESS => [Member::AUTHOR, Member::EDITOR]
     ],
     [
         ROUTE_KEY_URLS => [
@@ -198,15 +223,9 @@ return [
         ROUTE_KEY_CHECK_ACCESS => [Member::AUTHOR, Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true
     ],
-    [
-        ROUTE_KEY_URLS => [
-            '/admin/post-editor'
-        ],
-        ROUTE_KEY_NAME => "post_editor",
-        ROUTE_KEY_CONTROLLER => AdminController::class,
-        ROUTE_KEY_METHOD => 'showPostEditor',
-        ROUTE_KEY_CHECK_ACCESS => [Member::AUTHOR, Member::EDITOR]
-    ],
+
+    // Category editor
+
     [
         ROUTE_KEY_URLS => [
             '/admin/category-editor'
@@ -238,6 +257,9 @@ return [
         ROUTE_KEY_CHECK_ACCESS => [Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true
     ],
+
+    // Tags list
+
     [
         ROUTE_KEY_URLS => [
             '/admin/update-tags'
@@ -253,7 +275,9 @@ return [
         ROUTE_KEY_CHECK_ACCESS => [Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true
     ],
+
     // Media library
+
     [
         ROUTE_KEY_URLS => [
             '/admin/media-library'
