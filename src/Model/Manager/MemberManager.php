@@ -126,24 +126,38 @@ class MemberManager extends Manager
     }
 
     /**
-     * Check if a member is new
+     * Check if an email already exists in the members table
      *
-     * @param Member $newMember
+     * @param string $email
      * @return bool
      * @throws \Application\Exception\HttpException
      */
-    public function isNewMember(Member $newMember): bool
+    public function isNewEmail(string $email)
     {
-        $members = $this->getAll();
-
-        if (!empty($members)) {
-            foreach ($members as $member) {
-                if ($member->getEmail() === $newMember->getEmail()) {
-                    return false;
-                }
-            }
+        $query = "SELECT COUNT(m_email) FROM bl_member WHERE m_email = :email";
+        $count = $this->query($query, ["email" => $email])
+            ->fetch(PDO::FETCH_NUM)[0];
+        if ($count > 0) {
+            return false;
         }
+        return true;
+    }
 
+    /**
+     * Check if a name already exists in the members table
+     *
+     * @param string $name
+     * @return bool
+     * @throws \Application\Exception\HttpException
+     */
+    public function isNewName(string $name)
+    {
+        $query = "SELECT COUNT(m_name) FROM bl_member WHERE m_name = :name";
+        $count = $this->query($query, ["name" => $name])
+            ->fetch(PDO::FETCH_NUM)[0];
+        if ($count > 0) {
+            return false;
+        }
         return true;
     }
 

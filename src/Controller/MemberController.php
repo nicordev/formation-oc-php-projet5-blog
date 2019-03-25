@@ -13,6 +13,7 @@ use Application\Security\BruteForceProtector;
 use Application\Security\CsrfProtector;
 use Exception;
 use Helper\BlogHelper;
+use Helper\MemberHelper;
 use Model\Entity\Key;
 use Model\Entity\Member;
 use Model\Entity\Role;
@@ -43,6 +44,7 @@ class MemberController extends Controller
 
     const KEY_CONNECTED_MEMBER = "connected-member";
     const KEY_MEMBER = "member";
+    const KEY_WRONG_FIELDS = "wrongFields";
 
     public function __construct(
         MemberManager $memberManager,
@@ -89,9 +91,14 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showRegistrationPage(?string $message = null)
+    public function showRegistrationPage(?string $message = null, ?array $wrongFields = null)
     {
-        $this->render(self::VIEW_REGISTRATION, [BlogController::KEY_MESSAGE => $message]);
+        $this->render(self::VIEW_REGISTRATION, [
+            Member::KEY_EMAIL => $_POST[Member::KEY_EMAIL] ?? null,
+            Member::KEY_NAME => $_POST[Member::KEY_NAME] ?? null,
+            self::KEY_WRONG_FIELDS => $wrongFields,
+            BlogController::KEY_MESSAGE => $message
+        ]);
     }
 
     /**
@@ -267,28 +274,45 @@ class MemberController extends Controller
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws \Application\Exception\HttpException
+     * @throws Exception
      */
     public function register()
     {
         if (
-            isset($_POST['name']) &&
+            isset($_POST[Member::KEY_NAME]) &&
             isset($_POST[Member::KEY_EMAIL]) &&
             isset($_POST[Member::KEY_PASSWORD])
         ) {
-            if (
-                empty($_POST[Member::KEY_EMAIL]) ||
-                empty($_POST[Member::KEY_PASSWORD]) ||
-                empty($_POST['name'])
-            ) {
-                $this->showRegistrationPage("Le nom, l'email et le mot de passe doivent être renseignés.");
-            } else {
+            $emptyFields = [];
+            $message = "";
+
+            if (MemberHelper::isClearOfEmptyFields($emptyFields, $message)) {
+                if (!filter_var($_POST[Member::KEY_EMAIL], FILTER_VALIDATE_EMAIL)) {
+                    $this->showRegistrationPage("L'email est mal écrit.", ["email"]);
+                }
                 $member = $this->buildMemberFromForm();
-                if ($this->addNewMember($member)) {
+                $isNewEmail = $this->memberManager->isNewEmail($member->getEmail());
+                $isNewName = $this->memberManager->isNewName($member->getName());
+
+                if (!$isNewName || !$isNewEmail) {
+                    $wrongFields = [];
+                    $message = "";
+                    if (!$isNewName) {
+                        $message .= "Ce nom est déjà pris. ";
+                        $wrongFields[] = Member::KEY_NAME;
+                    }
+                    if (!$isNewEmail) {
+                        $message .= "Cet email est déjà pris.";
+                        $wrongFields[] = Member::KEY_EMAIL;
+                    }
+                    $this->showRegistrationPage($message, $wrongFields);
+                } else {
+                    $this->addNewMember($member);
                     $_SESSION[self::KEY_CONNECTED_MEMBER] = $member;
                     $this->showWelcomePage();
-                } else {
-                    $this->showRegistrationPage("Cet email est déjà pris.");
                 }
+            } else {
+                $this->showRegistrationPage($message, $emptyFields);
             }
         } else {
             $this->showRegistrationPage();
@@ -391,6 +415,7 @@ class MemberController extends Controller
     private function showConnectionPage(?string $message = null)
     {
         $this->render(self::VIEW_CONNECTION, [
+            Member::KEY_EMAIL => $_POST[Member::KEY_EMAIL] ?? null,
             BlogController::KEY_MESSAGE => $message
         ]);
     }
@@ -494,19 +519,12 @@ class MemberController extends Controller
      *
      * @param Member $member
      * @return bool
-     * @throws \Application\Exception\HttpException
      * @throws Exception
      */
     private function addNewMember(Member $member): bool
     {
-        if ($this->memberManager->isNewMember($member)) {
-            $member->setRoles([self::KEY_MEMBER]);
-            $this->memberManager->add($member);
-
-            return true;
-        }
-
-        return false;
+        $member->setRoles([self::KEY_MEMBER]);
+        $this->memberManager->add($member);
     }
 
     /**

@@ -93,6 +93,9 @@ abstract class Manager
         $properties = self::getEntityProperties($entity);
         $fullFields = $this->filterEmptyFields($entity);
 
+        ksort($properties);
+        ksort($fullFields);
+
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fullFields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
 
@@ -110,6 +113,9 @@ abstract class Manager
     {
         $properties = self::getEntityProperties($modifiedEntity);
         $fullFields = $this->filterEmptyFields($modifiedEntity);
+
+        ksort($properties);
+        ksort($fullFields);
 
         $query = 'UPDATE ' . $this->tableName . '
             SET ' . self::buildSqlSet($fullFields) . '
@@ -274,9 +280,12 @@ abstract class Manager
                     }
                 }
             }
-
-            if (!$request->execute($params)) {
-                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
+            try {
+                if (!$request->execute($params)) {
+                    throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
+                }
+            } catch (PDOException $e) {
+                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500, $e);
             }
         } else {
             $request = $this->database->query($query);

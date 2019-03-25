@@ -158,6 +158,14 @@ class DIC
         });
         $twig->addFunction($getImageSize);
 
+        // DEBUG: Show the content of variables
+        $dump = new Twig_Function('dump', function () {
+            $args = func_get_args();
+            var_dump($args);
+            die;
+        });
+        $twig->addFunction($dump);
+
         return $twig;
     }
 }
