@@ -24,8 +24,26 @@ You'll find a file `p5_mpd.png` in the **database** folder which shows a diagram
 ## Setup
 
 1. Clone the project
-2. Create the database using the file **database/p5_create_db.sql**
-3. Create the tables using the file **database/p5_tables.sql**
-4. *Optional: you can insert a set of demo data in the database with **database/p5_sample_data.sql***
-5. Run `composer install`
-6. Enjoy
+1. Create the database using the file **database/p5_create_db.sql**
+1. Create the tables using the file **database/p5_tables.sql**
+1. *Optional: you can insert a set of demo data in the database with **database/p5_sample_data.sql***
+1. Run `composer install`
+1. Fill the **config/sample_config.cfg** file with your database log in data and rename it to **config.cfg**:
+    
+    ```
+    # Database connexion
+    #
+    # Host
+    host=localhost
+    # Database name
+    dbname=put_your_database_name_here
+    # User
+    user=put_your_database_user_name_here
+    # Password
+    password=put_your_database_password_here
+    # Charset
+    charset=utf8mb4
+    # Enjoy!
+    ```
+    
+1. Enjoy

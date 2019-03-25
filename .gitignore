@@ -4,6 +4,6 @@ log/
 vendor/
 workbench/
 theme/
-config/
+config/config.cfg
 composer.lock
 code_review.bat
