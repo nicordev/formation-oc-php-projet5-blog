@@ -84,24 +84,6 @@ class MemberController extends Controller
     // Views
 
     /**
-     * Show the registration page
-     *
-     * @param string|null $message
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function showRegistrationPage(?string $message = null, ?array $wrongFields = null)
-    {
-        $this->render(self::VIEW_REGISTRATION, [
-            Member::KEY_EMAIL => $_POST[Member::KEY_EMAIL] ?? null,
-            Member::KEY_NAME => $_POST[Member::KEY_NAME] ?? null,
-            self::KEY_WRONG_FIELDS => $wrongFields,
-            BlogController::KEY_MESSAGE => $message
-        ]);
-    }
-
-    /**
      * Show a welcome page for new members
      *
      * @throws \Twig_Error_Loader
@@ -332,7 +314,14 @@ class MemberController extends Controller
     {
         if (isset($_POST[Member::KEY_EMAIL]) && isset($_POST[Member::KEY_PASSWORD])) {
             if (empty($_POST[Member::KEY_EMAIL]) || empty($_POST[Member::KEY_PASSWORD])) {
-                $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.");
+                $emptyFields = [];
+                if (empty($_POST[Member::KEY_EMAIL])) {
+                    $emptyFields[] = Member::KEY_EMAIL;
+                }
+                if (empty($_POST[Member::KEY_PASSWORD])) {
+                    $emptyFields[] = Member::KEY_PASSWORD;
+                }
+                $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.", $emptyFields);
             } else {
                 $member = $this->memberManager->getFromEmail($_POST[Member::KEY_EMAIL]);
 
@@ -348,7 +337,10 @@ class MemberController extends Controller
                         header('Location: /home');
                     }
                 }
-                $this->showConnectionPage("Erreur dans l'email ou le mot de passe.");
+                $this->showConnectionPage("Erreur dans l'email ou le mot de passe.", [
+                    Member::KEY_EMAIL,
+                    Member::KEY_PASSWORD
+                ]);
             }
         } else {
             $this->showConnectionPage();
@@ -408,14 +400,35 @@ class MemberController extends Controller
      * Show the connection page
      *
      * @param string|null $message
+     * @param array|null $wrongFields
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    private function showConnectionPage(?string $message = null)
+    private function showConnectionPage(?string $message = null, ?array $wrongFields = null)
     {
         $this->render(self::VIEW_CONNECTION, [
             Member::KEY_EMAIL => $_POST[Member::KEY_EMAIL] ?? null,
+            self::KEY_WRONG_FIELDS => $wrongFields,
+            BlogController::KEY_MESSAGE => $message
+        ]);
+    }
+
+    /**
+     * Show the registration page
+     *
+     * @param string|null $message
+     * @param array|null $wrongFields
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    private function showRegistrationPage(?string $message = null, ?array $wrongFields = null)
+    {
+        $this->render(self::VIEW_REGISTRATION, [
+            Member::KEY_EMAIL => $_POST[Member::KEY_EMAIL] ?? null,
+            Member::KEY_NAME => $_POST[Member::KEY_NAME] ?? null,
+            self::KEY_WRONG_FIELDS => $wrongFields,
             BlogController::KEY_MESSAGE => $message
         ]);
     }

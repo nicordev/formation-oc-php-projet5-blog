@@ -53,3 +53,12 @@
         </div>
     </section>
 {% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        {% for wrongField in wrongFields %}
+        myApp.validation.formatWrongField("{{ wrongField }}");
+        {% endfor %}
+    </script>
+{% endblock %}
