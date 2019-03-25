@@ -268,9 +268,10 @@ class MemberController extends Controller
             $emptyFields = [];
             $message = "";
 
-            if (MemberHelper::isClearOfEmptyFields($emptyFields, $message)) {
+            if (MemberHelper::checkEmptyRegistrationFields($emptyFields, $message)) {
                 if (!filter_var($_POST[Member::KEY_EMAIL], FILTER_VALIDATE_EMAIL)) {
                     $this->showRegistrationPage("L'email est mal écrit.", ["email"]);
+                    return false;
                 }
                 $member = $this->buildMemberFromForm();
                 $isNewEmail = $this->memberManager->isNewEmail($member->getEmail());
@@ -279,14 +280,7 @@ class MemberController extends Controller
                 if (!$isNewName || !$isNewEmail) {
                     $wrongFields = [];
                     $message = "";
-                    if (!$isNewName) {
-                        $message .= "Ce nom est déjà pris. ";
-                        $wrongFields[] = Member::KEY_NAME;
-                    }
-                    if (!$isNewEmail) {
-                        $message .= "Cet email est déjà pris.";
-                        $wrongFields[] = Member::KEY_EMAIL;
-                    }
+                    MemberHelper::setWrongRegistrationFields($wrongFields, $message, $isNewName, $isNewEmail);
                     $this->showRegistrationPage($message, $wrongFields);
                 } else {
                     $this->addNewMember($member);
@@ -313,15 +307,11 @@ class MemberController extends Controller
     public function connect()
     {
         if (isset($_POST[Member::KEY_EMAIL]) && isset($_POST[Member::KEY_PASSWORD])) {
-            if (empty($_POST[Member::KEY_EMAIL]) || empty($_POST[Member::KEY_PASSWORD])) {
-                $emptyFields = [];
-                if (empty($_POST[Member::KEY_EMAIL])) {
-                    $emptyFields[] = Member::KEY_EMAIL;
-                }
-                if (empty($_POST[Member::KEY_PASSWORD])) {
-                    $emptyFields[] = Member::KEY_PASSWORD;
-                }
-                $this->showConnectionPage("L'email et le mot de passe doivent être renseignés.", $emptyFields);
+            $emptyFields = [];
+            $message = "";
+            if (!MemberHelper::checkEmptyConnectionFields($emptyFields, $message)) {
+                $this->showConnectionPage($message, $emptyFields);
+
             } else {
                 $member = $this->memberManager->getFromEmail($_POST[Member::KEY_EMAIL]);
 
@@ -330,6 +320,7 @@ class MemberController extends Controller
                     $waitingTime = BruteForceProtector::canConnectAgainIn();
                     if ($waitingTime > 0) {
                         $this->showConnectionPage("Vous vous êtes trompé trop souvent. Attendez un moment pour réfléchir.<br>Temps restant : $waitingTime s");
+                        return false;
 
                     } elseif (password_verify($_POST[Member::KEY_PASSWORD], $member->getPassword())) {
                         $_SESSION[self::KEY_CONNECTED_MEMBER] = $member;

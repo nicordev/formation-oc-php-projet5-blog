@@ -280,13 +280,8 @@ abstract class Manager
                     }
                 }
             }
-            try {
-                if (!$request->execute($params)) {
-                    throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
-                }
-            } catch (PDOException $e) {
-                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500, $e);
-            }
+            self::executePreparedQuery($request, $params);
+
         } else {
             $request = $this->database->query($query);
         }
@@ -311,6 +306,17 @@ abstract class Manager
 
 
     // Private
+
+    private static function executePreparedQuery(\PDOStatement $request, array $params)
+    {
+        try {
+            if (!$request->execute($params)) {
+                throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500);
+            }
+        } catch (PDOException $e) {
+            throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500, $e);
+        }
+    }
 
     /**
      * Get the Entity child class
