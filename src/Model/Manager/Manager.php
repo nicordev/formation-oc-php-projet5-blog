@@ -29,6 +29,7 @@ abstract class Manager
      * @param string $user
      * @param string $password
      * @param string $charset
+     * @throws HttpException
      */
     public function __construct()
     {

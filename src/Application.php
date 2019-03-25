@@ -29,6 +29,11 @@ use ReflectionMethod;
 
 class Application
 {
+    private function __construct()
+    {
+        // Disabled
+    }
+
     /**
      * Begin the show! Enjoy!
      *
@@ -36,7 +41,7 @@ class Application
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function run()
+    public static function run()
     {
         define('ROOT_PATH', dirname(__DIR__));
 

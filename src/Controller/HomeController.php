@@ -22,12 +22,11 @@ class HomeController extends Controller
     const KEY_CONTACT_MESSAGE = "contact-message";
 
     public function __construct(
-                                PostManager $postManager,
-                                CategoryManager $categoryManager,
-                                MemberManager $memberManager,
-                                Twig_Environment $twig
-    )
-    {
+        PostManager $postManager,
+        CategoryManager $categoryManager,
+        MemberManager $memberManager,
+        Twig_Environment $twig
+    ) {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->categoryManager = $categoryManager;
