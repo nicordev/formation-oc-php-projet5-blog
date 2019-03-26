@@ -1,0 +1,67 @@
+{% extends 'admin/adminLayout.twig' %}
+
+{# head #}
+{% block title %}
+    Bibliothèque d'images
+{% endblock %}
+
+{# body #}
+{% block headerTitle %}
+    <h1>Bibliothèque d'images</h1>
+{% endblock %}
+
+{% block content %}
+    <section class="blog-admin">
+        {% include "message.twig" %}
+        <div>
+            {# Cancel button #}
+            <a id="cancel-btn" class="btn cancel-button" href="/admin">Retour</a>{# Note: the href is modified via navigationHelper.js #}
+        </div>
+
+        <div>
+            <form id="add-image-form" action="/admin/media-library/add" method="post" enctype="multipart/form-data">
+
+                {# CSRF protection #}
+                <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
+
+                <input id="new-image" class="form-control-file" type="file" name="new-image">
+
+                <p>
+                    <input class="btn" type="submit" value="Ajouter l'image">
+                </p>
+            </form>
+        </div>
+
+        <div class="media-deck">
+            {% for image in images %}
+                <a href="/admin/image-editor?image={{ image }}">
+                    <div class="media-card">
+                        <figure>
+                            <img src="{{ image }}" alt="Une image">
+                        </figure>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    {# Navigation #}
+    <script src="/public/js/navigationHelper.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            document.getElementById('cancel-btn').href = myNavigationHelper.getUrl();
+        })
+    </script>
+    {# Add image #}
+    <script>
+        document.getElementById('new-image').addEventListener('change', function () {
+            document.getElementById('add-image-form').submit();
+        });
+    </script>
+{% endblock %}
+
+
+

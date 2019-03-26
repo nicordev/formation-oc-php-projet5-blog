@@ -50,3 +50,11 @@
         {% endif %}
     {% endfor %}
 {% endmacro %}
+
+{% macro getPostEditorUrl(postId) %}
+    {% set postEditorUrl = getCurrentUrl() %}
+    {% if postId %}
+        {% set postEditorUrl = postEditorUrl ~ "?post-id=" ~ postId %}
+    {% endif %}
+    {{ postEditorUrl }}
+{% endmacro %}

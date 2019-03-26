@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Application\MailSender\MailSender;
+use Helper\BlogHelper;
 use Model\Manager\CategoryManager;
 use Model\Manager\MemberManager;
 use Model\Manager\PostManager;
@@ -16,13 +17,16 @@ class HomeController extends Controller
 
     const VIEW_HOME = 'home/home.twig';
 
+    const KEY_CONTACT_NAME = "contact-name";
+    const KEY_CONTACT_EMAIL = "contact-email";
+    const KEY_CONTACT_MESSAGE = "contact-message";
+
     public function __construct(
-                                PostManager $postManager,
-                                CategoryManager $categoryManager,
-                                MemberManager $memberManager,
-                                Twig_Environment $twig
-    )
-    {
+        PostManager $postManager,
+        CategoryManager $categoryManager,
+        MemberManager $memberManager,
+        Twig_Environment $twig
+    ) {
         parent::__construct($twig);
         $this->postManager = $postManager;
         $this->categoryManager = $categoryManager;
@@ -50,7 +54,19 @@ class HomeController extends Controller
             $postsByCategory[$catId] = $this->postManager->getPostsOfACategory($category->getId(), $numberOfPostsByCategory + 1, null, false);
             // Format creation dates and translate markdown
             foreach ($postsByCategory[$catId] as $post) {
-                BlogController::prepareAPost($post);
+                BlogHelper::prepareAPost($post);
+            }
+        }
+
+        if (
+            isset($_POST[self::KEY_CONTACT_NAME]) &&
+            isset($_POST[self::KEY_CONTACT_EMAIL]) &&
+            isset($_POST[self::KEY_CONTACT_MESSAGE])
+        ) {
+            if ($this->contact()) {
+                $message = 'Votre message a été envoyé.';
+            } else {
+                $message = 'Votre nom, prénom, email et message doivent être remplis.';
             }
         }
 
@@ -65,23 +81,21 @@ class HomeController extends Controller
     /**
      * Send a message to the admin
      *
+     * @return bool
      * @throws \Application\Exception\HttpException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
     public function contact()
     {
         if (
-            !empty($_POST['contact-name']) &&
-            !empty($_POST['contact-email']) &&
-            !empty($_POST['contact-message'])
+            !empty($_POST[self::KEY_CONTACT_NAME]) &&
+            !empty($_POST[self::KEY_CONTACT_EMAIL]) &&
+            !empty($_POST[self::KEY_CONTACT_MESSAGE])
         ) {
             $admins = $this->memberManager->getMembersByRole('admin');
-            $contactName = htmlspecialchars($_POST['contact-name']);
+            $contactName = htmlspecialchars($_POST[self::KEY_CONTACT_NAME]);
             $subject = "Blog de Nicolas Renvoisé : un message de {$contactName} pour l'admin.";
-            $message = htmlspecialchars($_POST['contact-message']);
-            $from = htmlspecialchars($_POST['contact-email']);
+            $message = htmlspecialchars($_POST[self::KEY_CONTACT_MESSAGE]);
+            $from = htmlspecialchars($_POST[self::KEY_CONTACT_EMAIL]);
 
             foreach ($admins as $admin) {
                 MailSender::send(
@@ -91,10 +105,8 @@ class HomeController extends Controller
                     $from
                 );
             }
-            $this->showHome('Votre message a été envoyé.');
-
-        } else {
-            $this->showHome('Votre nom, prénom, email et message doivent être remplis.');
+            return true;
         }
+        return false;
     }
 }

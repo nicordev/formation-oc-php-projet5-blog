@@ -17,11 +17,11 @@ class MemberManager extends Manager
     {
         $this->tableName = 'bl_member';
         $this->fields = [
-            'id' => 'm_id',
-            'email' => 'm_email',
-            'password' => 'm_password',
-            'name' => 'm_name',
-            'description' => 'm_description'
+            Member::KEY_ID => 'm_id',
+            Member::KEY_EMAIL => 'm_email',
+            Member::KEY_PASSWORD => 'm_password',
+            Member::KEY_NAME => 'm_name',
+            Member::KEY_DESCRIPTION => 'm_description'
         ];
 
         parent::__construct();
@@ -72,7 +72,7 @@ class MemberManager extends Manager
         $query = 'SELECT * FROM bl_member
             WHERE m_email = :email';
 
-        $requestMember = $this->query($query, ['email' => $email]);
+        $requestMember = $this->query($query, [Member::KEY_EMAIL => $email]);
 
         $memberData = $requestMember->fetch(PDO::FETCH_ASSOC);
 
@@ -126,24 +126,38 @@ class MemberManager extends Manager
     }
 
     /**
-     * Check if a member is new
+     * Check if an email already exists in the members table
      *
-     * @param Member $newMember
+     * @param string $email
      * @return bool
      * @throws \Application\Exception\HttpException
      */
-    public function isNewMember(Member $newMember): bool
+    public function isNewEmail(string $email)
     {
-        $members = $this->getAll();
-
-        if (!empty($members)) {
-            foreach ($members as $member) {
-                if ($member->getEmail() === $newMember->getEmail()) {
-                    return false;
-                }
-            }
+        $query = "SELECT COUNT(m_email) FROM bl_member WHERE m_email = :email";
+        $count = $this->query($query, ["email" => $email])
+            ->fetch(PDO::FETCH_NUM)[0];
+        if ($count > 0) {
+            return false;
         }
+        return true;
+    }
 
+    /**
+     * Check if a name already exists in the members table
+     *
+     * @param string $name
+     * @return bool
+     * @throws \Application\Exception\HttpException
+     */
+    public function isNewName(string $name)
+    {
+        $query = "SELECT COUNT(m_name) FROM bl_member WHERE m_name = :name";
+        $count = $this->query($query, ["name" => $name])
+            ->fetch(PDO::FETCH_NUM)[0];
+        if ($count > 0) {
+            return false;
+        }
         return true;
     }
 
@@ -166,7 +180,7 @@ class MemberManager extends Manager
         } elseif ($memberEmail) {
             $query = 'SELECT m_id FROM bl_member WHERE m_email = :email';
             $requestId = $this->query($query, [
-                'email' => $memberEmail
+                Member::KEY_EMAIL => $memberEmail
             ]);
         } else {
             throw new AppException('Wrong parameters for the method ' . __CLASS__ . '::getId(). Here are the parameters : ' . func_get_args());
@@ -215,7 +229,7 @@ class MemberManager extends Manager
     {
         $query = 'SELECT COUNT(m_email) FROM bl_member WHERE m_email = :email';
 
-        $requestCount = $this->query($query, ['email' => $email]);
+        $requestCount = $this->query($query, [Member::KEY_EMAIL => $email]);
 
         $count = $requestCount->fetch(PDO::FETCH_NUM);
 

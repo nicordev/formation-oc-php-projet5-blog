@@ -10,9 +10,11 @@ namespace Application;
 
 
 use Application\Security\CsrfProtector;
+use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MediaController;
 use Controller\MemberController;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
@@ -35,6 +37,7 @@ class DIC
 
     /**
      * @return BlogController
+     * @throws Exception\HttpException
      */
     public static function newBlogController(): BlogController
     {
@@ -44,6 +47,32 @@ class DIC
             new CategoryManager(),
             new CommentManager(),
             new MemberManager(),
+            self::generateTwigEnvironment()
+        );
+    }
+
+    /**
+     * @return AdminController
+     * @throws Exception\HttpException
+     */
+    public static function newAdminController(): AdminController
+    {
+        return new AdminController(
+            new PostManager(),
+            new TagManager(),
+            new CategoryManager(),
+            new CommentManager(),
+            new MemberManager(),
+            self::generateTwigEnvironment()
+        );
+    }
+
+    /**
+     * @return MediaController
+     */
+    public static function newMediaController(): MediaController
+    {
+        return new MediaController(
             self::generateTwigEnvironment()
         );
     }
@@ -71,6 +100,7 @@ class DIC
 
     /**
      * @return MemberController
+     * @throws Exception\HttpException
      */
     public static function newMemberController(): MemberController
     {
@@ -94,8 +124,8 @@ class DIC
         $twigLoader = new Twig_Loader_Filesystem(__DIR__ . '/view');
 
         $twig = new Twig_Environment($twigLoader, [
-            'debug' => true, // TODO change to false for production
-            'cache' => false // TODO change to true for production
+            'debug' => true, // Change to false for production
+            'cache' => false // Change to true for production
         ]);
 
         // Get the connected member
@@ -112,6 +142,32 @@ class DIC
             return CsrfProtector::getCounterCsrfToken();
         });
         $twig->addFunction($getCsrfToken);
+
+        // Get the current url
+        $getCurrentUrl = new Twig_Function('getCurrentUrl', function () {
+            return $_SERVER['REQUEST_URI'];
+        });
+        $twig->addFunction($getCurrentUrl);
+
+        // Get the size of an image
+        $getImageSize = new Twig_Function('getImageSize', function (string $imageUrl) {
+            if ($imageData = getimagesize(ROOT_PATH . $imageUrl)) {
+                return [
+                    'width' => $imageData[0],
+                    'height' =>$imageData[1]
+                ];
+            }
+            return null;
+        });
+        $twig->addFunction($getImageSize);
+
+        // DEBUG: Show the content of variables
+        $dump = new Twig_Function('dump', function () {
+            $args = func_get_args();
+            var_dump($args);
+            die;
+        });
+        $twig->addFunction($dump);
 
         return $twig;
     }

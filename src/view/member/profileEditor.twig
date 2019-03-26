@@ -31,7 +31,11 @@
 
             {# Cancel button #}
             <div class="form-group col-12">
-                <a class="btn btn-primary" href="/member-profile">Annuler</a>
+                {% if 'admin' in getUser().getRoles %}
+                    <a class="btn btn-primary" href="/member-profile?id={{ member.getId }}">Annuler</a>
+                {% else %}
+                    <a class="btn btn-primary" href="/member-profile">Annuler</a>
+                {% endif %}
             </div>
 
             <h2>Informations</h2>

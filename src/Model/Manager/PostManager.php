@@ -19,7 +19,11 @@ class PostManager extends Manager
 {
     public const EXCERPT_LENGTH = 300;
     public const TITLE_LENGTH = 100;
-    const CONTENT_LENGTH = 300000;
+    public const CONTENT_LENGTH = 300000;
+
+    private const KEY_CONTENT = "content";
+    private const KEY_POST_ID = "postId";
+    private const KEY_CATEGORY_ID = "categoryId";
 
     /**
      * PostManager constructor.
@@ -36,7 +40,7 @@ class PostManager extends Manager
             'markdown' => 'p_markdown',
             'title' => 'p_title',
             'excerpt' => 'p_excerpt',
-            'content' => 'p_content'
+            self::KEY_CONTENT => 'p_content'
         ];
 
         parent::__construct();
@@ -132,7 +136,7 @@ class PostManager extends Manager
             WHERE p_id = :postId';
 
         $requestTags = $this->query($query, [
-            'postId' => $postId
+            self::KEY_POST_ID => $postId
         ]);
 
         while ($tagData = $requestTags->fetch(PDO::FETCH_ASSOC)) {
@@ -159,7 +163,7 @@ class PostManager extends Manager
                 WHERE pc_post_id_fk = :postId
             )';
 
-        $requestCategories = $this->query($query, ['postId' => $postId]);
+        $requestCategories = $this->query($query, [self::KEY_POST_ID => $postId]);
 
         while ($categoryData = $requestCategories->fetch(PDO::FETCH_ASSOC)) {
             $categories[] = $this->createEntityFromTableData($categoryData, 'Category');
@@ -268,7 +272,7 @@ class PostManager extends Manager
             $columns = '*';
         } else {
             $columns = $this->fields;
-            unset($columns['content']);
+            unset($columns[self::KEY_CONTENT]);
             $columns = implode(', ', $columns);
         }
 
@@ -283,7 +287,7 @@ class PostManager extends Manager
         }
 
         $requestPosts = $this->query($query, [
-            'categoryId' => $categoryId
+            self::KEY_CATEGORY_ID => $categoryId
         ]);
 
         while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
@@ -313,7 +317,7 @@ class PostManager extends Manager
             $columns = '*';
         } else {
             $columns = $this->fields;
-            unset($columns['content']);
+            unset($columns[self::KEY_CONTENT]);
             $columns = implode(', ', $columns);
         }
 
@@ -358,7 +362,7 @@ class PostManager extends Manager
             $columns = '*';
         } else {
             $columns = $this->fields;
-            unset($columns['content']);
+            unset($columns[self::KEY_CONTENT]);
             $columns = implode(', ', $columns);
         }
 
@@ -401,7 +405,7 @@ class PostManager extends Manager
             SELECT pc_post_id_fk FROM bl_post_category WHERE pc_category_id_fk = :categoryId
         )';
 
-        $requestCount = $this->query($query, ['categoryId' => $categoryId]);
+        $requestCount = $this->query($query, [self::KEY_CATEGORY_ID => $categoryId]);
 
         return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
@@ -438,7 +442,7 @@ class PostManager extends Manager
         // Delete
         $query = 'DELETE FROM bl_post_category WHERE pc_post_id_fk = :postId';
         
-        $this->query($query, ['postId' => $post->getId()]);
+        $this->query($query, [self::KEY_POST_ID => $post->getId()]);
 
         if (!empty($categories)) {
             // Add
@@ -448,8 +452,8 @@ class PostManager extends Manager
 
             foreach ($categories as $category) {
                 $requestAdd->execute([
-                    'postId' => $post->getId(),
-                    'categoryId' => $category->getId()
+                    self::KEY_POST_ID => $post->getId(),
+                    self::KEY_CATEGORY_ID => $category->getId()
                 ]);
             }
         }
@@ -467,7 +471,7 @@ class PostManager extends Manager
         // Delete
         $query = 'DELETE FROM bl_post_tag WHERE pt_post_id_fk = :postId';
 
-        $this->query($query, ['postId' => $post->getId()]);
+        $this->query($query, [self::KEY_POST_ID => $post->getId()]);
 
         if (!empty($tags)) {
             // Add
@@ -477,7 +481,7 @@ class PostManager extends Manager
 
             foreach ($tags as $tag) {
                 $requestAdd->execute([
-                    'postId' => $post->getId(),
+                    self::KEY_POST_ID => $post->getId(),
                     'tagId' => $tag->getId()
                 ]);
             }

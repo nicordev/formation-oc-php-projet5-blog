@@ -306,5 +306,18 @@ var myApp = {
 
             return messageWrapperElt;
         }
+    },
+
+    validation: {
+        formatWrongField: function (id = null)
+        {
+            if (id) {
+                var elt = document.getElementById(id);
+
+                if (elt) {
+                    elt.style.boxShadow = "0px 0px 10px 3px rgba(168,52,52,1)";
+                }
+            }
+        }
     }
 }

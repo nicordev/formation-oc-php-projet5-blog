@@ -14,11 +14,14 @@ use Application\Exception\AppException;
 use Application\Exception\HttpException;
 use Application\Exception\PageNotFoundException;
 use Application\Exception\CsrfSecurityException;
+use Application\Logger\Logger;
 use Application\Router\Router;
 use Application\Security\CsrfProtector;
+use Controller\AdminController;
 use Controller\BlogController;
 use Controller\ErrorController;
 use Controller\HomeController;
+use Controller\MediaController;
 use Controller\MemberController;
 use Exception;
 use ReflectionException;
@@ -26,16 +29,22 @@ use ReflectionMethod;
 
 class Application
 {
+    private function __construct()
+    {
+        // Disabled
+    }
+
     /**
      * Begin the show! Enjoy!
      *
-     * @throws AppException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function run()
+    public static function run()
     {
+        define('ROOT_PATH', dirname(__DIR__));
+
         // Session
         session_start();
 
@@ -61,6 +70,10 @@ class Application
                     $controller = DIC::newBlogController();
                     break;
 
+                case AdminController::class:
+                    $controller = DIC::newAdminController();
+                    break;
+
                 case HomeController::class:
                     $controller = DIC::newHomeController();
                     break;
@@ -73,8 +86,12 @@ class Application
                     $controller = DIC::newMemberController();
                     break;
 
+                case MediaController::class:
+                    $controller = DIC::newMediaController();
+                    break;
+
                 default:
-                    throw new AppException('The DIC does not know the controller ' . $route->controller);
+                    throw new AppException('The controller ' . $route->controller . ' is missing from the Application::run() routing switch');
             }
 
             try {
@@ -98,6 +115,9 @@ class Application
         } catch (HttpException $e) {
             $errorController = DIC::newErrorController();
             switch ($e->getCode()) {
+                case 403:
+                    $errorController->showError403();
+                    break;
                 case 404:
                     $errorController->showError404();
                     break;
@@ -107,6 +127,10 @@ class Application
                 default:
                     $errorController->showCustomError("Un bug ! Quelle horreur !");
             }
+        } catch (AppException $e) {
+            $errorController = DIC::newErrorController();
+            Logger::addLog("Unknown error occured: " . $e->getMessage());
+            $errorController->showCustomError("Mais qu'est-ce qui s'est passé ??? Une erreur inconnue a été détectée !");
         }
     }
 }

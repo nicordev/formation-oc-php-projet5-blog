@@ -17,15 +17,7 @@ abstract class Manager
 {
     protected $tableName = '';
     protected $fields = [];
-
-    /**
-     * @var bool|PDO
-     */
     protected $database;
-    protected $databaseName = 'oc_projet5_blog';
-    protected $host = 'localhost';
-    protected $user = 'root';
-    protected $password = '';
 
     protected const ENTITY_NAMESPACE = 'Model\\Entity\\';
 
@@ -37,48 +29,11 @@ abstract class Manager
      * @param string $user
      * @param string $password
      * @param string $charset
+     * @throws HttpException
      */
-    public function __construct($host = '', $databaseName = '', $user = '', $password = '', $charset = 'utf8mb4')
+    public function __construct()
     {
-        if (!empty($host)) {
-            $this->host = $host;
-        }
-
-        if (!empty($databaseName)) {
-            $this->databaseName = $databaseName;
-        }
-
-        if (!empty($user)) {
-            $this->user = $user;
-        }
-
-        if (!empty($password)) {
-            $this->password = $password;
-        }
-
-        $this->database = self::getPdo($this->host, $this->databaseName, $this->user, $this->password, $charset);
-    }
-
-    /**
-     * @param string $host
-     * @param string $databaseName
-     * @param string $user
-     * @param string $password
-     * @param string $charset
-     * @return bool|PDO
-     */
-    public static function getPdo($host = 'localhost', $databaseName = 'test', $user = 'root', $password = '', $charset = 'utf8mb4')
-    {
-        try
-        {
-            $database = new PDO('mysql:host=' . $host . ';dbname=' . $databaseName . ';charset=' . $charset, $user, $password);
-            $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch(Exception $e)
-        {
-            return false;
-        }
-        return $database;
+        $this->database = Database::getPdo();
     }
 
     /**
@@ -92,6 +47,9 @@ abstract class Manager
     {
         $properties = self::getEntityProperties($entity);
         $fullFields = $this->filterEmptyFields($entity);
+
+        ksort($properties);
+        ksort($fullFields);
 
         $query = 'INSERT INTO ' . $this->tableName . '(' . implode(', ', $fullFields) . ')
             VALUES (:' . implode(', :', array_keys($properties)) .')';
@@ -110,6 +68,9 @@ abstract class Manager
     {
         $properties = self::getEntityProperties($modifiedEntity);
         $fullFields = $this->filterEmptyFields($modifiedEntity);
+
+        ksort($properties);
+        ksort($fullFields);
 
         $query = 'UPDATE ' . $this->tableName . '
             SET ' . self::buildSqlSet($fullFields) . '
@@ -274,10 +235,8 @@ abstract class Manager
                     }
                 }
             }
+            self::executePreparedQuery($request, $params);
 
-            if (!$request->execute($params)) {
-                throw new HttpException('Error when trying to execute the query ' . $query . ' with params ' . print_r($params, true), 500);
-            }
         } else {
             $request = $this->database->query($query);
         }
@@ -302,6 +261,17 @@ abstract class Manager
 
 
     // Private
+
+    private static function executePreparedQuery(\PDOStatement $request, array $params)
+    {
+        try {
+            if (!$request->execute($params)) {
+                throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500);
+            }
+        } catch (PDOException $e) {
+            throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500, $e);
+        }
+    }
 
     /**
      * Get the Entity child class

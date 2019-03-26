@@ -36,7 +36,7 @@
 
                         <input type="hidden" name="delete-post" value="{{ postToEdit.getId }}">
                         <p>
-                            <input class="btn" type="submit" value="Supprimer l'article">
+                            <input class="btn btn-danger" type="submit" value="Supprimer l'article">
                         </p>
                     </form>
                 </div>
@@ -46,13 +46,16 @@
         <div>
             {% if postToEdit %}
             <form id="publish-post-form" action="/admin/edit-post" method="post">
-                <input type="hidden" name="edit-post" value="{{ postToEdit.getId }}">
+                <input type="hidden" id="edit-post" name="edit-post" value="{{ postToEdit.getId }}">
                 <input type="hidden" name="post-editor-id" value="{{ getUser().getId }}">
                 <input type="hidden" name="post-author-id" value="{{ postToEdit.getAuthorId }}">
             {% else %}
             <form id="publish-post-form" action="/admin/add-post" method="post">
                 <input type="hidden" name="post-author-id" value="{{ getUser().getId }}">
             {% endif %}
+
+                {# Erase fields #}
+                <button type="button" id="erase-btn" class="btn btn-danger" onclick="areYouSure.show('Tout ce que vous avez écrit sera effacé de cette page (mais pas de la base de données).', myPostDraft.eraseFields, ['post-title', 'post-excerpt', 'post-content'])">Effacer les champs</button>
 
                 {# CSRF protection #}
                 <input type="hidden" name="csrf-token" value="{{ getCsrfToken() }}">
@@ -75,6 +78,9 @@
                     <label for="post-content">Contenu de l'article</label>
                     {# Choose editor #}
                     <button class="btn" type="button" onclick="myEditor.switchEditor(event, '#post-content');">Ouvrir l'éditeur</button>
+                    {# Images library #}
+                    <a class="btn" href="/admin/media-library?calling-page=/admin/post-editor">Images</a>
+                    {# Choose Markdown #}
                     <input type="checkbox" name="markdown-content" id="markdown-content" {% if markdown %}checked{% endif %}><label class="right-label" for="markdown-content">Markdown</label><br>
                     <textarea class="admin-textarea w100" name="post-content" id="post-content" cols="30" rows="30">{{ postToEdit.getContent }}</textarea>
                 </p>
@@ -103,6 +109,21 @@
 
 {% block scripts %}
     {{ parent() }}
+    {# Post draft #}
+    <script src="/public/js/postDraft.js"></script>
+    <script>
+        window.addEventListener("load", function() {
+            myPostDraft.load({{ postToEdit.getId ?? -1 }});
+        });
+        window.addEventListener('unload', myPostDraft.save);
+    </script>
+    {# Navigation #}
+    <script src="/public/js/navigationHelper.js"></script>
+    <script>
+        window.addEventListener('unload', function () {
+            myNavigationHelper.saveUrl("{{  macros.getPostEditorUrl(postToEdit.getId)|trim }}")
+        });
+    </script>
     {# Tags #}
     <script src="/public/js/tagHandler.js"></script>
     <script>

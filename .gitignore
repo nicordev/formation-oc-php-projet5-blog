@@ -1,7 +1,9 @@
 .idea/
+.scannerwork/
+log/
 vendor/
 workbench/
 theme/
-.scannerwork/
+config/config.cfg
 composer.lock
 code_review.bat

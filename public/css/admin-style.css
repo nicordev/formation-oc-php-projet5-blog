@@ -12,6 +12,10 @@ li {
     margin: 10px 0 10px 0;
 }
 
+figure {
+    margin: 0;
+}
+
 input[type='text'], textarea {
     border-radius: 10px;
     border: 1px solid lightslategrey;
@@ -101,6 +105,51 @@ footer ul li a, footer ul li a:hover {
     color: #b9bbbe;
 }
 
+.media-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.media-card {
+    height: 200px;
+    width: 200px;
+    padding: 10px;
+    border: 1px solid slategrey;
+    border-radius: 3px;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+}
+
+.media-card figure img {
+    width: auto;
+    height: auto;
+    max-height: 180px;
+    max-width: 180px;
+}
+
+.media-card:hover {
+    background-color: #0c5460;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+#image-tag-builder {
+    width: 100%;
+}
+
 #new-tag-input {
     font-size: 0.75em;
+}
+
+#image-preview {
+    background-repeat: no-repeat;
 }

@@ -8,6 +8,4 @@ if (class_exists('\\Symfony\\Component\\Debug\\Debug')) {
     \Symfony\Component\Debug\Debug::enable(E_ERROR);
 }
 
-$application = new Application();
-
-$application->run();
+Application::run();
