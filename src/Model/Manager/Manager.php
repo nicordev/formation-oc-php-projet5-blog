@@ -3,7 +3,6 @@
 namespace Model\Manager;
 
 use Application\Exception\HttpException;
-use Exception;
 use Model\Entity\Entity;
 use \PDO;
 use PDOException;
@@ -24,11 +23,6 @@ abstract class Manager
     /**
      * Manager constructor.
      *
-     * @param string $host
-     * @param string $databaseName
-     * @param string $user
-     * @param string $password
-     * @param string $charset
      * @throws HttpException
      */
     public function __construct()
