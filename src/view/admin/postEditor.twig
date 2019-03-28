@@ -183,6 +183,27 @@
             }
         }
     </script>
+    {# Use tab to add tabs #}
+    <script>
+        /**
+         *  Change l'action de la touche tab
+         *
+         *  @param {Event} evt l'évènement keydown
+         */
+        function changeTabAction(evt) {
+
+            var keyCode = evt.keyCode || evt.which;
+            if (keyCode == 9){
+                evt.preventDefault();
+                var s = this.selectionStart;
+                this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+                this.selectionEnd = s+1;
+            }
+        }
+
+        document.getElementById("post-content").addEventListener("keydown", changeTabAction);
+        document.getElementById("post-excerpt").addEventListener("keydown", changeTabAction);
+    </script>
 {% endblock %}
 
 
