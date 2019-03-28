@@ -3,7 +3,6 @@
 namespace Model\Manager;
 
 
-use Exception;
 use Model\Entity\Role;
 use PDO;
 
@@ -11,6 +10,7 @@ class RoleManager extends Manager
 {
     /**
      * RoleManager constructor.
+     * @throws \Application\Exception\HttpException
      */
     public function __construct()
     {

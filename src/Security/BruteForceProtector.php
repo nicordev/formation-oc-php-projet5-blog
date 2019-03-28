@@ -59,6 +59,7 @@ class BruteForceProtector
      * Delete the user from the bl_connection_try table
      *
      * @throws AppException
+     * @throws HttpException
      */
     public static function resetTheUser()
     {

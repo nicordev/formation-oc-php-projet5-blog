@@ -3,7 +3,6 @@
 namespace Model\Manager;
 
 
-use Exception;
 use Model\Entity\Tag;
 use PDO;
 
@@ -11,6 +10,7 @@ class TagManager extends Manager
 {
     /**
      * TagManager constructor.
+     * @throws \Application\Exception\HttpException
      */
     public function __construct()
     {

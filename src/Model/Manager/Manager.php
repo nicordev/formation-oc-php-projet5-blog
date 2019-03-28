@@ -256,6 +256,13 @@ abstract class Manager
 
     // Private
 
+    /**
+     * Execute a prepared query
+     *
+     * @param \PDOStatement $request
+     * @param array $params
+     * @throws HttpException
+     */
     private static function executePreparedQuery(\PDOStatement $request, array $params)
     {
         try {

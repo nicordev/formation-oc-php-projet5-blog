@@ -5,6 +5,9 @@ var myPostDraft = {
     idOfPostExcerpt: 'post-excerpt',
     idOfPostContent: 'post-content',
 
+    /**
+     * Save the content of a post draft
+     */
     save: function () {
         localStorage.setItem('myPostDraft-id', myPostDraft.getValue(myPostDraft.idOfPostId));
         localStorage.setItem('myPostDraft-title', myPostDraft.getValue(myPostDraft.idOfPostTitle));
@@ -12,6 +15,11 @@ var myPostDraft = {
         localStorage.setItem('myPostDraft-content', myPostDraft.getValue(myPostDraft.idOfPostContent));
     },
 
+    /**
+     * Load the content of a post draft
+     *
+     * @param id
+     */
     load: function (id = null) {
         if (
             parseInt(id, 10) === parseInt(localStorage.getItem('myPostDraft-id'), 10) ||
@@ -23,6 +31,12 @@ var myPostDraft = {
         }
     },
 
+    /**
+     * Get the value of a field
+     *
+     * @param fieldId
+     * @returns {*}
+     */
     getValue: function (fieldId) {
         if (document.getElementById(fieldId)) {
             return document.getElementById(fieldId).value;
@@ -30,6 +44,12 @@ var myPostDraft = {
         return '';
     },
 
+    /**
+     * Set the value and textContent of a field
+     *
+     * @param fieldId
+     * @param value
+     */
     setValue: function (fieldId, value) {
         var elt = document.getElementById(fieldId);
         if (elt) {
@@ -38,6 +58,11 @@ var myPostDraft = {
         }
     },
 
+    /**
+     * Erase the value and textContent of a field
+     *
+     * @param fieldIds
+     */
     eraseFields: function (fieldIds) {
 
         for (var i = 0; i < fieldIds.length; i++) {

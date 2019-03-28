@@ -12,6 +12,7 @@ class MemberManager extends Manager
 {
     /**
      * MemberManager constructor.
+     * @throws \Application\Exception\HttpException
      */
     public function __construct()
     {
@@ -109,12 +110,14 @@ class MemberManager extends Manager
     /**
      * Get all members from the database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
      * @throws \Application\Exception\HttpException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
-        $members = parent::getAll();
+        $members = parent::getAll($numberOfLines, $start);
 
         // Roles
         foreach ($members as $member) {

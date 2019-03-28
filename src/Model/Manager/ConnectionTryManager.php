@@ -5,7 +5,6 @@ namespace Model\Manager;
 
 use Application\Exception\AppException;
 use Application\Exception\HttpException;
-use Exception;
 use Model\Entity\ConnectionTry;
 use PDO;
 
@@ -13,6 +12,7 @@ class ConnectionTryManager extends Manager
 {
     /**
      * ConnectionTryManager constructor.
+     * @throws HttpException
      */
     public function __construct()
     {
