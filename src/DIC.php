@@ -79,6 +79,7 @@ class DIC
 
     /**
      * @return HomeController
+     * @throws Exception\HttpException
      */
     public static function newHomeController(): HomeController
     {

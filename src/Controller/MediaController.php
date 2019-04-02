@@ -2,16 +2,10 @@
 
 namespace Controller;
 
-use Model\Entity\Post;
-use Model\Entity\Tag;
-use Application\Exception\AccessException;
+
 use Application\Exception\AppException;
 use Application\Exception\FileException;
 use Application\FileHandler\ImageHandler;
-use Application\Exception\HttpException;
-use Application\Exception\PageNotFoundException;
-use Helper\BlogHelper;
-use Exception;
 
 class MediaController extends Controller
 {

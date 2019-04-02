@@ -6,6 +6,7 @@ var myCommentForm = {
      * @param evt
      * @param connectedMemberId
      * @param parentId
+     * @param postId
      */
     showForm: function (evt, connectedMemberId, parentId, postId) {
         evt.target.style.display = 'none';

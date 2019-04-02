@@ -2,8 +2,7 @@
 
 namespace Helper;
 
-use Application\Security\BruteForceProtector;
-use Controller\MemberController;
+
 use Model\Entity\Member;
 
 class MemberHelper

@@ -2,16 +2,8 @@
 
 namespace Application\Router;
 
-use Application\Exception\PageNotFoundException;
-use Application\FileHandler\ImageHandler;
 use Application\Security\CsrfProtector;
-use Controller\AdminController;
-use Controller\BlogController;
-use Controller\ErrorController;
-use Controller\HomeController;
-use Controller\MediaController;
 use Controller\MemberController;
-use Model\Entity\Member;
 
 class Router
 {

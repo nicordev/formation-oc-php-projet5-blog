@@ -5,7 +5,6 @@ namespace Model\Manager;
 
 use Application\Exception\AppException;
 use Application\Exception\HttpException;
-use Exception;
 use Model\Entity\Key;
 use PDO;
 
@@ -13,6 +12,7 @@ class KeyManager extends Manager
 {
     /**
      * KeyManager constructor.
+     * @throws HttpException
      */
     public function __construct()
     {

@@ -3,15 +3,15 @@
 namespace Model\Manager;
 
 
-use Exception;
 use Model\Entity\Category;
-use Model\Entity\Post;
 use PDO;
 
 class CategoryManager extends Manager
 {
     /**
      * CategoryManager constructor.
+     *
+     * @throws \Application\Exception\HttpException
      */
     public function __construct()
     {
@@ -51,8 +51,8 @@ class CategoryManager extends Manager
     {
         $categories = [];
 
-        $query = 'SELECT DISTINCT ct_category_id_fk FROM bl_post_category
-            WHERE ct_post_id_fk = :postId';
+        $query = 'SELECT DISTINCT pc_category_id_fk FROM bl_post_category
+            WHERE pc_post_id_fk = :postId';
 
         $requestPostId = $this->query($query, [
             'postId' => $postId

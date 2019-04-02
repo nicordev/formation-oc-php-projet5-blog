@@ -14,6 +14,7 @@ use PDO;
 
 class CommentManager extends Manager
 {
+    public static $commentsPerPage = 5;
 
     public function __construct()
     {
@@ -56,12 +57,14 @@ class CommentManager extends Manager
     /**
      * Get all comments from the database
      *
+     * @param int|null $numberOfLines
+     * @param int|null $start
      * @return array
      * @throws \Application\Exception\HttpException
      */
-    public function getAll(): array
+    public function getAll(?int $numberOfLines = null, ?int $start = null): array
     {
-        $comments = parent::getAll();
+        $comments = parent::getAll($numberOfLines, $start);
 
         foreach ($comments as $comment) {
             $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
@@ -90,8 +93,9 @@ class CommentManager extends Manager
     public function getFromPost(int $postId): array
     {
         $comments = [];
+
         $query = 'SELECT * FROM bl_comment
-            WHERE com_post_id_fk = :postId';
+        WHERE com_post_id_fk = :postId';
 
         $requestComments = $this->query($query, ['postId' => $postId]);
 

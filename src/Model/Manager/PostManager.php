@@ -9,9 +9,7 @@
 namespace Model\Manager;
 
 
-use Model\Entity\Category;
 use Model\Entity\Post;
-use Model\Entity\Tag;
 use \PDO;
 use Application\Exception\HttpException;
 
@@ -27,6 +25,7 @@ class PostManager extends Manager
 
     /**
      * PostManager constructor.
+     * @throws HttpException
      */
     public function __construct()
     {
@@ -211,48 +210,6 @@ class PostManager extends Manager
         }
 
         return $posts;
-    }
-
-    /**
-     * Get only the ids of the posts
-     *
-     * @param int|null $categoryId
-     * @return array
-     * @throws HttpException
-     */
-    public function getAllIds(?int $categoryId = null): array
-    {
-        if ($categoryId === null) {
-            $query = 'SELECT ' . $this->fields['id'] . ' FROM ' . $this->tableName . ' ORDER BY ' . $this->fields['id'];
-
-            $requestAllIds = $this->query($query);
-
-        } else {
-            $query = 'SELECT p_id FROM bl_post
-                WHERE p_id IN (
-                    SELECT DISTINCT pt_post_id_fk FROM bl_post_tag
-                    WHERE pt_tag_id_fk IN (
-                        SELECT tag_id FROM bl_tag
-                            INNER JOIN bl_category_tag
-                                ON tag_id = ct_tag_id_fk
-                            INNER JOIN bl_category
-                                ON cat_id = ct_category_id_fk
-                        WHERE cat_id = :id)
-                )';
-
-            $requestAllIds = $this->query($query, [
-                'id' => $categoryId
-            ]);
-        }
-
-        $idsFromDb = $requestAllIds->fetchAll(PDO::FETCH_ASSOC);
-        $ids = [];
-
-        foreach ($idsFromDb as $idFromDb) {
-            $ids[] = $idFromDb['p_id'];
-        }
-
-        return $ids;
     }
 
     /**

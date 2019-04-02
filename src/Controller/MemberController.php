@@ -302,6 +302,7 @@ class MemberController extends Controller
      * @throws \Twig_Error_Syntax
      * @throws \Application\Exception\HttpException
      * @throws AppException
+     * @throws \ReflectionException
      */
     public function connect()
     {

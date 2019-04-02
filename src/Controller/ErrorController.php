@@ -2,7 +2,6 @@
 
 namespace Controller;
 
-use Twig_Environment;
 
 class ErrorController extends Controller
 {
