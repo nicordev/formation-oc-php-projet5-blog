@@ -42,6 +42,10 @@ blockquote p::after {
     content: '\201D';
 }
 
+footer {
+    padding: 50px 0;
+}
+
 .post-nav-link {
     color: burlywood;
 }
@@ -175,10 +179,11 @@ blockquote p::after {
 }
 
 .card {
-    margin: 10px !important;
-    min-width: 400px;
+    border: none;
+    flex: 0 0 50% !important;
     transition-duration: 0.5s;
     transition-property: background-color, color;
+    margin: 0 !important;
 }
 
 .card:hover :nth-child(1n+0) {
@@ -210,8 +215,7 @@ blockquote p::after {
 .post-deck-more {
     text-align: center;
     height: available;
-    font-size: 3em;
-    background-color: rgb(247, 247, 247);
+    font-size: 2em;
     border-radius: 5px;
     padding: 0;
     display: flex;
@@ -266,16 +270,11 @@ blockquote p::after {
 
     .card-deck {
         padding: 2px;
-        border: 2px solid rgb(247, 247, 247);
     }
 
     .catch-phrase {
         position: relative;
         top: 30px;
         left: 0;
-    }
-
-    .card {
-        min-width: 200px;
     }
 }

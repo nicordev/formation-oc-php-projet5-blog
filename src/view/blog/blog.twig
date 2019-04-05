@@ -43,13 +43,15 @@
                 {% endif %}
 
                 {% if nextPage or previousPage %}
-                    <div class="row">
+                    <div class="row mx-0">
                         {% if previousPage %}
-                            <a class="col-4 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ previousPage }}">Articles suivants</a>
-                            <div class="col-4"></div>
+                            <a class="col-12 col-lg-5 my-2 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ previousPage }}">Articles suivants</a>
+                        {% endif %}
+                        {% if previousPage and nextPage %}
+                            <span class="offset-lg-2"></span>
                         {% endif %}
                         {% if nextPage %}
-                            <a class="col-4 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ nextPage }}">Articles précédents</a>
+                            <a class="col-12 col-lg-5 my-2 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ nextPage }}">Articles précédents</a>
                         {% endif %}
                     </div>
                 {% endif %}

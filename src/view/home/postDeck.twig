@@ -7,11 +7,11 @@
         </p>
 
     {% else %}
-        <div class="card-deck{% if posts|length > numberOfPosts %}{{ ' col-12 col-lg-11' }}{% endif %}">
+        <div class="card-deck row mx-0">
             {% set i = 0 %}
             {% for post in posts if i < numberOfPosts %}
             {% set i = loop.index %}
-            <div class="card">
+            <div class="card col-12 col-lg-6">
                 <div class="card-body">
                     <a href="/blog-post?post-id={{ post.getId }}&amp;category-id={{ categoryId }}&amp;page=1">
                         <h5 class="card-title">{{ post.getTitle }}</h5>
@@ -24,7 +24,7 @@
         </div>
 
         {% if posts|length > numberOfPosts %}
-            <a class="post-deck-more col-12 col-lg-1" href="/blog?category-id={{ categoryId }}&amp;page=1">🠾</a>
+            <a class="post-deck-more col-12" href="/blog?category-id={{ categoryId }}&amp;page=1">...</a>
         {% endif %}
     {% endif %}
 </div>
