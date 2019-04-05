@@ -1,13 +1,13 @@
 <h2 class="card-deck-title">{% block deckTitle %}{% endblock %}</h2>
 
-<div class="card-deck-wrapper row">
+<div class="card-deck-wrapper row mx-0">
     {% if posts is empty %}
         <p>
             Il n'y a aucun article pour l'instant.
         </p>
 
     {% else %}
-        <div class="card-deck{% if posts|length > numberOfPosts %}{{ ' col-11' }}{% endif %}">
+        <div class="card-deck{% if posts|length > numberOfPosts %}{{ ' col-12 col-lg-11' }}{% endif %}">
             {% set i = 0 %}
             {% for post in posts if i < numberOfPosts %}
             {% set i = loop.index %}
@@ -24,7 +24,7 @@
         </div>
 
         {% if posts|length > numberOfPosts %}
-            <a class="post-deck-more col-1" href="/blog?category-id={{ categoryId }}&amp;page=1">🠾</a>
+            <a class="post-deck-more col-12 col-lg-1" href="/blog?category-id={{ categoryId }}&amp;page=1">🠾</a>
         {% endif %}
     {% endif %}
 </div>

@@ -274,4 +274,8 @@ blockquote p::after {
         top: 30px;
         left: 0;
     }
+
+    .card {
+        min-width: 200px;
+    }
 }
