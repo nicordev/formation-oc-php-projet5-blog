@@ -137,6 +137,17 @@ return [
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'disconnect'
     ],
+    [
+        ROUTE_KEY_URLS => [
+            '/ask/author'
+        ],
+        ROUTE_KEY_NAME => "ask_to_be_author",
+        ROUTE_KEY_CONTROLLER => MemberController::class,
+        ROUTE_KEY_METHOD => 'askRole',
+        ROUTE_KEY_PARAMS => [
+            "role" => Member::AUTHOR
+        ]
+    ],
 
     // Admin
 

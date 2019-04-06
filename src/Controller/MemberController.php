@@ -85,13 +85,18 @@ class MemberController extends Controller
     /**
      * Show a welcome page for new members
      *
+     * @param string|null $message
+     * @param bool $questionSent
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showWelcomePage()
+    public function showWelcomePage(?string $message = "", bool $questionSent = false)
     {
-        $this->render(self::VIEW_WELCOME);
+        $this->render(self::VIEW_WELCOME, [
+            "message" => $message,
+            "questionSent" => $questionSent
+        ]);
     }
 
     /**
@@ -383,6 +388,35 @@ class MemberController extends Controller
         } else {
             $this->showPasswordRecovery('Un mail contenant la marche à suivre va vous être envoyé en remplissant ce formulaire');
         }
+    }
+
+    /**
+     * Send a mail to the admins to ask for a specific role
+     *
+     * @param string $role
+     * @throws HttpException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function askRole(string $role)
+    {
+        $admins = $this->memberManager->getMembersByRole('admin');
+        $contactName = htmlspecialchars($_SESSION[self::KEY_CONNECTED_MEMBER]->getName());
+        $subject = htmlspecialchars("Blog de Nicolas Renvoisé : {$contactName} souhaite devenir {$role}");
+        $message = htmlspecialchars("{$contactName} souhaite devenir {$role}");
+        $from = htmlspecialchars($_SESSION[self::KEY_CONNECTED_MEMBER]->getEmail());
+
+        foreach ($admins as $admin) {
+            MailSender::send(
+                $admin->getEmail(),
+                $subject,
+                $message,
+                $from
+            );
+        }
+
+        $this->showWelcomePage("Votre demande a été envoyée et sera traitée dès que possible.", true);
     }
 
     // Private

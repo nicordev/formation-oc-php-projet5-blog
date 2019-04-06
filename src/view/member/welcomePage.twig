@@ -15,6 +15,9 @@
 {% endblock %}
 
 {% block content %}
+
+    {% include 'message.twig' %}
+
     <section id="welcome">
         <p>
             Vous êtes inscrits. Vous pouvez maintenant écrire des commentaires sur les articles du site.
@@ -23,13 +26,19 @@
             Si vous souhaitez contribuer au site, vous pouvez devenir auteur et publier vos propres articles, ou juste me payer un café si vous n'êtes pas inspiré.
         </p>
         <div class="row">
-            <div class="col-md-4 col-12">
-                <a class="btn" href="#">Demander à être auteur</a>
-            </div>
-            <div class="col-md-4 col-12">
+            {% if not questionSent %}
+                <div class="col-md-4 col-12 my-2">
+                    <a class="btn" href="/ask/author">Demander à être auteur</a>
+                </div>
+            {% else %}
+                <div class="col-md-4 col-12 my-2">
+                    🗸 Demande envoyée.
+                </div>
+            {% endif %}
+            <div class="col-md-4 col-12 my-2">
                 <a class="btn" href="https://ko-fi.com/nicolas_renvoise" target="_blank">Me payer un café</a>
             </div>
-            <div class="col-md-4 col-12">
+            <div class="col-md-4 col-12 my-2">
                 <a class="btn" href="/home">Revenir à l'accueil</a>
             </div>
         </div>
