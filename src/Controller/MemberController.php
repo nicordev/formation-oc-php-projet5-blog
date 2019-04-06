@@ -522,10 +522,9 @@ class MemberController extends Controller
      * Add a new Member
      *
      * @param Member $member
-     * @return bool
      * @throws Exception
      */
-    private function addNewMember(Member $member): bool
+    private function addNewMember(Member $member)
     {
         $member->setRoles([self::KEY_MEMBER]);
         $this->memberManager->add($member);
