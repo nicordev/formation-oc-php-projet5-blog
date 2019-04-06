@@ -41,6 +41,9 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         {% block navigationItems %}
+                            {% if not categories %}
+                                {% set categories = getCategories() %}
+                            {% endif %}
                             {% for category in categories %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="/blog?category-id={{ category.getId }}">{{ category.getName }}</a>

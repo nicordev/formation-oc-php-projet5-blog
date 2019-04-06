@@ -162,6 +162,14 @@ class DIC
         });
         $twig->addFunction($getImageSize);
 
+        // Get categories
+        $getCategories = new Twig_Function('getCategories', function () {
+            $categoryManager = new CategoryManager();
+            $categories = $categoryManager->getAll();
+            return $categories;
+        });
+        $twig->addFunction($getCategories);
+
         // DEBUG: Show the content of variables
         $dump = new Twig_Function('dump', function () {
             $args = func_get_args();
