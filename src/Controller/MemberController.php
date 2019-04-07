@@ -264,6 +264,10 @@ class MemberController extends Controller
      */
     public function register()
     {
+        if (self::memberConnected()) {
+            $this->showRegistrationPage("Déconnectez-vous pour inscrire une autre personne.");
+            return false;
+        }
         if (
             isset($_POST[Member::KEY_NAME]) &&
             isset($_POST[Member::KEY_EMAIL]) &&
@@ -280,13 +284,19 @@ class MemberController extends Controller
                 $member = $this->buildMemberFromForm();
                 $isNewEmail = $this->memberManager->isNewEmail($member->getEmail());
                 $isNewName = $this->memberManager->isNewName($member->getName());
+                $hasStrongPassword = MemberHelper::hasStrongPassword($_POST[Member::KEY_PASSWORD]);
 
-                if (!$isNewName || !$isNewEmail) {
+                if (
+                    !$isNewName ||
+                    !$isNewEmail ||
+                    !$hasStrongPassword
+                ) {
                     $wrongFields = [];
                     $message = "";
-                    MemberHelper::setWrongRegistrationFields($wrongFields, $message, $isNewName, $isNewEmail);
+                    MemberHelper::setWrongRegistrationFields($wrongFields, $message, $isNewName, $isNewEmail, $hasStrongPassword);
                     $this->showRegistrationPage($message, $wrongFields);
                 } else {
+                    // Everything is fine, register the member
                     $this->addNewMember($member);
                     $_SESSION[self::KEY_CONNECTED_MEMBER] = $member;
                     $this->showWelcomePage();
