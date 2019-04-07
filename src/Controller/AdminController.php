@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Helper\MemberHelper;
 use Model\Entity\Member;
 use Model\Entity\Post;
 use Model\Entity\Tag;
@@ -41,7 +42,7 @@ class AdminController extends BlogController
         $categories = $this->categoryManager->getAll();
         $comments = $this->commentManager->getAll();
 
-        if (MemberController::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
             if (in_array('admin', $_SESSION['connected-member']->getRoles())) {
                 $members = $this->memberManager->getAll();
             }

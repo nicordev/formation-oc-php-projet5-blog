@@ -3,6 +3,7 @@
 namespace Helper;
 
 
+use Controller\MemberController;
 use Model\Entity\Member;
 
 class MemberHelper
@@ -103,9 +104,16 @@ class MemberHelper
      */
     public static function hasStrongPassword(?string $password)
     {
-        if (preg_match("#^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!$%@\#£€*?&_])\S{8,}$#", $password)) {
-            return true;
-        }
-        return false;
+        return preg_match("#^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!$%@\#£€*?&_])\S{8,}$#", $password);
+    }
+
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function memberConnected(): bool
+    {
+        return isset($_SESSION[MemberController::KEY_CONNECTED_MEMBER]) && !empty($_SESSION[MemberController::KEY_CONNECTED_MEMBER]);
     }
 }

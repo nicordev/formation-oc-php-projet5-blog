@@ -71,7 +71,7 @@ class MemberController extends Controller
      */
     public static function verifyAccess(?array $authorizedRoles = null): bool
     {
-        if (MemberController::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
             if (self::hasAuthorizedRole($authorizedRoles ?? self::AUTHORIZED_ROLES, $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
                 return true;
             }
@@ -156,19 +156,6 @@ class MemberController extends Controller
         } else {
             $this->showMemberProfileEditor($member, $keyValue);
         }
-    }
-
-    /**
-     * Check if the user is connected
-     *
-     * @return bool
-     */
-    public static function memberConnected(): bool
-    {
-        if (isset($_SESSION[self::KEY_CONNECTED_MEMBER]) && !empty($_SESSION[self::KEY_CONNECTED_MEMBER])) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -264,7 +251,7 @@ class MemberController extends Controller
      */
     public function register()
     {
-        if (self::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
             $this->showRegistrationPage("Déconnectez-vous pour inscrire une autre personne.");
             return false;
         }
@@ -411,7 +398,7 @@ class MemberController extends Controller
      */
     public function askRole(string $role)
     {
-        $admins = $this->memberManager->getMembersByRole('admin');
+        $admins = $this->memberManager->getMembersByRole(Member::AUTHOR);
         $contactName = htmlspecialchars($_SESSION[self::KEY_CONNECTED_MEMBER]->getName());
         $subject = htmlspecialchars("Blog de Nicolas Renvoisé : {$contactName} souhaite devenir {$role}");
         $message = htmlspecialchars("{$contactName} souhaite devenir {$role}");
@@ -484,11 +471,11 @@ class MemberController extends Controller
     {
         $availableRoles = $this->roleManager->getRoleNames();
 
-        if (MemberController::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
 
             if ($member === null || $member === 0) {
                 $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
-            } elseif (!($member instanceof Member) && in_array('admin', $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
+            } elseif (!($member instanceof Member) && in_array(Member::AUTHOR, $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
                 $member = $this->memberManager->get((int) $member);
             }
 
@@ -540,7 +527,7 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
-        } elseif (self::memberConnected()) {
+        } elseif (MemberHelper::memberConnected()) {
             $member->setId($_SESSION[self::KEY_CONNECTED_MEMBER]->getId());
         }
 

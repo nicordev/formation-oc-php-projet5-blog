@@ -16,6 +16,7 @@ use Controller\ErrorController;
 use Controller\HomeController;
 use Controller\MediaController;
 use Controller\MemberController;
+use Helper\MemberHelper;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\KeyManager;
@@ -131,7 +132,7 @@ class DIC
 
         // Get the connected member
         $getUserFunction = new Twig_Function('getUser', function () {
-            if (MemberController::memberConnected()) {
+            if (MemberHelper::memberConnected()) {
                 return $_SESSION['connected-member'];
             }
             return null;
@@ -165,8 +166,7 @@ class DIC
         // Get categories
         $getCategories = new Twig_Function('getCategories', function () {
             $categoryManager = new CategoryManager();
-            $categories = $categoryManager->getAll();
-            return $categories;
+            return $categoryManager->getAll();
         });
         $twig->addFunction($getCategories);
 
