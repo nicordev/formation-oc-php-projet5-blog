@@ -1,3 +1,4 @@
+-- Create the tables of the database
 
 DROP TABLE IF EXISTS bl_role_member;
 DROP TABLE IF EXISTS bl_post_category;

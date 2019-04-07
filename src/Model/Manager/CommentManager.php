@@ -87,30 +87,33 @@ class CommentManager extends Manager
      * Get the comments of a post
      *
      * @param int $postId
+     * @param int|null $numberOfLines
+     * @param int|null $page
      * @return array
      * @throws \Application\Exception\HttpException
      */
-    public function getFromPost(int $postId): array
+    public function getFromPost(int $postId, ?int $numberOfLines = null, ?int $page = 1, bool $filterApprouved = true): array
     {
         $comments = [];
-
         $query = 'SELECT * FROM bl_comment
-        WHERE com_post_id_fk = :postId';
+            WHERE com_post_id_fk = :postId';
+
+        if ($filterApprouved) {
+            $query .= " AND com_approved = 1";
+        }
+
+        if ($numberOfLines) {
+            $query .= " AND com_parent_id_fk IS NULL";
+            self::addLimitToQuery($query, $numberOfLines, ($page - 1) * $numberOfLines);
+        }
 
         $requestComments = $this->query($query, ['postId' => $postId]);
 
         while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-            $comment = $this->createEntityFromTableData($commentData);
-            $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
-            $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
-            if ($comment->getLastEditorId()) {
-                $comment->setLastEditor = $this->getCommentMember($comment->getLastEditorId());
-            }
+            $comment = $this->buildComment($commentData);
+            $comment->setChildren($this->getChildren($comment->getId()));
             $comments[$comment->getId()] = $comment;
         }
-
-        // Parent and children
-        self::fillParentsAndChildren($comments);
 
         return $comments;
     }
@@ -198,21 +201,88 @@ class CommentManager extends Manager
         return $comments;
     }
 
+    /**
+     * Count the number of comments of a post
+     *
+     * @param int $postId
+     * @param bool $countChildren
+     * @return mixed
+     * @throws \Application\Exception\HttpException
+     */
+    public function countPostComments(int $postId, bool $countChildren = true, bool $filterApproved = true)
+    {
+        $query = "SELECT COUNT(com_id) FROM bl_comment WHERE com_post_id_fk = :postId";
+        if (!$countChildren) {
+            $query .= " AND com_parent_id_fk IS NULL";
+        }
+        if ($filterApproved) {
+            $query .= " AND com_approved = 1";
+        }
+        $requestCount = $this->query($query, ["postId" => $postId]);
+
+        return $requestCount->fetch(PDO::FETCH_NUM)[0];
+    }
+
     // Private
 
     /**
-     * Fill parents and children properties of comments
+     * Get children of a comment
      *
-     * @param array $comments
+     * @param int $commentId
+     * @return array
+     * @throws \Application\Exception\HttpException
      */
-    private static function fillParentsAndChildren(array $comments)
+    private function getChildren(int $commentId)
     {
-        foreach ($comments as $comment) {
-            if ($comment->getParentId()) {
-                $parent = $comments[$comment->getParentId()];
-                $comment->setParent($parent);
-                $parent->addAChild($comment);
+        $children = [];
+
+        $query = "SELECT * FROM bl_comment
+            WHERE com_parent_id_fk = :commentId";
+        $requestChildren = $this->query($query, ["commentId" => $commentId]);
+
+        while ($commentData = $requestChildren->fetch(PDO::FETCH_ASSOC)) {
+            $comment = $this->buildComment($commentData);
+            if ($this->countChildren($comment->getId()) > 0) {
+                $commentChildren = $this->getChildren($comment->getId());
+                foreach ($commentChildren as $commentChild) {
+                    $commentChild->setParent($comment);
+                }
+                $comment->setChildren($commentChildren);
             }
+            $children[$comment->getId()] = $comment;
         }
+        return $children;
+    }
+
+    /**
+     * Count the number of children of a comment
+     *
+     * @param int $commentId
+     * @return mixed
+     * @throws \Application\Exception\HttpException
+     */
+    private function countChildren(int $commentId)
+    {
+        $query = "SELECT COUNT(com_id) FROM bl_comment
+            WHERE com_parent_id_fk = :commentId";
+        $requestCount = $this->query($query, ["commentId" => $commentId]);
+
+        return $requestCount->fetch(PDO::FETCH_NUM)[0];
+    }
+
+    /**
+     * @param array $commentData
+     * @return Comment
+     * @throws \Application\Exception\HttpException
+     */
+    private function buildComment(array $commentData): Comment
+    {
+        $comment = $this->createEntityFromTableData($commentData);
+        $comment->setAuthor($this->getCommentMember($comment->getAuthorId()));
+        $comment->setPostTitle($this->getPostTitle($comment->getPostId()));
+        if ($comment->getLastEditorId()) {
+            $comment->setLastEditor = $this->getCommentMember($comment->getLastEditorId());
+        }
+        return $comment;
     }
 }

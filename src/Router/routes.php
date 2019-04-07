@@ -65,7 +65,9 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showASinglePost',
         ROUTE_KEY_PARAMS => [
-            'postId' => (int) $_GET['post-id']
+            'postId' => (int) $_GET['post-id'],
+            'message' => null,
+            'commentPage' => (int) $_GET['comment-page'] ?? 1
         ]
     ],
 

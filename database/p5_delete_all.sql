@@ -1,3 +1,5 @@
+-- Empty the database
+
 DELETE FROM bl_role_member;
 DELETE FROM bl_post_category;
 DELETE FROM bl_post_tag;
