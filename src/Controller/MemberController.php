@@ -42,9 +42,11 @@ class MemberController extends Controller
 
     public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
-    const KEY_CONNECTED_MEMBER = "connected-member";
-    const KEY_MEMBER = "member";
-    const KEY_WRONG_FIELDS = "wrongFields";
+    public const KEY_CONNECTED_MEMBER = "connected-member";
+    public const KEY_MEMBER = "member";
+    public const KEY_WRONG_FIELDS = "wrongFields";
+
+    public const MESSAGE_PASSWORD_REQUIREMENTS = "Le mot de passe doit comporter au moins 8 caractères dont une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial. Bon courage ! ☺";
 
     public function __construct(
         MemberManager $memberManager,
@@ -103,13 +105,13 @@ class MemberController extends Controller
      * Show the static profile of a member
      *
      * @param int|null $memberId
+     * @param string|null $message
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws HttpException
-     * @throws Exception
      */
-    public function showMemberProfile(?int $memberId = null)
+    public function showMemberProfile(?int $memberId = null, ?string $message = null)
     {
         if ($memberId !== null && $memberId > 0) {
             $member = $this->memberManager->get($memberId);
@@ -127,7 +129,8 @@ class MemberController extends Controller
         $this->render(self::VIEW_MEMBER_PROFILE, [
             self::KEY_MEMBER => $member,
             'memberPosts' => $memberPosts,
-            'memberComments' => $memberComments
+            'memberComments' => $memberComments,
+            BlogController::KEY_MESSAGE => $message
         ]);
     }
 
@@ -205,6 +208,13 @@ class MemberController extends Controller
             isset($_POST[Member::KEY_DESCRIPTION])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
+            if (
+                !empty($_POST[Member::KEY_PASSWORD]) &&
+                !MemberHelper::hasStrongPassword($_POST[Member::KEY_PASSWORD])
+            ) {
+                $this->showMemberProfileEditor($modifiedMember, null, self::MESSAGE_PASSWORD_REQUIREMENTS);
+                return false;
+            }
             if (isset($_POST['keep-roles'])) {
                 $this->memberManager->edit($modifiedMember, false);
             } else {
@@ -213,7 +223,7 @@ class MemberController extends Controller
             if ($modifiedMember->getId() === $_SESSION[self::KEY_CONNECTED_MEMBER]->getId()) {
                 $_SESSION[self::KEY_CONNECTED_MEMBER] = $modifiedMember;
             }
-            $this->showMemberProfile($modifiedMember->getId());
+            $this->showMemberProfile($modifiedMember->getId(), "Votre profil a été modifié.");
 
         } else {
             throw new AppException('$_POST lacks the requested keys to update the member.');
@@ -460,14 +470,14 @@ class MemberController extends Controller
      *
      * @param Member|null $member
      * @param int|null $keyValue
+     * @param string|null $message
      * @throws AppException
      * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws Exception
      */
-    private function showMemberProfileEditor($member = null, ?int $keyValue = null)
+    private function showMemberProfileEditor($member = null, ?int $keyValue = null, ?string $message = null)
     {
         $availableRoles = $this->roleManager->getRoleNames();
 
@@ -481,7 +491,8 @@ class MemberController extends Controller
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles
+                'availableRoles' => $availableRoles,
+                BlogController::KEY_MESSAGE => $message
             ]);
 
         } elseif ($keyValue) {
@@ -496,7 +507,8 @@ class MemberController extends Controller
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles
+                'availableRoles' => $availableRoles,
+                BlogController::KEY_MESSAGE => $message
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');

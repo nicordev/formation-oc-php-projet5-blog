@@ -17,6 +17,9 @@
 {% endblock %}
 
 {% block content %}
+
+    {% include 'message.twig' %}
+
     <section id="profile">
 
         <form action="/profile-editor?action=update" method="post">

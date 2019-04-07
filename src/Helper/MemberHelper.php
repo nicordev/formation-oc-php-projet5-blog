@@ -65,7 +65,7 @@ class MemberHelper
             $wrongFields[] = Member::KEY_EMAIL;
         }
         if (!$hasStrongPassword) {
-            $message .= "Le mot de passe doit comporter au moins 8 caractères dont une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial. Bon courage ! ☺";
+            $message .= MemberController::MESSAGE_PASSWORD_REQUIREMENTS;
             $wrongFields[] = Member::KEY_PASSWORD;
         }
     }
