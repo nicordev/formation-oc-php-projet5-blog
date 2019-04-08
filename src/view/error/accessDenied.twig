@@ -5,16 +5,20 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Accès interdit</h2>
+    <div class="row mx-0">
+        <h2 class="col-12">Accès interdit</h2>
 
-    {% if getUser() %}
-        <p>Vous n'avez pas accès à cette partie du site.</p>
-    {% else %}
-        <p>Vous devez être connecté pour accéder à cette partie du site.</p>
-        <p>
-            <a class="btn btn-primary" href="/connection">Se connecter</a>
+        {% if getUser() %}
+            <p class="col-12">Vous n'avez pas accès à cette partie du site.</p>
+        {% else %}
+            <p class="col-12">Vous devez être connecté pour accéder à cette partie du site.</p>
+            <p class="col-12 text-center">
+                <a class="btn btn-primary" href="/connection">Se connecter</a>
+            </p>
+        {% endif %}
+
+        <p class="col-12">
+            <a href="/home">Revenir à l'accueil</a>
         </p>
-    {% endif %}
-
-    <p><a href="/home">Revenir à l'accueil</a></p>
+    </div>
 {% endblock %}

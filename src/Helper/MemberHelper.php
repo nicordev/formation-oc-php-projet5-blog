@@ -3,6 +3,7 @@
 namespace Helper;
 
 
+use Controller\MemberController;
 use Model\Entity\Member;
 
 class MemberHelper
@@ -51,8 +52,9 @@ class MemberHelper
      * @param string $message
      * @param bool $isNewName
      * @param bool $isNewEmail
+     * @param bool $hasStrongPassword
      */
-    public static function setWrongRegistrationFields(array &$wrongFields, string &$message, bool $isNewName, bool $isNewEmail)
+    public static function setWrongRegistrationFields(array &$wrongFields, string &$message, bool $isNewName, bool $isNewEmail, bool $hasStrongPassword)
     {
         if (!$isNewName) {
             $message .= "Ce nom est déjà pris. ";
@@ -61,6 +63,10 @@ class MemberHelper
         if (!$isNewEmail) {
             $message .= "Cet email est déjà pris.";
             $wrongFields[] = Member::KEY_EMAIL;
+        }
+        if (!$hasStrongPassword) {
+            $message .= MemberController::MESSAGE_PASSWORD_REQUIREMENTS;
+            $wrongFields[] = Member::KEY_PASSWORD;
         }
     }
 
@@ -88,5 +94,26 @@ class MemberHelper
         }
 
         return $isClear;
+    }
+
+    /**
+     * Password must have at least 8 characters, 1 lower case, 1 upper case, 1 digit, 1 special character, avoid any non-whitespace character
+     *
+     * @param string|null $password
+     * @return bool
+     */
+    public static function hasStrongPassword(?string $password)
+    {
+        return preg_match("#^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!$%@\#£€*?&_])\S{8,}$#", $password);
+    }
+
+    /**
+     * Check if the user is connected
+     *
+     * @return bool
+     */
+    public static function memberConnected(): bool
+    {
+        return isset($_SESSION[MemberController::KEY_CONNECTED_MEMBER]) && !empty($_SESSION[MemberController::KEY_CONNECTED_MEMBER]);
     }
 }

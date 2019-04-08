@@ -42,9 +42,12 @@ class MemberController extends Controller
 
     public const AUTHORIZED_ROLES = ['author', 'admin', 'editor', 'moderator'];
 
-    const KEY_CONNECTED_MEMBER = "connected-member";
-    const KEY_MEMBER = "member";
-    const KEY_WRONG_FIELDS = "wrongFields";
+    public const KEY_CONNECTED_MEMBER = "connected-member";
+    public const KEY_MEMBER = "member";
+    public const KEY_WRONG_FIELDS = "wrongFields";
+    public const KEY_AVAILABLE_ROLES = "availableRoles";
+
+    public const MESSAGE_PASSWORD_REQUIREMENTS = "Le mot de passe doit comporter au moins 8 caractères dont une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial. Bon courage ! ☺";
 
     public function __construct(
         MemberManager $memberManager,
@@ -71,7 +74,7 @@ class MemberController extends Controller
      */
     public static function verifyAccess(?array $authorizedRoles = null): bool
     {
-        if (MemberController::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
             if (self::hasAuthorizedRole($authorizedRoles ?? self::AUTHORIZED_ROLES, $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
                 return true;
             }
@@ -85,26 +88,31 @@ class MemberController extends Controller
     /**
      * Show a welcome page for new members
      *
+     * @param string|null $message
+     * @param bool $questionSent
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showWelcomePage()
+    public function showWelcomePage(?string $message = "", bool $questionSent = false)
     {
-        $this->render(self::VIEW_WELCOME);
+        $this->render(self::VIEW_WELCOME, [
+            BlogController::KEY_MESSAGE => $message,
+            "questionSent" => $questionSent
+        ]);
     }
 
     /**
      * Show the static profile of a member
      *
      * @param int|null $memberId
+     * @param string|null $message
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws HttpException
-     * @throws Exception
      */
-    public function showMemberProfile(?int $memberId = null)
+    public function showMemberProfile(?int $memberId = null, ?string $message = null)
     {
         if ($memberId !== null && $memberId > 0) {
             $member = $this->memberManager->get($memberId);
@@ -122,7 +130,8 @@ class MemberController extends Controller
         $this->render(self::VIEW_MEMBER_PROFILE, [
             self::KEY_MEMBER => $member,
             'memberPosts' => $memberPosts,
-            'memberComments' => $memberComments
+            'memberComments' => $memberComments,
+            BlogController::KEY_MESSAGE => $message
         ]);
     }
 
@@ -151,19 +160,6 @@ class MemberController extends Controller
         } else {
             $this->showMemberProfileEditor($member, $keyValue);
         }
-    }
-
-    /**
-     * Check if the user is connected
-     *
-     * @return bool
-     */
-    public static function memberConnected(): bool
-    {
-        if (isset($_SESSION[self::KEY_CONNECTED_MEMBER]) && !empty($_SESSION[self::KEY_CONNECTED_MEMBER])) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -213,6 +209,13 @@ class MemberController extends Controller
             isset($_POST[Member::KEY_DESCRIPTION])
         ) {
             $modifiedMember = $this->buildMemberFromForm();
+            if (
+                !empty($_POST[Member::KEY_PASSWORD]) &&
+                !MemberHelper::hasStrongPassword($_POST[Member::KEY_PASSWORD])
+            ) {
+                $this->showMemberProfileEditor($modifiedMember, null, self::MESSAGE_PASSWORD_REQUIREMENTS);
+                return false;
+            }
             if (isset($_POST['keep-roles'])) {
                 $this->memberManager->edit($modifiedMember, false);
             } else {
@@ -221,7 +224,7 @@ class MemberController extends Controller
             if ($modifiedMember->getId() === $_SESSION[self::KEY_CONNECTED_MEMBER]->getId()) {
                 $_SESSION[self::KEY_CONNECTED_MEMBER] = $modifiedMember;
             }
-            $this->showMemberProfile($modifiedMember->getId());
+            $this->showMemberProfile($modifiedMember->getId(), "Votre profil a été modifié.");
 
         } else {
             throw new AppException('$_POST lacks the requested keys to update the member.');
@@ -259,6 +262,10 @@ class MemberController extends Controller
      */
     public function register()
     {
+        if (MemberHelper::memberConnected()) {
+            $this->showRegistrationPage("Déconnectez-vous pour inscrire une autre personne.");
+            return false;
+        }
         if (
             isset($_POST[Member::KEY_NAME]) &&
             isset($_POST[Member::KEY_EMAIL]) &&
@@ -275,13 +282,19 @@ class MemberController extends Controller
                 $member = $this->buildMemberFromForm();
                 $isNewEmail = $this->memberManager->isNewEmail($member->getEmail());
                 $isNewName = $this->memberManager->isNewName($member->getName());
+                $hasStrongPassword = MemberHelper::hasStrongPassword($_POST[Member::KEY_PASSWORD]);
 
-                if (!$isNewName || !$isNewEmail) {
+                if (
+                    !$isNewName ||
+                    !$isNewEmail ||
+                    !$hasStrongPassword
+                ) {
                     $wrongFields = [];
                     $message = "";
-                    MemberHelper::setWrongRegistrationFields($wrongFields, $message, $isNewName, $isNewEmail);
+                    MemberHelper::setWrongRegistrationFields($wrongFields, $message, $isNewName, $isNewEmail, $hasStrongPassword);
                     $this->showRegistrationPage($message, $wrongFields);
                 } else {
+                    // Everything is fine, register the member
                     $this->addNewMember($member);
                     $_SESSION[self::KEY_CONNECTED_MEMBER] = $member;
                     $this->showWelcomePage();
@@ -385,6 +398,35 @@ class MemberController extends Controller
         }
     }
 
+    /**
+     * Send a mail to the admins to ask for a specific role
+     *
+     * @param string $role
+     * @throws HttpException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function askRole(string $role)
+    {
+        $admins = $this->memberManager->getMembersByRole(Member::AUTHOR);
+        $contactName = htmlspecialchars($_SESSION[self::KEY_CONNECTED_MEMBER]->getName());
+        $subject = htmlspecialchars("Blog de Nicolas Renvoisé : {$contactName} souhaite devenir {$role}");
+        $message = htmlspecialchars("{$contactName} souhaite devenir {$role}");
+        $from = htmlspecialchars($_SESSION[self::KEY_CONNECTED_MEMBER]->getEmail());
+
+        foreach ($admins as $admin) {
+            MailSender::send(
+                $admin->getEmail(),
+                $subject,
+                $message,
+                $from
+            );
+        }
+
+        $this->showWelcomePage("Votre demande a été envoyée et sera traitée dès que possible.", true);
+    }
+
     // Private
 
     /**
@@ -429,28 +471,29 @@ class MemberController extends Controller
      *
      * @param Member|null $member
      * @param int|null $keyValue
+     * @param string|null $message
      * @throws AppException
      * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws Exception
      */
-    private function showMemberProfileEditor($member = null, ?int $keyValue = null)
+    private function showMemberProfileEditor($member = null, ?int $keyValue = null, ?string $message = null)
     {
         $availableRoles = $this->roleManager->getRoleNames();
 
-        if (MemberController::memberConnected()) {
+        if (MemberHelper::memberConnected()) {
 
             if ($member === null || $member === 0) {
                 $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
-            } elseif (!($member instanceof Member) && in_array('admin', $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
+            } elseif (!($member instanceof Member) && in_array(Member::AUTHOR, $_SESSION[self::KEY_CONNECTED_MEMBER]->getRoles())) {
                 $member = $this->memberManager->get((int) $member);
             }
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles
+                self::KEY_AVAILABLE_ROLES => $availableRoles,
+                BlogController::KEY_MESSAGE => $message
             ]);
 
         } elseif ($keyValue) {
@@ -465,7 +508,8 @@ class MemberController extends Controller
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles
+                self::KEY_AVAILABLE_ROLES => $availableRoles,
+                BlogController::KEY_MESSAGE => $message
             ]);
         } else {
             throw new AppException('You can not edit a profile if you are not connected.');
@@ -496,7 +540,7 @@ class MemberController extends Controller
 
         if (isset($_POST['id']) && !empty($_POST['id'])) {
             $member->setId((int) $_POST['id']);
-        } elseif (self::memberConnected()) {
+        } elseif (MemberHelper::memberConnected()) {
             $member->setId($_SESSION[self::KEY_CONNECTED_MEMBER]->getId());
         }
 
@@ -522,10 +566,9 @@ class MemberController extends Controller
      * Add a new Member
      *
      * @param Member $member
-     * @return bool
      * @throws Exception
      */
-    private function addNewMember(Member $member): bool
+    private function addNewMember(Member $member)
     {
         $member->setRoles([self::KEY_MEMBER]);
         $this->memberManager->add($member);

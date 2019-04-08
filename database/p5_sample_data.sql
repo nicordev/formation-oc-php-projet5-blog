@@ -2054,7 +2054,7 @@ function theme_enqueue_styles() {
                 <li>Activer le thême enfant</li>
             </ol>
         </article>'),
-(12, 3, null, '2019-02-26 22:10:12', '2019-02-26 22:10:12', 0, 'Créer un thème WordPress à partir de rien', 'Cette fois-ci un tuto pour créer un thème de zéro. Pour des explications plus détaillées, vous pouvez vous rendre sur le blog de Tania Rascia (https://www.taniarascia.com/).', '<article>
+(12, 3, null, '2019-02-26 22:10:12', '2019-02-26 22:10:12', 0, 'Créer un thème WordPress à partir de rien', 'Cette fois-ci un tuto pour créer un thème de zéro. Pour des explications plus détaillées, vous pouvez vous rendre sur le blog de Tania Rascia.', '<article>
             <h2>Création d''un thème WordPress</h2>
 
             <p>
