@@ -116,8 +116,10 @@ class BlogController extends Controller
         $this->render(self::VIEW_BLOG, [
             self::KEY_POSTS => $posts,
             self::KEY_CATEGORY => $category,
-            'nextPage' => isset($nextPage) ? $nextPage : null,
-            'previousPage' => isset($previousPage) ? $previousPage : null
+            'nextPage' => $nextPage ?? null,
+            'previousPage' => $previousPage ?? null,
+            'currentPage' => $page,
+            'pagesCount' => $numberOfPages
         ]);
     }
 
