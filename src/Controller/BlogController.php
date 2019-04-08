@@ -175,36 +175,39 @@ class BlogController extends Controller
      *
      * @param int $postId
      * @param string|null $message
-     * @param int|null $commentPage
+     * @param int|null $commentsPage
      * @return void
-     * @throws PageNotFoundException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws HttpException
      */
-    public function showASinglePost(int $postId, ?string $message = null, ?int $commentPage = 1)
+    public function showASinglePost(int $postId, ?string $message = null, ?int $commentsPage = 1)
     {
-        try {
-            $post = $this->postManager->get($postId);
-            BlogHelper::prepareAPost($post);
+        $post = $this->postManager->get($postId);
+        BlogHelper::prepareAPost($post);
 
-            $comments = $this->commentManager->getFromPost($postId, $this->commentsPerPage, $commentPage);
-            $commentsCount = $this->commentManager->countPostComments($postId, true);
-            $rootCommentsCount = $this->commentManager->countPostComments($postId, false);
-            $commentPagesCount = ceil($rootCommentsCount / $this->commentsPerPage);
-            foreach ($comments as $comment) {
-                BlogHelper::convertDatesOfComment($comment);
-            }
+        $commentsCount = $this->commentManager->countComments($postId, null, true);
+        $rootCommentsCount = $this->commentManager->countComments($postId, null, false);
+        $commentsPagesCount = ceil($rootCommentsCount / $this->commentsPerPage);
 
-        } catch (HttpException $e) {
-            throw new PageNotFoundException('This post do not exists.');
+        if ($commentsPage < 1) {
+            $commentsPage = 1;
+        } elseif ($commentsPage > $commentsPagesCount) {
+            $commentsPage = $commentsPagesCount;
+        }
+
+        $comments = $this->commentManager->getFromPost($postId, $this->commentsPerPage, $commentsPage);
+        foreach ($comments as $comment) {
+            BlogHelper::convertDatesOfComment($comment);
         }
 
         $this->render(self::VIEW_BLOG_POST, [
             self::KEY_POST => $post,
             self::KEY_COMMENTS => $comments,
-            "commentPage" => $commentPage,
-            "commentPagesCount" => $commentPagesCount,
+            "commentsPage" => $commentsPage,
+            "commentsPagesCount" => $commentsPagesCount,
+            "commentsCount" => $commentsCount,
             self::KEY_MESSAGE => $message
         ]);
     }

@@ -2,6 +2,13 @@
 {% import 'macros.twig' as macros %}
 
 <div id="comments" class="comments-wrapper row mx-0">
+    <div class="col-12">
+        {% if commentsCount > 1 %}
+            {{ commentsCount }} commentaires
+        {% else %}
+            {{ commentsCount }} commentaire
+        {% endif %}
+    </div>
     {% if comments %}
         <dl class="col-12">
             {% for comment in comments %}
@@ -10,22 +17,21 @@
                 {% endif %}
             {% endfor %}
         </dl>
+        {# Paging #}
         <div class="col-12 row mx-0">
             <div class="col-12 mb-2">
-                {{ commentPage }} / {{ commentPagesCount }}
+                {{ commentsPage }} / {{ commentsPagesCount }}
             </div>
-            {% if commentPage > 1 %}
+            {% if commentsPage > 1 %}
                 <div class="col-12 my-2">
-                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comment-page={{ commentPage - 1 }}#comments">Page précédente</a>
+                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comments-page={{ commentsPage - 1 }}#comments">Page précédente</a>
                 </div>
             {% endif %}
-            {% if commentPage < commentPagesCount %}
+            {% if commentsPage < commentsPagesCount %}
                 <div class="col-12 my-2">
-                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comment-page={{ commentPage + 1 }}#comments">Page suivante</a>
+                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comments-page={{ commentsPage + 1 }}#comments">Page suivante</a>
                 </div>
             {% endif %}
         </div>
-    {% else %}
-        <p>Sans commentaire.</p>
     {% endif %}
 </div>

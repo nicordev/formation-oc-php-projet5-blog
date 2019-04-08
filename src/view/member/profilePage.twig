@@ -93,11 +93,11 @@
 
         {# Comments #}
         {% if memberComments %}
-            <div>
+            <div id="comments">
                 <h3>Commentaires</h3>
 
                 <p>
-                    Nombre de commentaires publiés : {{ memberComments|length }}
+                    Nombre de commentaires publiés : {{ commentsCount }}
                 </p>
 
                 <ul>
@@ -110,6 +110,23 @@
                         </li>
                     {% endfor %}
                 </ul>
+                {% if commentsPagesCount > 1 %}
+                    <div class="col-12 row mx-0">
+                        <div class="col-12 mb-2">
+                            {{ commentsPage }} / {{ commentsPagesCount }}
+                        </div>
+                        {% if commentsPage > 1 %}
+                            <div class="col-12 my-2">
+                                <a class="btn btn-secondary" href="/member-profile?id={{ member.id }}&amp;comments-page={{ commentsPage - 1 }}#comments">Page précédente</a>
+                            </div>
+                        {% endif %}
+                        {% if commentsPage < commentsPagesCount %}
+                            <div class="col-12 my-2">
+                                <a class="btn btn-secondary" href="/member-profile?id={{ member.id }}&amp;comments-page={{ commentsPage + 1 }}#comments">Page suivante</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
     </section>

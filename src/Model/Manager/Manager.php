@@ -267,10 +267,10 @@ abstract class Manager
     {
         try {
             if (!$request->execute($params)) {
-                throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500);
+                throw new HttpException('Error when trying to execute the query ' . $request->queryString . ' with params ' . print_r($params, true), 500);
             }
         } catch (PDOException $e) {
-            throw new HttpException('Error when trying to execute the query ' . $request["queryString"] . ' with params ' . print_r($params, true), 500, $e);
+            throw new HttpException('Error when trying to execute the query ' . $request->queryString . ' with params ' . print_r($params, true), 500, $e);
         }
     }
 

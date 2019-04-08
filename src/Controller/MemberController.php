@@ -31,6 +31,7 @@ class MemberController extends Controller
     protected $postManager;
     protected $commentManager;
     protected $keyManager;
+    protected $commentsPerMember = 3;
 
     public const VIEW_REGISTRATION = 'member/registrationPage.twig';
     public const VIEW_CONNECTION = 'member/connectionPage.twig';
@@ -106,12 +107,13 @@ class MemberController extends Controller
      *
      * @param int|null $memberId
      * @param string|null $message
+     * @param int $commentsPage
      * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showMemberProfile(?int $memberId = null, ?string $message = null)
+    public function showMemberProfile(?int $memberId = null, ?string $message = null, int $commentsPage = 1)
     {
         if ($memberId !== null && $memberId > 0) {
             $member = $this->memberManager->get($memberId);
@@ -119,8 +121,17 @@ class MemberController extends Controller
             $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
         }
 
+        $commentsCount = $this->commentManager->countComments(null, $member->getId(), false, true);
+        $commentsPagesCount = ceil($commentsCount / $this->commentsPerMember);
+
+        if ($commentsPage < 1) {
+            $commentsPage = 1;
+        } elseif ($commentsPage > $commentsPagesCount) {
+            $commentsPage = $commentsPagesCount;
+        }
+
         $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false, true);
-        $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true);
+        $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true, $this->commentsPerMember, ($commentsPage - 1) * $this->commentsPerMember);
 
         foreach ($memberComments as $memberComment) {
             BlogHelper::convertDatesOfComment($memberComment);
@@ -130,6 +141,9 @@ class MemberController extends Controller
             self::KEY_MEMBER => $member,
             'memberPosts' => $memberPosts,
             'memberComments' => $memberComments,
+            'commentsCount' => $commentsCount,
+            'commentsPage' => $commentsPage,
+            "commentsPagesCount" => $commentsPagesCount,
             BlogController::KEY_MESSAGE => $message
         ]);
     }

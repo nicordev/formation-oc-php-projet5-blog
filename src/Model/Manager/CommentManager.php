@@ -8,6 +8,7 @@
 
 namespace Model\Manager;
 
+use Application\Exception\HttpException;
 use Model\Entity\Comment;
 use \Exception;
 use PDO;
@@ -89,17 +90,22 @@ class CommentManager extends Manager
      * @param int $postId
      * @param int|null $numberOfLines
      * @param int|null $page
+     * @param bool $filterApproved
      * @return array
-     * @throws \Application\Exception\HttpException
+     * @throws HttpException
      */
-    public function getFromPost(int $postId, ?int $numberOfLines = null, ?int $page = 1, bool $filterApprouved = true): array
+    public function getFromPost(int $postId, ?int $numberOfLines = null, ?int $page = 1, bool $filterApproved = true): array
     {
         $comments = [];
         $query = 'SELECT * FROM bl_comment
             WHERE com_post_id_fk = :postId';
 
-        if ($filterApprouved) {
+        if ($filterApproved) {
             $query .= " AND com_approved = 1";
+        }
+
+        if ($page < 1) {
+            $page = 1;
         }
 
         if ($numberOfLines) {
@@ -205,20 +211,33 @@ class CommentManager extends Manager
      * Count the number of comments of a post
      *
      * @param int $postId
+     * @param int|null $memberId
      * @param bool $countChildren
+     * @param bool $filterApproved
      * @return mixed
-     * @throws \Application\Exception\HttpException
+     * @throws HttpException
      */
-    public function countPostComments(int $postId, bool $countChildren = true, bool $filterApproved = true)
+    public function countComments(?int $postId = null, ?int $memberId = null, bool $countChildren = true, bool $filterApproved = true)
     {
-        $query = "SELECT COUNT(com_id) FROM bl_comment WHERE com_post_id_fk = :postId";
+        if ($postId) {
+            $query = "SELECT COUNT(com_id) FROM bl_comment WHERE com_post_id_fk = :id";
+            $id = $postId;
+
+        } elseif ($memberId) {
+            $query = "SELECT COUNT(com_id) FROM bl_comment WHERE com_author_id_fk = :id";
+            $id = $memberId;
+
+        } else {
+            throw new HttpException("Lacking post id or member id", 500);
+        }
+
         if (!$countChildren) {
             $query .= " AND com_parent_id_fk IS NULL";
         }
         if ($filterApproved) {
             $query .= " AND com_approved = 1";
         }
-        $requestCount = $this->query($query, ["postId" => $postId]);
+        $requestCount = $this->query($query, ["id" => $id]);
 
         return $requestCount->fetch(PDO::FETCH_NUM)[0];
     }
