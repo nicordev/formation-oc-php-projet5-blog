@@ -45,6 +45,7 @@ class MemberController extends Controller
     public const KEY_CONNECTED_MEMBER = "connected-member";
     public const KEY_MEMBER = "member";
     public const KEY_WRONG_FIELDS = "wrongFields";
+    public const KEY_AVAILABLE_ROLES = "availableRoles";
 
     public const MESSAGE_PASSWORD_REQUIREMENTS = "Le mot de passe doit comporter au moins 8 caractères dont une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial. Bon courage ! ☺";
 
@@ -96,7 +97,7 @@ class MemberController extends Controller
     public function showWelcomePage(?string $message = "", bool $questionSent = false)
     {
         $this->render(self::VIEW_WELCOME, [
-            "message" => $message,
+            BlogController::KEY_MESSAGE => $message,
             "questionSent" => $questionSent
         ]);
     }
@@ -491,7 +492,7 @@ class MemberController extends Controller
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles,
+                self::KEY_AVAILABLE_ROLES => $availableRoles,
                 BlogController::KEY_MESSAGE => $message
             ]);
 
@@ -507,7 +508,7 @@ class MemberController extends Controller
 
             $this->render(self::VIEW_MEMBER_PROFILE_EDITOR, [
                 self::KEY_MEMBER => $member,
-                'availableRoles' => $availableRoles,
+                self::KEY_AVAILABLE_ROLES => $availableRoles,
                 BlogController::KEY_MESSAGE => $message
             ]);
         } else {
