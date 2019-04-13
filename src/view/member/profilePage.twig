@@ -73,11 +73,13 @@
 
         {# Posts #}
         {% if memberPosts %}
-            <div>
+            <hr>
+
+            <div id="posts" class="mt-5">
                 <h3>Articles</h3>
 
                 <p>
-                    Nombre d'articles publiés : {{ memberPosts|length }}
+                    Nombre d'articles publiés : {{ postsCount }}
                 </p>
 
                 <ul>
@@ -88,12 +90,16 @@
                     </li>
                 {% endfor %}
                 </ul>
+
+                {{ macros.showPagingButtons(postsPage, postsPagesCount, "/member-profile?id=" ~ member.id ~ "&amp;posts-page=" ~ (postsPage - 1) ~ "#posts", "/member-profile?id=" ~ member.id ~ "&amp;posts-page=" ~ (postsPage + 1) ~ "#posts") }}
             </div>
         {% endif %}
 
         {# Comments #}
         {% if memberComments %}
-            <div id="comments">
+            <hr>
+
+            <div id="comments" class="mt-5">
                 <h3>Commentaires</h3>
 
                 <p>
@@ -110,23 +116,9 @@
                         </li>
                     {% endfor %}
                 </ul>
-                {% if commentsPagesCount > 1 %}
-                    <div class="col-12 row mx-0">
-                        <div class="col-12 mb-2">
-                            {{ commentsPage }} / {{ commentsPagesCount }}
-                        </div>
-                        {% if commentsPage > 1 %}
-                            <div class="col-12 my-2">
-                                <a class="btn btn-secondary" href="/member-profile?id={{ member.id }}&amp;comments-page={{ commentsPage - 1 }}#comments">Page précédente</a>
-                            </div>
-                        {% endif %}
-                        {% if commentsPage < commentsPagesCount %}
-                            <div class="col-12 my-2">
-                                <a class="btn btn-secondary" href="/member-profile?id={{ member.id }}&amp;comments-page={{ commentsPage + 1 }}#comments">Page suivante</a>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
+
+                {{ macros.showPagingButtons(commentsPage, commentsPagesCount, "/member-profile?id=" ~ member.id ~ "&amp;comments-page=" ~ (commentsPage - 1) ~ "#comments", "/member-profile?id=" ~ member.id ~ "&amp;comments-page=" ~ (commentsPage + 1) ~ "#comments") }}
+
             </div>
         {% endif %}
     </section>

@@ -1,4 +1,5 @@
 {% macro translateRole(word) %}
+
     {% if word is same as('member') %}
         {{ 'Membre' }}
     {% elseif word is same as('author') %}
@@ -15,6 +16,7 @@
 {% endmacro %}
 
 {% macro showAComment(comment, connectedMember) %}
+
     {% import _self as macros %}
     {% if comment.isApproved %}
         <dt class="comment-info-wrapper">
@@ -44,6 +46,7 @@
 {% endmacro %}
 
 {% macro checkPostCategory(category, postCategories) %}
+
     {% for postCategory in postCategories %}
         {% if postCategory.getName is same as(category.getName) %}
             checked
@@ -52,9 +55,31 @@
 {% endmacro %}
 
 {% macro getPostEditorUrl(postId) %}
+
     {% set postEditorUrl = getCurrentUrl() %}
     {% if postId %}
         {% set postEditorUrl = postEditorUrl ~ "?post-id=" ~ postId %}
     {% endif %}
     {{ postEditorUrl }}
+{% endmacro %}
+
+{% macro showPagingButtons(currentPage, pagesCount, previousUrl, nextUrl) %}
+
+    {% if pagesCount > 1 %}
+        <div class="col-12 row mx-0">
+            <div class="col-12 mb-2">
+                {{ currentPage }} / {{ pagesCount }}
+            </div>
+            {% if currentPage > 1 %}
+                <div class="col-12 my-2">
+                    <a class="btn btn-secondary btn-sm" href="{{ previousUrl|raw }}">Page précédente</a>
+                </div>
+            {% endif %}
+            {% if currentPage < pagesCount %}
+                <div class="col-12 my-2">
+                    <a class="btn btn-secondary btn-sm" href="{{ nextUrl|raw }}">Page suivante</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endmacro %}

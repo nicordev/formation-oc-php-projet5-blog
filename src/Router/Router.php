@@ -2,6 +2,7 @@
 
 namespace Application\Router;
 
+use Application\Exception\HttpException;
 use Application\Security\CsrfProtector;
 use Controller\MemberController;
 
@@ -19,12 +20,16 @@ class Router
      * @return Route
      * @throws \Application\Exception\AccessException
      * @throws \Application\Exception\CsrfSecurityException
+     * @throws HttpException
      */
     public static function run(): Route
     {
         $requestedUrl = self::getUrl();
 
-        return self::getMatchingRoute($requestedUrl);
+        if (!$route = self::getMatchingRoute($requestedUrl)) {
+            throw new HttpException("There is no route matching the requested URL: " . implode("", $requestedUrl), 404);
+        }
+        return $route;
     }
 
     // Private
@@ -49,7 +54,7 @@ class Router
      * @throws \Application\Exception\AccessException
      * @throws \Application\Exception\CsrfSecurityException
      */
-    private static function getMatchingRoute(string $requestedUrl)
+    private static function getMatchingRoute(string $requestedUrl): ?Route
     {
         $routes = require ROOT_PATH . '/src/Router/routes.php';
 

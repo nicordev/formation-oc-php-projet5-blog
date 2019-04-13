@@ -31,7 +31,9 @@ class MemberController extends Controller
     protected $postManager;
     protected $commentManager;
     protected $keyManager;
-    protected $commentsPerMember = 3;
+    
+    public const POSTS_PER_MEMBER = 3;
+    public const COMMENTS_PER_MEMBER = 3;
 
     public const VIEW_REGISTRATION = 'member/registrationPage.twig';
     public const VIEW_CONNECTION = 'member/connectionPage.twig';
@@ -108,13 +110,14 @@ class MemberController extends Controller
      *
      * @param int|null $memberId
      * @param string|null $message
+     * @param int $postsPage
      * @param int $commentsPage
      * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function showMemberProfile(?int $memberId = null, ?string $message = null, int $commentsPage = 1)
+    public function showMemberProfile(?int $memberId = null, ?string $message = null, int $postsPage = 1, int $commentsPage = 1)
     {
         if ($memberId !== null && $memberId > 0) {
             $member = $this->memberManager->get($memberId);
@@ -122,8 +125,21 @@ class MemberController extends Controller
             $member = $_SESSION[self::KEY_CONNECTED_MEMBER];
         }
 
-        $commentsCount = $this->commentManager->countComments(null, $member->getId(), false, true);
-        $commentsPagesCount = ceil($commentsCount / $this->commentsPerMember);
+        // Posts paging
+        $postsCount = $this->postManager->countPostsOfAMember($member->getId(), true);
+        $postsPagesCount = ceil($postsCount / self::POSTS_PER_MEMBER);
+
+        if ($postsPage < 1) {
+            $postsPage = 1;
+        } elseif ($postsPage > $postsPagesCount) {
+            $postsPage = $postsPagesCount;
+        }
+        
+        $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false, true, self::POSTS_PER_MEMBER, ($postsPage - 1) * self::POSTS_PER_MEMBER);
+
+        // Comments paging
+        $commentsCount = $this->commentManager->countComments(null, $member->getId(), true, true);
+        $commentsPagesCount = ceil($commentsCount / self::COMMENTS_PER_MEMBER);
 
         if ($commentsPage < 1) {
             $commentsPage = 1;
@@ -131,8 +147,7 @@ class MemberController extends Controller
             $commentsPage = $commentsPagesCount;
         }
 
-        $memberPosts = $this->postManager->getPostsOfAMember($member->getId(), false, true);
-        $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true, $this->commentsPerMember, ($commentsPage - 1) * $this->commentsPerMember);
+        $memberComments = $this->commentManager->getCommentsOfAMember($member->getId(), true, self::COMMENTS_PER_MEMBER, ($commentsPage - 1) * self::COMMENTS_PER_MEMBER);
 
         foreach ($memberComments as $memberComment) {
             BlogHelper::convertDatesOfComment($memberComment);
@@ -141,6 +156,9 @@ class MemberController extends Controller
         $this->render(self::VIEW_MEMBER_PROFILE, [
             self::KEY_MEMBER => $member,
             'memberPosts' => $memberPosts,
+            'postsCount' => $postsCount,
+            'postsPage' => $postsPage,
+            "postsPagesCount" => $postsPagesCount,
             'memberComments' => $memberComments,
             'commentsCount' => $commentsCount,
             'commentsPage' => $commentsPage,
