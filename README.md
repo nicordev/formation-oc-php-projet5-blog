@@ -4,6 +4,16 @@
 
 Contains UML diagrams and the files of the website.
 
+Website written in plain PHP with a bit of JavaScript. I also used [Twig](https://twig.symfony.com/) and embedded a bootstrap blog template named [Clean Blog](https://startbootstrap.com/themes/clean-blog/).
+
+As a bonus, I added [TinyMCE](https://www.tiny.cloud/) and used [intervention/image](https://packagist.org/packages/intervention/image) library to write beautiful blog posts.
+
+In terms of security I implemented some protections against XSS, SQL injection, CSRF and brute force.
+
+Design patterns used: MVC, DIC and singleton. 
+
+I've learnt a lot during this project and it was really fun!
+
 ## Diagrams
 
 You'll find them in the **uml_diagrams** folder.
