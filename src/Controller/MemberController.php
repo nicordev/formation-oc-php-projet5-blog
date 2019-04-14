@@ -49,6 +49,13 @@ class MemberController extends Controller
     public const KEY_MEMBER = "member";
     public const KEY_WRONG_FIELDS = "wrongFields";
     public const KEY_AVAILABLE_ROLES = "availableRoles";
+    public const KEY_QUESTION_SENT = "questionSent";
+    public const KEY_MEMBER_POSTS = "memberPosts";
+    public const KEY_POSTS_COUNT = "postsCount";
+    public const KEY_POSTS_PAGE = "postsPage";
+    public const KEY_POSTS_PAGES_COUNT = "postsPagesCount";
+    public const KEY_MEMBER_COMMENTS = "memberComments";
+
 
     public const MESSAGE_PASSWORD_REQUIREMENTS = "Le mot de passe doit comporter au moins 8 caractères dont une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial. Bon courage ! ☺";
 
@@ -101,7 +108,7 @@ class MemberController extends Controller
     {
         $this->render(self::VIEW_WELCOME, [
             BlogController::KEY_MESSAGE => $message,
-            "questionSent" => $questionSent
+            self::KEY_QUESTION_SENT => $questionSent
         ]);
     }
 
@@ -155,14 +162,14 @@ class MemberController extends Controller
 
         $this->render(self::VIEW_MEMBER_PROFILE, [
             self::KEY_MEMBER => $member,
-            'memberPosts' => $memberPosts,
-            'postsCount' => $postsCount,
-            'postsPage' => $postsPage,
-            "postsPagesCount" => $postsPagesCount,
-            'memberComments' => $memberComments,
-            'commentsCount' => $commentsCount,
-            'commentsPage' => $commentsPage,
-            "commentsPagesCount" => $commentsPagesCount,
+            self::KEY_MEMBER_POSTS => $memberPosts,
+            self::KEY_POSTS_COUNT => $postsCount,
+            self::KEY_POSTS_PAGE => $postsPage,
+            self::KEY_POSTS_PAGES_COUNT => $postsPagesCount,
+            self::KEY_MEMBER_COMMENTS => $memberComments,
+            BlogController::KEY_COMMENTS_COUNT => $commentsCount,
+            BlogController::KEY_COMMENTS_PAGE => $commentsPage,
+            BlogController::KEY_COMMENTS_PAGES_COUNT => $commentsPagesCount,
             BlogController::KEY_MESSAGE => $message
         ]);
     }

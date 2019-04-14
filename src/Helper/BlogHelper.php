@@ -2,6 +2,7 @@
 
 namespace Helper;
 
+use Controller\BlogController;
 use Controller\Controller;
 use Exception;
 use Michelf\Markdown;
@@ -66,8 +67,8 @@ class BlogHelper
     {
         $tags = null;
 
-        if (isset($_POST['tags'])) {
-            foreach ($_POST['tags'] as $tag) {
+        if (isset($_POST[BlogController::KEY_TAGS])) {
+            foreach ($_POST[BlogController::KEY_TAGS] as $tag) {
                 $tags[] = new Tag(['name' => $tag]);
             }
         }
@@ -84,8 +85,8 @@ class BlogHelper
     {
         $categories = null;
 
-        if (isset($_POST['categories'])) {
-            foreach ($_POST['categories'] as $category) {
+        if (isset($_POST[BlogController::KEY_CATEGORIES])) {
+            foreach ($_POST[BlogController::KEY_CATEGORIES] as $category) {
                 $categories[] = new Category(['name' => $category]);
             }
         }

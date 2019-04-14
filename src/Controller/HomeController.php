@@ -15,11 +15,15 @@ class HomeController extends Controller
     protected $categoryManager;
     private $memberManager;
 
-    const VIEW_HOME = 'home/home.twig';
+    public const VIEW_HOME = 'home/home.twig';
 
-    const KEY_CONTACT_NAME = "contact-name";
-    const KEY_CONTACT_EMAIL = "contact-email";
-    const KEY_CONTACT_MESSAGE = "contact-message";
+    public const KEY_CONTACT_NAME = "contact-name";
+    public const KEY_CONTACT_EMAIL = "contact-email";
+    public const KEY_CONTACT_MESSAGE = "contact-message";
+    public const KEY_CATEGORIES = "categories";
+    public const KEY_POST_BY_CATEGORY = "postsByCategory";
+    public const KEY_NUMBER_OF_POSTS = "numberOfPosts";
+
 
     public function __construct(
         PostManager $postManager,
@@ -71,10 +75,10 @@ class HomeController extends Controller
         }
 
         $this->render(self::VIEW_HOME, [
-            'categories' => $categories,
-            'postsByCategory' => $postsByCategory,
-            'numberOfPosts' => $numberOfPostsByCategory,
-            'message' => $message
+            self::KEY_CATEGORIES => $categories,
+            self::KEY_POST_BY_CATEGORY => $postsByCategory,
+            self::KEY_NUMBER_OF_POSTS => $numberOfPostsByCategory,
+            BlogController::KEY_MESSAGE => $message
         ]);
     }
 

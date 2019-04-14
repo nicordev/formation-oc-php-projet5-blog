@@ -29,18 +29,27 @@ class BlogController extends Controller
     protected $postsPerPage = 5;
     protected $commentsPerPage = 3;
 
-    const VIEW_BLOG = 'blog/blog.twig';
-    const VIEW_BLOG_TAG = 'blog/tagPage.twig';
-    const VIEW_BLOG_POST = 'blog/blogPost.twig';
+    public const VIEW_BLOG = 'blog/blog.twig';
+    public const VIEW_BLOG_TAG = 'blog/tagPage.twig';
+    public const VIEW_BLOG_POST = 'blog/blogPost.twig';
 
-    const KEY_MESSAGE = "message";
-    const KEY_POST = "post";
-    const KEY_POSTS = "posts";
-    const KEY_POST_ID = "post-id";
-    const KEY_COMMENT_ID = "comment-id";
-    const KEY_COMMENTS = "comments";
-    const KEY_CATEGORY = "category";
-    const KEY_CATEGORIES = "categories";
+    public const KEY_MESSAGE = "message";
+    public const KEY_POST = "post";
+    public const KEY_POSTS = "posts";
+    public const KEY_POST_ID = "post-id";
+    public const KEY_COMMENT_ID = "comment-id";
+    public const KEY_COMMENTS = "comments";
+    public const KEY_COMMENTS_PAGE = "commentsPage";
+    public const KEY_COMMENTS_PAGES_COUNT = "commentsPagesCount";
+    public const KEY_COMMENTS_COUNT = "commentsCount";
+    public const KEY_CATEGORY = "category";
+    public const KEY_CATEGORIES = "categories";
+    public const KEY_PAGES_COUNT = "pagesCount";
+    public const KEY_CURRENT_PAGE = "currentPage";
+    public const KEY_PREVIOUS_PAGE = "previousPage";
+    public const KEY_NEXT_PAGE = "nextPage";
+    public const KEY_TAG = "tag";
+    public const KEY_TAGS = 'tags';
 
     /**
      * BlogController constructor.
@@ -115,10 +124,10 @@ class BlogController extends Controller
         $this->render(self::VIEW_BLOG, [
             self::KEY_POSTS => $posts,
             self::KEY_CATEGORY => $category,
-            'nextPage' => $nextPage ?? null,
-            'previousPage' => $previousPage ?? null,
-            'currentPage' => $page,
-            'pagesCount' => $numberOfPages
+            self::KEY_NEXT_PAGE => $nextPage ?? null,
+            self::KEY_PREVIOUS_PAGE => $previousPage ?? null,
+            self::KEY_CURRENT_PAGE => $page,
+            self::KEY_PAGES_COUNT => $numberOfPages
         ]);
     }
 
@@ -165,11 +174,11 @@ class BlogController extends Controller
 
         $this->render(self::VIEW_BLOG_TAG, [
             self::KEY_POSTS => $posts,
-            'tag' => $tag,
-            'nextPage' => $nextPage ?? null,
-            'previousPage' => $previousPage ?? null,
-            'currentPage' => $page,
-            'pagesCount' => $numberOfPages
+            self::KEY_TAG => $tag,
+            self::KEY_NEXT_PAGE => $nextPage ?? null,
+            self::KEY_PREVIOUS_PAGE => $previousPage ?? null,
+            self::KEY_CURRENT_PAGE => $page,
+            self::KEY_PAGES_COUNT => $numberOfPages
         ]);
     }
 
@@ -208,9 +217,9 @@ class BlogController extends Controller
         $this->render(self::VIEW_BLOG_POST, [
             self::KEY_POST => $post,
             self::KEY_COMMENTS => $comments,
-            "commentsPage" => $commentsPage,
-            "commentsPagesCount" => $commentsPagesCount,
-            "commentsCount" => $commentsCount,
+            self::KEY_COMMENTS_PAGE => $commentsPage,
+            self::KEY_COMMENTS_PAGES_COUNT => $commentsPagesCount,
+            self::KEY_COMMENTS_COUNT => $commentsCount,
             self::KEY_MESSAGE => $message
         ]);
     }

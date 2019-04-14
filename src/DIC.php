@@ -170,6 +170,13 @@ class DIC
         });
         $twig->addFunction($getCategories);
 
+        // Get members
+        $getMembers = new Twig_Function('getMembers', function () {
+            $memberManager = new MemberManager();
+            return $memberManager->getAll();
+        });
+        $twig->addFunction($getMembers);
+
         // DEBUG: Show the content of variables
         $dump = new Twig_Function('dump', function () {
             $args = func_get_args();
