@@ -12,7 +12,6 @@ namespace Application;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\HttpException;
-use Application\Exception\PageNotFoundException;
 use Application\Exception\CsrfSecurityException;
 use Application\Logger\Logger;
 use Application\Router\Router;
@@ -106,9 +105,6 @@ class Application
         } catch (AccessException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showError403();
-        } catch (PageNotFoundException $e) {
-            $errorController = DIC::newErrorController();
-            $errorController->showError404();
         } catch (CsrfSecurityException $e) {
             $errorController = DIC::newErrorController();
             $errorController->showCustomError('Une attaque CSRF a été détectée. Si vous êtes à l\'origine de cette attaque, c\'est pas gentil.');

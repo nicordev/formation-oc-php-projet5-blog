@@ -9,7 +9,7 @@ use Model\Entity\Tag;
 use Application\Exception\AccessException;
 use Application\Exception\AppException;
 use Application\Exception\HttpException;
-use Application\Exception\PageNotFoundException;
+use Application\Exception\HttpException;
 use Helper\BlogHelper;
 use Exception;
 
@@ -148,7 +148,7 @@ class AdminController extends BlogController
      *
      * @param int|null $commentToEditId
      * @param string $message
-     * @throws PageNotFoundException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -160,7 +160,7 @@ class AdminController extends BlogController
             if (isset($_POST[self::KEY_COMMENT_ID]) && !empty($_POST[self::KEY_COMMENT_ID])) {
                 $commentToEditId = (int) $_POST[self::KEY_COMMENT_ID];
             } else {
-                throw new PageNotFoundException('It lacks the comment to edit id.');
+                throw new HttpException('It lacks the comment to edit id.');
             }
         }
 
