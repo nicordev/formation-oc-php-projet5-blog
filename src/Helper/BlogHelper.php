@@ -129,6 +129,9 @@ class BlogHelper
             if (isset($_POST['post-editor-id'])) {
                 $post->setLastEditorId($_POST['post-editor-id']);
             }
+            if (isset($_POST['select-author-id'])) {
+                $post->setAuthorId($_POST['select-author-id']);
+            }
 
             self::setPostSettingsFromForm($post);
 

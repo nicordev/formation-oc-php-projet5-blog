@@ -67,10 +67,14 @@
                 {# Post author #}
                 {% if 'editor' in getUser().getRoles() %}
                     <p>
-                        <label for="select-author">Auteur de l'article</label><br>
-                        <select class="w100 custom-select" name="select-author" id="select-author">
+                        <label for="select-author-id">Auteur de l'article</label><br>
+                        <select class="w100 custom-select" name="select-author-id" id="select-author-id">
                             {% for member in getMembers() %}
-                                <option value="{{ member.id }}">{{ member.name }}</option>
+                                {% if member.id is same as(postToEdit.authorId) %}
+                                    <option value="{{ member.id }}" selected>{{ member.name }}</option>
+                                {% else %}
+                                    <option value="{{ member.id }}">{{ member.name }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </p>
