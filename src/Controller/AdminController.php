@@ -7,8 +7,6 @@ use Model\Entity\Member;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use Application\Exception\AccessException;
-use Application\Exception\AppException;
-use Application\Exception\HttpException;
 use Application\Exception\HttpException;
 use Helper\BlogHelper;
 use Exception;

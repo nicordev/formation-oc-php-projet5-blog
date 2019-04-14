@@ -41,8 +41,8 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showPostsOfACategory',
         ROUTE_KEY_PARAMS => [
-            'categoryId' => (int) $_GET['category-id'],
-            'page' => (int) $_GET['page']
+            BlogController::KEY_PARAM_CATEGORY_ID => (int) $_GET[BlogController::KEY_CATEGORY_ID],
+            BlogController::KEY_PAGE => (int) $_GET[BlogController::KEY_PAGE]
         ]
     ],
     [
@@ -53,8 +53,8 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showPostsOfATag',
         ROUTE_KEY_PARAMS => [
-            'tagId' => (int) $_GET['tag-id'],
-            'page' => (int) $_GET['page']
+            BlogController::KEY_PARAM_TAG_ID => (int) $_GET[BlogController::KEY_TAG_ID],
+            BlogController::KEY_PAGE => (int) $_GET[BlogController::KEY_PAGE]
         ]
     ],
     [
@@ -65,8 +65,8 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showASinglePost',
         ROUTE_KEY_PARAMS => [
-            'postId' => (int) $_GET['post-id'],
-            'message' => null,
+            BlogController::KEY_PARAM_POST_ID => (int) $_GET[BlogController::KEY_POST_ID],
+            BlogController::KEY_MESSAGE => null,
             'commentsPage' => (int) $_GET['comments-page'] ?? 1
         ]
     ],

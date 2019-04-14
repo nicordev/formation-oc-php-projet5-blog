@@ -43,13 +43,20 @@ class BlogController extends Controller
     public const KEY_COMMENTS_PAGES_COUNT = "commentsPagesCount";
     public const KEY_COMMENTS_COUNT = "commentsCount";
     public const KEY_CATEGORY = "category";
+    public const KEY_CATEGORY_ID = "category_id";
     public const KEY_CATEGORIES = "categories";
     public const KEY_PAGES_COUNT = "pagesCount";
+    public const KEY_PAGE = "page";
     public const KEY_CURRENT_PAGE = "currentPage";
     public const KEY_PREVIOUS_PAGE = "previousPage";
     public const KEY_NEXT_PAGE = "nextPage";
     public const KEY_TAG = "tag";
+    public const KEY_TAG_ID = "tag-id";
     public const KEY_TAGS = 'tags';
+
+    public const KEY_PARAM_CATEGORY_ID = "categoryId";
+    public const KEY_PARAM_TAG_ID = "tagId";
+    public const KEY_PARAM_POST_ID = "postId";
 
     /**
      * BlogController constructor.
