@@ -43,7 +43,7 @@ class BlogController extends Controller
     public const KEY_COMMENTS_PAGES_COUNT = "commentsPagesCount";
     public const KEY_COMMENTS_COUNT = "commentsCount";
     public const KEY_CATEGORY = "category";
-    public const KEY_CATEGORY_ID = "category_id";
+    public const KEY_CATEGORY_ID = "category-id";
     public const KEY_CATEGORIES = "categories";
     public const KEY_PAGES_COUNT = "pagesCount";
     public const KEY_PAGE = "page";
