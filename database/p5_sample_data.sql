@@ -1,3 +1,4 @@
+-- Create tables then insert demo data
 
 DROP TABLE IF EXISTS bl_role_member;
 DROP TABLE IF EXISTS bl_post_category;
@@ -14,205 +15,197 @@ DROP TABLE IF EXISTS bl_key;
 DROP TABLE IF EXISTS bl_connection_try;
 
 CREATE TABLE bl_connection_try(
-                                  cot_id INT UNSIGNED AUTO_INCREMENT,
-                                  cot_count INT UNSIGNED,
-                                  cot_last_try DATETIME,
-                                  cot_user VARCHAR(100),
+  cot_id INT UNSIGNED AUTO_INCREMENT,
+  cot_count INT UNSIGNED,
+  cot_last_try DATETIME,
+  cot_user VARCHAR(100),
 
-                                  CONSTRAINT  pk_connection_try_id
-                                      PRIMARY KEY (cot_id)
+  CONSTRAINT  pk_connection_try_id
+      PRIMARY KEY (cot_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_key(
-                       key_id INT UNSIGNED AUTO_INCREMENT,
-                       key_value INT UNSIGNED NOT NULL,
+   key_id INT UNSIGNED AUTO_INCREMENT,
+   key_value INT UNSIGNED NOT NULL,
 
-                       CONSTRAINT pk_key_id
-                           PRIMARY KEY (key_id)
+   CONSTRAINT pk_key_id
+       PRIMARY KEY (key_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_role(
-                        r_id INT UNSIGNED AUTO_INCREMENT,
-                        r_name VARCHAR(100),
+    r_id INT UNSIGNED AUTO_INCREMENT,
+    r_name VARCHAR(100),
 
-                        CONSTRAINT pk_r_id
-                            PRIMARY KEY (r_id)
+    CONSTRAINT pk_r_id
+        PRIMARY KEY (r_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_member(
-                          m_id INT UNSIGNED AUTO_INCREMENT,
-                          m_email VARCHAR(100) NOT NULL UNIQUE,
-                          m_password VARCHAR(100) NOT NULL,
-                          m_name VARCHAR(100) NOT NULL UNIQUE,
-                          m_description VARCHAR(1000),
+    m_id INT UNSIGNED AUTO_INCREMENT,
+    m_email VARCHAR(100) NOT NULL UNIQUE,
+    m_password VARCHAR(100) NOT NULL,
+    m_name VARCHAR(100) NOT NULL UNIQUE,
+    m_description VARCHAR(1000),
 
-                          CONSTRAINT pk_m_id
-                              PRIMARY KEY (m_id)
+    CONSTRAINT pk_m_id
+        PRIMARY KEY (m_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_role_member(
-                               rm_member_id_fk INT UNSIGNED,
-                               rm_role_id_fk INT UNSIGNED,
+   rm_member_id_fk INT UNSIGNED,
+   rm_role_id_fk INT UNSIGNED,
 
-                               CONSTRAINT pk_rm_member_id_rm_role_id
-                                   PRIMARY KEY (rm_member_id_fk, rm_role_id_fk),
+   CONSTRAINT pk_rm_member_id_rm_role_id
+       PRIMARY KEY (rm_member_id_fk, rm_role_id_fk),
 
-                               CONSTRAINT fk_rm_member_id_m_id
-                                   FOREIGN KEY (rm_member_id_fk)
-                                       REFERENCES bl_member(m_id)
-                                       ON UPDATE CASCADE
-                                       ON DELETE CASCADE,
+   CONSTRAINT fk_rm_member_id_m_id
+       FOREIGN KEY (rm_member_id_fk)
+           REFERENCES bl_member(m_id)
+           ON UPDATE CASCADE
+           ON DELETE CASCADE,
 
-                               CONSTRAINT fk_rm_role_id_r_id
-                                   FOREIGN KEY (rm_role_id_fk)
-                                       REFERENCES bl_role(r_id)
-                                       ON UPDATE CASCADE
-                                       ON DELETE CASCADE
+   CONSTRAINT fk_rm_role_id_r_id
+       FOREIGN KEY (rm_role_id_fk)
+           REFERENCES bl_role(r_id)
+           ON UPDATE CASCADE
+           ON DELETE CASCADE
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_post(
-                        p_id INT UNSIGNED AUTO_INCREMENT,
-                        p_author_id_fk INT UNSIGNED,
-                        p_last_editor_id_fk INT UNSIGNED,
-                        p_creation_date DATETIME NOT NULL,
-                        p_last_modification_date DATETIME,
-                        p_markdown TINYINT(1) NOT NULL DEFAULT 0,
-                        p_title VARCHAR(100) NOT NULL,
-                        p_excerpt VARCHAR(300) NOT NULL,
-                        p_content LONGTEXT NOT NULL,
+    p_id INT UNSIGNED AUTO_INCREMENT,
+    p_author_id_fk INT UNSIGNED,
+    p_last_editor_id_fk INT UNSIGNED,
+    p_creation_date DATETIME NOT NULL,
+    p_last_modification_date DATETIME,
+    p_markdown TINYINT(1) NOT NULL DEFAULT 0,
+    p_title VARCHAR(100) NOT NULL,
+    p_excerpt VARCHAR(300) NOT NULL,
+    p_content LONGTEXT NOT NULL,
 
-                        CONSTRAINT pk_p_id
-                            PRIMARY KEY (p_id),
+    CONSTRAINT pk_p_id
+        PRIMARY KEY (p_id),
 
-                        CONSTRAINT fk_p_author_id_m_id
-                            FOREIGN KEY (p_author_id_fk)
-                                REFERENCES bl_member(m_id)
-                                ON UPDATE CASCADE
-                                ON DELETE SET NULL,
+    CONSTRAINT fk_p_author_id_m_id
+        FOREIGN KEY (p_author_id_fk)
+            REFERENCES bl_member(m_id)
+            ON UPDATE CASCADE
+            ON DELETE SET NULL,
 
-                        CONSTRAINT fk_p_last_editor_id_m_id
-                            FOREIGN KEY (p_last_editor_id_fk)
-                                REFERENCES bl_member(m_id)
-                                ON UPDATE CASCADE
-                                ON DELETE SET NULL
+    CONSTRAINT fk_p_last_editor_id_m_id
+        FOREIGN KEY (p_last_editor_id_fk)
+            REFERENCES bl_member(m_id)
+            ON UPDATE CASCADE
+            ON DELETE SET NULL
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_tag(
-                       tag_id INT UNSIGNED AUTO_INCREMENT,
-                       tag_name VARCHAR(100) UNIQUE,
+   tag_id INT UNSIGNED AUTO_INCREMENT,
+   tag_name VARCHAR(100) UNIQUE,
 
-                       CONSTRAINT pk_tag_id
-                           PRIMARY KEY (tag_id)
+   CONSTRAINT pk_tag_id
+       PRIMARY KEY (tag_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_post_tag(
-                            pt_post_id_fk INT UNSIGNED,
-                            pt_tag_id_fk INT UNSIGNED,
+    pt_post_id_fk INT UNSIGNED,
+    pt_tag_id_fk INT UNSIGNED,
 
-                            CONSTRAINT pk_pt_post_id_pt_tag_id
-                                PRIMARY KEY (pt_post_id_fk, pt_tag_id_fk),
+    CONSTRAINT pk_pt_post_id_pt_tag_id
+        PRIMARY KEY (pt_post_id_fk, pt_tag_id_fk),
 
-                            CONSTRAINT fk_pt_post_id_p_id
-                                FOREIGN KEY (pt_post_id_fk)
-                                    REFERENCES bl_post(p_id)
-                                    ON UPDATE CASCADE
-                                    ON DELETE CASCADE,
+    CONSTRAINT fk_pt_post_id_p_id
+        FOREIGN KEY (pt_post_id_fk)
+            REFERENCES bl_post(p_id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE,
 
-                            CONSTRAINT fk_pt_tag_tag_id
-                                FOREIGN KEY (pt_tag_id_fk)
-                                    REFERENCES bl_tag(tag_id)
-                                    ON UPDATE CASCADE
-                                    ON DELETE CASCADE
+    CONSTRAINT fk_pt_tag_tag_id
+        FOREIGN KEY (pt_tag_id_fk)
+            REFERENCES bl_tag(tag_id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_category(
-                            cat_id INT UNSIGNED AUTO_INCREMENT,
-                            cat_name VARCHAR(100) UNIQUE,
+    cat_id INT UNSIGNED AUTO_INCREMENT,
+    cat_name VARCHAR(100) UNIQUE,
 
-                            CONSTRAINT pk_cat_id
-                                PRIMARY KEY (cat_id)
+    CONSTRAINT pk_cat_id
+        PRIMARY KEY (cat_id)
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_post_category(
-                                 pc_post_id_fk INT UNSIGNED,
-                                 pc_category_id_fk INT UNSIGNED,
+     pc_post_id_fk INT UNSIGNED,
+     pc_category_id_fk INT UNSIGNED,
 
-                                 CONSTRAINT pk_pc_post_id_pc_category_id
-                                     PRIMARY KEY (pc_post_id_fk, pc_category_id_fk),
+     CONSTRAINT pk_pc_post_id_pc_category_id
+         PRIMARY KEY (pc_post_id_fk, pc_category_id_fk),
 
-                                 CONSTRAINT fk_pc_post_id_post_id
-                                     FOREIGN KEY (pc_post_id_fk)
-                                         REFERENCES bl_post(p_id)
-                                         ON UPDATE CASCADE
-                                         ON DELETE CASCADE,
+     CONSTRAINT fk_pc_post_id_post_id
+         FOREIGN KEY (pc_post_id_fk)
+             REFERENCES bl_post(p_id)
+             ON UPDATE CASCADE
+             ON DELETE CASCADE,
 
-                                 CONSTRAINT fk_pc_category_cat_id
-                                     FOREIGN KEY (pc_category_id_fk)
-                                         REFERENCES bl_category(cat_id)
-                                         ON UPDATE CASCADE
-                                         ON DELETE CASCADE
+     CONSTRAINT fk_pc_category_cat_id
+         FOREIGN KEY (pc_category_id_fk)
+             REFERENCES bl_category(cat_id)
+             ON UPDATE CASCADE
+             ON DELETE CASCADE
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 CREATE TABLE bl_comment(
-                           com_id INT UNSIGNED AUTO_INCREMENT,
-                           com_parent_id_fk INT UNSIGNED,
-                           com_post_id_fk INT UNSIGNED NOT NULL,
-                           com_author_id_fk INT UNSIGNED,
-                           com_last_editor_id_fk INT UNSIGNED,
-                           com_creation_date DATETIME NOT NULL,
-                           com_last_modification_date DATETIME,
-                           com_content TEXT NOT NULL,
-                           com_approved TINYINT(1) NOT NULL DEFAULT 0,
+   com_id INT UNSIGNED AUTO_INCREMENT,
+   com_parent_id_fk INT UNSIGNED,
+   com_post_id_fk INT UNSIGNED NOT NULL,
+   com_author_id_fk INT UNSIGNED,
+   com_last_editor_id_fk INT UNSIGNED,
+   com_creation_date DATETIME NOT NULL,
+   com_last_modification_date DATETIME,
+   com_content TEXT NOT NULL,
+   com_approved TINYINT(1) NOT NULL DEFAULT 0,
 
-                           CONSTRAINT pk_com_id
-                               PRIMARY KEY (com_id),
+   CONSTRAINT pk_com_id
+       PRIMARY KEY (com_id),
 
-                           CONSTRAINT fk_com_parent_id_com_id
-                               FOREIGN KEY (com_parent_id_fk)
-                                   REFERENCES bl_comment(com_id)
-                                   ON UPDATE CASCADE
-                                   ON DELETE CASCADE,
+   CONSTRAINT fk_com_parent_id_com_id
+       FOREIGN KEY (com_parent_id_fk)
+           REFERENCES bl_comment(com_id)
+           ON UPDATE CASCADE
+           ON DELETE CASCADE,
 
-                           CONSTRAINT fk_com_author_id_m_id
-                               FOREIGN KEY (com_author_id_fk)
-                                   REFERENCES bl_member(m_id)
-                                   ON UPDATE CASCADE
-                                   ON DELETE SET NULL,
+   CONSTRAINT fk_com_author_id_m_id
+       FOREIGN KEY (com_author_id_fk)
+           REFERENCES bl_member(m_id)
+           ON UPDATE CASCADE
+           ON DELETE SET NULL,
 
-                           CONSTRAINT fk_com_post_id_p_id
-                               FOREIGN KEY (com_post_id_fk)
-                                   REFERENCES bl_post(p_id)
-                                   ON UPDATE CASCADE
-                                   ON DELETE CASCADE,
+   CONSTRAINT fk_com_post_id_p_id
+       FOREIGN KEY (com_post_id_fk)
+           REFERENCES bl_post(p_id)
+           ON UPDATE CASCADE
+           ON DELETE CASCADE,
 
-                           CONSTRAINT fk_com_last_editor_id_m_id
-                               FOREIGN KEY (com_last_editor_id_fk)
-                                   REFERENCES bl_member(m_id)
-                                   ON UPDATE CASCADE
-                                   ON DELETE SET NULL
+   CONSTRAINT fk_com_last_editor_id_m_id
+       FOREIGN KEY (com_last_editor_id_fk)
+           REFERENCES bl_member(m_id)
+           ON UPDATE CASCADE
+           ON DELETE SET NULL
 )
-    ENGINE = InnoDB;
+ENGINE = InnoDB;
 
 
-
-
-
-
-
-
-
-
--- Données
+-- Insert demo data in the tables
 
 INSERT INTO bl_tag (tag_id, tag_name) VALUES
 (1, 'Ceci est une étiquette'),
@@ -247,13 +240,13 @@ VALUES
 
 INSERT INTO bl_member (m_id, m_email, m_password, m_name, m_description)
 VALUES
-(null, 'mentor.validateur@benice.plz', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
-(null, 'jean.tenbien@yahoo.fr', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
-(null, 'sarah.croche@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
-(null, 'jim.nastique@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
-(null, 'larry.viere@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
-(null, 'paul.emploi@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
-(null, 'lenny.bards@gmail.com', '$2y$10$xJ.gG0a5hfd1FGBVwGDq0ODQIgAphJ3Slo4bC9sOyMlHAOJIM9kBq', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
+(null, 'mentor.validateur@benice.plz', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
+(null, 'jean.tenbien@yahoo.fr', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
+(null, 'sarah.croche@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
+(null, 'jim.nastique@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
+(null, 'larry.viere@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
+(null, 'paul.emploi@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
+(null, 'lenny.bards@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
 
 INSERT INTO bl_role_member (rm_member_id_fk, rm_role_id_fk)
 VALUES
