@@ -41,8 +41,8 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showPostsOfACategory',
         ROUTE_KEY_PARAMS => [
-            BlogController::KEY_PARAM_CATEGORY_ID => (int) $_GET[BlogController::KEY_CATEGORY_ID],
-            BlogController::KEY_PAGE => (int) $_GET[BlogController::KEY_PAGE]
+            (int) $_GET[BlogController::KEY_CATEGORY_ID],
+            (int) $_GET[BlogController::KEY_PAGE]
         ]
     ],
     [
@@ -53,8 +53,8 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showPostsOfATag',
         ROUTE_KEY_PARAMS => [
-            BlogController::KEY_PARAM_TAG_ID => (int) $_GET[BlogController::KEY_TAG_ID],
-            BlogController::KEY_PAGE => (int) $_GET[BlogController::KEY_PAGE]
+            (int) $_GET[BlogController::KEY_TAG_ID],
+            (int) $_GET[BlogController::KEY_PAGE]
         ]
     ],
     [
@@ -65,9 +65,9 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showASinglePost',
         ROUTE_KEY_PARAMS => [
-            BlogController::KEY_PARAM_POST_ID => (int) $_GET[BlogController::KEY_POST_ID],
-            BlogController::KEY_MESSAGE => null,
-            'commentsPage' => (int) $_GET['comments-page'] ?? 1
+            (int) $_GET[BlogController::KEY_POST_ID],
+            null,
+            (int) $_GET['comments-page'] ?? 1
         ]
     ],
 
@@ -102,10 +102,10 @@ return [
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'showMemberProfile',
         ROUTE_KEY_PARAMS => [
-            'memberId' => (int) $_GET['id'] ?? null,
-            BlogController::KEY_MESSAGE => null,
-            'postsPage' => (int) $_GET['posts-page'] ?? null,
-            'commentsPage' => (int) $_GET['comments-page'] ?? null
+            (int) $_GET['id'] ?? null,
+            null,
+            (int) $_GET['posts-page'] ?? null,
+            (int) $_GET['comments-page'] ?? null
         ]
     ],
     [
@@ -116,8 +116,8 @@ return [
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'profileEditor',
         ROUTE_KEY_PARAMS => [
-            Member::MEMBER => (int) $_GET['id'] ?? null,
-            'key' => (int) $_GET['key'] ?? null
+            (int) $_GET['id'] ?? null,
+            (int) $_GET['key'] ?? null
         ]
     ],
     [
@@ -152,7 +152,7 @@ return [
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'askRole',
         ROUTE_KEY_PARAMS => [
-            "role" => Member::AUTHOR
+            Member::AUTHOR
         ]
     ],
 
@@ -177,7 +177,9 @@ return [
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'showCommentEditor',
         ROUTE_KEY_CHECK_ACCESS => [Member::MODERATOR],
-        ROUTE_KEY_PARAMS => ['commentToEditId' => (int) $_GET['id']]
+        ROUTE_KEY_PARAMS => [
+            (int) $_GET['id']
+        ]
     ],
     [
         ROUTE_KEY_URLS => [
@@ -286,9 +288,9 @@ return [
         ROUTE_KEY_CONTROLLER => AdminController::class,
         ROUTE_KEY_METHOD => 'updateTagList',
         ROUTE_KEY_PARAMS => [
-            'tagIds' => $_POST['tag_ids'],
-            'tagNames' => $_POST['tag_names'],
-            'action' => $_GET['action'] ?? null
+            $_POST['tag_ids'],
+            $_POST['tag_names'],
+            $_GET['action'] ?? null
         ],
         ROUTE_KEY_CHECK_ACCESS => [Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true
@@ -324,7 +326,7 @@ return [
         ROUTE_KEY_CONTROLLER => MediaController::class,
         ROUTE_KEY_METHOD => 'showImageEditor',
         ROUTE_KEY_PARAMS => [
-            ImageHandler::KEY_IMAGE_PATH => htmlspecialchars($_GET['image'])
+            htmlspecialchars($_GET['image'])
         ],
         ROUTE_KEY_CHECK_ACCESS => [Member::AUTHOR, Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true
@@ -337,7 +339,7 @@ return [
         ROUTE_KEY_CONTROLLER => MediaController::class,
         ROUTE_KEY_METHOD => 'editImage',
         ROUTE_KEY_PARAMS => [
-            ImageHandler::KEY_IMAGE_PATH => htmlspecialchars($_POST['path']),
+            htmlspecialchars($_POST['path']),
             'cropParameters' => [
                 'width' => (int) $_POST['crop-width'] ?? null,
                 'height' => (int) $_POST['crop-height'] ?? null,
@@ -358,7 +360,7 @@ return [
         ROUTE_KEY_CONTROLLER => MediaController::class,
         ROUTE_KEY_METHOD => 'deleteImage',
         ROUTE_KEY_PARAMS => [
-            ImageHandler::KEY_IMAGE_PATH => htmlspecialchars($_POST['path'])
+            htmlspecialchars($_POST['path'])
         ],
         ROUTE_KEY_CHECK_ACCESS => [Member::AUTHOR, Member::EDITOR],
         ROUTE_KEY_CHECK_CSRF => true

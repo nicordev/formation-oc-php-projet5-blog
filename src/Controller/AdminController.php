@@ -81,6 +81,7 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     * @throws AccessException
      */
     public function showPostEditor(?int $postToEditId = null, string $message = '')
     {
@@ -103,6 +104,8 @@ class AdminController extends BlogController
             $postToEdit = $this->postManager->get($postToEditId);
             $selectedTagNames = BlogHelper::getTagNames($postToEdit->getTags());
             $markdown = $postToEdit->isMarkdown();
+        } else {
+            MemberController::verifyAccess([Member::AUTHOR]);
         }
 
         $this->render(self::VIEW_POST_EDITOR, [

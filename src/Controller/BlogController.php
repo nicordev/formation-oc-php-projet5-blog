@@ -54,10 +54,6 @@ class BlogController extends Controller
     public const KEY_TAG_ID = "tag-id";
     public const KEY_TAGS = 'tags';
 
-    public const KEY_PARAM_CATEGORY_ID = "categoryId";
-    public const KEY_PARAM_TAG_ID = "tagId";
-    public const KEY_PARAM_POST_ID = "postId";
-
     /**
      * BlogController constructor.
      *
