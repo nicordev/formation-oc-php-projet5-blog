@@ -240,13 +240,13 @@ VALUES
 
 INSERT INTO bl_member (m_id, m_email, m_password, m_name, m_description)
 VALUES
-(null, 'mentor.validateur@benice.plz', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
-(null, 'jean.tenbien@yahoo.fr', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
-(null, 'sarah.croche@gmail.com', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
-(null, 'jim.nastique@gmail.com', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
-(null, 'larry.viere@gmail.com', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
-(null, 'paul.emploi@gmail.com', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
-(null, 'lenny.bards@gmail.com', '$2y$10$xvhUrwBDPiHhrb05HuVI6O3iPBIAfl8oxfqM51EHhg9lui4GbTioO', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
+(null, 'mentor.validateur@benice.plz', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Chantal Gique', 'I''m an awesome validator working for OpenClassrooms and I like raspberries. Oh yes and I have every roles on this website.'),
+(null, 'jean.tenbien@yahoo.fr', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Jean Tenbien', 'Hi. I''m a simple member. I can just write comments to say how good is a post.'),
+(null, 'sarah.croche@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Sarah Croche', 'I''m an author. I can write posts and I''m awesome.'),
+(null, 'jim.nastique@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Jim Nastique', 'I''m an editor. I can edit posts but I can not write new ones. But I''m still awesome.'),
+(null, 'larry.viere@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Larry Vière', 'Hello, I''m a moderator. I can approuved, edit or delete comments.'),
+(null, 'paul.emploi@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Paul Emploi', 'Me? I''m an admin. I can just manage members.'),
+(null, 'lenny.bards@gmail.com', '$2y$10$1VRm0Lw.uBBXOBADmzP8Pu/g6XbHR1nR51vcj01g478veW3owFqIW', 'Lenny Bards', 'Hey! I''m an awesome author and editor on this wonderful website!');
 
 INSERT INTO bl_role_member (rm_member_id_fk, rm_role_id_fk)
 VALUES
