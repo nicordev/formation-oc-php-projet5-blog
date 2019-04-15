@@ -4,6 +4,16 @@
 
 Contains UML diagrams and the files of the website.
 
+Website written in plain PHP with a bit of JavaScript. I also used [Twig](https://twig.symfony.com/) and embedded a bootstrap blog template named [Clean Blog](https://startbootstrap.com/themes/clean-blog/).
+
+As a bonus, I added [TinyMCE](https://www.tiny.cloud/) and used [intervention/image](https://packagist.org/packages/intervention/image) library to write beautiful blog posts.
+
+In terms of security I implemented some protections against XSS, SQL injection, CSRF and brute force.
+
+Design patterns used: MVC, DIC and singleton. 
+
+I've learnt a lot during this project and it was really fun!
+
 ## Diagrams
 
 You'll find them in the **uml_diagrams** folder.
@@ -47,3 +57,19 @@ You'll find a file `p5_mpd.png` in the **database** folder which shows a diagram
     ```
     
 1. Enjoy
+
+## Demo data
+
+Here are the demo accounts:
+
+Same password for all accounts: pwdSucks!1
+
+| email | roles |
+|:------|:------|
+| mentor.validateur@benice.plz | member author editor moderator admin |
+| jean.tenbien@yahoo.fr | member |
+| sarah.croche@gmail.com | member author |
+| jim.nastique@gmail.com | member editor |
+| larry.viere@gmail.com | member moderator |
+| paul.emploi@gmail.com | member admin |
+| lenny.bards@gmail.com | member author editor |
