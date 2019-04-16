@@ -184,24 +184,19 @@ class CommentManager extends Manager
         $comments = [];
 
         $query = 'SELECT ' . implode(', ', $this->fields) . ' FROM bl_comment WHERE com_author_id_fk = :memberId';
+
+        if ($filterApproved) {
+            $query .= " AND com_approved = 1";
+        }
+
         if ($numberOfComments) {
             self::addLimitToQuery($query, $numberOfComments, $start);
         }
         $requestComments = $this->query($query, ['memberId' => $memberId]);
 
-        if ($filterApproved) {
-            while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-                $comment = $this->createEntityFromTableData($commentData);
-                if ($comment->isApproved()) {
-                    $comments[] = $comment;
-                }
-            }
-
-        } else {
-            while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
-                $comment = $this->createEntityFromTableData($commentData);
-                $comments[] = $comment;
-            }
+        while ($commentData = $requestComments->fetch(PDO::FETCH_ASSOC)) {
+            $comment = $this->createEntityFromTableData($commentData);
+            $comments[] = $comment;
         }
 
         return $comments;

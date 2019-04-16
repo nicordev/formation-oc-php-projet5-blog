@@ -44,6 +44,11 @@
 
                 {% if nextPage or previousPage %}
                     <div class="row mx-0">
+                        {% if currentPage %}
+                            <div class="col-12">
+                                {{ currentPage }} / {{ pagesCount }}
+                            </div>
+                        {% endif %}
                         {% if previousPage %}
                             <a class="col-12 col-lg-5 my-2 btn btn-primary" href="/blog?category-id={{ category.getId }}&amp;page={{ previousPage }}">Articles suivants</a>
                         {% endif %}

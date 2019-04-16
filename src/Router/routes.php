@@ -104,6 +104,7 @@ return [
         ROUTE_KEY_PARAMS => [
             'memberId' => (int) $_GET['id'] ?? null,
             BlogController::KEY_MESSAGE => null,
+            'postsPage' => (int) $_GET['posts-page'] ?? null,
             'commentsPage' => (int) $_GET['comments-page'] ?? null
         ]
     ],

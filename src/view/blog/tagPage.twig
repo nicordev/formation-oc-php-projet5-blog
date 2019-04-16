@@ -42,7 +42,12 @@
                 {% endif %}
 
                 {% if nextPage or previousPage %}
-                    <div class="row">
+                    <div class="row mx-0">
+                        {% if currentPage %}
+                            <div class="col-12">
+                                {{ currentPage }} / {{ pagesCount }}
+                            </div>
+                        {% endif %}
                         {% if previousPage %}
                             <a class="col-4 btn btn-primary" href="/blog/tag?tag-id={{ tag.getId }}&amp;page={{ previousPage }}">Articles suivants</a>
                             <div class="col-4"></div>
