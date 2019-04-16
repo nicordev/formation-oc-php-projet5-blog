@@ -459,6 +459,23 @@ class MemberController extends Controller
         $this->showWelcomePage("Votre demande a été envoyée et sera traitée dès que possible.", true);
     }
 
+    /**
+     * Check if a role is in the authorized roles
+     *
+     * @param array $rolesToCheck
+     * @param array $authorizedRoles
+     * @return bool
+     */
+    public static function hasAuthorizedRole(array $rolesToCheck, array $authorizedRoles)
+    {
+        foreach ($rolesToCheck as $roleToCheck) {
+            if (in_array($roleToCheck, $authorizedRoles)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Private
 
     /**
@@ -604,22 +621,5 @@ class MemberController extends Controller
     {
         $member->setRoles([self::KEY_MEMBER]);
         $this->memberManager->add($member);
-    }
-
-    /**
-     * Check if a role is in the authorized roles
-     *
-     * @param array $rolesToCheck
-     * @param array $authorizedRoles
-     * @return bool
-     */
-    private static function hasAuthorizedRole(array $rolesToCheck, array $authorizedRoles)
-    {
-        foreach ($rolesToCheck as $roleToCheck) {
-            if (in_array($roleToCheck, $authorizedRoles)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
