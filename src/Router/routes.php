@@ -65,7 +65,9 @@ return [
         ROUTE_KEY_CONTROLLER => BlogController::class,
         ROUTE_KEY_METHOD => 'showASinglePost',
         ROUTE_KEY_PARAMS => [
-            'postId' => (int) $_GET['post-id']
+            'postId' => (int) $_GET['post-id'],
+            'message' => null,
+            'commentsPage' => (int) $_GET['comments-page'] ?? 1
         ]
     ],
 
@@ -99,7 +101,11 @@ return [
         ROUTE_KEY_NAME => "member_profile",
         ROUTE_KEY_CONTROLLER => MemberController::class,
         ROUTE_KEY_METHOD => 'showMemberProfile',
-        ROUTE_KEY_PARAMS => ['memberId' => (int) $_GET['id'] ?? null]
+        ROUTE_KEY_PARAMS => [
+            'memberId' => (int) $_GET['id'] ?? null,
+            BlogController::KEY_MESSAGE => null,
+            'commentsPage' => (int) $_GET['comments-page'] ?? null
+        ]
     ],
     [
         ROUTE_KEY_URLS => [

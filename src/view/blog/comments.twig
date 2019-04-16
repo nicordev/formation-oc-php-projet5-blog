@@ -1,16 +1,37 @@
 
 {% import 'macros.twig' as macros %}
 
-<div class="comments-wrapper row mx-0">
+<div id="comments" class="comments-wrapper row mx-0">
+    <div class="col-12">
+        {% if commentsCount > 1 %}
+            {{ commentsCount }} commentaires
+        {% else %}
+            {{ commentsCount }} commentaire
+        {% endif %}
+    </div>
     {% if comments %}
-        <dl>
+        <dl class="col-12">
             {% for comment in comments %}
                 {% if not comment.getParentId %}
                     {{ macros.showAComment(comment, getUser()) }}
                 {% endif %}
             {% endfor %}
         </dl>
-    {% else %}
-        <p>Sans commentaire.</p>
+        {# Paging #}
+        <div class="col-12 row mx-0">
+            <div class="col-12 mb-2">
+                {{ commentsPage }} / {{ commentsPagesCount }}
+            </div>
+            {% if commentsPage > 1 %}
+                <div class="col-12 my-2">
+                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comments-page={{ commentsPage - 1 }}#comments">Page précédente</a>
+                </div>
+            {% endif %}
+            {% if commentsPage < commentsPagesCount %}
+                <div class="col-12 my-2">
+                    <a class="btn btn-secondary" href="/blog-post?post-id={{ post.id }}&amp;comments-page={{ commentsPage + 1 }}#comments">Page suivante</a>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 </div>
