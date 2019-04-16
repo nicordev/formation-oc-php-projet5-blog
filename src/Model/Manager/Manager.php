@@ -249,7 +249,7 @@ abstract class Manager
     {
         $query .= ' LIMIT ' . $numberOfLines;
         if ($start) {
-            $query .= ' OFFSET ' . $start;
+            $query .= ' OFFSET ' . $start > 0 ? $start : 0;
         }
     }
 

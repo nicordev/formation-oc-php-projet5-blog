@@ -17,6 +17,7 @@ use Controller\HomeController;
 use Controller\MediaController;
 use Controller\MemberController;
 use Helper\MemberHelper;
+use Model\Entity\Member;
 use Model\Manager\CategoryManager;
 use Model\Manager\CommentManager;
 use Model\Manager\KeyManager;
@@ -138,6 +139,17 @@ class DIC
             return null;
         });
         $twig->addFunction($getUserFunction);
+
+        // Check if the connected member can have access to the admin panel
+        $canAccessAdmin = new Twig_Function('canAccessAdmin', function (?Member $user) {
+            if (MemberHelper::memberConnected()) {
+                if (MemberController::hasAuthorizedRole(MemberController::AUTHORIZED_ROLES, $user->getRoles())) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        $twig->addFunction($canAccessAdmin);
 
         // Get the counter CSRF token
         $getCsrfToken = new Twig_Function('getCsrfToken', function () {
