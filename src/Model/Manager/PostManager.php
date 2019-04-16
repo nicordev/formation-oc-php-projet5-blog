@@ -306,13 +306,13 @@ class PostManager extends Manager
      *
      * @param int $memberId
      * @param bool $getContent
-     * @param bool $filterWithTags
+     * @param bool $publishedOnly
      * @param int|null $numberOfPosts
      * @param int|null $start
      * @return array
      * @throws HttpException
      */
-    public function getPostsOfAMember(int $memberId, bool $getContent = false, bool $filterWithTags = true, ?int $numberOfPosts = null, ?int $start = null): array
+    public function getPostsOfAMember(int $memberId, bool $getContent = false, bool $publishedOnly = true, ?int $numberOfPosts = null, ?int $start = null): array
     {
         $posts = [];
         if ($getContent) {
@@ -323,27 +323,25 @@ class PostManager extends Manager
             $columns = implode(', ', $columns);
         }
 
-        $query = 'SELECT ' . $columns . ' FROM bl_post WHERE p_author_id_fk = :memberId';
+        if ($publishedOnly) {
+            $query = "SELECT {$columns} FROM bl_post
+                INNER JOIN bl_post_category
+                   ON pc_post_id_fk = p_id
+                INNER JOIN bl_post_tag
+                   ON pt_post_id_fk = p_id
+                WHERE p_author_id_fk = :memberId";
+        } else {
+            $query = 'SELECT ' . $columns . ' FROM bl_post WHERE p_author_id_fk = :memberId';
+        }
         if ($numberOfPosts) {
             self::addLimitToQuery($query, $numberOfPosts, $start);
         }
         $requestPosts = $this->query($query, ['memberId' => $memberId]);
 
-        if ($filterWithTags) {
-            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
-                $post = $this->createEntityFromTableData($postData, 'Post');
-                $post->setTags($this->getTagsOfAPost($post->getId()));
-                if ($post->getTags()) {
-                    $posts[] = $post;
-                }
-            }
-
-        } else {
-            while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
-                $post = $this->createEntityFromTableData($postData, 'Post');
-                $post->setTags($this->getTagsOfAPost($post->getId()));
-                $posts[] = $post;
-            }
+        while ($postData = $requestPosts->fetch(PDO::FETCH_ASSOC)) {
+            $post = $this->createEntityFromTableData($postData, 'Post');
+            $post->setTags($this->getTagsOfAPost($post->getId()));
+            $posts[] = $post;
         }
 
         return $posts;
@@ -381,6 +379,32 @@ class PostManager extends Manager
         )';
 
         $requestCount = $this->query($query, ['tagId' => $tagId]);
+
+        return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
+    }
+
+    /**
+     * Count the number of posts written or published by a member
+     *
+     * @param int $memberId
+     * @param bool $filterPublished
+     * @return int
+     * @throws HttpException
+     */
+    public function countPostsOfAMember(int $memberId, bool $filterPublished = true): int
+    {
+        if ($filterPublished) {
+            $query = "SELECT COUNT(p_id) FROM bl_post
+                INNER JOIN bl_post_category
+                    ON pc_post_id_fk = p_id
+                INNER JOIN bl_post_tag
+                    ON pt_post_id_fk = p_id
+                WHERE p_author_id_fk = :id";
+        } else {
+            $query = "SELECT COUNT(p_id) FROM bl_post WHERE p_author_id_fk = :id";
+        }
+
+        $requestCount = $this->query($query, ['id' => $memberId]);
 
         return (int) $requestCount->fetch(PDO::FETCH_NUM)[0];
     }

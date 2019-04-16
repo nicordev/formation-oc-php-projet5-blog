@@ -10,7 +10,6 @@ namespace Controller;
 
 
 use Application\Exception\HttpException;
-use Application\Exception\PageNotFoundException;
 use Helper\BlogHelper;
 use Exception;
 use Model\Manager\CategoryManager;
