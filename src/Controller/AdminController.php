@@ -7,20 +7,31 @@ use Model\Entity\Member;
 use Model\Entity\Post;
 use Model\Entity\Tag;
 use Application\Exception\AccessException;
-use Application\Exception\AppException;
 use Application\Exception\HttpException;
-use Application\Exception\PageNotFoundException;
 use Helper\BlogHelper;
 use Exception;
 
 class AdminController extends BlogController
 {
-    const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
-    const VIEW_POST_EDITOR = 'admin/postEditor.twig';
-    const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
-    const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
-    const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
-    const VIEW_IMAGE_EDITOR = 'admin/imageEditor.twig';
+    public const VIEW_BLOG_ADMIN = 'admin/blogAdmin.twig';
+    public const VIEW_POST_EDITOR = 'admin/postEditor.twig';
+    public const VIEW_CATEGORY_EDITOR = 'admin/categoryEditor.twig';
+    public const VIEW_COMMENT_EDITOR = 'admin/commentEditor.twig';
+    public const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
+    public const VIEW_IMAGE_EDITOR = 'admin/imageEditor.twig';
+
+    public const KEY_YES_NO_FORM = 'yesNoForm';
+    public const KEY_YES_ACTION = 'yesAction';
+    public const KEY_NO_ACTION = 'noAction';
+    public const KEY_MEMBERS = 'members';
+    public const KEY_POST_TO_EDIT = 'postToEdit';
+    public const KEY_POST_TO_EDIT_ID = 'postToEditId';
+    public const KEY_AVAILABLE_TAGS = 'availableTags';
+    public const KEY_SELECTED_TAGS = 'selectedTags';
+    public const KEY_MARKDOWN = 'markdown';
+    public const KEY_CATEGORY_TO_EDIT = 'categoryToEdit';
+    public const KEY_CATEGORY_TO_EDIT_ID = 'categoryToEditId';
+    public const KEY_COMMENT_TO_EDIT = 'commentToEdit';
 
     /**
      * Show the panel do manage blog posts
@@ -53,11 +64,11 @@ class AdminController extends BlogController
         $this->render(self::VIEW_BLOG_ADMIN, [
             self::KEY_POSTS => $posts,
             self::KEY_MESSAGE => $message,
-            'yesNoForm' => $yesNoForm,
-            'tags' => $tags,
+            self::KEY_YES_NO_FORM => $yesNoForm,
+            BlogController::KEY_TAGS => $tags,
             self::KEY_CATEGORIES => $categories,
             self::KEY_COMMENTS => $comments,
-            'members' => $members ?? null
+            self::KEY_MEMBERS => $members ?? null
         ]);
     }
 
@@ -93,16 +104,18 @@ class AdminController extends BlogController
             $postToEdit = $this->postManager->get($postToEditId);
             $selectedTagNames = BlogHelper::getTagNames($postToEdit->getTags());
             $markdown = $postToEdit->isMarkdown();
+        } else {
+            MemberController::verifyAccess([Member::AUTHOR]);
         }
 
         $this->render(self::VIEW_POST_EDITOR, [
-            'postToEdit' => $postToEdit,
-            'postToEditId' => $postToEditId,
+            self::KEY_POST_TO_EDIT => $postToEdit,
+            self::KEY_POST_TO_EDIT_ID => $postToEditId,
             self::KEY_CATEGORIES => $categories,
             self::KEY_MESSAGE => $message,
-            'availableTags' => $availableTagNames,
-            'selectedTags' => $selectedTagNames,
-            'markdown' => $markdown
+            self::KEY_AVAILABLE_TAGS => $availableTagNames,
+            self::KEY_SELECTED_TAGS => $selectedTagNames,
+            self::KEY_MARKDOWN => $markdown
         ]);
     }
 
@@ -125,8 +138,8 @@ class AdminController extends BlogController
         }
 
         $this->render(self::VIEW_CATEGORY_EDITOR, [
-            'categoryToEdit' => $categoryToEdit,
-            'categoryToEditId' => $categoryToEditId,
+            self::KEY_CATEGORY_TO_EDIT => $categoryToEdit,
+            self::KEY_CATEGORY_TO_EDIT_ID => $categoryToEditId,
             self::KEY_MESSAGE => $message
         ]);
     }
@@ -136,7 +149,7 @@ class AdminController extends BlogController
      *
      * @param int|null $commentToEditId
      * @param string $message
-     * @throws PageNotFoundException
+     * @throws HttpException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -148,14 +161,14 @@ class AdminController extends BlogController
             if (isset($_POST[self::KEY_COMMENT_ID]) && !empty($_POST[self::KEY_COMMENT_ID])) {
                 $commentToEditId = (int) $_POST[self::KEY_COMMENT_ID];
             } else {
-                throw new PageNotFoundException('It lacks the comment to edit id.');
+                throw new HttpException('It lacks the comment to edit id.');
             }
         }
 
         $comment = $this->commentManager->get($commentToEditId);
 
         $this->render(self::VIEW_COMMENT_EDITOR, [
-            'commentToEdit' => $comment
+            self::KEY_COMMENT_TO_EDIT => $comment
         ]);
     }
 
@@ -169,7 +182,6 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function addPost()
     {
@@ -194,7 +206,6 @@ class AdminController extends BlogController
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws AccessException
      */
     public function editPost()
     {
@@ -248,8 +259,8 @@ class AdminController extends BlogController
             } else {
                 // Head back to the admin panel
                 $yesNoForm = [
-                    'yesAction' => '/admin/update-tags?action=delete-all',
-                    'noAction' => '/admin'
+                    self::KEY_YES_ACTION => '/admin/update-tags?action=delete-all',
+                    self::KEY_NO_ACTION => '/admin'
                 ];
                 $this->showAdminPanel('Vous êtes sur le point de supprimer toutes les étiquettes. Continuer ?', $yesNoForm);
             }
@@ -345,7 +356,6 @@ class AdminController extends BlogController
      * Add a comment to the database
      *
      * @throws HttpException
-     * @throws PageNotFoundException
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
@@ -537,13 +547,16 @@ class AdminController extends BlogController
         if ($isNew) {
             array_unshift($messages, "L'article a été ajouté");
             $this->postManager->add($postToHandle);
+
+            // Come back to the admin panel
+            $this->showPostEditor($this->postManager->getLastId(), implode('<br>', $messages));
         } else {
             array_unshift($messages, "L'article a été modifié");
             $this->postManager->edit($postToHandle);
-        }
 
-        // Come back to the admin panel
-        $this->showPostEditor($this->postManager->getLastId(), implode('<br>', $messages));
+            // Come back to the admin panel
+            $this->showPostEditor($postToHandle->getId(), implode('<br>', $messages));
+        }
     }
 
     /**
@@ -553,7 +566,6 @@ class AdminController extends BlogController
      * @param Member $member
      * @return bool
      * @throws HttpException
-     * @throws AccessException
      */
     public function isAllowedToEditThePost(int $postId, Member $member)
     {

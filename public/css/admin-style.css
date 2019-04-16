@@ -16,7 +16,7 @@ figure {
     margin: 0;
 }
 
-input[type='text'], textarea {
+textarea, select {
     border-radius: 10px;
     border: 1px solid lightslategrey;
     box-sizing: border-box;
@@ -146,8 +146,9 @@ footer ul li a, footer ul li a:hover {
     width: 100%;
 }
 
-#new-tag-input {
-    font-size: 0.75em;
+#new-tag {
+    max-width: 300px;
+    display: inline;
 }
 
 #image-preview {

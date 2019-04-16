@@ -29,7 +29,7 @@
 
                     <input type="hidden" name="delete-comment" value="{{ commentToEdit.getId }}">
                     <p>
-                        <input class="btn" type="submit" value="Supprimer le commentaire">
+                        <input class="btn" type="submit" value="Supprimer">
                     </p>
                 </form>
             </div>
@@ -48,7 +48,7 @@
                 <input type="hidden" name="creation-date" value="{{ commentToEdit.getCreationDate }}">
 
                 <p>
-                    <input class="btn" type="submit" value="Publier le commentaire">
+                    <input class="btn" type="submit" value="Enregistrer">
                 </p>
 
                 <p>
@@ -58,7 +58,7 @@
                 {# Comment #}
                 <p>
                     <label for="comment">Commentaire de <a href="/member-profile?id={{ commentToEdit.getAuthorId }}">{{ commentToEdit.getAuthor }}</a> du {{ commentToEdit.getCreationDate }}</label><br>
-                    <textarea class="admin-textarea w100" name="comment" id="comment" cols="30" rows="10">{{ commentToEdit.getContent }}</textarea>
+                    <textarea class="form-control w100" name="comment" id="comment" cols="30" rows="10">{{ commentToEdit.getContent }}</textarea>
                 </p>
             </form>
         </div>

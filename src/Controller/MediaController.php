@@ -12,6 +12,9 @@ class MediaController extends Controller
     const VIEW_MEDIA_LIBRARY = 'admin/mediaLibrary.twig';
     const VIEW_IMAGE_EDITOR = 'admin/imageEditor.twig';
 
+    const KEY_IMAGES = "images";
+    const KEY_IMAGE_PATH = "imagePath";
+
     /**
      * Show the media library
      *
@@ -26,8 +29,8 @@ class MediaController extends Controller
         $images = ImageHandler::getAllPath();
 
         $this->render(self::VIEW_MEDIA_LIBRARY, [
-            'images' => $images,
-            'message' => $message
+            self::KEY_IMAGES => $images,
+            BlogController::KEY_MESSAGE => $message
         ]);
     }
 
@@ -43,8 +46,8 @@ class MediaController extends Controller
     public function showImageEditor(string $imagePath = null, string $message = null)
     {
         $this->render(self::VIEW_IMAGE_EDITOR, [
-            'imagePath' => $imagePath,
-            'message' => $message
+            self::KEY_IMAGE_PATH => $imagePath,
+            BlogController::KEY_MESSAGE => $message
         ]);
     }
 
