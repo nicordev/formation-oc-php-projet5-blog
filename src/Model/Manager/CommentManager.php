@@ -15,8 +15,6 @@ use PDO;
 
 class CommentManager extends Manager
 {
-    public static $commentsPerPage = 5;
-
     public function __construct()
     {
         $this->tableName = 'bl_comment';

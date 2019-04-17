@@ -43,7 +43,7 @@
             {% endif %}
         </div>
 
-        <div>
+        <div class="mt-4">
             {% if postToEdit %}
             <form id="publish-post-form" action="/admin/edit-post" method="post">
                 <input type="hidden" id="edit-post" name="edit-post" value="{{ postToEdit.getId }}">

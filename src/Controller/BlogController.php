@@ -26,8 +26,9 @@ class BlogController extends Controller
     protected $categoryManager;
     protected $commentManager;
     protected $memberManager;
-    protected $postsPerPage = 5;
-    protected $commentsPerPage = 3;
+
+    public const POSTS_PER_PAGE = 5;
+    public const COMMENTS_PER_PAGE = 5;
 
     public const VIEW_BLOG = 'blog/blog.twig';
     public const VIEW_BLOG_TAG = 'blog/tagPage.twig';
@@ -96,7 +97,7 @@ class BlogController extends Controller
     public function showPostsOfACategory(int $categoryId, ?int $page = null)
     {
         $numberOfPosts = $this->postManager->countPostsOfACategory($categoryId);
-        $numberOfPages = ceil($numberOfPosts / $this->postsPerPage);
+        $numberOfPages = ceil($numberOfPosts / self::POSTS_PER_PAGE);
 
         if ($page >= $numberOfPages) {
             $page = $numberOfPages;
@@ -105,14 +106,14 @@ class BlogController extends Controller
         }
 
         if ($page > 1) {
-            $start = ($page - 1) * $this->postsPerPage;
-            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsPerPage, $start, false);
+            $start = ($page - 1) * self::POSTS_PER_PAGE;
+            $posts = $this->postManager->getPostsOfACategory($categoryId, self::POSTS_PER_PAGE, $start, false);
             if ($page < $numberOfPages) {
                 $nextPage = $page + 1;
             }
             $previousPage = $page - 1;
         } else {
-            $posts = $this->postManager->getPostsOfACategory($categoryId, $this->postsPerPage, null, false);
+            $posts = $this->postManager->getPostsOfACategory($categoryId, self::POSTS_PER_PAGE, null, false);
             if ($numberOfPages > 1) {
                 $nextPage = 2;
             }
@@ -148,7 +149,7 @@ class BlogController extends Controller
     public function showPostsOfATag(int $tagId, ?int $page = null)
     {
         $numberOfPosts = $this->postManager->countPostsOfATag($tagId);
-        $numberOfPages = ceil($numberOfPosts / $this->postsPerPage);
+        $numberOfPages = ceil($numberOfPosts / self::POSTS_PER_PAGE);
 
         if ($page >= $numberOfPages) {
             $page = $numberOfPages;
@@ -157,14 +158,14 @@ class BlogController extends Controller
         }
 
         if ($page > 1) {
-            $start = ($page - 1) * $this->postsPerPage;
-            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsPerPage, $start, false);
+            $start = ($page - 1) * self::POSTS_PER_PAGE;
+            $posts = $this->postManager->getPostsOfATag($tagId, self::POSTS_PER_PAGE, $start, false);
             if ($page < $numberOfPages) {
                 $nextPage = $page + 1;
             }
             $previousPage = $page - 1;
         } else {
-            $posts = $this->postManager->getPostsOfATag($tagId, $this->postsPerPage, null, false);
+            $posts = $this->postManager->getPostsOfATag($tagId, self::POSTS_PER_PAGE, null, false);
             if ($numberOfPages > 1) {
                 $nextPage = 2;
             }
@@ -204,7 +205,7 @@ class BlogController extends Controller
 
         $commentsCount = $this->commentManager->countComments($postId, null, true);
         $rootCommentsCount = $this->commentManager->countComments($postId, null, false);
-        $commentsPagesCount = ceil($rootCommentsCount / $this->commentsPerPage);
+        $commentsPagesCount = ceil($rootCommentsCount / self::COMMENTS_PER_PAGE);
 
         if ($commentsPage < 1) {
             $commentsPage = 1;
@@ -212,7 +213,7 @@ class BlogController extends Controller
             $commentsPage = $commentsPagesCount;
         }
 
-        $comments = $this->commentManager->getFromPost($postId, $this->commentsPerPage, $commentsPage);
+        $comments = $this->commentManager->getFromPost($postId, self::COMMENTS_PER_PAGE, $commentsPage);
         foreach ($comments as $comment) {
             BlogHelper::convertDatesOfComment($comment);
         }
