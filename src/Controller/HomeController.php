@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Application\Logger\Logger;
 use Application\MailSender\MailSender;
 use Helper\BlogHelper;
 use Model\Manager\CategoryManager;
@@ -83,7 +84,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Send a message to the admin
+     * Send a mail to the admins
      *
      * @return bool
      * @throws \Application\Exception\HttpException
@@ -100,6 +101,8 @@ class HomeController extends Controller
             $subject = "Blog de Nicolas Renvoisé : un message de {$contactName} pour l'admin.";
             $message = htmlspecialchars($_POST[self::KEY_CONTACT_MESSAGE]);
             $from = htmlspecialchars($_POST[self::KEY_CONTACT_EMAIL]);
+
+            Logger::saveContactMessage($contactName, $from, $message);
 
             foreach ($admins as $admin) {
                 MailSender::send(
